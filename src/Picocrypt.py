@@ -1,3 +1,18 @@
+#!/usr/bin/env python3
+
+# Dependencies: argon2-cffi, pycryptodome
+# Copyright (c) Evan Su (https://evansu.cc)
+# Released under a GNU GPL v3 license
+# Source: https://github.com/HACKERALERT/Picocrypt
+
+try:
+    from argon2.low_level import hash_secret_raw,Type
+    from Crypto.Cipher import ChaCha20_Poly1305
+except:
+    from os import system
+    system("python3 -m pip install argon2-cffi")
+    system("python3 -m pip install pycryptodome")
+
 from tkinter import filedialog
 from threading import Thread
 from datetime import datetime
@@ -8,7 +23,6 @@ from secrets import compare_digest
 from os import urandom,fsync,remove
 from os.path import getsize,expanduser
 import sys
-import tkinter.scrolledtext as scrolledtext
 import tkinter
 import tkinter.ttk
 import webbrowser
@@ -30,7 +44,7 @@ eraseNotice = "Securely erase and delete original file"
 working = False
 
 tk = tkinter.Tk()
-tk.geometry("480x390")
+tk.geometry("480x420")
 tk.title("Picocrypt")
 tk.configure(background="#f5f6f7")
 tk.resizable(0,0)
@@ -52,7 +66,7 @@ def inputSelected():
         if len(tmp)==0:
             raise Exception("No file selected.")
         inputFile = tmp
-        if ".enc" in inputFile.split("/")[-1]:
+        if ".pcf" in inputFile.split("/")[-1]:
             suffix = " (will be decrypted)"
             fin = open(inputFile,"rb+")
             adlen = b""
@@ -140,9 +154,9 @@ def start():
     startBtn["state"] = "disabled"
     keepBtn["state"] = "disabled"
 
-    if ".enc" not in inputFile:
+    if ".pcf" not in inputFile:
         mode = "encrypt"
-        outputFile = inputFile+".enc"
+        outputFile = inputFile+".pcf"
     else:
         mode = "decrypt"
         outputFile = inputFile[:-4]
@@ -297,13 +311,18 @@ def start():
         if first:
             statusString.set("...% at ... MB/s (ETA: ...s)")
         else:
-            statusString.set(f"{rPercent}% at {rSpeed} MB/s (ETA: {eta}s)")
+            info = f"{rPercent}% at {rSpeed} MB/s (ETA: {eta}s)"
+            statusString.set(info)
         
         done += chunkSize
         fout.write(data)
 
     if not kept:
-        statusString.set("Completed.")
+        if mode=="encrypt":
+            output = inputFile.split("/")[-1]+".pcf"
+        else:
+            output = inputFile.split("/")[-1].replace(".pcf","")
+        statusString.set(f"Completed. (Output: {output})")
     else:
         if kept=="modified":
             statusString.set(kModifiedNotice)
@@ -364,7 +383,7 @@ adFrame.place(x=20,y=128)
 adFrame.columnconfigure(0,weight=10)
 adFrame.grid_propagate(False)
 
-adArea = scrolledtext.ScrolledText(
+adArea = tkinter.Text(
     adFrame,
     exportselection=0
 )
@@ -426,10 +445,25 @@ statusString = tkinter.StringVar(tk)
 statusString.set("Ready.")
 status = tkinter.ttk.Label(
     tk,
-    textvariable = statusString
+    textvariable=statusString
 )
 status.place(x=17,y=356)
 status.config(background="#f5f6f7")
+
+hint = "Created by Evan Su. Click for more details and source code."
+creditsString = tkinter.StringVar(tk)
+creditsString.set(hint)
+credits = tkinter.ttk.Label(
+    tk,
+    textvariable=creditsString,
+    cursor="hand2"
+)
+credits["state"] = "disabled"
+credits.config(background="#f5f6f7")
+credits.place(x=17,y=386)
+source = "https://github.com/HACKERALERT/Picocrypt"
+credits.bind("<Button-1>",lambda e:webbrowser.open(source))
+
 
 dummy = tkinter.ttk.Button(
     tk
