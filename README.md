@@ -2,7 +2,7 @@
 Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern XChaCha20-Poly1305 cipher suite as well as Argon2ID, making it about as secure and modern of an encryption tool as you'll ever get your hands on. Picocrypt's focus is <i>security</i>, so it might be slightly slower than others. 
 
 # Download
-You can run the raw Python source file, compile it yourself, or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 4MB in size) <a href="https://github.com/HACKERALERT/Picocrypt/raw/main/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, the following two <code>pip</code> dependencies will be automatically installed via <code>pip</code>: <code>argon2-cffi</code> and <code>pycryptodome</code>.
+You can run the raw Python source file, compile it yourself, or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 4MB in size) <a href="https://github.com/HACKERALERT/Picocrypt/raw/main/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, all you have to do is run the Python file. The following two dependencies will be automatically installed via <code>pip</code>: <code>argon2-cffi</code> and <code>pycryptodome</code>.
 
 # Why Picocrypt?
 Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-Zip? Here are some reasons why you should switch to Picocrypt:
