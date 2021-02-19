@@ -25,7 +25,7 @@ Picocrypt is about as simple as it gets. Just select a file, enter a password, a
 </ul>
 
 # Security
-Security is Picocrypt's sole focus. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one, so I created Picocrypt. Picocrypt uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the future of encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, 7-Zip, and VeraCrypt. It's used by Cloudflare, Google, and many other forward-thinking companies.
+Security is Picocrypt's sole focus. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one, so I created Picocrypt. Picocrypt uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the future of encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies.
 
 For key derivation, Picocrypt uses Argon2ID, winner of the PHC (Password Hashing Competition), which was completed in 2015. Argon2ID is even slower than Scrypt and Bcrypt (for those that don't understand crypto, this is a good thing), making GPU, ASIC, and FPGA attacks impracticle due to the huge amount of RAM that is used and written to during the key derivation.
 
