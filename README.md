@@ -11,7 +11,7 @@ Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-
 	<li>Unlike NordLocker and Bitlocker, Picocrypt is FOSS (free open-source software) and can be audited. You can verify for yourself that there aren't any backdoors.</li>
 	<li>Picocrypt is portable and <i>tiny</i> (just 4MB!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). It can also run on any machine (since it's Python) and the pre-made .exe can run on any Windows PC from 7 and up.</li>
 	<li>It's infinitely easier to use than VeraCrypt (no need to create volumes) and a 5-year-old could use Picocrypt.</li>
-	<li>Picocrypt is built for security, using modern standards and the most secure settings. See *Security* below for more info.</li>
+	<li>Picocrypt is built for security, using modern standards and the most secure settings. See <strong>Security<strong> below for more info.</li>
 	<li>It supports file integrity checking through Poly1305, which means that you would know if a hacker has maliciously modified your data.</li>
 </ul>
 
