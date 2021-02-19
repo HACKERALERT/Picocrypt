@@ -43,8 +43,8 @@ Both XChaCha20-Poly1305 and Argon2ID are well recognized within the cryptography
 	</li>
 	<li>If decrypting, compare the derived key with the SHA3_512 hash of the correct key stored in the ciphertext. If encrypting, compute the SHA3_512 of the derived key and add to ciphertext.</li>
 	<li>Encryption/decryption start, reading in 1MB chunks at a time. For each chunk, it is first encrypted by XChaCha20, and then a CRC (using SHA3_512) is updated.</li>
-	<li>If 'Secure wipe' is enabled, 1MB of CSPRNG data is written to the original file.</li>
-	<li>When encryption/decryption is finished, the MAC tag (Poly1305) will be added to the ciphertext or verified, depending on if you're encrypting or decrypting.</li>
+	<li>If 'Secure wipe' is enabled, CSPRNG data is written over the original file in chunks of 1MB to securely wipe the file.</li>
+	<li>When encryption/decryption is finished, the MAC tag (Poly1305) will be added to the ciphertext or verified, depending on if you're encrypting or decrypting. If 'Secure wipe' is enabled, the original file is deleted.</li>
 	<li>Similar to above, the CRC is either checked or added to the ciphertext depending on the operation.</li>
 	<li>If decrypting, both the CRC and the MAC tag are securely verified using constant-time comparison. If either don't match, decryption is unsuccessful and an error message will be displayed. Otherwise, decryption is considered successful and the process is done.</li>
 </ol>
