@@ -59,4 +59,4 @@ Both XChaCha20-Poly1305 and Argon2ID are well recognized within the cryptography
 
 # Contribution
 There shouldn't be a lot more to improve on. I've done extensive testing on Picocrypt and it
-shouldn't have any major bugs or flaws. If you somehow manage to find a bug or security issue, please create an Issue. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll updated the code (if necessary) and recompile the .exe for Windows.
+shouldn't have any major bugs or flaws. If you somehow manage to find a bug or security issue, please create an Issue. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows.
