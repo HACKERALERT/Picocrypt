@@ -1,5 +1,5 @@
 # Picocrypt
-Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern XChaCha20-Poly1305 cipher suite as well as Argon2ID, making it about as secure and modern of an encryption tool as you'll ever get your hands on. Picocrypt's focus is <i>security</i>, so it might be slightly slower and less attractive visually than others. 
+Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern XChaCha20-Poly1305 cipher suite as well as Argon2ID, making it about as secure and modern of an encryption tool as you'll ever get your hands on. Picocrypt's focus is <i>security</i>, so it might be slightly slower and less attractive visually than others.
 
 <img alt="Screenshot" src="https://i.imgur.com/S3cNkiL.png">
 
@@ -18,7 +18,7 @@ Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-
 </ul>
 
 # Instructions
-Picocrypt is about as simple as it gets. Just select a file, enter a password, and start. There are some additional options that you can use for more control:
+Picocrypt is about as simple as it gets. Just select a file, enter a password, and start. If you want to encrypt multiple files, add them to an archive or zip file. There are some additional options that you can use for more control:
 
 <ul>
 	<li>File metadata (editable for encryption, readonly for decryption): Use this to store notes, information, and text along with the file (it won't be encrypted). For example, you can put a description of the file before sending it to someone. When the person you sent it to selects the file in Picocrypt, your description will be shown to that person.</li>
@@ -57,8 +57,8 @@ XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography
 
 <ul>
 	<li>Max file size is 256GB, due to ChaCha20 itself. You can split files into chunks for files larger than 256GB.</li>
-	<li>Argon2ID may take a while, but realize that this is all for security. Security and speed were never friends.</li>
-	<li>Encryption/decryption is a little slower than other tools, which average speeds ~50MB/s on a medium-class CPU. Same as above, security and reliability comes at a little decrease in speed.</li>
+	<li>Argon2 may take a while to derive, but realize that this is all for security. Security and speed were never friends.</li>
+	<li>Encryption/decryption is a little slower than other tools. Picocrypt average speeds ~50MB/s on a medium-class CPU, because a digest is constantly being updated with every chunk. Same as above, security and reliability comes at a little decrease in speed.</li>
 	<li>The portable .exe can be detected as a virus, because it uses 7-Zip's self-extracting archive format to bundle Python along with Picocrypt. I've done my best and submitted it as a false positive to a couple antivirus companies to deal with this.</li>
 </ul>
 
