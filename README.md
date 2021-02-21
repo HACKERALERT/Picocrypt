@@ -59,6 +59,7 @@ XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography
 	<li>Max file size is 256GB, due to ChaCha20 itself. You can split files into chunks for files larger than 256GB.</li>
 	<li>Argon2ID may take a while, but realize that this is all for security. Security and speed were never friends.</li>
 	<li>Encryption/decryption is a little slower than other tools, which average speeds ~50MB/s on a medium-class CPU. Same as above, security and reliability comes at a little decrease in speed.</li>
+	<li>The portable .exe can be detected as a virus, because it uses 7-Zip's self-extracting archive format to bundle Python along with Picocrypt. I've done my best and submitted it as a false positive to a couple antivirus companies to deal with this.</li>
 </ul>
 
 # Contribution
