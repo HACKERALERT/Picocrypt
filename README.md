@@ -64,4 +64,4 @@ XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography
 
 # Contribution
 There shouldn't be a lot more to improve on. I've done extensive testing on Picocrypt and it
-shouldn't have any major bugs or flaws. If you somehow manage to find a bug or security issue, please create an Issue. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows.
+shouldn't have any major bugs or flaws. If you somehow manage to find a bug or security issue, please create an Issue. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm open to suggestions and features, and you can also leave an Issue for that.
