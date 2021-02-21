@@ -6,14 +6,14 @@
 # Source: https://github.com/HACKERALERT/Picocrypt
 
 try:
-    from argon2.low_level import hash_secret_raw,Type
+    from argon2.low_level import hash_secret_raw
     from Crypto.Cipher import ChaCha20_Poly1305
 except:
     from os import system
     system("python3 -m pip install argon2-cffi")
     system("python3 -m pip install pycryptodome")
 
-from tkinter import filedialog
+from tkinter import filedialog,messagebox
 from threading import Thread
 from datetime import datetime
 from argon2.low_level import hash_secret_raw,Type
@@ -42,6 +42,7 @@ keepNotice = "Keep decrypted output even if it's corrupted or modified"
 kept = False
 eraseNotice = "Securely erase and delete original file"
 working = False
+overwriteNotice = "Output file already exists. Would you like to overwrite it?"
 
 tk = tkinter.Tk()
 tk.geometry("480x420")
@@ -143,6 +144,20 @@ passwordInput["state"] = "disabled"
 def start():
     global inputFile,outputFile,password,ad,kept,working
 
+    if ".pcf" not in inputFile:
+        mode = "encrypt"
+        outputFile = inputFile+".pcf"
+    else:
+        mode = "decrypt"
+        outputFile = inputFile[:-4]
+    try:
+        getsize(outputFile)
+        force = messagebox.askyesno("Warning",overwriteNotice)
+        dummy.focus()
+        if force!=1:
+            return
+    except:
+        pass
     working = True
     dummy.focus()
     password = passwordInput.get().encode("utf-8")
@@ -153,13 +168,6 @@ def start():
     adArea["state"] = "disabled"
     startBtn["state"] = "disabled"
     keepBtn["state"] = "disabled"
-
-    if ".pcf" not in inputFile:
-        mode = "encrypt"
-        outputFile = inputFile+".pcf"
-    else:
-        mode = "decrypt"
-        outputFile = inputFile[:-4]
 
     fin = open(inputFile,"rb+")
     fout = open(outputFile,"wb+")
@@ -198,9 +206,9 @@ def start():
     key = hash_secret_raw(
         password,
         salt,
-        time_cost=16,
+        time_cost=8,
         memory_cost=1048576,
-        parallelism=4,
+        parallelism=8,
         hash_len=32,
         type=Type.ID
     )
