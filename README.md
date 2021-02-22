@@ -1,5 +1,5 @@
 # Picocrypt
-Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern XChaCha20-Poly1305 cipher suite as well as Argon2, making it about as secure and modern of an encryption tool as you'll ever get your hands on. Picocrypt's focus is <i>security</i>, so it might be slightly slower and less attractive visually than others. Remember: <i>The only safe encryption is the one you do yourself. Trust nobody except yourself to protect your data.</i>
+Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern XChaCha20-Poly1305 cipher suite as well as Argon2, making it about as secure and modern of an encryption tool as you'll ever get your hands on. Picocrypt's focus is <i>security</i>, so it might be slightly slower and less attractive visually than others.
 
 <img alt="Screenshot" src="https://i.imgur.com/S3cNkiL.png">
 
@@ -10,6 +10,7 @@ You can run the raw Python source file, compile it yourself, or download the por
 Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-Zip? Here are some reasons why you should switch to Picocrypt:
 
 <ul>
+	<li>The only safe encryption is the one you do yourself. Don't trust cloud providers to "encrypt" your data, because you'll never know if they do or don't. Picocrypt is meant to be the simplest tool to allow you to take control over your confidential data and protect it with the most secure modern standards available.</li>
 	<li>Unlike NordLocker and Bitlocker, Picocrypt is FOSS (free open-source software) and can be audited. You can verify for yourself that there aren't any backdoors.</li>
 	<li>Picocrypt is portable and <i>tiny</i> (just 4MB!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). It can also run on any machine (since it's Python) and the standalone .exe can run on any Windows PC from 7 and up.</li>
 	<li>It's infinitely easier to use than VeraCrypt (no need to create volumes) and a 5-year-old could use Picocrypt.</li>
