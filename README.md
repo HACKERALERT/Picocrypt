@@ -1,5 +1,5 @@
 # Picocrypt
-Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern XChaCha20-Poly1305 cipher suite as well as Argon2ID, making it about as secure and modern of an encryption tool as you'll ever get your hands on. Picocrypt's focus is <i>security</i>, so it might be slightly slower and less attractive visually than others.
+Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern XChaCha20-Poly1305 cipher suite as well as Argon2, making it about as secure and modern of an encryption tool as you'll ever get your hands on. Picocrypt's focus is <i>security</i>, so it might be slightly slower and less attractive visually than others. Remember: The only safe encryption is the one you do yourself. Trust nobody except yourself to protect your data.
 
 <img alt="Screenshot" src="https://i.imgur.com/S3cNkiL.png">
 
@@ -11,7 +11,7 @@ Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-
 
 <ul>
 	<li>Unlike NordLocker and Bitlocker, Picocrypt is FOSS (free open-source software) and can be audited. You can verify for yourself that there aren't any backdoors.</li>
-	<li>Picocrypt is portable and <i>tiny</i> (just 4MB!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). It can also run on any machine (since it's Python) and the pre-made .exe can run on any Windows PC from 7 and up.</li>
+	<li>Picocrypt is portable and <i>tiny</i> (just 4MB!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). It can also run on any machine (since it's Python) and the standalone .exe can run on any Windows PC from 7 and up.</li>
 	<li>It's infinitely easier to use than VeraCrypt (no need to create volumes) and a 5-year-old could use Picocrypt.</li>
 	<li>Picocrypt is built for security, using modern standards and the most secure settings. See <strong>Security</strong> below for more info.</li>
 	<li>It supports file integrity checking through Poly1305, which means that you would know if a hacker has maliciously modified your data.</li>
@@ -27,22 +27,22 @@ Picocrypt is about as simple as it gets. Just select a file, enter a password, a
 </ul>
 
 # Security
-Security is Picocrypt's sole focus. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one, so I created Picocrypt. Picocrypt uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the future of encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies.
+Security is Picocrypt's sole focus. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one, so I created Picocrypt. Picocrypt uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the future of symmetric encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies.
 
 For key derivation, Picocrypt uses Argon2ID, winner of the PHC (Password Hashing Competition), which was completed in 2015. Argon2ID is even slower than Scrypt and Bcrypt (for those that don't understand crypto, this is a good thing), making GPU, ASIC, and FPGA attacks impractical due to the huge amount of RAM that is used and written to during the key derivation.
 
-For key checking and CRCs, SHA3_512 (standardized Keccak) is used. Before decrypting, Picocrypt checks whether the password is correct by comparing <i>the derived key</i> to a SHA3_512 hash stored in the encrypted file. SHA3 is the latest standard for hashing recommended by the NIST. It's a modern and well-designed hash function that's open-source and unpatented.
+For key checking and CRCs, SHA3_512 (standardized Keccak) is used. Before decrypting, Picocrypt checks whether the password is correct by comparing <i>the derived key</i> to a SHA3_512 hash stored in the encrypted file. SHA3 is the latest standard for hashing recommended by the NIST. It's a modern and well-designed hash function that's open-source, unpatented, and royalty-free.
 
-XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography community and are all mature and future-proof. Let me get this clear: <i>I did not write the crypto for Picocrypt</i>. Instead, I followed cryptography's number one rule: <i>Don't roll your own crypto</i>. Picocrypt uses two Python libraries, <code>argon2-cffi</code> and <code>pycryptodome</code>, both of which are well known and popular within the Python community. Picocrypt also uses Python's standard <code>hashlib</code> for SHA3_512. For people who want to know how Picocrypt handles the crypto, or for the paranoid, here is a breakdown of how Picocrypt protects your data:
+XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography community and are all considered to be mature and future-proof. Let me get this clear: <i>I did not write the crypto for Picocrypt</i>. Instead, I followed cryptography's number one rule: <i>Don't roll your own crypto</i>. Picocrypt uses two Python libraries, <code>argon2-cffi</code> and <code>pycryptodome</code>, both of which are well known and popular within the Python community. Picocrypt also uses Python's standard <code>hashlib</code> for SHA3_512. For people who want to know how Picocrypt handles the crypto, or for the paranoid, here is a breakdown of how Picocrypt protects your data:
 
 <ol>
-	<li>A 16-byte salt (for Argon2ID) and a 24-byte nonce (for XChaCha20) is generated using a CSPRNG (Python's <code>os.urandom()</code>)</li>
+	<li>A 16-byte salt (for Argon2) and a 24-byte nonce (for XChaCha20) is generated using a CSPRNG (Python's <code>os.urandom()</code>)</li>
 	<li>
 		The encryption/decryption key is generated through Argon2ID using the salt above and the following parameters:
 		<ul>
-			<li>Time cost: 16</li>
-			<li>Memory cost: 2^30 (1GB)</li>
-			<li>Parallelism: 4</li>
+			<li>Time cost: 8</li>
+			<li>Memory cost: 2^30 (1GiB)</li>
+			<li>Parallelism: 8</li>
 		</ul>
 	</li>
 	<li>If decrypting, compare the derived key with the SHA3_512 hash of the correct key stored in the ciphertext. If encrypting, compute the SHA3_512 of the derived key and add to ciphertext.</li>
@@ -56,12 +56,12 @@ XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography
 # Limitations
 
 <ul>
-	<li>Max file size is 256GB, due to ChaCha20 itself. You can split files into chunks for files larger than 256GB.</li>
-	<li>Argon2 may take a while to derive, but realize that this is all for security. Security and speed were never friends.</li>
-	<li>Encryption/decryption is a little slower than other tools. Picocrypt average speeds ~50MB/s on a medium-class CPU, because a digest is constantly being updated with every chunk. Same as above, security and reliability comes at a little decrease in speed.</li>
-	<li>The portable .exe can be detected as a virus, because it uses 7-Zip's self-extracting archive format to bundle Python along with Picocrypt. I've done my best and submitted it as a false positive to a couple antivirus companies to deal with this.</li>
+	<li>Max file size is 256GB, due to ChaCha20 itself. The reason for this is because the counter for ChaCha20 will overflow out of the 64-bit range at 256GB. You can split files into chunks for files larger than 256GB.</li>
+	<li>Argon2 may take a while to derive, but realize that this is all for security. Security and speed were never friends and there is always a trade-off between security and speed.</li>
+	<li>Encryption/decryption is a little slower than other tools. Picocrypt average speeds ~50MB/s on a medium-class CPU, because a digest is constantly being updated with every chunk. Same as above, security and reliability comes at a slight decrease in speed.</li>
+	<li>The portable .exe can be detected as a virus, because it uses 7-Zip's self-extracting archive format to bundle Python along with Picocrypt. I've done my best and submitted it as a false positive to a couple antivirus companies to deal with this. If your antivirus is detecting it as a virus, please submit it as a false positive to your antivirus provider.</li>
 </ul>
 
 # Contribution
 There shouldn't be a lot more to improve on. I've done extensive testing on Picocrypt and it
-shouldn't have any major bugs or flaws. If you somehow manage to find a bug or security issue, please create an Issue. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm open to suggestions and features, and you can also leave an Issue for that.
+shouldn't have any major bugs or flaws. If you somehow manage to find a bug or security issue, please create an Issue. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm also open to suggestions and features, so you can leave an Issue for that.
