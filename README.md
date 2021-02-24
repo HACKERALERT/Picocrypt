@@ -34,7 +34,9 @@ For key derivation, Picocrypt uses Argon2ID, winner of the PHC (Password Hashing
 
 For key checking and CRCs, SHA3_512 (standardized Keccak) is used. Before decrypting, Picocrypt checks whether the password is correct by comparing <i>the derived key</i> to a SHA3_512 hash stored in the encrypted file. SHA3 is the latest standard for hashing recommended by the NIST. It's a modern and well-designed hash function that's open-source, unpatented, and royalty-free.
 
-XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography community and are all considered to be mature and future-proof. Let me get this clear: <i>I did not write the crypto for Picocrypt</i>. Instead, I followed cryptography's number one rule: <i>Don't roll your own crypto</i>. Picocrypt uses two Python libraries, <code>argon2-cffi</code> and <code>pycryptodome</code>, both of which are well known and popular within the Python community. Picocrypt also uses Python's standard <code>hashlib</code> for SHA3_512. For people who want to know how Picocrypt handles the crypto, or for the paranoid, here is a breakdown of how Picocrypt protects your data:
+XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography community and are all considered to be mature and future-proof.
+
+<i>I did not write the crypto for Picocrypt</i>. Picocrypt uses two Python libraries, <code>argon2-cffi</code> and <code>pycryptodome</code>, both of which are well known and popular within the Python community. Picocrypt also uses Python's standard <code>hashlib</code> for SHA3_512. For people who want to know how Picocrypt handles the crypto, or for the paranoid, here is a breakdown of how Picocrypt protects your data:
 
 <ol>
 	<li>A 16-byte salt (for Argon2) and a 24-byte nonce (for XChaCha20) is generated using a CSPRNG (Python's <code>os.urandom()</code>)</li>
