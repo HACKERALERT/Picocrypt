@@ -25,6 +25,7 @@ from os.path import getsize,expanduser
 import sys
 import tkinter
 import tkinter.ttk
+import tkinter.scrolledtext
 import webbrowser
 
 inputFile = ""
@@ -43,6 +44,8 @@ kept = False
 eraseNotice = "Securely erase and delete original file"
 working = False
 overwriteNotice = "Output file already exists. Would you like to overwrite it?"
+unknownErrorNotice = "Unknown error occured. Please try again or view the logs."
+log = ""
 
 tk = tkinter.Tk()
 tk.geometry("480x420")
@@ -57,8 +60,9 @@ s = tkinter.ttk.Style()
 s.configure("TCheckbutton",background="#f5f6f7")
 
 def inputSelected():
-    global inputFile
+    global inputFile,working,log
     dummy.focus()
+    log += "File selection dialog opened\n"
     try:
         suffix = ""
         tmp = filedialog.askopenfilename(
@@ -86,6 +90,7 @@ def inputSelected():
             adLabelString.set("File metadata (read only):")
             keepBtn["state"] = "normal"
             eraseBtn["state"] = "disabled"
+            log += "File selected, will decrypt\n"
         else:
             eraseBtn["state"] = "normal"
             keepBtn["state"] = "disabled"
@@ -93,12 +98,20 @@ def inputSelected():
             adArea.delete("1.0",tkinter.END)
             suffix = " (will be encrypted)"
             adLabelString.set(adString)
+            log += "File selected, will encrypt\n"
         inputString.set(inputFile.split("/")[-1]+suffix)
         passwordInput["state"] = "normal"
         startBtn["state"] = "normal"
         statusString.set("Ready.")
-    except:
-        pass
+        progress["value"] = 0
+    except UnicodeDecodeError as e:
+        log += str(e)+"\n"
+        statusString.set(corruptedNotice)
+    except Exception as e:
+        log += str(e)+"\n"
+    finally:
+        dummy.focus()
+        working = False
 
 selectFileInput = tkinter.ttk.Button(
     tk,
@@ -142,7 +155,9 @@ passwordInput.grid(sticky="nesw")
 passwordInput["state"] = "disabled"
 
 def start():
-    global inputFile,outputFile,password,ad,kept,working
+    global inputFile,outputFile,password,ad,kept,working,log
+
+    log += "Starting the encryption/decryption process\n"
 
     if ".pcf" not in inputFile:
         mode = "encrypt"
@@ -153,17 +168,25 @@ def start():
     try:
         getsize(outputFile)
         force = messagebox.askyesno("Warning",overwriteNotice)
+        log += "Overwrite set to true\n"
         dummy.focus()
         if force!=1:
+            log += "Cancelled because overwrite set to false\n"
             return
     except:
         pass
+
     working = True
     dummy.focus()
     password = passwordInput.get().encode("utf-8")
     ad = adArea.get("1.0",tkinter.END).encode("utf-8")
     wipe = erase.get()==1
+    if wipe and mode=="encrypt":
+        log += "Secure wipe enabled\n"
+    elif not wipe and mode=="encrypt":
+        log += "Secure wipe disabled\n"
 
+    selectFileInput["state"] = "disabled"
     passwordInput["state"] = "disabled"
     adArea["state"] = "disabled"
     startBtn["state"] = "disabled"
@@ -203,6 +226,8 @@ def start():
     progress.config(mode="indeterminate")
     progress.start(15)
 
+    log += "Generating key through Argon2\n"
+
     key = hash_secret_raw(
         password,
         salt,
@@ -220,11 +245,14 @@ def start():
     check = sha3_512(key).digest()
 
     if mode=="decrypt":
+        log += "Checking if key is correct"
         if not compare_digest(check,cs):
+            log += "\nIncorrect password\n"
             statusString.set(passwordNotice)
             fin.close()
             fout.close()
             remove(outputFile)
+            selectFileInput["state"] = "normal"
             passwordInput["state"] = "normal"
             adArea["state"] = "normal"
             startBtn["state"] = "normal"
@@ -232,6 +260,7 @@ def start():
             working = False
             del key
             return
+        log += " (yes)\n"
 
     cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
     crc = sha3_512()
@@ -245,6 +274,7 @@ def start():
         wiper = open(inputFile,"r+b")
         wiper.seek(0)
 
+    log += "Encryption/decryption starting\n"
     while True:
         piece = fin.read(chunkSize)
         if wipe:
@@ -263,11 +293,15 @@ def start():
             else:
                 crcdg = crc.digest()
                 if not compare_digest(crccs,crcdg):
+                    log += "Data is corrupted\n"
                     statusString.set(corruptedNotice)
+                    progress["value"] = 100
                     fin.close()
                     fout.close()
                     if keep.get()!=1:
+                        log += "Corrupted output has been kept\n"
                         remove(outputFile)
+                        selectFileInput["state"] = "normal"
                         passwordInput["state"] = "normal"
                         adArea["state"] = "normal"
                         startBtn["state"] = "normal"
@@ -280,11 +314,15 @@ def start():
                 try:
                     cipher.verify(digest)
                 except:
+                    log += "Data has been modified\n"
                     statusString.set(modifiedNotice)
+                    progress["value"] = 100
                     fin.close()
                     fout.close()
                     if keep.get()!=1:
+                        log += "Modified output has been kept\n"
                         remove(outputFile)
+                        selectFileInput["state"] = "normal"
                         passwordInput["state"] = "normal"
                         adArea["state"] = "normal"
                         startBtn["state"] = "normal"
@@ -336,6 +374,7 @@ def start():
             statusString.set(kModifiedNotice)
         else:
             statusString.set(kCorruptedNotice)
+    selectFileInput["state"] = "normal"
     adArea["state"] = "normal"
     adArea.delete("1.0",tkinter.END)
     adArea["state"] = "disabled"
@@ -368,9 +407,27 @@ def start():
     kept = False
     working = False
     del fin,fout,cipher,key
+    log += "Process completed\n"
+
+def wrapper():
+    global working,log
+    try:
+        start()
+    except Exception as e:
+        selectFileInput["state"] = "normal"
+        passwordInput["state"] = "normal"
+        adArea["state"] = "normal"
+        startBtn["state"] = "normal"
+        keepBtn["state"] = "normal"
+        statusString.set(unknownErrorNotice)
+        dummy.focus()
+        working = False
+        log += str(e)+"\n"
+    finally:
+        sys.exit(0)
     
 def startWorker():
-    thread = Thread(target=start,daemon=True)
+    thread = Thread(target=wrapper,daemon=True)
     thread.start()
 
 adLabelString = tkinter.StringVar(tk)
@@ -426,7 +483,7 @@ eraseBtn["state"] = "disabled"
 
 startFrame = tkinter.Frame(
     tk,
-    width=440,
+    width=442,
     height=25
 )
 startFrame.place(x=19,y=290)
@@ -458,7 +515,7 @@ status = tkinter.ttk.Label(
 status.place(x=17,y=356)
 status.config(background="#f5f6f7")
 
-hint = "Created by Evan Su. Click for more details and source code."
+hint = "(v1.4) Created by Evan Su. Click for details and source."
 creditsString = tkinter.StringVar(tk)
 creditsString.set(hint)
 credits = tkinter.ttk.Label(
@@ -472,6 +529,44 @@ credits.place(x=17,y=386)
 source = "https://github.com/HACKERALERT/Picocrypt"
 credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
+versionString = tkinter.StringVar(tk)
+versionString.set("Logs")
+version = tkinter.ttk.Label(
+    tk,
+    textvariable=versionString,
+    cursor="hand2"
+)
+version["state"] = "disabled"
+version.config(background="#f5f6f7")
+version.place(x=430,y=386)
+version.bind("<Button-1>",lambda e:showLog())
+
+def showLogWrapper():
+    logger = tkinter.Tk()
+    logger.geometry("480x420")
+    logger.title("Logs")
+    logger.resizable(0,0)
+    loggerFrame = tkinter.Frame(
+        logger,
+        width=480,
+        height=420
+    )
+    loggerFrame.place(x=0,y=0)
+    loggerFrame.columnconfigure(0,weight=10)
+    loggerFrame.grid_propagate(False)
+    box = tkinter.scrolledtext.ScrolledText(
+        loggerFrame,
+    )
+    box.config(font=("Consolas",11))
+    box.grid(sticky="nesw")
+    box.insert("1.0",log)
+    box["state"] = "disabled"
+    logger.mainloop()
+    sys.exit(0)
+
+def showLog():
+    t = Thread(target=showLogWrapper,daemon=True)
+    t.start()
 
 dummy = tkinter.ttk.Button(
     tk
