@@ -59,12 +59,11 @@ XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography
 # Limitations
 
 <ul>
-	<li>Max file size is 256GB, due to ChaCha20 itself. The reason for this is because the counter for ChaCha20 will overflow out of the 64-bit range at 256GB. You can split files into chunks for files larger than 256GB.</li>
+	<li>Max file size is 256GB, due to ChaCha20 itself. The reason for this is because the counter for ChaCha20 will overflow out of the 32-bit range at 256GB. You can split files into chunks for files larger than 256GB.</li>
 	<li>Argon2 may take a while to derive, but realize that this is all for security. Security and speed were never friends and there is always a trade-off between security and speed.</li>
 	<li>Encryption/decryption is a little slower than other tools. Picocrypt average speeds ~50MB/s on a medium-class CPU, because a digest is constantly being updated with every chunk. Same as above, security and reliability comes at a slight decrease in speed.</li>
 	<li>The portable .exe can be detected as a virus, because it uses 7-Zip's self-extracting archive format to bundle Python along with Picocrypt. I've done my best and submitted it as a false positive to a couple antivirus companies to deal with this. If your antivirus is detecting it as a virus, please submit it as a false positive to your antivirus provider.</li>
 </ul>
 
 # Contribution
-There shouldn't be a lot more to improve on. I've done extensive testing on Picocrypt and it
-shouldn't have any major bugs or flaws. If you somehow manage to find a bug or security issue, please create an Issue. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm also open to suggestions and features, so you can leave an Issue for that.
+If you manage to find a bug or security issue, please create an Issue. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm also open to suggestions and features (you can leave an Issue for that).
