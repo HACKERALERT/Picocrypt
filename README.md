@@ -4,7 +4,7 @@ Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure fil
 <img alt="Screenshot" src="https://i.imgur.com/S3cNkiL.png">
 
 # Download
-You can run the raw Python source file, compile it yourself, or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 4MB in size) <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.3.6.4/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, the following two dependencies will be automatically installed via <code>pip</code> if not already installed: <code>argon2-cffi</code> and <code>pycryptodome</code>.
+Picocrypt is not related to PicoCrypt, so only download Picocrypt from this Github repo to ensure you get the correct and authentic software. You can run the raw Python source file, compile it yourself, or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 3MB in size) <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.5/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, the following two dependencies will be automatically installed via <code>pip</code> if not already installed: <code>argon2-cffi</code> and <code>pycryptodome</code>.
 
 # Why Picocrypt?
 Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-Zip? Here are some reasons why you should switch to Picocrypt:
@@ -12,7 +12,7 @@ Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-
 <ul>
 	<li>The only safe encryption is the one you do yourself. Don't trust cloud providers to "encrypt" your data, because you'll never know if they do it or not. Picocrypt is meant to be the simplest tool to allow you to take control over your confidential data and protect it with the most secure modern standards available.</li>
 	<li>Unlike NordLocker, Bitlocker, and many cloud storage providers, Picocrypt is FOSS (free open-source software) and can be audited. You can verify for yourself that there aren't any backdoors or flaws.</li>
-	<li>Picocrypt is portable and <i>tiny</i> (just 4MB!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). The raw Python file can run any machine and the standalone .exe can run on any Windows PC from 7 and up.</li>
+	<li>Picocrypt is portable and <i>tiny</i> (just 3MB!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). The raw Python file can run any machine and the standalone .exe can run on any Windows PC from 7 and up.</li>
 	<li>It's infinitely easier to use than VeraCrypt (no need to create volumes) and a 5-year-old could use Picocrypt.</li>
 	<li>Picocrypt is built for security, using modern standards and the most secure settings. See <strong>Security</strong> below for more info.</li>
 	<li>It supports file integrity checking through Poly1305, which means that you would know if a hacker has maliciously modified your data.</li>
