@@ -6,7 +6,7 @@ Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure fil
 # Download
 You can run the raw Python source file, compile it yourself, or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 3MB in size) <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.5/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, the following two dependencies will be automatically installed via <code>pip</code> if not already installed: <code>argon2-cffi</code> and <code>pycryptodome</code>.
 
-Note: For some reason, there's an old and outdated tool called PicoCrypt, which was released in 2005. PicoCrypt is not related to Picocrypt (this project). Make sure you only download Picocrypt from this Github repository to ensure that you download the correct and authentic software.
+Note: For some reason, there's an outdated and useless tool called PicoCrypt on the Internet, which was released in 2005. PicoCrypt is not related to Picocrypt (this project). Make sure you only download Picocrypt from this Github repository to ensure that you download the correct and authentic software.
 
 # Why Picocrypt?
 Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-Zip? Here are some reasons why you should switch to Picocrypt:
