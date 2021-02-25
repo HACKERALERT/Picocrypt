@@ -1,1 +1,0 @@
-These are the resources I used to compile Picocrypt.py into a portable .exe for Windows. Here, you'll see a 7zSD.sfx file, which is used to create a 7-Zip self-extracting archive that packs Picocrypt along with Python and its dependencies. There's also an embeddable Python zip file, which contains the Python runtimes and dependencies.
