@@ -32,6 +32,13 @@ import tkinter.ttk
 import tkinter.scrolledtext
 import webbrowser
 
+# Set high DPI on Windows
+try:
+	from ctypes import windll
+	windll.shcore.SetProcessDpiAwareness(1)
+except:
+	pass
+
 # Global variables and notices
 inputFile = ""
 outputFile = ""
