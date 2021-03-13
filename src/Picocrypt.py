@@ -32,10 +32,11 @@ import tkinter.ttk
 import tkinter.scrolledtext
 import webbrowser
 
-# Set high DPI on Windows
+# Tk/Tcl is a little barbaric, disable
+# high DPI so it doesn't look really ugly
 try:
 	from ctypes import windll
-	windll.shcore.SetProcessDpiAwareness(1)
+	windll.shcore.SetProcessDpiAwareness(0)
 except:
 	pass
 
@@ -60,17 +61,10 @@ unknownErrorNotice = "Unknown error occured. Please try again."
 
 # Create root Tk
 tk = tkinter.Tk()
-#tk.tk.call('tk', 'scaling', 2.0)
 tk.geometry("480x420")
 tk.title("Picocrypt")
 tk.configure(background="#f5f6f7")
 tk.resizable(0,0)
-
-try:
-	dpi = windll.user32.GetDpiForWindow(tk.winfo_id())
-	tk.tk.call("tk","scaling",dpi/72.0)
-except:
-	pass
 
 # Try setting image if included with Picocrypt
 try:
