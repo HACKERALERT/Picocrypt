@@ -66,6 +66,12 @@ tk.title("Picocrypt")
 tk.configure(background="#f5f6f7")
 tk.resizable(0,0)
 
+try:
+	dpi = windll.user32.GetDpiForWindow(tk.winfo_id())
+	tk.tk.call("tk","scaling",dpi/72.0)
+except:
+	pass
+
 # Try setting image if included with Picocrypt
 try:
 	favicon = tkinter.PhotoImage(file="./key.png")
