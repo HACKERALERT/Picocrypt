@@ -233,9 +233,12 @@ def start():
 	# If decrypting, read values from file
 	else:
 		# Read past metadata into actual data
+		adlen = b""
 		while True:
 			letter = fin.read(1)
+			adlen += letter
 			if letter==b"|":
+				adlen = adlen[:-1]
 				break
 		fin.read(int(adlen.decode("utf-8")))
 		cs = fin.read(64)
@@ -581,7 +584,7 @@ credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
 # Version
 versionString = tkinter.StringVar(tk)
-versionString.set("v1.4")
+versionString.set("v1.6")
 version = tkinter.ttk.Label(
 	tk,
 	textvariable=versionString
