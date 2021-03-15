@@ -591,7 +591,7 @@ credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
 # Version
 versionString = tkinter.StringVar(tk)
-versionString.set("v1.6")
+versionString.set("v1.7")
 version = tkinter.ttk.Label(
 	tk,
 	textvariable=versionString
