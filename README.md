@@ -2,6 +2,8 @@
 
 Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern ChaCha20-Poly1305 cipher suite as well as Argon2, making it about as secure and modern of an encryption tool as you'll ever get your hands on. Picocrypt's focus is <i>security</i>, so it might be slightly slower and less attractive visually than others.
 
+# Screenshot
+Here's what Picocrypt looks like:
 <p align="center"><img alt="Screenshot" src="https://i.imgur.com/S3cNkiL.png"></p>
 
 # Download
