@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-# Dependencies: argon2-cffi, pycryptodome, reedsolo
-# Copyright (c) Evan Su (https://evansu.cc)
-# Released under a GNU GPL v3 license
-# https://github.com/HACKERALERT/Picocrypt
+"""
+Dependencies: argon2-cffi, pycryptodome, reedsolo
+Copyright (c) Evan Su (https://evansu.cc)
+Released under a GNU GPL v3 license
+https://github.com/HACKERALERT/Picocrypt
+"""
 
 # Test if libraries are installed
 try:
