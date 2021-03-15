@@ -2,10 +2,10 @@
 
 Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure file encryption tool. It uses the modern ChaCha20-Poly1305 cipher suite as well as Argon2, making it about as secure and modern of an encryption tool as you'll ever get your hands on. It's very simple to use, which allows anyone to start encrypting private files, no matter what level of experience they have with computers. Picocrypt's focus is <i>security</i>, so it might be slightly slower and less attractive visually than others.
 
-<p align="center"><img alt="Screenshot" src="https://i.imgur.com/S3cNkiL.png"></p>
+<p align="center"><img alt="Screenshot" src="https://i.imgur.com/hGY08BT.png"></p>
 
 # Download
-You can run the raw Python source file under <code>/src</code> or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 3MB and fully portable) <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.7/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, the following two dependencies will be automatically installed via <code>pip</code> if not already installed: <code>argon2-cffi</code> and <code>pycryptodome</code>.
+You can run the raw Python source file under <code>/src</code> or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 3MB and fully portable) <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.8/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, the following two dependencies will be automatically installed via <code>pip</code> if not already installed: <code>argon2-cffi</code> and <code>pycryptodome</code>.
 
 Note: For some reason, there's an outdated and useless tool called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related to Picocrypt (this project). Make sure you only download Picocrypt from this Github repository to ensure that you download the correct, authentic, and backdoor-free software.
 
