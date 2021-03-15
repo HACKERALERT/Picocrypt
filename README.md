@@ -5,7 +5,7 @@ Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure fil
 <p align="center"><img alt="Screenshot" src="https://i.imgur.com/hGY08BT.png"></p>
 
 # Download
-You can run the raw Python source file under <code>/src</code> or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 3MB and fully portable) <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.8/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, the following two dependencies will be automatically installed via <code>pip</code> if not already installed: <code>argon2-cffi</code> and <code>pycryptodome</code>.
+You can run the raw Python source file under <code>/src</code> or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination (recommended, because it's just 3MB and fully portable) <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.8/Picocrypt.exe" target="_blank">here</a>. If you're compiling from source or running the raw Python file, the following three dependencies will be automatically installed via <code>pip</code> if not already installed: <code>argon2-cffi</code>, <code>pycryptodome</code>, and <code>reedsolo</code>. See the <code>/src</code> folder for more info.
 
 Note: For some reason, there's an outdated and useless tool called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related to Picocrypt (this project). Make sure you only download Picocrypt from this Github repository to ensure that you download the correct, authentic, and backdoor-free software.
 
