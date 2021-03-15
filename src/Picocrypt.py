@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Dependencies: argon2-cffi, pycryptodome
+# Dependencies: argon2-cffi, pycryptodome, reedsolo
 # Copyright (c) Evan Su (https://evansu.cc)
 # Released under a GNU GPL v3 license
 # https://github.com/HACKERALERT/Picocrypt
@@ -9,12 +9,22 @@
 try:
 	from argon2.low_level import hash_secret_raw
 	from Crypto.Cipher import ChaCha20_Poly1305
+	try:
+		from creedsolo import ReedSolomonError
+	except:
+		from reedsolo import ReedSolomonError
 except:
 	# Libraries missing, install them
 	from os import system
-	system("sudo apt-get install python3-tk")
-	system("python3 -m pip install argon2-cffi")
-	system("python3 -m pip install pycryptodome")
+	try:
+		# Debian/Ubuntu based
+		system("sudo apt-get install python3-tk")
+	except:
+		# Fedora
+		system("sudo dnf install python3-tkinter")
+	system("python3 -m pip install argon2-cffi --no-cache-dir")
+	system("python3 -m pip install pycryptodome --no-cache-dir")
+	system("python3 -m pip install reedsolo --no-cache-dir")
 
 # Imports
 from tkinter import filedialog,messagebox
@@ -31,6 +41,10 @@ import tkinter
 import tkinter.ttk
 import tkinter.scrolledtext
 import webbrowser
+try:
+	from creedsolo import RSCodec,ReedSolomonError
+except:
+	from reedsolo import RSCodec,ReedSolomonError
 
 # Tk/Tcl is a little barbaric, disable
 # high DPI so it doesn't look really ugly
@@ -57,11 +71,13 @@ derivingNotice = "Deriving key (takes a few seconds)..."
 keepNotice = "Keep decrypted output even if it's corrupted or modified"
 eraseNotice = "Securely erase and delete original file"
 overwriteNotice = "Output file already exists. Would you like to overwrite it?"
+rsNotice = "Prevent corruption using Reed-Solomon"
+rscNotice = "Creating Reed-Solomon tables..."
 unknownErrorNotice = "Unknown error occured. Please try again."
 
 # Create root Tk
 tk = tkinter.Tk()
-tk.geometry("480x420")
+tk.geometry("480x440")
 tk.title("Picocrypt")
 tk.configure(background="#f5f6f7")
 tk.resizable(0,0)
@@ -95,13 +111,14 @@ def inputSelected():
 		inputFile = tmp
 		# Decide if encrypting or decrypting
 		if ".pcf" in inputFile.split("/")[-1]:
-			suffix = " (will be decrypted)"
+			suffix = " (will decrypt)"
 			fin = open(inputFile,"rb+")
 			# Read file metadata
 			adlen = b""
 			while True:
 				letter = fin.read(1)
-				adlen += letter
+				if letter!=b"+":
+					adlen += letter
 				if letter==b"|":
 					adlen = adlen[:-1]
 					break
@@ -115,13 +132,15 @@ def inputSelected():
 			adLabelString.set("File metadata (read only):")
 			keepBtn["state"] = "normal"
 			eraseBtn["state"] = "disabled"
+			rsBtn["state"] = "disabled"
 		else:
 			# Update the UI
 			eraseBtn["state"] = "normal"
 			keepBtn["state"] = "disabled"
+			rsBtn["state"] = "normal"
 			adArea["state"] = "normal"
 			adArea.delete("1.0",tkinter.END)
-			suffix = " (will be encrypted)"
+			suffix = " (will encrypt)"
 			adLabelString.set(adString)
 		# Enable password box, etc.
 		inputString.set(inputFile.split("/")[-1]+suffix)
@@ -190,13 +209,23 @@ passwordInput["state"] = "disabled"
 # Start the encryption/decryption process
 def start():
 	global inputFile,outputFile,password,ad,kept,working
+	dummy.focus()
+	reedsolo = False
+	chunkSize = 2**20
 
 	# Decide if encrypting or decrypting
 	if ".pcf" not in inputFile:
 		mode = "encrypt"
 		outputFile = inputFile+".pcf"
+		reedsolo = rs.get()==1
 	else:
 		mode = "decrypt"
+		test = open(inputFile,"rb+")
+		decider = test.read(1).decode("utf-8")
+		test.close()
+		if decider=="+":
+			reedsolo = True
+			print("reed solo")
 		outputFile = inputFile[:-4]
 
 	# Check if file already exists
@@ -209,6 +238,17 @@ def start():
 	except:
 		pass
 
+	# Set progress bar indeterminate
+	progress.config(mode="indeterminate")
+	progress.start(15)
+
+	# Create Reed-Solomon object
+	if reedsolo:
+		statusString.set(rscNotice)
+		rsc = RSCodec(8)
+		reedsoloFixedCount = 0
+		reedsoloErrorCount = 0
+
 	# Set and get some variables
 	working = True
 	dummy.focus()
@@ -220,10 +260,17 @@ def start():
 	passwordInput["state"] = "disabled"
 	adArea["state"] = "disabled"
 	startBtn["state"] = "disabled"
+	eraseBtn["state"] = "disabled"
 	keepBtn["state"] = "disabled"
+	rsBtn["state"] = "disabled"
 
 	fin = open(inputFile,"rb+")
+	if reedsolo and mode=="decrypt":
+		fin.read(1)
 	fout = open(outputFile,"wb+")
+	if reedsolo and mode=="encrypt":
+		print("Write +")
+		fout.write(b"+")
 
 	# Generate values for encryption if encrypting
 	if mode=="encrypt":
@@ -254,17 +301,15 @@ def start():
 		salt = fin.read(16)
 		nonce = fin.read(24)
 
-	# Show notice, set progress bar indeterminate
+	# Show notice about key derivation
 	statusString.set(derivingNotice)
-	progress.config(mode="indeterminate")
-	progress.start(15)
 
 	# Derive argon2id key
 	key = hash_secret_raw(
 		password,
 		salt,
 		time_cost=8, # 8 iterations
-		memory_cost=2**20, # 2^20 Kilobytes (1GB)
+		memory_cost=2**20, # 2^20 Kibibytes (1GiB)
 		parallelism=8, # 8 parallel threads
 		hash_len=32,
 		type=Type.ID
@@ -291,6 +336,7 @@ def start():
 			adArea["state"] = "normal"
 			startBtn["state"] = "normal"
 			keepBtn["state"] = "normal"
+			rsBtn["state"] = "normal"
 			working = False
 			del key
 			return
@@ -302,7 +348,6 @@ def start():
 
 	done = 0
 	total = getsize(inputFile)
-	chunkSize = 2**20
 	startTime = datetime.now()
 
 	# If secure wipe enabled, create a wiper object
@@ -312,7 +357,11 @@ def start():
 
 	# Continously read file in chunks of 1MB
 	while True:
-		piece = fin.read(chunkSize)
+		if mode=="decrypt" and reedsolo:
+			# Read the piece and Reed-Solomon recovery bytes
+			piece = fin.read(1082544)
+		else:
+			piece = fin.read(chunkSize)
 		if wipe:
 			# If securely wipe, write random trash
 			# to original file after reading it
@@ -326,7 +375,8 @@ def start():
 				fout.flush()
 				fout.close()
 				fout = open(outputFile,"r+b")
-				fout.seek(len(str(len(ad)))+1+len(ad))
+				rsOffset = 1 if reedsolo else 0
+				fout.seek(len(str(len(ad)))+1+len(ad)+rsOffset)
 				fout.write(check)
 				fout.write(crc.digest())
 				fout.write(digest)
@@ -339,7 +389,7 @@ def start():
 					progress["value"] = 100
 					fin.close()
 					fout.close()
-					# If keep file checked...
+					# If keep file not checked...
 					if keep.get()!=1:
 						remove(outputFile)
 						selectFileInput["state"] = "normal"
@@ -347,6 +397,7 @@ def start():
 						adArea["state"] = "normal"
 						startBtn["state"] = "normal"
 						keepBtn["state"] = "normal"
+						rsBtn["state"] = "normal"
 						working = False
 						del fin,fout,cipher,key
 						return
@@ -356,33 +407,69 @@ def start():
 					# Throws ValueError if incorrect
 					cipher.verify(digest)
 				except:
-					# File is modified
-					statusString.set(modifiedNotice)
-					progress["value"] = 100
-					fin.close()
-					fout.close()
-					# If keep file checked...
-					if keep.get()!=1:
-						remove(outputFile)
-						selectFileInput["state"] = "normal"
-						passwordInput["state"] = "normal"
-						adArea["state"] = "normal"
-						startBtn["state"] = "normal"
-						keepBtn["state"] = "normal"
-						working = False
-						del fin,fout,cipher,key
-						return
-					else:
-						kept = "modified"					
+					if not reedsoloErrorCount:
+						# File is modified
+						statusString.set(modifiedNotice)
+						progress["value"] = 100
+						fin.close()
+						fout.close()
+						# If keep file not checked...
+						if keep.get()!=1:
+							remove(outputFile)
+							selectFileInput["state"] = "normal"
+							passwordInput["state"] = "normal"
+							adArea["state"] = "normal"
+							startBtn["state"] = "normal"
+							keepBtn["state"] = "normal"
+							rsBtn["state"] = "normal"
+							working = False
+							del fin,fout,cipher,key
+							return
+						else:
+							kept = "modified"					
 			break
 		
 		# Encrypt/decrypt chunk and update CRC
 		if mode=="encrypt":
 			data = cipher.encrypt(piece)
 			crc.update(data)
+			if reedsolo:
+				data = bytes(rsc.encode(data))
 		else:
-			crc.update(piece)
-			data = cipher.decrypt(piece)
+			if reedsolo:
+				try:
+					data,_,fixed = rsc.decode(piece)
+				except ReedSolomonError:
+					# File is really corrupted
+					if not reedsoloErrorCount:
+						statusString.set(corruptedNotice)
+						progress["value"] = 100
+					# If keep file not checked...
+					if keep.get()!=1:
+						fin.close()
+						fout.close()
+						remove(outputFile)
+						selectFileInput["state"] = "normal"
+						passwordInput["state"] = "normal"
+						adArea["state"] = "normal"
+						startBtn["state"] = "normal"
+						keepBtn["state"] = "normal"
+						rsBtn["state"] = "normal"
+						working = False
+						del fin,fout,cipher,key
+						return
+					else:
+						kept = "corrupted"
+						data = piece[:2**20]
+						fixed = bytearray()
+						reedsoloErrorCount += 1
+				data = bytes(data)
+				reedsoloFixedCount += len(fixed)
+				crc.update(data)
+				data = cipher.decrypt(data)
+			else:
+				crc.update(piece)
+				data = cipher.decrypt(piece)
 
 		# Calculate speed, ETA, etc.
 		first = False
@@ -396,12 +483,18 @@ def start():
 		if speed==0:
 			first = True
 			speed = 0.1**6
-		rSpeed = round(speed)
+		rSpeed = round(speed,2)
 		eta = round((total-done)/(speed*10**6))
+		if eta>=60:
+			eta = f"{eta//60}m {eta%60}"
 		if first:
 			statusString.set("...% at ... MB/s (ETA: ...s)")
 		else:
 			info = f"{rPercent}% at {rSpeed} MB/s (ETA: {eta}s)"
+			if reedsolo and mode=="decrypt" and reedsoloFixedCount:
+				info += f", fixed {reedsoloFixedCount} corrupted bytes"
+			if reedsolo and mode=="decrypt" and reedsoloErrorCount:
+				info += f", {reedsoloErrorCount} MB unrecoverable"
 			statusString.set(info)
 		
 		done += chunkSize
@@ -414,6 +507,9 @@ def start():
 		else:
 			output = inputFile.split("/")[-1].replace(".pcf","")
 		statusString.set(f"Completed. (Output: {output})")
+		if mode=="decrypt" and reedsolo and reedsoloFixedCount:
+			statusString.set(f"Completed with {reedsoloFixedCount} bytes fixed."+
+				f" (Output: {output})")
 	else:
 		if kept=="modified":
 			statusString.set(kModifiedNotice)
@@ -437,6 +533,8 @@ def start():
 	eraseBtn["state"] = "normal"
 	erase.set(0)
 	eraseBtn["state"] = "disabled"
+	rs.set(0)
+	rsBtn["state"] = "disabled"
 	if not kept:
 		fout.flush()
 		fsync(fout.fileno())
@@ -463,12 +561,15 @@ def wrapper():
 	# Try start() and handle errors
 	try:
 		start()
-	except:
+	except Exception as e:
+		print(e)
+		progress["value"] = 100
 		selectFileInput["state"] = "normal"
 		passwordInput["state"] = "normal"
 		adArea["state"] = "normal"
 		startBtn["state"] = "normal"
 		keepBtn["state"] = "normal"
+		rsBtn["state"] = "normal"
 		statusString.set(unknownErrorNotice)
 		dummy.focus()
 		working = False
@@ -537,13 +638,26 @@ eraseBtn = tkinter.ttk.Checkbutton(
 eraseBtn.place(x=18,y=260)
 eraseBtn["state"] = "disabled"
 
+# Check box for Reed Solomon
+rs = tkinter.IntVar()
+rsBtn = tkinter.ttk.Checkbutton(
+	tk,
+	text=rsNotice,
+	variable=rs,
+	onvalue=1,
+	offvalue=0,
+	command=lambda:dummy.focus()
+)
+rsBtn.place(x=18,y=280)
+rsBtn["state"] = "disabled"
+
 # Frame so start button can fill width
 startFrame = tkinter.Frame(
 	tk,
 	width=442,
 	height=25
 )
-startFrame.place(x=19,y=290)
+startFrame.place(x=19,y=310)
 startFrame.columnconfigure(0,weight=10)
 startFrame.grid_propagate(False)
 # Start button
@@ -562,7 +676,7 @@ progress = tkinter.ttk.Progressbar(
 	length=440,
 	mode="determinate"
 )
-progress.place(x=20,y=328)
+progress.place(x=20,y=348)
 
 # Status label
 statusString = tkinter.StringVar(tk)
@@ -571,7 +685,7 @@ status = tkinter.ttk.Label(
 	tk,
 	textvariable=statusString
 )
-status.place(x=17,y=356)
+status.place(x=17,y=376)
 status.config(background="#f5f6f7")
 
 # Credits :)
@@ -585,20 +699,20 @@ credits = tkinter.ttk.Label(
 )
 credits["state"] = "disabled"
 credits.config(background="#f5f6f7")
-credits.place(x=17,y=386)
+credits.place(x=17,y=406)
 source = "https://github.com/HACKERALERT/Picocrypt"
 credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
 # Version
 versionString = tkinter.StringVar(tk)
-versionString.set("v1.7")
+versionString.set("v1.8")
 version = tkinter.ttk.Label(
 	tk,
 	textvariable=versionString
 )
 version["state"] = "disabled"
 version.config(background="#f5f6f7")
-version.place(x=436,y=386)
+version.place(x=436,y=406)
 
 # Dummy button to remove focus from other buttons
 # and prevent ugly border highlighting
