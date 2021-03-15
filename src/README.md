@@ -6,6 +6,9 @@ Picocrypt can use the <code>reedsolo</code> pip package itself, but it is very s
 
 # External links
 Here are the Github links of the dependencies of Picocrypt:
+
 Argon2-cffi: https://github.com/hynek/argon2-cffi
+
 Pycryptodome: https://github.com/Legrandin/pycryptodome
+
 ReedSolo: https://github.com/tomerfiliba/reedsolomon
