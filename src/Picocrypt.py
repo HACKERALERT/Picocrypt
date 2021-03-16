@@ -3,7 +3,7 @@
 """
 Dependencies: argon2-cffi, pycryptodome, reedsolo
 Copyright (c) Evan Su (https://evansu.cc)
-Released under a GNU GPL v3 license
+Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
 """
 
@@ -24,6 +24,7 @@ except:
 	except:
 		# Fedora
 		system("sudo dnf install python3-tkinter")
+
 	system("python3 -m pip install argon2-cffi --no-cache-dir")
 	system("python3 -m pip install pycryptodome --no-cache-dir")
 	system("python3 -m pip install reedsolo --no-cache-dir")
@@ -48,8 +49,8 @@ try:
 except:
 	from reedsolo import RSCodec,ReedSolomonError
 
-# Tk/Tcl is a little barbaric, disable
-# high DPI so it doesn't look really ugly
+# Tk/Tcl is a little barbaric, so I'm disabling
+# high DPI so it doesn't scale bad and look horrible
 try:
 	from ctypes import windll
 	windll.shcore.SetProcessDpiAwareness(0)
@@ -84,7 +85,7 @@ tk.title("Picocrypt")
 tk.configure(background="#f5f6f7")
 tk.resizable(0,0)
 
-# Try setting image if included with Picocrypt
+# Try setting window icon if included with Picocrypt
 try:
 	favicon = tkinter.PhotoImage(file="./key.png")
 	tk.iconphoto(False,favicon)
@@ -222,15 +223,17 @@ def start():
 		reedsolo = rs.get()==1
 	else:
 		mode = "decrypt"
+		# Check if Reed-Solomon was enabled by checking for "+"
 		test = open(inputFile,"rb+")
 		decider = test.read(1).decode("utf-8")
 		test.close()
 		if decider=="+":
 			reedsolo = True
 			print("reed solo")
+		# Decrypted output is just input file without the extension
 		outputFile = inputFile[:-4]
 
-	# Check if file already exists
+	# Check if file already exists (getsize() throws error if file not found)
 	try:
 		getsize(outputFile)
 		force = messagebox.askyesno("Warning",overwriteNotice)
@@ -247,6 +250,7 @@ def start():
 	# Create Reed-Solomon object
 	if reedsolo:
 		statusString.set(rscNotice)
+		# 8 bytes per 128 bytes, 6.25% larger output file
 		rsc = RSCodec(8)
 		reedsoloFixedCount = 0
 		reedsoloErrorCount = 0
@@ -258,6 +262,7 @@ def start():
 	ad = adArea.get("1.0",tkinter.END).encode("utf-8")
 	wipe = erase.get()==1
 
+	# Disable inputs and buttons while encrypting/decrypting
 	selectFileInput["state"] = "disabled"
 	passwordInput["state"] = "disabled"
 	adArea["state"] = "disabled"
@@ -266,26 +271,29 @@ def start():
 	keepBtn["state"] = "disabled"
 	rsBtn["state"] = "disabled"
 
+	# Open files
 	fin = open(inputFile,"rb+")
 	if reedsolo and mode=="decrypt":
+		# Move pointer one forward
 		fin.read(1)
 	fout = open(outputFile,"wb+")
 	if reedsolo and mode=="encrypt":
-		print("Write +")
+		# Signal that Reed-Solomon was enabled with "+"
 		fout.write(b"+")
 
 	# Generate values for encryption if encrypting
 	if mode=="encrypt":
 		salt = urandom(16)
 		nonce = urandom(24)
-		fout.write(str(len(ad)).encode("utf-8"))
-		fout.write(b"|")
-		fout.write(ad)
-		fout.write(b"0"*64)
-		fout.write(b"0"*64)
-		fout.write(b"0"*16)
-		fout.write(salt)
-		fout.write(nonce)
+		fout.write(str(len(ad)).encode("utf-8")) # Length of metadata
+		fout.write(b"|") # Separator
+		fout.write(ad) # Metadata
+		# Write zeros as placeholder, come back to write over it later
+		fout.write(b"0"*64) # SHA3-512 of encryption key
+		fout.write(b"0"*64) # CRC of file
+		fout.write(b"0"*16) # Poly1305 tag
+		fout.write(salt) # Argon2 salt
+		fout.write(nonce) # ChaCha20 nonce
 	# If decrypting, read values from file
 	else:
 		# Read past metadata into actual data
@@ -297,6 +305,7 @@ def start():
 				adlen = adlen[:-1]
 				break
 		fin.read(int(adlen.decode("utf-8")))
+		# Read the salt, nonce, etc.
 		cs = fin.read(64)
 		crccs = fin.read(64)
 		digest = fin.read(16)
@@ -333,6 +342,7 @@ def start():
 			fin.close()
 			fout.close()
 			remove(outputFile)
+			# Reset UI
 			selectFileInput["state"] = "normal"
 			passwordInput["state"] = "normal"
 			adArea["state"] = "normal"
@@ -348,6 +358,7 @@ def start():
 	# Cyclic redundancy check for file corruption
 	crc = sha3_512()
 
+	# Amount of data encrypted/decrypted, total file size, starting time
 	done = 0
 	total = getsize(inputFile)
 	startTime = datetime.now()
@@ -360,7 +371,7 @@ def start():
 	# Continously read file in chunks of 1MB
 	while True:
 		if mode=="decrypt" and reedsolo:
-			# Read the piece and Reed-Solomon recovery bytes
+			# Read a chunk plus Reed-Solomon recovery bytes
 			piece = fin.read(1082544)
 		else:
 			piece = fin.read(chunkSize)
@@ -372,13 +383,15 @@ def start():
 		# If EOF
 		if not piece:
 			if mode=="encrypt":
-				# Get the cipher MAC tag, write to file
+				# Get the cipher MAC tag (Poly1305)
 				digest = cipher.digest()
 				fout.flush()
 				fout.close()
 				fout = open(outputFile,"r+b")
+				# Compute the offset and seek to it
 				rsOffset = 1 if reedsolo else 0
 				fout.seek(len(str(len(ad)))+1+len(ad)+rsOffset)
+				# Write hash of key, CRC, and Poly1305 MAC tag
 				fout.write(check)
 				fout.write(crc.digest())
 				fout.write(digest)
@@ -394,6 +407,7 @@ def start():
 					# If keep file not checked...
 					if keep.get()!=1:
 						remove(outputFile)
+						# Reset UI
 						selectFileInput["state"] = "normal"
 						passwordInput["state"] = "normal"
 						adArea["state"] = "normal"
@@ -406,7 +420,7 @@ def start():
 					else:
 						kept = "corrupted"
 				try:
-					# Throws ValueError if incorrect
+					# Throws ValueError if incorrect Poly1305
 					cipher.verify(digest)
 				except:
 					if not reedsoloErrorCount:
@@ -418,6 +432,7 @@ def start():
 						# If keep file not checked...
 						if keep.get()!=1:
 							remove(outputFile)
+							# Reset UI
 							selectFileInput["state"] = "normal"
 							passwordInput["state"] = "normal"
 							adArea["state"] = "normal"
@@ -433,11 +448,15 @@ def start():
 		
 		# Encrypt/decrypt chunk and update CRC
 		if mode=="encrypt":
+			# Encrypt piece
 			data = cipher.encrypt(piece)
+			# Update checksum
 			crc.update(data)
 			if reedsolo:
+				# Encode using Reed-Solomon if user chooses
 				data = bytes(rsc.encode(data))
 		else:
+			# Basically encrypting but in reverse
 			if reedsolo:
 				try:
 					data,_,fixed = rsc.decode(piece)
@@ -451,6 +470,7 @@ def start():
 						fin.close()
 						fout.close()
 						remove(outputFile)
+						# Reset UI
 						selectFileInput["state"] = "normal"
 						passwordInput["state"] = "normal"
 						adArea["state"] = "normal"
@@ -476,22 +496,27 @@ def start():
 		# Calculate speed, ETA, etc.
 		first = False
 		elapsed = (datetime.now()-startTime).total_seconds()
-		if elapsed==0:
+		# Prevent divison by zero
+		if not elapsed:
 			elapsed = 0.1**6
 		percent = done*100/total
 		progress["value"] = percent
 		rPercent = round(percent)
 		speed = (done/elapsed)/10**6
-		if speed==0:
+		# Prevent divison by zero
+		if not speed:
 			first = True
 			speed = 0.1**6
 		rSpeed = round(speed,2)
 		eta = round((total-done)/(speed*10**6))
+		# Seconds to minutes if seconds more than 59
 		if eta>=60:
 			eta = f"{eta//60}m {eta%60}"
+		# If it's the first round and no data/predictions yet...
 		if first:
 			statusString.set("...% at ... MB/s (ETA: ...s)")
 		else:
+			# Update status
 			info = f"{rPercent}% at {rSpeed} MB/s (ETA: {eta}s)"
 			if reedsolo and mode=="decrypt" and reedsoloFixedCount:
 				info += f", fixed {reedsoloFixedCount} corrupted bytes"
@@ -499,6 +524,7 @@ def start():
 				info += f", {reedsoloErrorCount} MB unrecoverable"
 			statusString.set(info)
 		
+		# Increase done and write to output
 		done += chunkSize
 		fout.write(data)
 
@@ -509,6 +535,7 @@ def start():
 		else:
 			output = inputFile.split("/")[-1].replace(".pcf","")
 		statusString.set(f"Completed. (Output: {output})")
+		# Show Reed-Solomon stats if it fixed corrupted bytes
 		if mode=="decrypt" and reedsolo and reedsoloFixedCount:
 			statusString.set(f"Completed with {reedsoloFixedCount} bytes fixed."+
 				f" (Output: {output})")
