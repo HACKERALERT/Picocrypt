@@ -287,7 +287,7 @@ def start():
 		nonce = urandom(24)
 		fout.write(str(len(ad)).encode("utf-8")) # Length of metadata
 		fout.write(b"|") # Separator
-		fout.write(ad) # Metadata
+		fout.write(ad) # Metadata (associated data)
 		# Write zeros as placeholder, come back to write over it later
 		fout.write(b"0"*64) # SHA3-512 of encryption key
 		fout.write(b"0"*64) # CRC of file
