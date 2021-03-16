@@ -348,7 +348,6 @@ def start():
 			adArea["state"] = "normal"
 			startBtn["state"] = "normal"
 			keepBtn["state"] = "normal"
-			rsBtn["state"] = "normal"
 			working = False
 			del key
 			return
