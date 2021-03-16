@@ -112,8 +112,10 @@ def inputSelected():
 			# Exception will be caught by except below
 			raise Exception("No file selected.")
 		inputFile = tmp
-		# Decide if encrypting or decrypting
-		if ".pcf" in inputFile.split("/")[-1]:
+		# Decide if encrypting or decrypting (".pcf" is the legacy Picocrypt extension,
+		#     ".pcv" is the newer Picocrypt extension. Both are cross-compatible, but
+		#     I just think ".pcv" is better because it stands for "Picocrypt Volume")
+		if ".pcf" in inputFile.split("/")[-1] or ".pcv" in inputFile.split("/")[-1]:
 			suffix = " (will decrypt)"
 			fin = open(inputFile,"rb+")
 			# Read file metadata
@@ -217,9 +219,9 @@ def start():
 	chunkSize = 2**20
 
 	# Decide if encrypting or decrypting
-	if ".pcf" not in inputFile:
+	if ".pcf" not in inputFile and ".pcv" not in inputFile:
 		mode = "encrypt"
-		outputFile = inputFile+".pcf"
+		outputFile = inputFile+".pcv"
 		reedsolo = rs.get()==1
 	else:
 		mode = "decrypt"
@@ -229,7 +231,6 @@ def start():
 		test.close()
 		if decider=="+":
 			reedsolo = True
-			print("reed solo")
 		# Decrypted output is just input file without the extension
 		outputFile = inputFile[:-4]
 
@@ -288,12 +289,15 @@ def start():
 		fout.write(str(len(ad)).encode("utf-8")) # Length of metadata
 		fout.write(b"|") # Separator
 		fout.write(ad) # Metadata (associated data)
+
 		# Write zeros as placeholder, come back to write over it later
-		fout.write(b"0"*64) # SHA3-512 of encryption key
-		fout.write(b"0"*64) # CRC of file
-		fout.write(b"0"*16) # Poly1305 tag
-		fout.write(salt) # Argon2 salt
-		fout.write(nonce) # ChaCha20 nonce
+		# Note that 8 additional bytes are added if Reed-Solomon is enabled
+		fout.write(b"0"*(64+(8 if reedsolo else 0))) # SHA3-512 of encryption key
+		fout.write(b"0"*(64+(8 if reedsolo else 0))) # CRC of file
+		fout.write(b"0"*(16+(8 if reedsolo else 0))) # Poly1305 tag
+		# If Reed-Solomon is enabled, encode the salt and nonce, otherwise write them raw
+		fout.write(bytes(rsc.encode(salt)) if reedsolo else salt) # Argon2 salt
+		fout.write(bytes(rsc.encode(nonce)) if reedsolo else nonce) # ChaCha20 nonce
 	# If decrypting, read values from file
 	else:
 		# Read past metadata into actual data
@@ -306,11 +310,19 @@ def start():
 				break
 		fin.read(int(adlen.decode("utf-8")))
 		# Read the salt, nonce, etc.
-		cs = fin.read(64)
-		crccs = fin.read(64)
-		digest = fin.read(16)
-		salt = fin.read(16)
-		nonce = fin.read(24)
+		# Read 8 extra bytes if Reed-Solomon is enabled
+		cs = fin.read(72 if reedsolo else 64)
+		crccs = fin.read(72 if reedsolo else 64)
+		digest = fin.read(24 if reedsolo else 16)
+		salt = fin.read(24 if reedsolo else 16)
+		nonce = fin.read(32 if reedsolo else 24)
+		# If Reed-Solomon is enabled, decode each value
+		if reedsolo:
+			cs = bytes(rsc.decode(cs)[0])
+			crccs = bytes(rsc.decode(crccs)[0])
+			digest = bytes(rsc.decode(digest)[0])
+			salt = bytes(rsc.decode(salt)[0])
+			nonce = bytes(rsc.decode(nonce)[0])
 
 	# Show notice about key derivation
 	statusString.set(derivingNotice)
@@ -391,9 +403,15 @@ def start():
 				rsOffset = 1 if reedsolo else 0
 				fout.seek(len(str(len(ad)))+1+len(ad)+rsOffset)
 				# Write hash of key, CRC, and Poly1305 MAC tag
-				fout.write(check)
-				fout.write(crc.digest())
-				fout.write(digest)
+				# Reed-Solomon-encode if selected by user
+				if reedsolo:
+					fout.write(bytes(rsc.encode(check)))
+					fout.write(bytes(rsc.encode(crc.digest())))
+					fout.write(bytes(rsc.encode(digest)))
+				else:
+					fout.write(check)
+					fout.write(crc.digest())
+					fout.write(digest)
 			else:
 				# If decrypting, verify MAC tag
 				crcdg = crc.digest()
@@ -530,9 +548,9 @@ def start():
 	# Show appropriate notice if file corrupted or modified
 	if not kept:
 		if mode=="encrypt":
-			output = inputFile.split("/")[-1]+".pcf"
+			output = inputFile.split("/")[-1]+".pcv"
 		else:
-			output = inputFile.split("/")[-1].replace(".pcf","")
+			output = inputFile.split("/")[-1].replace(".pcf","").replace(".pcv","")
 		statusString.set(f"Completed. (Output: {output})")
 		# Show Reed-Solomon stats if it fixed corrupted bytes
 		if mode=="decrypt" and reedsolo and reedsoloFixedCount:
@@ -589,8 +607,7 @@ def wrapper():
 	# Try start() and handle errors
 	try:
 		start()
-	except Exception as e:
-		print(e)
+	except Exception:
 		progress["value"] = 100
 		selectFileInput["state"] = "normal"
 		passwordInput["state"] = "normal"
