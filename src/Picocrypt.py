@@ -417,12 +417,15 @@ def start():
 	# Amount of data encrypted/decrypted, total file size, starting time
 	done = 0
 	total = getsize(inputFile)
-	startTime = datetime.now()
 
 	# If secure wipe enabled, create a wiper object
 	if wipe:
 		wiper = open(inputFile,"r+b")
 		wiper.seek(0)
+
+	# Keep track of time because it flies...
+	startTime = datetime.now()
+	previousTime = datetime.now()
 
 	# Continously read file in chunks of 1MB
 	while True:
@@ -570,23 +573,31 @@ def start():
 
 		# Calculate speed, ETA, etc.
 		first = False
-		elapsed = (datetime.now()-startTime).total_seconds()
+		elapsed = (datetime.now()-previousTime).total_seconds()
+		sinceStart = (datetime.now()-startTime).total_seconds()
+		previousTime = datetime.now()
 		# Prevent divison by zero
 		if not elapsed:
 			elapsed = 0.1**6
 		percent = done*100/total
 		progress["value"] = percent
 		rPercent = round(percent)
-		speed = (done/elapsed)/10**6
+		speed = (done/sinceStart)/10**6
 		# Prevent divison by zero
 		if not speed:
 			first = True
 			speed = 0.1**6
-		rSpeed = round(speed,2)
+		rSpeed = str(round(speed,2))
+		# Right-pad zeros to prevent layout shifts
+		while len(rSpeed.split(".")[1])!=2:
+			rSpeed += "0"
 		eta = round((total-done)/(speed*10**6))
 		# Seconds to minutes if seconds more than 59
 		if eta>=60:
 			eta = f"{eta//60}m {eta%60}"
+		if isinstance(eta,int) or isinstance(eta,float):
+			if eta<0:
+				eta = 0
 		# If it's the first round and no data/predictions yet...
 		if first:
 			statusString.set("...% at ... MB/s (ETA: ...s)")
@@ -668,8 +679,7 @@ def wrapper():
 	# Try start() and handle errors
 	try:
 		start()
-	except Exception as e:
-		print(e)
+	except:
 		progress["value"] = 100
 		selectFileInput["state"] = "normal"
 		passwordInput["state"] = "normal"
