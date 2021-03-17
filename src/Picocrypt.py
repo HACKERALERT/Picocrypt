@@ -612,7 +612,7 @@ def start():
 			statusString.set(info)
 		
 		# Increase done and write to output
-		done += chunkSize if not reedsolo else 1104905
+		done += 1104905 if (reedsolo and decrypting) else chunkSize
 		fout.write(data)
 
 	# Show appropriate notice if file corrupted or modified
