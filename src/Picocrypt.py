@@ -67,9 +67,11 @@ working = False
 adString = "File metadata (used to store some text along with the file):"
 passwordNotice = "Error. The provided password is incorrect."
 corruptedNotice = "Error. The input file is corrupted."
+veryCorruptedNotice = "Error. The input file and header keys are badly corrupted."
 modifiedNotice = "Error. The input file has been intentionally modified."
 kCorruptedNotice = "The input file is corrupted, but the output has been kept."
 kModifiedNotice = "The input file has been intentionally modified, but the output has been kept."
+kVeryCorruptedNotice = "The input file is badly corrupted, but the output has been kept."
 derivingNotice = "Deriving key (takes a few seconds)..."
 keepNotice = "Keep decrypted output even if it's corrupted or modified"
 eraseNotice = "Securely erase and delete original file"
@@ -251,13 +253,14 @@ def start():
 	# Create Reed-Solomon object
 	if reedsolo:
 		statusString.set(rscNotice)
-		# 8 bytes per 128 bytes, 6.25% larger output file
-		rsc = RSCodec(8)
-		reedsoloFixedCount = 0
-		reedsoloErrorCount = 0
+		# 13 bytes per 128 bytes, ~10% larger output file
+		rsc = RSCodec(13)
 
 	# Set and get some variables
 	working = True
+	headerBroken = False
+	reedsoloFixedCount = 0
+	reedsoloErrorCount = 0
 	dummy.focus()
 	password = passwordInput.get().encode("utf-8")
 	ad = adArea.get("1.0",tkinter.END).encode("utf-8")
@@ -291,10 +294,10 @@ def start():
 		fout.write(ad) # Metadata (associated data)
 
 		# Write zeros as placeholder, come back to write over it later
-		# Note that 8 additional bytes are added if Reed-Solomon is enabled
-		fout.write(b"0"*(64+(8 if reedsolo else 0))) # SHA3-512 of encryption key
-		fout.write(b"0"*(64+(8 if reedsolo else 0))) # CRC of file
-		fout.write(b"0"*(16+(8 if reedsolo else 0))) # Poly1305 tag
+		# Note that 13 additional bytes are added if Reed-Solomon is enabled
+		fout.write(b"0"*(64+(13 if reedsolo else 0))) # SHA3-512 of encryption key
+		fout.write(b"0"*(64+(13 if reedsolo else 0))) # CRC of file
+		fout.write(b"0"*(16+(13 if reedsolo else 0))) # Poly1305 tag
 		# If Reed-Solomon is enabled, encode the salt and nonce, otherwise write them raw
 		fout.write(bytes(rsc.encode(salt)) if reedsolo else salt) # Argon2 salt
 		fout.write(bytes(rsc.encode(nonce)) if reedsolo else nonce) # ChaCha20 nonce
@@ -310,19 +313,59 @@ def start():
 				break
 		fin.read(int(adlen.decode("utf-8")))
 		# Read the salt, nonce, etc.
-		# Read 8 extra bytes if Reed-Solomon is enabled
-		cs = fin.read(72 if reedsolo else 64)
-		crccs = fin.read(72 if reedsolo else 64)
-		digest = fin.read(24 if reedsolo else 16)
-		salt = fin.read(24 if reedsolo else 16)
-		nonce = fin.read(32 if reedsolo else 24)
+		# Read 13 extra bytes if Reed-Solomon is enabled
+		cs = fin.read(77 if reedsolo else 64)
+		crccs = fin.read(77 if reedsolo else 64)
+		digest = fin.read(29 if reedsolo else 16)
+		salt = fin.read(29 if reedsolo else 16)
+		nonce = fin.read(37 if reedsolo else 24)
 		# If Reed-Solomon is enabled, decode each value
 		if reedsolo:
-			cs = bytes(rsc.decode(cs)[0])
-			crccs = bytes(rsc.decode(crccs)[0])
-			digest = bytes(rsc.decode(digest)[0])
-			salt = bytes(rsc.decode(salt)[0])
-			nonce = bytes(rsc.decode(nonce)[0])
+			try:
+				cs = bytes(rsc.decode(cs)[0])
+			except:
+				headerBroken = True
+				cs = cs[:64]
+			try:
+				crccs = bytes(rsc.decode(crccs)[0])
+			except:
+				headerBroken = True
+				crccs = crccs[:64]
+			try:
+				digest = bytes(rsc.decode(digest)[0])
+			except:
+				headerBroken = True
+				digest = digest[:16]
+			try:
+				salt = bytes(rsc.decode(salt)[0])
+			except:
+				headerBroken = True
+				salt = salt[:16]
+			try:
+				nonce = bytes(rsc.decode(nonce)[0])
+			except:
+				headerBroken = True
+				nonce = nonce[:24]
+
+			if headerBroken:
+				if keep.get()!=1:
+					statusString.set(veryCorruptedNotice)
+					fin.close()
+					fout.close()
+					remove(outputFile)
+					# Reset UI
+					selectFileInput["state"] = "normal"
+					passwordInput["state"] = "normal"
+					adArea["state"] = "normal"
+					startBtn["state"] = "normal"
+					keepBtn["state"] = "normal"
+					working = False
+					progress.stop()
+					progress.config(mode="determinate")
+					progress["value"] = 100
+					return
+				else:
+					kept = "badlyCorrupted"
 
 	# Show notice about key derivation
 	statusString.set(derivingNotice)
@@ -332,7 +375,7 @@ def start():
 		password,
 		salt,
 		time_cost=8, # 8 iterations
-		memory_cost=2**20, # 2^20 Kibibytes (1GiB)
+		memory_cost=2**10, # 2^20 Kibibytes (1GiB)
 		parallelism=8, # 8 parallel threads
 		hash_len=32,
 		type=Type.ID
@@ -350,19 +393,21 @@ def start():
 	if mode=="decrypt":
 		# If key is incorrect...
 		if not compare_digest(check,cs):
-			statusString.set(passwordNotice)
-			fin.close()
-			fout.close()
-			remove(outputFile)
-			# Reset UI
-			selectFileInput["state"] = "normal"
-			passwordInput["state"] = "normal"
-			adArea["state"] = "normal"
-			startBtn["state"] = "normal"
-			keepBtn["state"] = "normal"
-			working = False
-			del key
-			return
+			if not headerBroken:
+				statusString.set(passwordNotice)
+				fin.close()
+				fout.close()
+				remove(outputFile)
+				# Reset UI
+				selectFileInput["state"] = "normal"
+				passwordInput["state"] = "normal"
+				adArea["state"] = "normal"
+				startBtn["state"] = "normal"
+				keepBtn["state"] = "normal"
+				working = False
+				progress["value"] = 100
+				del key
+				return
 
 	# Create XChaCha20-Poly1305 object
 	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
@@ -383,7 +428,7 @@ def start():
 	while True:
 		if mode=="decrypt" and reedsolo:
 			# Read a chunk plus Reed-Solomon recovery bytes
-			piece = fin.read(1082544)
+			piece = fin.read(1104905)
 		else:
 			piece = fin.read(chunkSize)
 		if wipe:
@@ -413,7 +458,7 @@ def start():
 					fout.write(crc.digest())
 					fout.write(digest)
 			else:
-				# If decrypting, verify MAC tag
+				# If decrypting, verify CRC
 				crcdg = crc.digest()
 				if not compare_digest(crccs,crcdg):
 					# File is corrupted
@@ -430,17 +475,18 @@ def start():
 						adArea["state"] = "normal"
 						startBtn["state"] = "normal"
 						keepBtn["state"] = "normal"
-						rsBtn["state"] = "normal"
 						working = False
 						del fin,fout,cipher,key
 						return
 					else:
-						kept = "corrupted"
+						if not kept:
+							kept = "corrupted"
+				# Next, verify MAC tag (Poly1305)
 				try:
 					# Throws ValueError if incorrect Poly1305
 					cipher.verify(digest)
 				except:
-					if not reedsoloErrorCount:
+					if not reedsoloErrorCount and not headerBroken:
 						# File is modified
 						statusString.set(modifiedNotice)
 						progress["value"] = 100
@@ -455,12 +501,12 @@ def start():
 							adArea["state"] = "normal"
 							startBtn["state"] = "normal"
 							keepBtn["state"] = "normal"
-							rsBtn["state"] = "normal"
 							working = False
 							del fin,fout,cipher,key
 							return
 						else:
-							kept = "modified"					
+							if not kept:
+								kept = "modified"					
 			break
 		
 		# Encrypt/decrypt chunk and update CRC
@@ -480,8 +526,9 @@ def start():
 				except ReedSolomonError:
 					# File is really corrupted
 					if not reedsoloErrorCount:
-						statusString.set(corruptedNotice)
-						progress["value"] = 100
+						if keep.get()!=1:
+							statusString.set(veryCorruptedNotice)
+							progress["value"] = 100
 					# If keep file not checked...
 					if keep.get()!=1:
 						fin.close()
@@ -493,13 +540,24 @@ def start():
 						adArea["state"] = "normal"
 						startBtn["state"] = "normal"
 						keepBtn["state"] = "normal"
-						rsBtn["state"] = "normal"
 						working = False
+						progress["value"] = 100
 						del fin,fout,cipher,key
 						return
 					else:
-						kept = "corrupted"
-						data = piece[:2**20]
+						kept = "badlyCorrupted"
+						# Attempt to recover badly corrupted data
+						data = b""
+						piece = piece[:-13]
+						counter = 0
+						while True:
+							# Basically just strip the Reed-Solomon bytes
+							# and return the original non-encoded data
+							if counter<1104905:
+								data += piece[counter:counter+242]
+								counter += 255 # 255 bytes, 242 original
+							else:
+								break
 						fixed = bytearray()
 						reedsoloErrorCount += 1
 				data = bytes(data)
@@ -536,13 +594,14 @@ def start():
 			# Update status
 			info = f"{rPercent}% at {rSpeed} MB/s (ETA: {eta}s)"
 			if reedsolo and mode=="decrypt" and reedsoloFixedCount:
-				info += f", fixed {reedsoloFixedCount} corrupted bytes"
+				eng = "s" if reedsoloFixedCount!=1 else ""
+				info += f", fixed {reedsoloFixedCount} corrupted byte{eng}"
 			if reedsolo and mode=="decrypt" and reedsoloErrorCount:
 				info += f", {reedsoloErrorCount} MB unrecoverable"
 			statusString.set(info)
 		
 		# Increase done and write to output
-		done += chunkSize
+		done += chunkSize if not reedsolo else 1104905
 		fout.write(data)
 
 	# Show appropriate notice if file corrupted or modified
@@ -559,8 +618,10 @@ def start():
 	else:
 		if kept=="modified":
 			statusString.set(kModifiedNotice)
-		else:
+		elif kept=="corrupted":
 			statusString.set(kCorruptedNotice)
+		else:
+			statusString.set(kVeryCorruptedNotice)
 	
 	# Reset variables and UI states
 	selectFileInput["state"] = "normal"
@@ -607,7 +668,8 @@ def wrapper():
 	# Try start() and handle errors
 	try:
 		start()
-	except Exception:
+	except Exception as e:
+		print(e)
 		progress["value"] = 100
 		selectFileInput["state"] = "normal"
 		passwordInput["state"] = "normal"
@@ -750,7 +812,7 @@ credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
 # Version
 versionString = tkinter.StringVar(tk)
-versionString.set("v1.8")
+versionString.set("v1.9")
 version = tkinter.ttk.Label(
 	tk,
 	textvariable=versionString
