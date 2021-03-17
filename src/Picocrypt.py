@@ -375,7 +375,7 @@ def start():
 		password,
 		salt,
 		time_cost=8, # 8 iterations
-		memory_cost=2**10, # 2^20 Kibibytes (1GiB)
+		memory_cost=2**20, # 2^20 Kibibytes (1GiB)
 		parallelism=8, # 8 parallel threads
 		hash_len=32,
 		type=Type.ID
