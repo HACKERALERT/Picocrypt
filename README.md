@@ -18,7 +18,8 @@ Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-
 	<li>Picocrypt is portable and <i>tiny</i> (just 3MB!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). The raw Python file can run any machine and the standalone .exe can run on any Windows PC from 7 and up. Picocrypt floats your boat without any bloat.</li>
 	<li>It's infinitely easier to use than VeraCrypt (no need to create volumes) and a 5-year-old could probably use Picocrypt. All you need to do is select a file and enter a password.</li>
 	<li>Picocrypt is built for security, using modern standards and secure settings. See <strong>Security</strong> below for more info.</li>
-	<li>It supports file integrity checking through Poly1305, which means that you would know if a hacker has maliciously modified your data.</li>
+	<li>It supports file integrity checking through Poly1305, which means that you would know if a hacker has maliciously modified your data. This is useful for transfering sensitive data where authenticity is crucial.</li>
+	<li>Picocrypt supports anti-corruption through Reed-Solomon. Unlike other encryption tools, Picocrypt can actively protect your files by adding extra Reed-Solomon bytes, so if your file gets corrupted (ie. hard drive failure), Picocrypt can still fix the errors and decrypt your files. None of Bitlocker, NordLocker, VeraCrypt, or 7-Zip has this ability.</li>
 </ul>
 
 # Instructions
@@ -27,7 +28,7 @@ Picocrypt is about as simple as it gets. Just select a file, enter a password, a
 <ul>
 	<li>File metadata (editable for encryption, readonly for decryption): Use this to store notes, information, and text along with the file (it won't be encrypted). For example, you can put a description of the file before sending it to someone. When the person you sent it to selects the file in Picocrypt, your description will be shown to that person.</li>
 	<li>Keep decrypted output even if it's corrupted or modified (decryption only): Picocrypt automatically checks for integrity upon decryption. If the file has been modified or is corrupted, Picocrypt will delete the output. If you want to keep the corrupted or modified data after decryption, check this option. Also, if this option is checked and the Reed-Solomon feature was used on the encrypted file, Picocrypt will attempt to recover as much of the file as possible during decryption, if it is corrupted.</li>
-	<li>Securely erase and delete original file (encryption only): If checked, Picocrypt will generate pseudo-random data and write it to the original file while encrypting, effectively wiping the original file. The file will be deleted once encryption is complete.</li>
+	<li>Securely erase and delete original file (encryption only): If checked, Picocrypt will generate pseudo-random data and write it to the original file while encrypting, effectively wiping the original file. The file will be deleted once encryption is complete. This method is better than just deleting the original file, because the original file can still be recovered by hackers using special software. Picocrypt overwrites the original file making sure that it's impossibe to retrieve the original file after deletion.</li>
 	<li>Prevent corruption using Reed-Solomon (encryption only): This feature is very useful if you are planning on archiving important data on a cloud provider or external hard drive for a long time. If checked, Picocrypt will use the Reed-Solomon error correction code to add 13 extra bytes for every 128 bytes to prevent file corruption. This means that up to ~5% (13/128/2) of your file can corrupt, and Picocrypt will still be able to correct it and decrypt your files with no corruption. Note that decryption is very slow because Picocrypt is reassembling and (if necessary) correcting broken bytes. The output will also be ~10% larger.</li>
 </ul>
 
@@ -54,11 +55,14 @@ I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <
 	</li>
 	<li>If decrypting, compare the derived key with the SHA3-512 hash of the correct key stored in the ciphertext. If encrypting, compute the SHA3-512 of the derived key and add to ciphertext.</li>
 	<li>Encryption/decryption start, reading in 1MB chunks at a time. For each chunk, it is first encrypted by XChaCha20, and then a CRC (using SHA3-512) is updated.</li>
+	<li>If anti-corruption is checked, the 1MB chunk will be split into 128 byte chunks and 13 additional Reed-Solomon (parity) bytes will be added. If decrypting, decode the encoded 1MB chunk to get the raw data.</li>
 	<li>If 'Secure wipe' is enabled, CSPRNG data is written over the original file in chunks of 1MB to securely wipe the file.</li>
 	<li>When encryption/decryption is finished, the MAC tag (Poly1305) will be added to the ciphertext or verified, depending on if you're encrypting or decrypting. If 'Secure wipe' is enabled, the original file is deleted.</li>
 	<li>Similar to above, the CRC is either checked or added to the ciphertext depending on the operation.</li>
-	<li>If decrypting, both the CRC and the MAC tag are securely verified using constant-time comparison. If either don't match, decryption is unsuccessful and an error message will be displayed. Otherwise, decryption is considered successful and the process is done.</li>
+	<li>If decrypting, both the CRC and the MAC tag are verified. If either don't match, decryption is unsuccessful and an error message will be displayed. Otherwise, decryption is considered successful and the process is done.</li>
 </ol>
+
+Note: the list above is heavily simplified. A lot more is actually happening.
 
 # Limitations
 
