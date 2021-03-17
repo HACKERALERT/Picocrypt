@@ -74,4 +74,4 @@ Note: the list above is heavily simplified. A lot more is actually happening.
 </ul>
 
 # Contribution
-If you manage to find a bug or security issue, please create an Issue. If the security problem is severe or critical and could potentially be exploited by hackers if published, please contact me privately through the Contacts section in my website: https://evansu.cc. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm also open to suggestions and features (you can leave an Issue for that).
+If you manage to find a bug or security issue, please create an Issue. If the security problem is severe or critical and could potentially be exploited by hackers if published, please contact me privately through the contacts section in my website: https://evansu.cc. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm also open to suggestions and features (you can leave an Issue for that).
