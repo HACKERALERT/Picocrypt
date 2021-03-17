@@ -828,7 +828,7 @@ dummy = tkinter.ttk.Button(
 )
 dummy.place(x=480,y=0)
 
-# Close window only if not encryption or decrypting
+# Close window only if not encrypting or decrypting
 def onClose():
 	if not working:
 		tk.destroy()
