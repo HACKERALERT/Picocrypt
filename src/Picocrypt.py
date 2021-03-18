@@ -884,14 +884,14 @@ credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
 # Version
 versionString = tkinter.StringVar(tk)
-versionString.set("v1.9")
+versionString.set("v1.10")
 version = tkinter.ttk.Label(
 	tk,
 	textvariable=versionString
 )
 version["state"] = "disabled"
 version.config(background="#f5f6f7")
-version.place(x=436,y=446)
+version.place(x=430,y=446)
 
 # Dummy button to remove focus from other buttons
 # and prevent ugly border highlighting
