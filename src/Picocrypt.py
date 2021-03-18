@@ -65,6 +65,7 @@ ad = ""
 kept = False
 working = False
 gMode = None
+headerRsc = None
 adString = "File metadata (used to store some text along with the file):"
 passwordNotice = "Error. The provided password is incorrect."
 corruptedNotice = "Error. The input file is corrupted."
@@ -101,7 +102,7 @@ s.configure("TCheckbutton",background="#f5f6f7")
 
 # Event when user selects an input file
 def inputSelected():
-	global inputFile,working
+	global inputFile,working,headerRsc
 	dummy.focus()
 
 	# Try to handle when select file is cancelled
@@ -115,27 +116,37 @@ def inputSelected():
 			# Exception will be caught by except below
 			raise Exception("No file selected.")
 		inputFile = tmp
-		# Decide if encrypting or decrypting (".pcf" is the legacy Picocrypt extension,
-		#     ".pcv" is the newer Picocrypt extension. Both are cross-compatible, but
-		#     I just think ".pcv" is better because it stands for "Picocrypt Volume")
-		if ".pcf" in inputFile.split("/")[-1] or ".pcv" in inputFile.split("/")[-1]:
+
+		# Decide if encrypting or decrypting
+		if ".pcv" in inputFile.split("/")[-1]:
 			suffix = " (will decrypt)"
-			fin = open(inputFile,"rb+")
-			# Read file metadata
-			adlen = b""
-			while True:
-				letter = fin.read(1)
-				if letter!=b"+":
-					adlen += letter
-				if letter==b"|":
-					adlen = adlen[:-1]
-					break
-			ad = fin.read(int(adlen.decode("utf-8")))
+			fin = open(inputFile,"r+b")
+
+			# Read file metadata (a little complex)
+			tmp = fin.read(139)
+			reedsolo = False
+			if tmp[0]==43:
+				reedsolo = True
+				tmp = tmp[1:]
+			else:
+				tmp = tmp[:-1]
+			tmp = bytes(headerRsc.decode(tmp)[0])
+			tmp = tmp.replace(b"+",b"")
+			tmp = int(tmp.decode("utf-8"))
+			if not reedsolo:
+				fin.seek(138)
+			ad = fin.read(tmp)
+			try:
+				ad = bytes(headerRsc.decode(ad)[0])
+			except ReedSolomonError:
+				ad = b"Error decoding file metadata."
+			ad = ad.decode("utf-8")
 			fin.close()
+
 			# Insert the metadata into its text box
 			adArea["state"] = "normal"
 			adArea.delete("1.0",tkinter.END)
-			adArea.insert("1.0",ad.decode("utf-8"))
+			adArea.insert("1.0",ad)
 			adArea["state"] = "disabled"
 			adLabelString.set("File metadata (read only):")
 			keepBtn["state"] = "normal"
@@ -155,6 +166,7 @@ def inputSelected():
 			adLabelString.set(adString)
 			cpasswordInput["state"] = "normal"
 			cpasswordInput.delete(0,"end")
+
 		# Enable password box, etc.
 		inputString.set(inputFile.split("/")[-1]+suffix)
 		passwordInput["state"] = "normal"
@@ -162,14 +174,16 @@ def inputSelected():
 		startBtn["state"] = "normal"
 		statusString.set("Ready.")
 		progress["value"] = 0
+
 	# File decode error
 	except UnicodeDecodeError:
-		passwordInput["state"] = "normal"
-		passwordInput.delete(0,"end")
 		statusString.set(corruptedNotice)
+		progress["value"] = 100
+
 	# No file selected, do nothing
 	except:
 		pass
+
 	# Focus the dummy button to remove ugly borders
 	finally:
 		dummy.focus()
@@ -248,23 +262,13 @@ cpasswordInput["state"] = "disabled"
 
 # Start the encryption/decryption process
 def start():
-	global inputFile,outputFile,password,ad,kept,working,gMode
+	global inputFile,outputFile,password,ad,kept,working,gMode,headerRsc
 	dummy.focus()
 	reedsolo = False
 	chunkSize = 2**20
 
-	# Disable inputs and buttons while encrypting/decrypting
-	selectFileInput["state"] = "disabled"
-	passwordInput["state"] = "disabled"
-	cpasswordInput["state"] = "disabled"
-	adArea["state"] = "disabled"
-	startBtn["state"] = "disabled"
-	eraseBtn["state"] = "disabled"
-	keepBtn["state"] = "disabled"
-	rsBtn["state"] = "disabled"
-
 	# Decide if encrypting or decrypting
-	if ".pcf" not in inputFile and ".pcv" not in inputFile:
+	if ".pcv" not in inputFile:
 		mode = "encrypt"
 		gMode = "encrypt"
 		outputFile = inputFile+".pcv"
@@ -281,6 +285,26 @@ def start():
 		# Decrypted output is just input file without the extension
 		outputFile = inputFile[:-4]
 
+	# Check if file already exists (getsize() throws error if file not found)
+	try:
+		getsize(outputFile)
+		force = messagebox.askyesno("Warning",overwriteNotice)
+		dummy.focus()
+		if force!=1:
+			return
+	except:
+		pass
+
+	# Disable inputs and buttons while encrypting/decrypting
+	selectFileInput["state"] = "disabled"
+	passwordInput["state"] = "disabled"
+	cpasswordInput["state"] = "disabled"
+	adArea["state"] = "disabled"
+	startBtn["state"] = "disabled"
+	eraseBtn["state"] = "disabled"
+	keepBtn["state"] = "disabled"
+	rsBtn["state"] = "disabled"
+
 	# Make sure passwords match
 	if passwordInput.get()!=cpasswordInput.get() and mode=="encrypt":
 		selectFileInput["state"] = "normal"
@@ -295,23 +319,13 @@ def start():
 		statusString.set("Passwords don't match.")
 		return
 
-	# Check if file already exists (getsize() throws error if file not found)
-	try:
-		getsize(outputFile)
-		force = messagebox.askyesno("Warning",overwriteNotice)
-		dummy.focus()
-		if force!=1:
-			return
-	except:
-		pass
-
 	# Set progress bar indeterminate
 	progress.config(mode="indeterminate")
 	progress.start(15)
+	statusString.set(rscNotice)
 
 	# Create Reed-Solomon object
 	if reedsolo:
-		statusString.set(rscNotice)
 		# 13 bytes per 128 bytes, ~10% larger output file
 		rsc = RSCodec(13)
 
@@ -332,90 +346,97 @@ def start():
 		fin.read(1)
 	fout = open(outputFile,"wb+")
 	if reedsolo and mode=="encrypt":
-		# Signal that Reed-Solomon was enabled with "+"
+		# Signal that Reed-Solomon was enabled with a "+"
 		fout.write(b"+")
 
 	# Generate values for encryption if encrypting
 	if mode=="encrypt":
 		salt = urandom(16)
 		nonce = urandom(24)
-		fout.write(str(len(ad)).encode("utf-8")) # Length of metadata
-		fout.write(b"|") # Separator
+
+		# Reed-Solomon-encode metadata
+		ad = bytes(headerRsc.encode(ad))
+		# Write the metadata to output
+		tmp = str(len(ad)).encode("utf-8")
+		# Right-pad with "+"
+		while len(tmp)!=10:
+			tmp += b"+"
+		tmp = bytes(headerRsc.encode(tmp))
+		fout.write(tmp) # Length of metadata
 		fout.write(ad) # Metadata (associated data)
 
-		# Write zeros as placeholder, come back to write over it later
-		# Note that 13 additional bytes are added if Reed-Solomon is enabled
-		fout.write(b"0"*(64+(13 if reedsolo else 0))) # SHA3-512 of encryption key
-		fout.write(b"0"*(64+(13 if reedsolo else 0))) # CRC of file
-		fout.write(b"0"*(16+(13 if reedsolo else 0))) # Poly1305 tag
-		# If Reed-Solomon is enabled, encode the salt and nonce, otherwise write them raw
-		fout.write(bytes(rsc.encode(salt)) if reedsolo else salt) # Argon2 salt
-		fout.write(bytes(rsc.encode(nonce)) if reedsolo else nonce) # ChaCha20 nonce
+		# Write zeros as placeholders, come back to write over it later.
+		# Note that 128 extra Reed-Solomon bytes are added
+		fout.write(b"0"*192) # SHA3-512 of encryption key
+		fout.write(b"0"*192) # CRC of file
+		fout.write(b"0"*144) # Poly1305 tag
+		# Reed-Solomon-encode salt and nonce
+		fout.write(bytes(headerRsc.encode(salt))) # Argon2 salt
+		fout.write(bytes(headerRsc.encode(nonce))) # ChaCha20 nonce
+
 	# If decrypting, read values from file
 	else:
-		# Read past metadata into actual data
-		adlen = b""
-		while True:
-			letter = fin.read(1)
-			adlen += letter
-			if letter==b"|":
-				adlen = adlen[:-1]
-				break
-		fin.read(int(adlen.decode("utf-8")))
-		# Read the salt, nonce, etc.
-		# Read 13 extra bytes if Reed-Solomon is enabled
-		cs = fin.read(77 if reedsolo else 64)
-		crccs = fin.read(77 if reedsolo else 64)
-		digest = fin.read(29 if reedsolo else 16)
-		salt = fin.read(29 if reedsolo else 16)
-		nonce = fin.read(37 if reedsolo else 24)
-		# If Reed-Solomon is enabled, decode each value
-		if reedsolo:
-			try:
-				cs = bytes(rsc.decode(cs)[0])
-			except:
-				headerBroken = True
-				cs = cs[:64]
-			try:
-				crccs = bytes(rsc.decode(crccs)[0])
-			except:
-				headerBroken = True
-				crccs = crccs[:64]
-			try:
-				digest = bytes(rsc.decode(digest)[0])
-			except:
-				headerBroken = True
-				digest = digest[:16]
-			try:
-				salt = bytes(rsc.decode(salt)[0])
-			except:
-				headerBroken = True
-				salt = salt[:16]
-			try:
-				nonce = bytes(rsc.decode(nonce)[0])
-			except:
-				headerBroken = True
-				nonce = nonce[:24]
+		# Move past metadata into actual data
+		tmp = fin.read(138)
+		if tmp[0]==43:
+			tmp = tmp[1:]+fin.read(1)
+		tmp = bytes(headerRsc.decode(tmp)[0])
+		tmp = tmp.replace(b"+",b"")
+		adlen = int(tmp.decode("utf-8"))
+		fin.read(int(adlen))
 
-			if headerBroken:
-				if keep.get()!=1:
-					statusString.set(veryCorruptedNotice)
-					fin.close()
-					fout.close()
-					remove(outputFile)
-					# Reset UI
-					selectFileInput["state"] = "normal"
-					passwordInput["state"] = "normal"
-					adArea["state"] = "normal"
-					startBtn["state"] = "normal"
-					keepBtn["state"] = "normal"
-					working = False
-					progress.stop()
-					progress.config(mode="determinate")
-					progress["value"] = 100
-					return
-				else:
-					kept = "badlyCorrupted"
+		# Read the salt, nonce, etc.
+		cs = fin.read(192)
+		crccs = fin.read(192)
+		digest = fin.read(144)
+		salt = fin.read(144)
+		nonce = fin.read(152)
+		# Reed-Solomon-decode each value
+		try:
+			cs = bytes(headerRsc.decode(cs)[0])
+		except:
+			headerBroken = True
+			cs = cs[:64]
+		try:
+			crccs = bytes(headerRsc.decode(crccs)[0])
+		except:
+			headerBroken = True
+			crccs = crccs[:64]
+		try:
+			digest = bytes(headerRsc.decode(digest)[0])
+		except:
+			headerBroken = True
+			digest = digest[:16]
+		try:
+			salt = bytes(headerRsc.decode(salt)[0])
+		except:
+			headerBroken = True
+			salt = salt[:16]
+		try:
+			nonce = bytes(headerRsc.decode(nonce)[0])
+		except:
+			headerBroken = True
+			nonce = nonce[:24]
+
+		if headerBroken:
+			if keep.get()!=1:
+				statusString.set(veryCorruptedNotice)
+				fin.close()
+				fout.close()
+				remove(outputFile)
+				# Reset UI
+				selectFileInput["state"] = "normal"
+				passwordInput["state"] = "normal"
+				adArea["state"] = "normal"
+				startBtn["state"] = "normal"
+				keepBtn["state"] = "normal"
+				working = False
+				progress.stop()
+				progress.config(mode="determinate")
+				progress["value"] = 100
+				return
+			else:
+				kept = "badlyCorrupted"
 
 	# Show notice about key derivation
 	statusString.set(derivingNotice)
@@ -497,19 +518,13 @@ def start():
 				fout.flush()
 				fout.close()
 				fout = open(outputFile,"r+b")
-				# Compute the offset and seek to it
+				# Compute the offset and seek to it (unshift "+")
 				rsOffset = 1 if reedsolo else 0
-				fout.seek(len(str(len(ad)))+1+len(ad)+rsOffset)
+				fout.seek(138+len(ad)+rsOffset)
 				# Write hash of key, CRC, and Poly1305 MAC tag
-				# Reed-Solomon-encode if selected by user
-				if reedsolo:
-					fout.write(bytes(rsc.encode(check)))
-					fout.write(bytes(rsc.encode(crc.digest())))
-					fout.write(bytes(rsc.encode(digest)))
-				else:
-					fout.write(check)
-					fout.write(crc.digest())
-					fout.write(digest)
+				fout.write(bytes(headerRsc.encode(check)))
+				fout.write(bytes(headerRsc.encode(crc.digest())))
+				fout.write(bytes(headerRsc.encode(digest)))
 			else:
 				# If decrypting, verify CRC
 				crcdg = crc.digest()
@@ -638,7 +653,7 @@ def start():
 			first = True
 			speed = 0.1**6
 		rSpeed = str(round(speed,2))
-		# Right-pad zeros to prevent layout shifts
+		# Right-pad with zeros to large prevent layout shifts
 		while len(rSpeed.split(".")[1])!=2:
 			rSpeed += "0"
 		eta = round((total-done)/(speed*10**6))
@@ -670,7 +685,7 @@ def start():
 		if mode=="encrypt":
 			output = inputFile.split("/")[-1]+".pcv"
 		else:
-			output = inputFile.split("/")[-1].replace(".pcf","").replace(".pcv","")
+			output = inputFile.split("/")[-1].replace(".pcv","")
 		statusString.set(f"Completed. (Output: {output})")
 		# Show Reed-Solomon stats if it fixed corrupted bytes
 		if mode=="decrypt" and reedsolo and reedsoloFixedCount:
@@ -900,13 +915,23 @@ dummy = tkinter.ttk.Button(
 )
 dummy.place(x=480,y=0)
 
+# Function to create Reed-Solomon header codec
+def createRsc():
+	global headerRsc
+	headerRsc = RSCodec(128)
+	sys.exit(0)
+
 # Close window only if not encrypting or decrypting
 def onClose():
 	if not working:
 		tk.destroy()
 
-# Main tkinter loop
+# Main application loop
 if __name__=="__main__":
+	# Create Reed-Solomon header codec
+	tmp = Thread(target=createRsc,daemon=True)
+	tmp.start()
+	# Start tkinter
 	tk.protocol("WM_DELETE_WINDOW",onClose)
 	tk.mainloop()
 	sys.exit(0)
