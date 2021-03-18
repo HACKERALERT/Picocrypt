@@ -64,6 +64,7 @@ password = ""
 ad = ""
 kept = False
 working = False
+gMode = None
 adString = "File metadata (used to store some text along with the file):"
 passwordNotice = "Error. The provided password is incorrect."
 corruptedNotice = "Error. The input file is corrupted."
@@ -82,7 +83,7 @@ unknownErrorNotice = "Unknown error occured. Please try again."
 
 # Create root Tk
 tk = tkinter.Tk()
-tk.geometry("480x440")
+tk.geometry("480x480")
 tk.title("Picocrypt")
 tk.configure(background="#f5f6f7")
 tk.resizable(0,0)
@@ -140,6 +141,9 @@ def inputSelected():
 			keepBtn["state"] = "normal"
 			eraseBtn["state"] = "disabled"
 			rsBtn["state"] = "disabled"
+			cpasswordInput["state"] = "normal"
+			cpasswordInput.delete(0,"end")
+			cpasswordInput["state"] = "disabled"
 		else:
 			# Update the UI
 			eraseBtn["state"] = "normal"
@@ -149,6 +153,8 @@ def inputSelected():
 			adArea.delete("1.0",tkinter.END)
 			suffix = " (will encrypt)"
 			adLabelString.set(adString)
+			cpasswordInput["state"] = "normal"
+			cpasswordInput.delete(0,"end")
 		# Enable password box, etc.
 		inputString.set(inputFile.split("/")[-1]+suffix)
 		passwordInput["state"] = "normal"
@@ -208,25 +214,64 @@ passwordFrame.columnconfigure(0,weight=10)
 passwordFrame.grid_propagate(False)
 # Password input box
 passwordInput = tkinter.ttk.Entry(
-	passwordFrame
+	passwordFrame,
+	show="\u2022"
 )
 passwordInput.grid(sticky="nesw")
 passwordInput["state"] = "disabled"
 
+cpasswordString = tkinter.StringVar(tk)
+cpasswordString.set("Confirm password:")
+cpasswordLabel = tkinter.ttk.Label(
+	tk,
+	textvariable=cpasswordString
+)
+cpasswordLabel.place(x=17,y=106)
+cpasswordLabel.config(background="#f5f6f7")
+
+# A frame to make confirm password input fill width
+cpasswordFrame = tkinter.Frame(
+	tk,
+	width=440,
+	height=22
+)
+cpasswordFrame.place(x=20,y=126)
+cpasswordFrame.columnconfigure(0,weight=10)
+cpasswordFrame.grid_propagate(False)
+# Confirm password input box
+cpasswordInput = tkinter.ttk.Entry(
+	cpasswordFrame,
+	show="\u2022"
+)
+cpasswordInput.grid(sticky="nesw")
+cpasswordInput["state"] = "disabled"
+
 # Start the encryption/decryption process
 def start():
-	global inputFile,outputFile,password,ad,kept,working
+	global inputFile,outputFile,password,ad,kept,working,gMode
 	dummy.focus()
 	reedsolo = False
 	chunkSize = 2**20
 
+	# Disable inputs and buttons while encrypting/decrypting
+	selectFileInput["state"] = "disabled"
+	passwordInput["state"] = "disabled"
+	cpasswordInput["state"] = "disabled"
+	adArea["state"] = "disabled"
+	startBtn["state"] = "disabled"
+	eraseBtn["state"] = "disabled"
+	keepBtn["state"] = "disabled"
+	rsBtn["state"] = "disabled"
+
 	# Decide if encrypting or decrypting
 	if ".pcf" not in inputFile and ".pcv" not in inputFile:
 		mode = "encrypt"
+		gMode = "encrypt"
 		outputFile = inputFile+".pcv"
 		reedsolo = rs.get()==1
 	else:
 		mode = "decrypt"
+		gMode = "decrypt"
 		# Check if Reed-Solomon was enabled by checking for "+"
 		test = open(inputFile,"rb+")
 		decider = test.read(1).decode("utf-8")
@@ -235,6 +280,20 @@ def start():
 			reedsolo = True
 		# Decrypted output is just input file without the extension
 		outputFile = inputFile[:-4]
+
+	# Make sure passwords match
+	if passwordInput.get()!=cpasswordInput.get() and mode=="encrypt":
+		selectFileInput["state"] = "normal"
+		passwordInput["state"] = "normal"
+		cpasswordInput["state"] = "normal"
+		adArea["state"] = "normal"
+		startBtn["state"] = "normal"
+		eraseBtn["state"] = "normal"
+		rsBtn["state"] = "normal"
+		working = False
+		progress["value"] = 100
+		statusString.set("Passwords don't match.")
+		return
 
 	# Check if file already exists (getsize() throws error if file not found)
 	try:
@@ -265,15 +324,6 @@ def start():
 	password = passwordInput.get().encode("utf-8")
 	ad = adArea.get("1.0",tkinter.END).encode("utf-8")
 	wipe = erase.get()==1
-
-	# Disable inputs and buttons while encrypting/decrypting
-	selectFileInput["state"] = "disabled"
-	passwordInput["state"] = "disabled"
-	adArea["state"] = "disabled"
-	startBtn["state"] = "disabled"
-	eraseBtn["state"] = "disabled"
-	keepBtn["state"] = "disabled"
-	rsBtn["state"] = "disabled"
 
 	# Open files
 	fin = open(inputFile,"rb+")
@@ -643,6 +693,9 @@ def start():
 	passwordInput["state"] = "normal"
 	passwordInput.delete(0,"end")
 	passwordInput["state"] = "disabled"
+	cpasswordInput["state"] = "normal"
+	cpasswordInput.delete(0,"end")
+	cpasswordInput["state"] = "disabled"
 	progress["value"] = 0
 	inputString.set("Please select a file.")
 	keepBtn["state"] = "normal"
@@ -675,18 +728,27 @@ def start():
 
 # Wraps the start() function with error handling
 def wrapper():
-	global working
+	global working,gMode
 	# Try start() and handle errors
 	try:
 		start()
 	except:
+		# Reset UI accordingly
+		progress.stop()
+		progress.config(mode="determinate")
 		progress["value"] = 100
 		selectFileInput["state"] = "normal"
 		passwordInput["state"] = "normal"
-		adArea["state"] = "normal"
 		startBtn["state"] = "normal"
-		keepBtn["state"] = "normal"
-		rsBtn["state"] = "normal"
+
+		if gMode=="decrypt":
+			keepBtn["state"] = "normal"
+		else:
+			adArea["state"] = "normal"
+			cpasswordInput["state"] = "normal"
+			rsBtn["state"] = "normal"
+			eraseBtn["state"] = "normal"
+
 		statusString.set(unknownErrorNotice)
 		dummy.focus()
 		working = False
@@ -707,7 +769,7 @@ adLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=adLabelString
 )
-adLabel.place(x=17,y=108)
+adLabel.place(x=17,y=158)
 adLabel.config(background="#f5f6f7")
 
 # Frame so metadata text box can fill width
@@ -716,7 +778,7 @@ adFrame = tkinter.Frame(
 	width=440,
 	height=100
 )
-adFrame.place(x=20,y=128)
+adFrame.place(x=20,y=178)
 adFrame.columnconfigure(0,weight=10)
 adFrame.grid_propagate(False)
 
@@ -739,7 +801,7 @@ keepBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-keepBtn.place(x=18,y=240)
+keepBtn.place(x=18,y=290)
 keepBtn["state"] = "disabled"
 
 # Check box for securely erasing original file
@@ -752,7 +814,7 @@ eraseBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-eraseBtn.place(x=18,y=260)
+eraseBtn.place(x=18,y=310)
 eraseBtn["state"] = "disabled"
 
 # Check box for Reed Solomon
@@ -765,7 +827,7 @@ rsBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-rsBtn.place(x=18,y=280)
+rsBtn.place(x=18,y=330)
 rsBtn["state"] = "disabled"
 
 # Frame so start button can fill width
@@ -774,7 +836,7 @@ startFrame = tkinter.Frame(
 	width=442,
 	height=25
 )
-startFrame.place(x=19,y=310)
+startFrame.place(x=19,y=360)
 startFrame.columnconfigure(0,weight=10)
 startFrame.grid_propagate(False)
 # Start button
@@ -793,7 +855,7 @@ progress = tkinter.ttk.Progressbar(
 	length=440,
 	mode="determinate"
 )
-progress.place(x=20,y=348)
+progress.place(x=20,y=388)
 
 # Status label
 statusString = tkinter.StringVar(tk)
@@ -802,7 +864,7 @@ status = tkinter.ttk.Label(
 	tk,
 	textvariable=statusString
 )
-status.place(x=17,y=376)
+status.place(x=17,y=416)
 status.config(background="#f5f6f7")
 
 # Credits :)
@@ -816,7 +878,7 @@ credits = tkinter.ttk.Label(
 )
 credits["state"] = "disabled"
 credits.config(background="#f5f6f7")
-credits.place(x=17,y=406)
+credits.place(x=17,y=446)
 source = "https://github.com/HACKERALERT/Picocrypt"
 credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
@@ -829,7 +891,7 @@ version = tkinter.ttk.Label(
 )
 version["state"] = "disabled"
 version.config(background="#f5f6f7")
-version.place(x=436,y=406)
+version.place(x=436,y=446)
 
 # Dummy button to remove focus from other buttons
 # and prevent ugly border highlighting
