@@ -35,7 +35,7 @@ from threading import Thread
 from datetime import datetime
 from argon2.low_level import hash_secret_raw,Type
 from Crypto.Cipher import ChaCha20_Poly1305
-from hashlib import sha3_512
+from Crypto.Hash import SHA3_512 as sha3_512
 from secrets import compare_digest
 from os import urandom,fsync,remove
 from os.path import getsize,expanduser
@@ -458,7 +458,9 @@ def start():
 	progress["value"] = 0
 
 	# Compute hash of derived key
-	check = sha3_512(key).digest()
+	check = sha3_512()
+	check.update(key)
+	check = check.digest()
 
 	# If decrypting, check if key is correct
 	if mode=="decrypt":
