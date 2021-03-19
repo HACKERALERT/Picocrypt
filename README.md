@@ -5,8 +5,19 @@ Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure fil
 <p align="center"><img alt="Screenshot" src="https://i.imgur.com/KL8TPGK.png" width="384"></p>
 
 # Download
-You can run the raw Python source file under <code>/src</code> or download the portable .exe (for Windows) that I've precompiled and optimized beyond imagination <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.10/Picocrypt.exe" target="_blank">here</a></u></strong>  (recommended, because it's just 3MB and fully portable). If you're compiling from source or running the raw Python file, the following three dependencies will be automatically installed via <code>pip</code> if not already installed: <code>argon2-cffi</code>, <code>pycryptodome</code>, and <code>reedsolo</code>. See the <code>/src</code> folder for more info.
+<strong>Windows</strong>
 
+Picocrypt for Windows is as easy as it gets. To download the latest, standalone, and portable executable, click <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.10/Picocrypt.exe" target="_blank">here</a></u></strong>. You can also download a specific release from the Releases tab.
+
+<strong>MacOS</strong>
+
+Currently, you'll have to install Python on your Mac machine for Picocrypt to work. Simply download <code>Picocrypt.py</code> which is under the <code>src/</code> directory and run it. Dependencies will be automatically installed and Picocrypt will fire up shortly. A standalone executable for MacOS will be out soon.
+
+<strong>Linux</strong>
+
+Since the Linux kernel bundles Python along with the system, all you have to do is go to the <code>src/</code> directory in the files above and download <code>Picocrypt.py</code> or copy it into a Python file. Run it, and dependecies, etc. will be automatically installed. When dependencies are installed, Picocrypt will fire up. The <code>src/</code> directory has more info.
+
+<br>
 Note: For some reason, there's an outdated and useless tool called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related to Picocrypt (this project). Make sure you only download Picocrypt from this Github repository to ensure that you download the correct, authentic, and backdoor-free software.
 
 # Why Picocrypt?
@@ -62,7 +73,7 @@ I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <
 	<li>If decrypting, both the CRC and the MAC tag are verified. If either don't match, decryption is unsuccessful and an error message will be displayed. Otherwise, decryption is considered successful and the process is done.</li>
 </ol>
 
-Note: the list above is heavily simplified. A lot more is actually happening.
+Note: the list above is greatly simplified. A lot more is actually happening.
 
 # Roadmap
 See <code>Roadmap.md</code> for a list of new features and improvements that I'm working on.
