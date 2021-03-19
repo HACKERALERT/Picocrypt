@@ -458,7 +458,7 @@ def start():
 	progress["value"] = 0
 
 	# Compute hash of derived key
-	check = sha3_512()
+	check = sha3_512.new()
 	check.update(key)
 	check = check.digest()
 
@@ -485,7 +485,7 @@ def start():
 	# Create XChaCha20-Poly1305 object
 	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
 	# Cyclic redundancy check for file corruption
-	crc = sha3_512()
+	crc = sha3_512.new()
 
 	# Amount of data encrypted/decrypted, total file size, starting time
 	done = 0
