@@ -1,5 +1,5 @@
 # Roadmap
-Here's the road forward for Picocrypt. Not all items listed will be added; They are simply possible new features. They're not in any particular order. Have suggestions? Create an Issues. Thanks!
+Here's the road forward for Picocrypt. Not all items listed will be added; They are simply possible new features. They're not in any particular order. Have suggestions? Create an Issue. Thanks!
 
 <ul>
 	<li>Get Picocrypt audited (please donate to help fund the audit)</li>
