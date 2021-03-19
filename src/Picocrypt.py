@@ -640,8 +640,8 @@ def start():
 
 		# Calculate speed, ETA, etc.
 		first = False
-		elapsed = (datetime.now()-previousTime).total_seconds()
-		sinceStart = (datetime.now()-startTime).total_seconds()
+		elapsed = (datetime.now()-previousTime).total_seconds() or 0.0001
+		sinceStart = (datetime.now()-startTime).total_seconds() or 0.0001
 		previousTime = datetime.now()
 		# Prevent divison by zero
 		if not elapsed:
