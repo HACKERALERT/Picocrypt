@@ -33,7 +33,7 @@ Picocrypt is about as simple as it gets. Just select a file, enter a password, a
 </ul>
 
 # Security
-Security is Picocrypt's primary focus. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one. That's why I created Picocrypt, which uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the future of symmetric encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies.
+I have a solid understanding of cryptography and security is Picocrypt's primary focus. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one. That's why I created Picocrypt, which uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the future of symmetric encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies.
 
 For key derivation, Picocrypt uses Argon2(id), winner of the PHC (Password Hashing Competition), which was completed in 2015. Argon2 is even slower than Scrypt and Bcrypt (for those that don't understand crypto, this is a good thing), making GPU, ASIC, and FPGA attacks impractical due to the huge amount of RAM that is used and written to during the key derivation.
 
@@ -63,6 +63,9 @@ I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <
 </ol>
 
 Note: the list above is heavily simplified. A lot more is actually happening.
+
+# Roadmap
+See <code>Roadmap.md</code> for a list of new features and improvements that I'm working on.
 
 # Limitations
 
