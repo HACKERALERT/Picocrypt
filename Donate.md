@@ -14,8 +14,7 @@ Total donations: $0/(to be determined)
     <li>NEO: <code>ARbC3Z1mTBvRhBy3n3W2F389RNiCpLrfJA</code></li>
     <li>XTZ: <code>tz1d5Usjd42cDajV6CvufEi4XUCJupxWz2Un</code></li>
     <li>ZEC: <code>t1PPsgyEHC5aXV17FPE4XAArJK5Wf1qMVwP</code></li>
-    <li>NANO: <code></code></li>
-    <li>XLM: <code></code>GCCSVT3BWOWIGZZXUEBC6KRQHXFVOCIMCA2WGYWM243MK35XTLO4GSOC</li>
+    <li>XLM: <code>GCCSVT3BWOWIGZZXUEBC6KRQHXFVOCIMCA2WGYWM243MK35XTLO4GSOC</code></li>
     <li>BCH: <code>bitcoincash:qqsk0reyz3c4x2pyqymxh2swfuve0n0efyx8cytgz3</code></li>
     <li>XMR: <code>44Ymf12fj5sZDfjSJHyNieLBXxJww2zhCBCv94DVzCFb48jwwyC9uEPfEZuMSUXgePeWniWi4Gm3qhhksaYSCzbtDGg186o</code></li>
 </ul>
