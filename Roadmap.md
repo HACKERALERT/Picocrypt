@@ -9,4 +9,5 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 	<li>Keyfile support (thanks r/PiratesOfTheArctic)</li>
 	<li>Full disk encryption (thanks r/playffy)</li>
 	<li>Hardware keys (thanks r/Tech99bananas)</li>
+	<li>CLI</li>
 </ul>
