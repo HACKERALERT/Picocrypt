@@ -11,7 +11,7 @@ Picocrypt for Windows is as easy as it gets. To download the latest, standalone,
 
 <strong>MacOS</strong>
 
-Picocrypt for MacOS is also very easy to use. Download the latest, standalone, and portable executable for MacOS <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.10/Picocrypt.app.zip" target="_blank">here</a></u></strong>. Older releases are available under Releases.
+Picocrypt for MacOS is also very easy to use. Download the latest, standalone, and portable executable for MacOS <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.10/Picocrypt.app.zip" target="_blank">here</a></u></strong>. Older releases are available under Releases. After double-clicking, you should see a new Picocrypt executable.
 
 <strong>Linux</strong>
 
