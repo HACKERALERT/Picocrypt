@@ -11,7 +11,7 @@ Picocrypt for Windows is as easy as it gets. To download the latest, standalone,
 
 <strong>MacOS</strong>
 
-Currently, you'll have to install Python on your Mac machine for Picocrypt to work. Simply download <code>Picocrypt.py</code> which is under the <code>src/</code> directory and run it. Dependencies will be automatically installed and Picocrypt will fire up shortly. A standalone executable for MacOS will be out soon.
+Picocrypt for MacOS is also very easy to use. Download the latest, standalone, and portable executable for MacOS <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.10/Picocrypt.app.zip" target="_blank">here</a></u></strong>. Older releases are available under Releases.
 
 <strong>Linux</strong>
 
