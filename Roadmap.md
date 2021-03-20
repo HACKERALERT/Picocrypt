@@ -4,7 +4,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 <ul>
 	<li>Get Picocrypt audited (please donate to help fund the audit)</li>
 	<li>Add to AUR (Arch User Repo) (thanks r/blackrosae)</li>
-	<li>Standalone executables for MacOS.</li>
+	<li>Drag and drop files (thanks r/your_username)</li>
 	<li>Android/iOS support (thanks r/fzylqd), potentially via a web interface, thanks (@Tutturuuu)</li>
 	<li>Keyfile support (thanks r/PiratesOfTheArctic)</li>
 	<li>Full disk encryption (thanks r/playffy)</li>
