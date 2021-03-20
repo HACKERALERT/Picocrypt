@@ -1,5 +1,5 @@
 # Roadmap
-Here's the road ahead for Picocrypt. Not all items listed will be added; They are simply possible new features. They're not in any particular order. Have suggestions? Create an Issue. Thanks!
+Here's the road ahead for Picocrypt. Not all items listed will be added; they are simply possible new features. They're not in any particular order. Have suggestions? Create an Issue. Thanks!
 
 <ul>
 	<li>Get Picocrypt audited (please donate to help fund the audit)</li>
@@ -8,4 +8,5 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; They ar
 	<li>Android/iOS support (thanks r/fzylqd), potentially via a web interface, thanks (@Tutturuuu)</li>
 	<li>Keyfile support (thanks r/PiratesOfTheArctic)</li>
 	<li>Full disk encryption (thanks r/playffy)</li>
+	<li>Hardware keys (thanks r/Tech99bananas)</li>
 </ul>
