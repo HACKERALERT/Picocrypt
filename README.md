@@ -52,7 +52,7 @@ For key checking and corruption checks, SHA3-512 (Keccak) is used. Before decryp
 
 XChaCha20-Poly1305, Argon2, and SHA3 are well recognized within the cryptography community and are all considered to be mature and future-proof. You can rely on these ciphers and algorithms to protect your data, as they are all modern and have undergone a large amount of cryptanalysis.
 
-I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <code>argon2-cffi</code> and <code>pycryptodome</code>, both of which are well known and popular within the Python community. Picocrypt also uses Python's standard <code>hashlib</code> for SHA3-512. For people who want to know how Picocrypt handles the crypto, or for the paranoid, here is a breakdown of how Picocrypt protects your data:
+I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <code>argon2-cffi</code> and <code>pycryptodome</code>, both of which are well known and popular within the Python community. For people who want to know how Picocrypt handles the crypto, or for the paranoid, here is a breakdown of how Picocrypt protects your data:
 
 <ol>
 	<li>A 16-byte salt (for Argon2) and a 24-byte nonce (for XChaCha20) is generated using a CSPRNG (Python's <code>os.urandom()</code>)</li>
