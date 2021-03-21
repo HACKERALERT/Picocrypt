@@ -1,33 +1,16 @@
 #!/usr/bin/env python3
 
 """
-Dependencies: argon2-cffi, pycryptodome, reedsolo
+
+Picocrypt v1.11 (Beta)
+Dependencies: argon2-cffi, pycryptodome, reedsolo, tkinterdnd2
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
+
+~ In cryptography we trust ~
+
 """
-
-# Test if libraries are installed
-try:
-	from argon2.low_level import hash_secret_raw
-	from Crypto.Cipher import ChaCha20_Poly1305
-	try:
-		from creedsolo import ReedSolomonError
-	except:
-		from reedsolo import ReedSolomonError
-except:
-	# Libraries missing, install them
-	from os import system
-	try:
-		# Debian/Ubuntu based
-		system("sudo apt-get install python3-tk")
-	except:
-		# Fedora
-		system("sudo dnf install python3-tkinter")
-
-	system("python3 -m pip install argon2-cffi --no-cache-dir")
-	system("python3 -m pip install pycryptodome --no-cache-dir")
-	system("python3 -m pip install reedsolo --no-cache-dir")
 
 # Imports
 from tkinter import filedialog,messagebox
@@ -38,19 +21,15 @@ from Crypto.Cipher import ChaCha20_Poly1305
 from Crypto.Hash import SHA3_512 as sha3_512
 from secrets import compare_digest
 from os import urandom,fsync,remove,system
-from os.path import getsize,expanduser,dirname
-from os.path import abspath
-from TkinterDnD2 import *
+from os.path import getsize,expanduser,isdir
+from tkinterdnd2 import TkinterDnD,DND_FILES
 import sys
 import tkinter
 import tkinter.ttk
 import tkinter.scrolledtext
 import webbrowser
 import platform
-try:
-	from creedsolo import RSCodec,ReedSolomonError
-except:
-	from reedsolo import RSCodec,ReedSolomonError
+from creedsolo import RSCodec,ReedSolomonError
 
 # Tk/Tcl is a little barbaric, so I'm disabling
 # high DPI so it doesn't scale bad and look horrible
@@ -92,11 +71,6 @@ tk.title("Picocrypt")
 tk.configure(background="#f5f6f7")
 tk.resizable(0,0)
 
-def onDrop(e):
-	print(e)
-tk.drop_target_register(DND_FILES)
-tk.dnd_bind("<<Drop>>",onDrop)
-
 # Try setting window icon if included with Picocrypt
 try:
 	favicon = tkinter.PhotoImage(file="./key.png")
@@ -109,7 +83,7 @@ s = tkinter.ttk.Style()
 s.configure("TCheckbutton",background="#f5f6f7")
 
 # Event when user selects an input file
-def inputSelected():
+def inputSelected(draggedFile=None):
 	global inputFile,working,headerRsc
 	dummy.focus()
 
@@ -117,13 +91,16 @@ def inputSelected():
 	try:
 		# Ask for input file
 		suffix = ""
-		tmp = filedialog.askopenfilename(
-			initialdir=expanduser("~")
-		)
-		if len(tmp)==0:
-			# Exception will be caught by except below
-			raise Exception("No file selected.")
-		inputFile = tmp
+		if not draggedFile:
+			tmp = filedialog.askopenfilename(
+				initialdir=expanduser("~")
+			)
+			if len(tmp)==0:
+				# Exception will be caught by except below
+				raise Exception("No file selected.")
+			inputFile = tmp
+		else:
+			inputFile = draggedFile
 
 		# Decide if encrypting or decrypting
 		if ".pcv" in inputFile.split("/")[-1]:
@@ -163,6 +140,7 @@ def inputSelected():
 			cpasswordInput["state"] = "normal"
 			cpasswordInput.delete(0,"end")
 			cpasswordInput["state"] = "disabled"
+			cpasswordString.set("Confirm password (N/A):")
 		else:
 			# Update the UI
 			eraseBtn["state"] = "normal"
@@ -174,6 +152,7 @@ def inputSelected():
 			adLabelString.set(adString)
 			cpasswordInput["state"] = "normal"
 			cpasswordInput.delete(0,"end")
+			cpasswordString.set("Confirm password:")
 
 		# Enable password box, etc.
 		inputString.set(inputFile.split("/")[-1]+suffix)
@@ -196,6 +175,13 @@ def inputSelected():
 	finally:
 		dummy.focus()
 		working = False
+
+# Allow drag and drop
+def onDrop(e):
+	print(e.data)
+	inputSelected(e.data)
+tk.drop_target_register(DND_FILES)
+tk.dnd_bind("<<Drop>>",onDrop)
 
 # Button to select input file
 selectFileInput = tkinter.ttk.Button(
@@ -304,26 +290,11 @@ def start():
 		pass
 
 	# Disable inputs and buttons while encrypting/decrypting
-	selectFileInput["state"] = "disabled"
-	passwordInput["state"] = "disabled"
-	cpasswordInput["state"] = "disabled"
-	adArea["state"] = "disabled"
-	startBtn["state"] = "disabled"
-	eraseBtn["state"] = "disabled"
-	keepBtn["state"] = "disabled"
-	rsBtn["state"] = "disabled"
+	disableAllInputs()
 
 	# Make sure passwords match
 	if passwordInput.get()!=cpasswordInput.get() and mode=="encrypt":
-		selectFileInput["state"] = "normal"
-		passwordInput["state"] = "normal"
-		cpasswordInput["state"] = "normal"
-		adArea["state"] = "normal"
-		startBtn["state"] = "normal"
-		eraseBtn["state"] = "normal"
-		rsBtn["state"] = "normal"
-		working = False
-		progress["value"] = 100
+		resetEncryptionUI()
 		statusString.set("Passwords don't match.")
 		return
 
@@ -433,15 +404,7 @@ def start():
 				fout.close()
 				remove(outputFile)
 				# Reset UI
-				selectFileInput["state"] = "normal"
-				passwordInput["state"] = "normal"
-				adArea["state"] = "normal"
-				startBtn["state"] = "normal"
-				keepBtn["state"] = "normal"
-				working = False
-				progress.stop()
-				progress.config(mode="determinate")
-				progress["value"] = 100
+				resetDecryptionUI()
 				return
 			else:
 				kept = "badlyCorrupted"
@@ -480,14 +443,7 @@ def start():
 				fout.close()
 				remove(outputFile)
 				# Reset UI
-				selectFileInput["state"] = "normal"
-				passwordInput["state"] = "normal"
-				adArea["state"] = "normal"
-				startBtn["state"] = "normal"
-				keepBtn["state"] = "normal"
-				working = False
-				progress["value"] = 100
-				del key
+				resetDecryptionUI()
 				return
 
 	# Create XChaCha20-Poly1305 object
@@ -541,12 +497,7 @@ def start():
 					if keep.get()!=1:
 						remove(outputFile)
 						# Reset UI
-						selectFileInput["state"] = "normal"
-						passwordInput["state"] = "normal"
-						adArea["state"] = "normal"
-						startBtn["state"] = "normal"
-						keepBtn["state"] = "normal"
-						working = False
+						resetDecryptionUI()
 						del fin,fout,cipher,key
 						return
 					else:
@@ -567,12 +518,7 @@ def start():
 						if keep.get()!=1:
 							remove(outputFile)
 							# Reset UI
-							selectFileInput["state"] = "normal"
-							passwordInput["state"] = "normal"
-							adArea["state"] = "normal"
-							startBtn["state"] = "normal"
-							keepBtn["state"] = "normal"
-							working = False
+							resetDecryptionUI()
 							del fin,fout,cipher,key
 							return
 						else:
@@ -606,13 +552,7 @@ def start():
 						fout.close()
 						remove(outputFile)
 						# Reset UI
-						selectFileInput["state"] = "normal"
-						passwordInput["state"] = "normal"
-						adArea["state"] = "normal"
-						startBtn["state"] = "normal"
-						keepBtn["state"] = "normal"
-						working = False
-						progress["value"] = 100
+						resetDecryptionUI()
 						del fin,fout,cipher,key
 						return
 					else:
@@ -712,27 +652,7 @@ def start():
 			statusString.set(kVeryCorruptedNotice)
 	
 	# Reset variables and UI states
-	selectFileInput["state"] = "normal"
-	adArea["state"] = "normal"
-	adArea.delete("1.0",tkinter.END)
-	adArea["state"] = "disabled"
-	startBtn["state"] = "disabled"
-	passwordInput["state"] = "normal"
-	passwordInput.delete(0,"end")
-	passwordInput["state"] = "disabled"
-	cpasswordInput["state"] = "normal"
-	cpasswordInput.delete(0,"end")
-	cpasswordInput["state"] = "disabled"
-	progress["value"] = 0
-	inputString.set("Please select a file.")
-	keepBtn["state"] = "normal"
-	keep.set(0)
-	keepBtn["state"] = "disabled"
-	eraseBtn["state"] = "normal"
-	erase.set(0)
-	eraseBtn["state"] = "disabled"
-	rs.set(0)
-	rsBtn["state"] = "disabled"
+	resetUI()
 	inputFile = ""
 	outputFile = ""
 	password = ""
@@ -751,42 +671,95 @@ def wrapper():
 		start()
 	except:
 		# Reset UI accordingly
-		progress.stop()
-		progress.config(mode="determinate")
-		progress["value"] = 100
-		selectFileInput["state"] = "normal"
-		passwordInput["state"] = "normal"
-		startBtn["state"] = "normal"
 
 		if gMode=="decrypt":
-			keepBtn["state"] = "normal"
+			resetDecryptionUI()
 		else:
-			adArea["state"] = "normal"
-			cpasswordInput["state"] = "normal"
-			rsBtn["state"] = "normal"
-			eraseBtn["state"] = "normal"
+			resetEncryptionUI()
 
 		statusString.set(unknownErrorNotice)
 		dummy.focus()
-		working = False
 	finally:
 		sys.exit(0)
 
-# Encryption/decrypt is done is a separate thread
-# so the UI isn't blocked. This is a wrapper
-# to spawn a thread and start it.
+# Encryption/decrypt is done is a separate thread so the UI
+# isn't blocked. This is a wrapper to spawn a thread and start it.
 def startWorker():
 	thread = Thread(target=wrapper,daemon=True)
 	thread.start()
-	
+
+# Securely wipe file
 def secureWipe(fin):
 	statusString.set("Securely erasing original file...")
+	# Check platform, erase accordingly
 	if platform.system()=="Windows":
 		system(f'sdelete64.exe "{inputFile}" -p 4')
 	elif platform.system()=="Darwin":
 		pass
 	else:
 		system(f'shred -uz "{inputFile}"')
+
+# Disable all inputs while encrypting/decrypting
+def disableAllInputs():
+	selectFileInput["state"] = "disabled"
+	passwordInput["state"] = "disabled"
+	cpasswordInput["state"] = "disabled"
+	adArea["state"] = "disabled"
+	startBtn["state"] = "disabled"
+	eraseBtn["state"] = "disabled"
+	keepBtn["state"] = "disabled"
+	rsBtn["state"] = "disabled"
+
+# Reset UI to encryption state
+def resetEncryptionUI():
+	global working
+	selectFileInput["state"] = "normal"
+	passwordInput["state"] = "normal"
+	cpasswordInput["state"] = "normal"
+	adArea["state"] = "normal"
+	startBtn["state"] = "normal"
+	eraseBtn["state"] = "normal"
+	rsBtn["state"] = "normal"
+	working = False
+	progress["value"] = 100
+
+# Reset UI to decryption state
+def resetDecryptionUI():
+	global working
+	selectFileInput["state"] = "normal"
+	passwordInput["state"] = "normal"
+	adArea["state"] = "normal"
+	startBtn["state"] = "normal"
+	keepBtn["state"] = "normal"
+	working = False
+	progress.stop()
+	progress.config(mode="determinate")
+	progress["value"] = 100
+
+# Reset UI to original state (no file selected)
+def resetUI():
+	selectFileInput["state"] = "normal"
+	adArea["state"] = "normal"
+	adArea.delete("1.0",tkinter.END)
+	adArea["state"] = "disabled"
+	startBtn["state"] = "disabled"
+	passwordInput["state"] = "normal"
+	passwordInput.delete(0,"end")
+	passwordInput["state"] = "disabled"
+	cpasswordInput["state"] = "normal"
+	cpasswordInput.delete(0,"end")
+	cpasswordInput["state"] = "disabled"
+	cpasswordString.set("Confirm password:")
+	progress["value"] = 0
+	inputString.set("Please select a file.")
+	keepBtn["state"] = "normal"
+	keep.set(0)
+	keepBtn["state"] = "disabled"
+	eraseBtn["state"] = "normal"
+	erase.set(0)
+	eraseBtn["state"] = "disabled"
+	rs.set(0)
+	rsBtn["state"] = "disabled"
 
 # ad stands for "associated data"/metadata
 adLabelString = tkinter.StringVar(tk)
