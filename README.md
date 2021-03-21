@@ -18,7 +18,7 @@ Picocrypt for MacOS is also very easy to use. Download the latest, standalone, a
 Since the Linux kernel bundles Python along with the system, all you have to do is go to the <code>src/</code> directory in the files above and download <code>Picocrypt.py</code> or copy it into a Python file. Run it, and dependecies, etc. will be automatically installed. When dependencies are installed, Picocrypt will fire up. The <code>src/</code> directory has more info.
 
 <br>
-Note: For some reason, there's an outdated and useless tool called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related to Picocrypt (this project). Make sure you only download Picocrypt from this Github repository to ensure that you download the correct, authentic, and backdoor-free software.
+Note: For some reason, there's an outdated and useless tool called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related to Picocrypt (this project). <strong>Make sure you only download Picocrypt from this Github repository to ensure that you download the correct and backdoor-free software</strong>. Downloading from somewhere else could mean that you're downloading malicious and hacked software!
 
 # Why Picocrypt?
 Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-Zip? Here are some reasons why you should switch to Picocrypt:
@@ -44,7 +44,7 @@ Picocrypt is about as simple as it gets. Just select a file, enter a password, a
 </ul>
 
 # Security
-I have a solid understanding of cryptography and security is Picocrypt's primary focus. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one. That's why I created Picocrypt, which uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the future of symmetric encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies.
+I have a solid understanding of cryptography and security is Picocrypt's primary focus. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one. That's why I created Picocrypt, which uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the future of symmetric encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies. In terms of physical security, I have 2FA enabled on all accounts with a tie to Picocrypt, so you can rest assured that the official Picocrypt repository won't be hacked.
 
 For key derivation, Picocrypt uses Argon2(id), winner of the PHC (Password Hashing Competition), which was completed in 2015. Argon2 is even slower than Scrypt and Bcrypt (for those that don't understand crypto, this is a good thing), making GPU, ASIC, and FPGA attacks impractical due to the huge amount of RAM that is used and written to during the key derivation.
 
@@ -77,6 +77,15 @@ Note: the list above is greatly simplified. A lot more is actually happening.
 
 # Roadmap
 See <code>Roadmap.md</code> for a list of new features and improvements that I'm working on.
+
+# Community
+Here's some places where you can see the latest news about Picocrypt and get involved:
+<ul>
+	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
+	<li><a href="">Discord (coming soon)</a></li>
+	<li><a href="https://twitter.com/picocrypt">Twitter</a></li>
+</ul>
+These are the official Picocrypt social groups and accounts. Be aware of scammers and hackers that might try to impersonate me and get you to download malicious software. Only trust these accounts and only download from this Github repo.
 
 # Limitations
 
