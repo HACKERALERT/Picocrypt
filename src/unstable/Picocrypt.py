@@ -37,13 +37,16 @@ from argon2.low_level import hash_secret_raw,Type
 from Crypto.Cipher import ChaCha20_Poly1305
 from Crypto.Hash import SHA3_512 as sha3_512
 from secrets import compare_digest
-from os import urandom,fsync,remove
-from os.path import getsize,expanduser
+from os import urandom,fsync,remove,system
+from os.path import getsize,expanduser,dirname
+from os.path import abspath
+from TkinterDnD2 import *
 import sys
 import tkinter
 import tkinter.ttk
 import tkinter.scrolledtext
 import webbrowser
+import platform
 try:
 	from creedsolo import RSCodec,ReedSolomonError
 except:
@@ -83,11 +86,16 @@ rscNotice = "Creating Reed-Solomon tables..."
 unknownErrorNotice = "Unknown error occured. Please try again."
 
 # Create root Tk
-tk = tkinter.Tk()
+tk = TkinterDnD.Tk()
 tk.geometry("480x480")
 tk.title("Picocrypt")
 tk.configure(background="#f5f6f7")
 tk.resizable(0,0)
+
+def onDrop(e):
+	print(e)
+tk.drop_target_register(DND_FILES)
+tk.dnd_bind("<<Drop>>",onDrop)
 
 # Try setting window icon if included with Picocrypt
 try:
@@ -492,9 +500,6 @@ def start():
 	total = getsize(inputFile)
 
 	# If secure wipe enabled, create a wiper object
-	if wipe:
-		wiper = open(inputFile,"r+b")
-		wiper.seek(0)
 
 	# Keep track of time because it flies...
 	startTime = datetime.now()
@@ -507,11 +512,7 @@ def start():
 			piece = fin.read(1104905)
 		else:
 			piece = fin.read(chunkSize)
-		if wipe:
-			# If securely wipe, write random trash
-			# to original file after reading it
-			trash = urandom(len(piece))
-			wiper.write(trash)
+
 		# If EOF
 		if not piece:
 			if mode=="encrypt":
@@ -682,6 +683,15 @@ def start():
 		done += 1104905 if (reedsolo and mode=="decrypt") else chunkSize
 		fout.write(data)
 
+	if not kept:
+		fout.flush()
+		fsync(fout.fileno())
+	fout.close()
+	fin.close()
+
+	if wipe:
+		secureWipe(inputFile)
+
 	# Show appropriate notice if file corrupted or modified
 	if not kept:
 		if mode=="encrypt":
@@ -723,23 +733,13 @@ def start():
 	eraseBtn["state"] = "disabled"
 	rs.set(0)
 	rsBtn["state"] = "disabled"
-	if not kept:
-		fout.flush()
-		fsync(fout.fileno())
-	fout.close()
-	fin.close()
-	if wipe:
-		# Make sure to flush file
-		wiper.flush()
-		fsync(wiper.fileno())
-		wiper.close()
-		remove(inputFile)
 	inputFile = ""
 	outputFile = ""
 	password = ""
 	ad = ""
 	kept = False
 	working = False
+	
 	# Wipe keys for safety
 	del fin,fout,cipher,key
 
@@ -778,6 +778,15 @@ def wrapper():
 def startWorker():
 	thread = Thread(target=wrapper,daemon=True)
 	thread.start()
+	
+def secureWipe(fin):
+	statusString.set("Securely erasing original file...")
+	if platform.system()=="Windows":
+		system(f'sdelete64.exe "{inputFile}" -p 4')
+	elif platform.system()=="Darwin":
+		pass
+	else:
+		system(f'shred -uz "{inputFile}"')
 
 # ad stands for "associated data"/metadata
 adLabelString = tkinter.StringVar(tk)
