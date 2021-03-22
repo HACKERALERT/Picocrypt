@@ -20,7 +20,10 @@ Total donations: $0 / ~$8500 USD
 </ul>
 
 # Buy Me A Coffee
-Coming soon...
+https://www.buymeacoffee.com/Picocrypt
+
+# PayPal
+https://paypal.me/evanyiwensu
 
 <br>
-Want to donate another cryptocurrency? Let me know in an Issue. <strong>Thank you for your support for Picocrypt. I can't wait to get Picocrypt audited.</strong>
+Want to donate in another form? Let me know in an Issue. <strong>Thank you for your support for Picocrypt. I can't wait to get Picocrypt audited.</strong>
