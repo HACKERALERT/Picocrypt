@@ -10,6 +10,7 @@ Total donations: $0 / ~$8500 USD
     <li>DOGE: <code>DSQ8qAAmUXHvWVuW24WJQSVnxyMRBsejMe</code></li>
     <li>ATOM: <code>cosmos1fl7ln9ct5wmm3cm7pjlq8yu7jhryn55aa5t4gf</code></li>
     <li>DASH: <code>XaxEH19s49FKoqki5mubEWbqHttBq3pA6B</code></li>
+    <li>NANO: <code>nano_3au8tuic5y1rnkrix8jwqrzuhg9k9h8gdw3g6z11jsear4pstbqpm8xibwan</code></li>
     <li>LINK: <code>0x1f98A13A680494c42B7d31e47570F27089348c53</code></li>
     <li>NEO: <code>ARbC3Z1mTBvRhBy3n3W2F389RNiCpLrfJA</code></li>
     <li>XTZ: <code>tz1d5Usjd42cDajV6CvufEi4XUCJupxWz2Un</code></li>
