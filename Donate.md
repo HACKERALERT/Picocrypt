@@ -1,6 +1,6 @@
 <strong>Thanks for expressing your interest in donating to Picocrypt. All donations will go toward getting Picocrypt audited. For transparency reasons, I'll periodically update the total amount of donations recieved and approximate how far I am from having enough money to purchase an audit for Picocrypt.</strong>
 
-Total donations: $0/(to be determined)
+Total donations: $0 / ~$8500 USD
 
 # Crypto
 <ul>
