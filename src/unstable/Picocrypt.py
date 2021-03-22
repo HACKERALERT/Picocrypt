@@ -980,6 +980,9 @@ def createRsc():
 	global headerRsc
 	headerRsc = RSCodec(128)
 	sys.exit(0)
+	
+def prepare():
+	system("sdelete64.exe /accepteula")
 
 # Close window only if not encrypting or decrypting
 def onClose():
@@ -990,6 +993,9 @@ def onClose():
 if __name__=="__main__":
 	# Create Reed-Solomon header codec
 	tmp = Thread(target=createRsc,daemon=True)
+	tmp.start()
+	# Prepare application
+	tmp = Thread(target=prepare,daemon=True)
 	tmp.start()
 	# Start tkinter
 	tk.protocol("WM_DELETE_WINDOW",onClose)
