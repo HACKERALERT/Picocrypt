@@ -1,1 +1,1 @@
-These are the core cryptography components that will need to be audited, once the fundraiser has raised enough money for the audit. Please donate some of your pocket change to help Picocrypt get audited. Thanks.
+These are the core cryptography components of Pycryptodome that will need to be audited, once the fundraiser has raised enough money for the audit. Also, <a href="https://github.com/hynek/argon2-cffi">Argon2-cffi</a> will need to be audited.
