@@ -1,1 +1,1 @@
-These are the core cryptography components that will need to be audited, once the fundraiser has raised enough money for the audit.
+These are the core cryptography components that will need to be audited, once the fundraiser has raised enough money for the audit. Please donate some of your pocket change to help Picocrypt get audited. Thanks.
