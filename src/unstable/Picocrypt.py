@@ -22,7 +22,12 @@ from Crypto.Hash import SHA3_512 as sha3_512
 from secrets import compare_digest
 from os import urandom,fsync,remove,system
 from os.path import getsize,expanduser,isdir
+from os.path import dirname,abspath
+from os.path import join as pathJoin
+from os.path import split as pathSplit
 from tkinterdnd2 import TkinterDnD,DND_FILES
+from zipfile import ZipFile
+from pathlib import Path
 import sys
 import tkinter
 import tkinter.ttk
@@ -42,13 +47,17 @@ except:
 # Global variables and notices
 inputFile = ""
 outputFile = ""
+outputPath = ""
 password = ""
 ad = ""
 kept = False
 working = False
 gMode = None
 headerRsc = None
+draggedFiles = False
+dragFolderPath = False
 adString = "File metadata (used to store some text along with the file):"
+compressingNotice = "Compressing files together..."
 passwordNotice = "Error. The provided password is incorrect."
 corruptedNotice = "Error. The input file is corrupted."
 veryCorruptedNotice = "Error. The input file and header keys are badly corrupted."
@@ -84,11 +93,16 @@ s.configure("TCheckbutton",background="#f5f6f7")
 
 # Event when user selects an input file
 def inputSelected(draggedFile=None):
-	global inputFile,working,headerRsc
+	global inputFile,working,headerRsc,draggedFiles
+	global dragFolderPath
 	dummy.focus()
+	status.config(cursor="")
+	status.bind("<Button-1>",lambda e:None)
 
 	# Try to handle when select file is cancelled
 	try:
+		draggedFiles = None
+		dragFolderPath = None
 		# Ask for input file
 		suffix = ""
 		if not draggedFile:
@@ -100,7 +114,20 @@ def inputSelected(draggedFile=None):
 				raise Exception("No file selected.")
 			inputFile = tmp
 		else:
-			inputFile = draggedFile
+			# Check if multiple files
+			if "} {" in draggedFile:
+				draggedFiles = draggedFile[1:-1]
+				draggedFiles = draggedFiles.split("} {")
+			elif " " in draggedFile and "{" not in draggedFile:
+				draggedFiles = draggedFile.split()
+			else:
+				if isdir(draggedFile):
+					draggedFiles = Path(draggedFile).rglob("*")
+					draggedFiles = [abspath(i) for i in draggedFiles]
+					dragFolderPath = draggedFile
+				else:
+					draggedFile = draggedFile.replace("{","")
+					inputFile = draggedFile.replace("}","")
 
 		# Decide if encrypting or decrypting
 		if ".pcv" in inputFile.split("/")[-1]:
@@ -154,8 +181,14 @@ def inputSelected(draggedFile=None):
 			cpasswordInput.delete(0,"end")
 			cpasswordString.set("Confirm password:")
 
+		# Show selected file(s)
+		if draggedFiles:
+			inputString.set(f"{len(draggedFiles)} files selected"+
+				" (will encrypt).")
+		else:
+			inputString.set(inputFile.split("/")[-1]+suffix)
+
 		# Enable password box, etc.
-		inputString.set(inputFile.split("/")[-1]+suffix)
 		passwordInput["state"] = "normal"
 		passwordInput.delete(0,"end")
 		startBtn["state"] = "normal"
@@ -169,7 +202,8 @@ def inputSelected(draggedFile=None):
 
 	# No file selected, do nothing
 	except:
-		pass
+		inputString.set("Please select a file.")
+		resetUI()
 
 	# Focus the dummy button to remove ugly borders
 	finally:
@@ -178,7 +212,6 @@ def inputSelected(draggedFile=None):
 
 # Allow drag and drop
 def onDrop(e):
-	print(e.data)
 	inputSelected(e.data)
 tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
@@ -256,7 +289,9 @@ cpasswordInput["state"] = "disabled"
 
 # Start the encryption/decryption process
 def start():
-	global inputFile,outputFile,password,ad,kept,working,gMode,headerRsc
+	global inputFile,outputFile,password,ad,kept
+	global working,gMode,headerRsc,draggedFiles
+	global dragFolderPath
 	dummy.focus()
 	reedsolo = False
 	chunkSize = 2**20
@@ -307,6 +342,28 @@ def start():
 	if reedsolo:
 		# 13 bytes per 128 bytes, ~10% larger output file
 		rsc = RSCodec(13)
+	
+	# Compress files together if user dragged multiple files
+	if draggedFiles:
+		statusString.set(compressingNotice)
+		tmp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+		if dragFolderPath:
+			zfName = Path(dragFolderPath).parent.absolute()
+			zfName = pathJoin(zfName,tmp+".zip")
+		else:
+			zfName = Path(draggedFiles[0]).parent.absolute()
+			zfName = pathJoin(zfName,tmp+".zip")
+		zf = ZipFile(zfName,"w")
+		for i in draggedFiles:
+			if dragFolderPath:
+				nameOffset = len(dragFolderPath)
+				zf.write(i,i[nameOffset:])
+			else:
+				zf.write(i,pathSplit(i)[1])
+		zf.close()
+		inputFile = zfName
+		outputFile = zfName+".pcv"
+		outputPath = dirname(outputFile)
 
 	# Set and get some variables
 	working = True
@@ -623,14 +680,25 @@ def start():
 		done += 1104905 if (reedsolo and mode=="decrypt") else chunkSize
 		fout.write(data)
 
+	# Flush outputs, close files
 	if not kept:
 		fout.flush()
 		fsync(fout.fileno())
 	fout.close()
 	fin.close()
 
+	# Securely wipe files as necessary
 	if wipe:
+		progress.config(mode="indeterminate")
+		progress.start(15)
+		if draggedFiles:
+			for i in draggedFiles:
+				print("==============="+i)
+				secureWipe(i)
 		secureWipe(inputFile)
+	else:
+		if draggedFiles:
+			remove(inputFile)
 
 	# Show appropriate notice if file corrupted or modified
 	if not kept:
@@ -651,6 +719,9 @@ def start():
 		else:
 			statusString.set(kVeryCorruptedNotice)
 	
+	status.config(cursor="hand2")
+	status.bind("<Button-1>",lambda e:print(outputPath))
+	
 	# Reset variables and UI states
 	resetUI()
 	inputFile = ""
@@ -659,6 +730,8 @@ def start():
 	ad = ""
 	kept = False
 	working = False
+	draggedFiles = False
+	dragFolderPath = False
 	
 	# Wipe keys for safety
 	del fin,fout,cipher,key
@@ -667,9 +740,9 @@ def start():
 def wrapper():
 	global working,gMode
 	# Try start() and handle errors
-	try:
-		start()
-	except:
+	#try:
+	start()
+	'''except:
 		# Reset UI accordingly
 
 		if gMode=="decrypt":
@@ -680,7 +753,7 @@ def wrapper():
 		statusString.set(unknownErrorNotice)
 		dummy.focus()
 	finally:
-		sys.exit(0)
+		sys.exit(0)'''
 
 # Encryption/decrypt is done is a separate thread so the UI
 # isn't blocked. This is a wrapper to spawn a thread and start it.
@@ -693,11 +766,11 @@ def secureWipe(fin):
 	statusString.set("Securely erasing original file...")
 	# Check platform, erase accordingly
 	if platform.system()=="Windows":
-		system(f'sdelete64.exe "{inputFile}" -p 4')
+		system(f'sdelete64.exe "{fin}" -p 4')
 	elif platform.system()=="Darwin":
 		pass
 	else:
-		system(f'shred -uz "{inputFile}"')
+		system(f'shred -uz "{fin}" -n 4')
 
 # Disable all inputs while encrypting/decrypting
 def disableAllInputs():
@@ -760,6 +833,9 @@ def resetUI():
 	eraseBtn["state"] = "disabled"
 	rs.set(0)
 	rsBtn["state"] = "disabled"
+	progress.stop()
+	progress.config(mode="determinate")
+	progress["value"] = 0
 
 # ad stands for "associated data"/metadata
 adLabelString = tkinter.StringVar(tk)
