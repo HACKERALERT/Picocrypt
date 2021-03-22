@@ -22,12 +22,13 @@ from Crypto.Hash import SHA3_512 as sha3_512
 from secrets import compare_digest
 from os import urandom,fsync,remove,system
 from os.path import getsize,expanduser,isdir
-from os.path import dirname,abspath
+from os.path import dirname,abspath,realpath
 from os.path import join as pathJoin
 from os.path import split as pathSplit
 from tkinterdnd2 import TkinterDnD,DND_FILES
 from zipfile import ZipFile
 from pathlib import Path
+from shutil import rmtree
 import sys
 import tkinter
 import tkinter.ttk
@@ -45,6 +46,7 @@ except:
 	pass
 
 # Global variables and notices
+rootDir = dirname(realpath(__file__))
 inputFile = ""
 outputFile = ""
 outputPath = ""
@@ -55,7 +57,8 @@ working = False
 gMode = None
 headerRsc = None
 draggedFiles = False
-dragFolderPath = False
+draggedFolderPaths = False
+filesToErase = False
 adString = "File metadata (used to store some text along with the file):"
 compressingNotice = "Compressing files together..."
 passwordNotice = "Error. The provided password is incorrect."
@@ -68,6 +71,7 @@ kVeryCorruptedNotice = "The input file is badly corrupted, but the output has be
 derivingNotice = "Deriving key (takes a few seconds)..."
 keepNotice = "Keep decrypted output even if it's corrupted or modified"
 eraseNotice = "Securely erase and delete original file"
+erasingNotice = "Securely erasing original file(s)..."
 overwriteNotice = "Output file already exists. Would you like to overwrite it?"
 rsNotice = "Prevent corruption using Reed-Solomon"
 rscNotice = "Creating Reed-Solomon tables..."
@@ -94,7 +98,7 @@ s.configure("TCheckbutton",background="#f5f6f7")
 # Event when user selects an input file
 def inputSelected(draggedFile=None):
 	global inputFile,working,headerRsc,draggedFiles
-	global dragFolderPath
+	global draggedFolderPaths,filesToErase
 	dummy.focus()
 	status.config(cursor="")
 	status.bind("<Button-1>",lambda e:None)
@@ -102,7 +106,8 @@ def inputSelected(draggedFile=None):
 	# Try to handle when select file is cancelled
 	try:
 		draggedFiles = None
-		dragFolderPath = None
+		filesToErase = None
+		draggedFolderPaths = []
 		# Ask for input file
 		suffix = ""
 		if not draggedFile:
@@ -114,20 +119,47 @@ def inputSelected(draggedFile=None):
 				raise Exception("No file selected.")
 			inputFile = tmp
 		else:
-			# Check if multiple files
-			if "} {" in draggedFile:
-				draggedFiles = draggedFile[1:-1]
-				draggedFiles = draggedFiles.split("} {")
-			elif " " in draggedFile and "{" not in draggedFile:
-				draggedFiles = draggedFile.split()
-			else:
-				if isdir(draggedFile):
-					draggedFiles = Path(draggedFile).rglob("*")
-					draggedFiles = [abspath(i) for i in draggedFiles]
-					dragFolderPath = draggedFile
+			tmp = [i for i in draggedFile]
+			res = []
+			within = False
+			tmpName = ""
+			for i in tmp:
+				if i=="{":
+					within = True
+				elif i=="}":
+					within = False
+					res.append(tmpName)
+					tmpName = ""
 				else:
-					draggedFile = draggedFile.replace("{","")
-					inputFile = draggedFile.replace("}","")
+					print(tmpName)
+					if i==" " and not within:
+						if tmpName!="":
+							res.append(tmpName)
+						tmpName = ""
+					else:
+						tmpName += i
+			if tmpName:
+				res.append(tmpName)
+
+			draggedFiles = []
+			filesToErase = []
+
+			for i in res:
+				if isdir(i):
+					draggedFolderPaths.append(i)
+					tmp = Path(i).rglob("*")
+					for p in tmp:
+						draggedFiles.append(abspath(p))
+				else:
+					filesToErase.append(i)
+
+			draggedFiles = list(filter(lambda i:not isdir(i),draggedFiles))
+
+			if len(draggedFiles)==1:
+				draggedFiles = []
+				inputFile = draggedFiles[0]
+			else:
+				inputFile = ""
 
 		# Decide if encrypting or decrypting
 		if ".pcv" in inputFile.split("/")[-1]:
@@ -183,7 +215,7 @@ def inputSelected(draggedFile=None):
 
 		# Show selected file(s)
 		if draggedFiles:
-			inputString.set(f"{len(draggedFiles)} files selected"+
+			inputString.set(f"{len(draggedFiles)} file(s) selected"+
 				" (will encrypt).")
 		else:
 			inputString.set(inputFile.split("/")[-1]+suffix)
@@ -212,6 +244,7 @@ def inputSelected(draggedFile=None):
 
 # Allow drag and drop
 def onDrop(e):
+	print(e.data)
 	inputSelected(e.data)
 tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
@@ -290,7 +323,7 @@ cpasswordInput["state"] = "disabled"
 # Start the encryption/decryption process
 def start():
 	global inputFile,outputFile,password,ad,kept
-	global working,gMode,headerRsc,draggedFiles
+	global working,gMode,headerRsc,draggedFiles,filesToErase
 	global dragFolderPath
 	dummy.focus()
 	reedsolo = False
@@ -347,19 +380,13 @@ def start():
 	if draggedFiles:
 		statusString.set(compressingNotice)
 		tmp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-		if dragFolderPath:
-			zfName = Path(dragFolderPath).parent.absolute()
-			zfName = pathJoin(zfName,tmp+".zip")
-		else:
-			zfName = Path(draggedFiles[0]).parent.absolute()
-			zfName = pathJoin(zfName,tmp+".zip")
+		zfPath = Path(draggedFiles[0]).parent.absolute()
+		zfOffset = len(str(zfPath))
+		zfName = pathJoin(zfPath,tmp+".zip")
 		zf = ZipFile(zfName,"w")
 		for i in draggedFiles:
-			if dragFolderPath:
-				nameOffset = len(dragFolderPath)
-				zf.write(i,i[nameOffset:])
-			else:
-				zf.write(i,pathSplit(i)[1])
+			zf.write(i,i[zfOffset:])
+
 		zf.close()
 		inputFile = zfName
 		outputFile = zfName+".pcv"
@@ -474,7 +501,7 @@ def start():
 		password,
 		salt,
 		time_cost=8, # 8 iterations
-		memory_cost=2**20, # 2^20 Kibibytes (1GiB)
+		memory_cost=2**10, # 2^20 Kibibytes (1GiB)
 		parallelism=8, # 8 parallel threads
 		hash_len=32,
 		type=Type.ID
@@ -687,17 +714,26 @@ def start():
 	fout.close()
 	fin.close()
 
+	print(draggedFolderPaths)
+	print(draggedFiles)
+	print(filesToErase)
+	input()
 	# Securely wipe files as necessary
 	if wipe:
-		progress.config(mode="indeterminate")
-		progress.start(15)
-		if draggedFiles:
-			for i in draggedFiles:
-				print("==============="+i)
+		if draggedFolderPaths:
+			for i in draggedFolderPaths:
 				secureWipe(i)
+		if filesToErase:
+			for i in range(len(filesToErase)):
+				statusString.set(erasingNotice+f" ({i}/{len(filesToErase)}")
+				progress["value"] = i/len(filesToErase)
+				print("Erasing file "+filesToErase[i])
+				secureWipe(filesToErase[i])
 		secureWipe(inputFile)
+	# Secure wipe not enabled
 	else:
 		if draggedFiles:
+			# Remove temporary zip file if created
 			remove(inputFile)
 
 	# Show appropriate notice if file corrupted or modified
@@ -763,10 +799,25 @@ def startWorker():
 
 # Securely wipe file
 def secureWipe(fin):
-	statusString.set("Securely erasing original file...")
+	global draggedFiles
+	statusString.set(erasingNotice)
 	# Check platform, erase accordingly
 	if platform.system()=="Windows":
-		system(f'sdelete64.exe "{fin}" -p 4')
+		if isdir(fin):
+			paths = []
+			for i in Path(fin).rglob("*"):
+				if dirname(i) not in paths:
+					paths.append(dirname(i))
+			for i in range(len(paths)):
+				statusString.set(erasingNotice+f" ({i}/{len(paths)})")
+				progress["value"] = 100*i/len(paths)
+				system(f'cd "{paths[i]}" && "{rootDir}/sdelete64.exe" * -p 4 -s -nobanner')
+			system(f'cd "{i}"')
+			rmtree(fin)
+		else:
+			statusString.set(erasingNotice)
+			progress["value"] = 100
+			system(f'sdelete64.exe "{fin}" -p 4 -nobanner')
 	elif platform.system()=="Darwin":
 		pass
 	else:
@@ -982,7 +1033,7 @@ def createRsc():
 	sys.exit(0)
 	
 def prepare():
-	system("sdelete64.exe /accepteula")
+	system("sdelete64.exe /accepteula -nobanner")
 
 # Close window only if not encrypting or decrypting
 def onClose():
