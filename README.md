@@ -15,7 +15,7 @@ Picocrypt for MacOS is also very easy to use. Download the latest, standalone, a
 
 <strong>Linux</strong>
 
-Since the Linux kernel bundles Python along with the system, all you have to do is go to the <code>src/</code> directory in the files above and download <code>Picocrypt.py</code> or copy it into a Python file. Run it, and dependecies, etc. will be automatically installed. When dependencies are installed, Picocrypt will fire up. The <code>src/</code> directory has more info.
+A .AppImage for Linux is coming soon.
 
 <br>
 Note: For some reason, there's an outdated and useless tool called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related to Picocrypt (this project). <strong>Make sure you only download Picocrypt from this Github repository to ensure that you download the correct and backdoor-free software. Downloading from somewhere else could mean that you're downloading malicious and hacked software!</strong>
