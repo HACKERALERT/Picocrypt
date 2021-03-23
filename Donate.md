@@ -1,4 +1,4 @@
-<strong>Thanks for expressing your interest in donating to Picocrypt. All donations will go toward getting Picocrypt audited. For transparency reasons, I'll periodically update the total amount of donations recieved and approximate how far I am from having enough money to purchase an audit for Picocrypt. If you've donated and would like your name to be shown here, contact me via the contacts on my <a href="https://evansu.cc">website</a>.</strong>
+<strong>Thanks for expressing your interest in donating to Picocrypt. All donations will go toward getting Picocrypt audited. For transparency reasons, I'll periodically update the total amount of donations recieved and approximate how far I am from having enough money to purchase an audit for Picocrypt. If you've donated and would like your name to be shown here, contact me via the contacts on my <a href="https://evansu.cc/#contacts">website</a>.</strong>
 
 Total donations: $0 / ~$8500 USD
 
