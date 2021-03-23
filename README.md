@@ -97,7 +97,7 @@ These are the official Picocrypt social groups and accounts. Be aware of scammer
 </ul>
 
 # Contribution
-If you manage to find a bug or security issue, please create an Issue. If the security problem is severe or critical and could potentially be exploited by hackers if published, please contact me privately <a href="https://evansu.cc/#contacts">here</a>. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm also open to suggestions and features (you can leave an Issue for that).
+If you manage to find a bug or security issue, please create an Issue. If the security problem is severe or critical and could potentially be exploited by hackers if published, please contact me privately <a href="https://evansu.cc/#contacts">here</a>. If one of Picocrypt's dependencies gets a critical security patch, let me know and I'll update the code (if necessary) and recompile the .exe for Windows. I'm also open to suggestions and features (you can leave an Issue or write about it in Discussions).
 
 # Donations
 If you find Picocrypt useful, please consider donating. I've spent countless hours on Picocrypt and I'd love to get Picocrypt along with its dependencies audited by a cybersecurity firm such as Cure53. Audits typically cost <i>thousands</i> of dollars, so I'm asking for your support. If every person who saw this message or uses Picocrypt donated a dollar or two, I'd have enough funds to get Picocrypt audited. For more information about donating, see <a href="Donate.md">here</a>.
