@@ -321,7 +321,7 @@ passwordLabel["state"] = "disabled"
 # A frame to make password input fill width
 passwordFrame = tkinter.Frame(
 	tk,
-	width=440,
+	width=(443 if platform.system()=="Darwin" else 440),
 	height=22
 )
 passwordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=66)
@@ -348,7 +348,7 @@ cpasswordLabel["state"] = "disabled"
 # A frame to make confirm password input fill width
 cpasswordFrame = tkinter.Frame(
 	tk,
-	width=440,
+	width=(443 if platform.system()=="Darwin" else 440),
 	height=22
 )
 cpasswordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=116)
@@ -823,9 +823,9 @@ def start():
 def wrapper():
 	global working,gMode
 	# Try start() and handle errors
-	#try:
-	start()
-	'''except:
+	try:
+		start()
+	except:
 		# Reset UI accordingly
 
 		if gMode=="decrypt":
@@ -836,7 +836,7 @@ def wrapper():
 		statusString.set(unknownErrorNotice)
 		dummy.focus()
 	finally:
-		sys.exit(0)'''
+		sys.exit(0)
 
 # Encryption/decrypt is done is a separate thread so the UI
 # isn't blocked. This is a wrapper to spawn a thread and start it.
