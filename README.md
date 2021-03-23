@@ -7,7 +7,7 @@ Picocrypt is a <i>very tiny</i> (hence "Pico"), very simple, yet very secure fil
 # Download
 <strong>Windows</strong>
 
-Picocrypt for Windows is as easy as it gets. To download the latest, standalone, and portable executable, click <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.10/Picocrypt.exe" target="_blank">here</a></u></strong>. You can also download a specific release from the Releases tab.
+Picocrypt for Windows is as easy as it gets. To download the latest, standalone, and portable executable, click <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.11/Picocrypt.exe" target="_blank">here</a></u></strong>. You can also download a specific release from the Releases tab.
 
 <strong>MacOS</strong>
 
