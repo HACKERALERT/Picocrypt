@@ -1015,7 +1015,7 @@ rsBtn["state"] = "disabled"
 startFrame = tkinter.Frame(
 	tk,
 	width=442,
-	height=25
+	height=24
 )
 startFrame.place(x=19,y=350)
 startFrame.columnconfigure(0,weight=10)
