@@ -297,7 +297,10 @@ clearInput = tkinter.ttk.Button(
 	text="Clear",
 	command=clearInputs
 )
-clearInput.place(x=421,y=14,width=40,height=24)
+if platform.system()=="Darwin":
+	clearInput.place(x=398,y=14,width=64,height=24)
+else:
+	clearInput.place(x=421,y=14,width=40,height=24)
 
 separator = tkinter.ttk.Separator(
 	tk
@@ -321,7 +324,7 @@ passwordFrame = tkinter.Frame(
 	width=440,
 	height=22
 )
-passwordFrame.place(x=20,y=66)
+passwordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=66)
 passwordFrame.columnconfigure(0,weight=10)
 passwordFrame.grid_propagate(False)
 # Password input box
@@ -348,7 +351,7 @@ cpasswordFrame = tkinter.Frame(
 	width=440,
 	height=22
 )
-cpasswordFrame.place(x=20,y=116)
+cpasswordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=116)
 cpasswordFrame.columnconfigure(0,weight=10)
 cpasswordFrame.grid_propagate(False)
 # Confirm password input box
