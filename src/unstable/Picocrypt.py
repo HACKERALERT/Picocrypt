@@ -56,9 +56,9 @@ kept = False
 working = False
 gMode = None
 headerRsc = None
-draggedFiles = False
+allFiles = False
 draggedFolderPaths = False
-filesToErase = False
+files = False
 adString = "File metadata (used to store some text along with the file):"
 compressingNotice = "Compressing files together..."
 passwordNotice = "Error. The provided password is incorrect."
@@ -96,73 +96,61 @@ s = tkinter.ttk.Style()
 s.configure("TCheckbutton",background="#f5f6f7")
 
 # Event when user selects an input file
-def inputSelected(draggedFile=None):
-	global inputFile,working,headerRsc,draggedFiles
-	global draggedFolderPaths,filesToErase
+def inputSelected(draggedFile):
+	global inputFile,working,headerRsc,allFiles
+	global draggedFolderPaths,files
 	dummy.focus()
 	status.config(cursor="")
 	status.bind("<Button-1>",lambda e:None)
 
 	# Try to handle when select file is cancelled
 	try:
-		draggedFiles = None
-		filesToErase = None
+		allFiles = []
+		files = []
 		draggedFolderPaths = []
 		# Ask for input file
 		suffix = ""
-		if not draggedFile:
-			tmp = filedialog.askopenfilename(
-				initialdir=expanduser("~")
-			)
-			if len(tmp)==0:
-				# Exception will be caught by except below
-				raise Exception("No file selected.")
-			inputFile = tmp
-		else:
-			tmp = [i for i in draggedFile]
-			res = []
-			within = False
-			tmpName = ""
-			for i in tmp:
-				if i=="{":
-					within = True
-				elif i=="}":
-					within = False
-					res.append(tmpName)
+		tmp = [i for i in draggedFile]
+		res = []
+		within = False
+		tmpName = ""
+		for i in tmp:
+			if i=="{":
+				within = True
+			elif i=="}":
+				within = False
+				res.append(tmpName)
+				tmpName = ""
+			else:
+				if i==" " and not within:
+					if tmpName!="":
+						res.append(tmpName)
 					tmpName = ""
 				else:
-					print(tmpName)
-					if i==" " and not within:
-						if tmpName!="":
-							res.append(tmpName)
-						tmpName = ""
-					else:
-						tmpName += i
-			if tmpName:
-				res.append(tmpName)
+					tmpName += i
+		if tmpName:
+			res.append(tmpName)
 
-			draggedFiles = []
-			filesToErase = []
+		allFiles = []
+		files = []
 
-			for i in res:
-				if isdir(i):
-					draggedFolderPaths.append(i)
-					tmp = Path(i).rglob("*")
-					for p in tmp:
-						draggedFiles.append(abspath(p))
-				else:
-					filesToErase.append(i)
-
-			draggedFiles = list(filter(lambda i:not isdir(i),draggedFiles))
-
-			if len(draggedFiles)==1:
-				draggedFiles = []
-				inputFile = draggedFiles[0]
+		for i in res:
+			if isdir(i):
+				draggedFolderPaths.append(i)
+				tmp = Path(i).rglob("*")
+				for p in tmp:
+					allFiles.append(abspath(p))
 			else:
-				inputFile = ""
+				files.append(i)
+
+		if len(files)==1 and len(allFiles)==0:
+			inputFile = files[0]
+			files = []
+		else:
+			inputFile = ""
 
 		# Decide if encrypting or decrypting
-		if ".pcv" in inputFile.split("/")[-1]:
+		if inputFile.endswith(".pcv"):
 			suffix = " (will decrypt)"
 			fin = open(inputFile,"rb")
 
@@ -214,9 +202,9 @@ def inputSelected(draggedFile=None):
 			cpasswordString.set("Confirm password:")
 
 		# Show selected file(s)
-		if draggedFiles:
-			inputString.set(f"{len(draggedFiles)} file(s) selected"+
-				" (will encrypt).")
+		if allFiles or files:
+			inputString.set(f"{len(allFiles) or len(files)}"+
+				" file(s) selected (will encrypt).")
 		else:
 			inputString.set(inputFile.split("/")[-1]+suffix)
 
@@ -234,7 +222,7 @@ def inputSelected(draggedFile=None):
 
 	# No file selected, do nothing
 	except:
-		inputString.set("Please select a file.")
+		inputString.set("Please drag and drop files here.")
 		resetUI()
 
 	# Focus the dummy button to remove ugly borders
@@ -244,28 +232,19 @@ def inputSelected(draggedFile=None):
 
 # Allow drag and drop
 def onDrop(e):
-	print(e.data)
 	inputSelected(e.data)
 tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
 
-# Button to select input file
-selectFileInput = tkinter.ttk.Button(
-	tk,
-	text="Select file",
-	command=inputSelected,
-)
-selectFileInput.place(x=19,y=20)
-
 # Label that displays selected input file
 inputString = tkinter.StringVar(tk)
-inputString.set("Please select a file.")
+inputString.set("Please drag and drop files here.")
 selectedInput = tkinter.ttk.Label(
 	tk,
 	textvariable=inputString
 )
 selectedInput.config(background="#f5f6f7")
-selectedInput.place(x=104,y=23)
+selectedInput.place(x=17,y=20)
 
 # Label that prompts user to enter a password
 passwordString = tkinter.StringVar(tk)
@@ -323,7 +302,7 @@ cpasswordInput["state"] = "disabled"
 # Start the encryption/decryption process
 def start():
 	global inputFile,outputFile,password,ad,kept
-	global working,gMode,headerRsc,draggedFiles,filesToErase
+	global working,gMode,headerRsc,allFiles,files
 	global dragFolderPath
 	dummy.focus()
 	reedsolo = False
@@ -377,15 +356,20 @@ def start():
 		rsc = RSCodec(13)
 	
 	# Compress files together if user dragged multiple files
-	if draggedFiles:
+	if allFiles or files:
 		statusString.set(compressingNotice)
 		tmp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-		zfPath = Path(draggedFiles[0]).parent.absolute()
+		if files:
+			zfPath = Path(files[0]).parent.absolute()
+		else:
+			zfPath = Path(dirname(allFiles[0])).parent.absolute()
 		zfOffset = len(str(zfPath))
 		zfName = pathJoin(zfPath,tmp+".zip")
 		zf = ZipFile(zfName,"w")
-		for i in draggedFiles:
+		for i in allFiles:
 			zf.write(i,i[zfOffset:])
+		for i in files:
+			zf.write(i,pathSplit(i)[1])
 
 		zf.close()
 		inputFile = zfName
@@ -403,7 +387,13 @@ def start():
 	wipe = erase.get()==1
 
 	# Open files
-	fin = open(inputFile,"rb")
+	try:
+		fin = open(inputFile,"rb")
+	except:
+		resetEncryptionUI()
+		statusString.set("Folder is empty.")
+		return
+
 	if reedsolo and mode=="decrypt":
 		# Move pointer one forward
 		fin.read(1)
@@ -714,39 +704,33 @@ def start():
 	fout.close()
 	fin.close()
 
-	print(draggedFolderPaths)
-	print(draggedFiles)
-	print(filesToErase)
-	input()
 	# Securely wipe files as necessary
 	if wipe:
 		if draggedFolderPaths:
 			for i in draggedFolderPaths:
 				secureWipe(i)
-		if filesToErase:
-			for i in range(len(filesToErase)):
-				statusString.set(erasingNotice+f" ({i}/{len(filesToErase)}")
-				progress["value"] = i/len(filesToErase)
-				print("Erasing file "+filesToErase[i])
-				secureWipe(filesToErase[i])
+		if files:
+			for i in range(len(files)):
+				statusString.set(erasingNotice+f" ({i}/{len(files)}")
+				progress["value"] = i/len(files)
+				secureWipe(files[i])
 		secureWipe(inputFile)
 	# Secure wipe not enabled
 	else:
-		if draggedFiles:
+		if allFiles:
 			# Remove temporary zip file if created
 			remove(inputFile)
 
 	# Show appropriate notice if file corrupted or modified
 	if not kept:
-		if mode=="encrypt":
-			output = inputFile.split("/")[-1]+".pcv"
-		else:
-			output = inputFile.split("/")[-1].replace(".pcv","")
-		statusString.set(f"Completed. (Output: {output})")
+		statusString.set(f"Completed. (Click here to show output)")
+
 		# Show Reed-Solomon stats if it fixed corrupted bytes
 		if mode=="decrypt" and reedsolo and reedsoloFixedCount:
-			statusString.set(f"Completed with {reedsoloFixedCount} bytes fixed."+
-				f" (Output: {output})")
+			statusString.set(
+				f"Completed with {reedsoloFixedCount}"+
+				f" bytes fixed. (Output: {output})"
+			)
 	else:
 		if kept=="modified":
 			statusString.set(kModifiedNotice)
@@ -756,7 +740,13 @@ def start():
 			statusString.set(kVeryCorruptedNotice)
 	
 	status.config(cursor="hand2")
-	status.bind("<Button-1>",lambda e:print(outputPath))
+	
+	# A little hack since strings are immutable
+	output = "".join([i for i in outputFile])
+	# Bind the output file
+	status.bind("<Button-1>",
+		lambda e:showOutput(output.replace("/","\\"))
+	)
 	
 	# Reset variables and UI states
 	resetUI()
@@ -766,7 +756,7 @@ def start():
 	ad = ""
 	kept = False
 	working = False
-	draggedFiles = False
+	allFiles = False
 	dragFolderPath = False
 	
 	# Wipe keys for safety
@@ -799,7 +789,6 @@ def startWorker():
 
 # Securely wipe file
 def secureWipe(fin):
-	global draggedFiles
 	statusString.set(erasingNotice)
 	# Check platform, erase accordingly
 	if platform.system()=="Windows":
@@ -812,20 +801,19 @@ def secureWipe(fin):
 				statusString.set(erasingNotice+f" ({i}/{len(paths)})")
 				progress["value"] = 100*i/len(paths)
 				system(f'cd "{paths[i]}" && "{rootDir}/sdelete64.exe" * -p 4 -s -nobanner')
-			system(f'cd "{i}"')
+			system(f'cd "{rootDir}"')
 			rmtree(fin)
 		else:
 			statusString.set(erasingNotice)
 			progress["value"] = 100
 			system(f'sdelete64.exe "{fin}" -p 4 -nobanner')
 	elif platform.system()=="Darwin":
-		pass
+		system(f'rm -rfP "{fin}"')
 	else:
 		system(f'shred -uz "{fin}" -n 4')
 
 # Disable all inputs while encrypting/decrypting
 def disableAllInputs():
-	selectFileInput["state"] = "disabled"
 	passwordInput["state"] = "disabled"
 	cpasswordInput["state"] = "disabled"
 	adArea["state"] = "disabled"
@@ -837,7 +825,6 @@ def disableAllInputs():
 # Reset UI to encryption state
 def resetEncryptionUI():
 	global working
-	selectFileInput["state"] = "normal"
 	passwordInput["state"] = "normal"
 	cpasswordInput["state"] = "normal"
 	adArea["state"] = "normal"
@@ -845,12 +832,13 @@ def resetEncryptionUI():
 	eraseBtn["state"] = "normal"
 	rsBtn["state"] = "normal"
 	working = False
+	progress.stop()
+	progress.config(mode="determinate")
 	progress["value"] = 100
 
 # Reset UI to decryption state
 def resetDecryptionUI():
 	global working
-	selectFileInput["state"] = "normal"
 	passwordInput["state"] = "normal"
 	adArea["state"] = "normal"
 	startBtn["state"] = "normal"
@@ -862,7 +850,6 @@ def resetDecryptionUI():
 
 # Reset UI to original state (no file selected)
 def resetUI():
-	selectFileInput["state"] = "normal"
 	adArea["state"] = "normal"
 	adArea.delete("1.0",tkinter.END)
 	adArea["state"] = "disabled"
@@ -875,7 +862,7 @@ def resetUI():
 	cpasswordInput["state"] = "disabled"
 	cpasswordString.set("Confirm password:")
 	progress["value"] = 0
-	inputString.set("Please select a file.")
+	inputString.set("Please drag and drop files here.")
 	keepBtn["state"] = "normal"
 	keep.set(0)
 	keepBtn["state"] = "disabled"
@@ -887,6 +874,15 @@ def resetUI():
 	progress.stop()
 	progress.config(mode="determinate")
 	progress["value"] = 0
+	
+def showOutput(file):
+	if platform.system()=="Windows":
+		system(f'explorer /select,"{file}"')
+	elif platform.system()=="Darwin":
+		system(f'cd "{file}"; open -R .')
+		system(f'cd "{rootDir}"')
+	else:
+		system(f'xdg-open "{dirname(file)}"')
 
 # ad stands for "associated data"/metadata
 adLabelString = tkinter.StringVar(tk)
