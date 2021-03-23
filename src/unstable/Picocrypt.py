@@ -82,7 +82,10 @@ unknownErrorNotice = "Unknown error occured. Please try again."
 tk = TkinterDnD.Tk()
 tk.geometry("480x470")
 tk.title("Picocrypt")
-tk.configure(background="#ffffff")
+if platform.system()=="Darwin":
+	tk.configure(background="#edeced")
+else:
+	tk.configure(background="#ffffff")
 tk.resizable(0,0)
 
 # Try setting window icon if included with Picocrypt
@@ -934,7 +937,7 @@ def showOutput(file):
 	if platform.system()=="Windows":
 		system(f'explorer /select,"{file}"')
 	elif platform.system()=="Darwin":
-		system(f'cd "{file}"; open -R .')
+		system(f'cd "{dirname(file)}"; open -R {pathSplit(file)[1]}')
 		system(f'cd "{rootDir}"')
 	else:
 		system(f'xdg-open "{dirname(file)}"')
@@ -1086,7 +1089,8 @@ def createRsc():
 	sys.exit(0)
 	
 def prepare():
-	system("sdelete64.exe /accepteula")
+	if platform.system()=="Windows":
+		system("sdelete64.exe /accepteula")
 
 # Close window only if not encrypting or decrypting
 def onClose():
