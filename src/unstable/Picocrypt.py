@@ -321,7 +321,7 @@ passwordLabel["state"] = "disabled"
 # A frame to make password input fill width
 passwordFrame = tkinter.Frame(
 	tk,
-	width=(443 if platform.system()=="Darwin" else 440),
+	width=(445 if platform.system()=="Darwin" else 440),
 	height=22
 )
 passwordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=66)
@@ -348,7 +348,7 @@ cpasswordLabel["state"] = "disabled"
 # A frame to make confirm password input fill width
 cpasswordFrame = tkinter.Frame(
 	tk,
-	width=(443 if platform.system()=="Darwin" else 440),
+	width=(445 if platform.system()=="Darwin" else 440),
 	height=22
 )
 cpasswordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=116)
@@ -799,11 +799,16 @@ def start():
 	
 	# A little hack since strings are immutable
 	output = "".join([i for i in outputFile])
+
 	# Bind the output file
-	status.bind("<Button-1>",
-		lambda e:showOutput(output.replace("/","\\"))
-	)
-	
+	if platform.system()=="Windows":
+		status.bind("<Button-1>",
+			lambda e:showOutput(output.replace("/","\\"))
+		)
+	else:
+		status.bind("<Button-1>",
+			lambda e:showOutput(output)
+		)
 	# Reset variables and UI states
 	resetUI()
 	status["state"] = "normal"
@@ -1069,14 +1074,14 @@ credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
 # Version
 versionString = tkinter.StringVar(tk)
-versionString.set("v1.10")
+versionString.set("v1.11")
 version = tkinter.ttk.Label(
 	tk,
 	textvariable=versionString
 )
 version["state"] = "disabled"
 version.config(background="#ffffff")
-version.place(x=430,y=436)
+version.place(x=(420 if platform.system()=="Darwin" else 430),y=436)
 
 # Dummy button to remove focus from other buttons
 # and prevent ugly border highlighting
