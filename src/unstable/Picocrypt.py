@@ -45,7 +45,7 @@ try:
 except:
 	pass
 
-# Global variables and notices
+# Global variables and strings
 rootDir = dirname(realpath(__file__))
 inputFile = ""
 outputFile = ""
@@ -55,7 +55,7 @@ ad = ""
 kept = False
 working = False
 gMode = None
-headerRsc = None
+headerRsc = False
 allFiles = False
 draggedFolderPaths = False
 files = False
@@ -73,7 +73,7 @@ keepNotice = "Keep decrypted output even if it's corrupted or modified"
 eraseNotice = "Securely erase and delete original file"
 erasingNotice = "Securely erasing original file(s)..."
 overwriteNotice = "Output file already exists. Would you like to overwrite it?"
-cancelNotice = "Picocrypt is still working. Are you sure?"
+cancelNotice = "Exiting now will lead to broken output. Are you sure?"
 rsNotice = "Prevent corruption using Reed-Solomon"
 rscNotice = "Creating Reed-Solomon tables..."
 unknownErrorNotice = "Unknown error occured. Please try again."
@@ -96,26 +96,39 @@ except:
 s = tkinter.ttk.Style()
 s.configure("TCheckbutton",background="#ffffff")
 
-# Event when user selects an input file
+# Event when user drags file(s) and folder(s) into window
 def inputSelected(draggedFile):
-	global inputFile,working,headerRsc,allFiles
-	global draggedFolderPaths,files
+	global inputFile,working,headerRsc,allFiles,draggedFolderPaths,files
 	resetUI()
 	dummy.focus()
 	status.config(cursor="")
 	status.bind("<Button-1>",lambda e:None)
 
-	# Try to handle when select file is cancelled
+	# Use try to handle errors
 	try:
+		# Create list of input files
 		allFiles = []
 		files = []
 		draggedFolderPaths = []
-		# Ask for input file
 		suffix = ""
 		tmp = [i for i in draggedFile]
 		res = []
 		within = False
 		tmpName = ""
+
+		"""
+		The next for loop parses data return by tkinterdnd2's file drop method.
+		When files and folders are dragged, the output (the 'draggedFile' parameter)
+		will contain the dropped files/folders and will look something like this:
+		
+		A single file/folder: "C:\Foo\Bar.txt"
+		A single file/folder with a space in path: "{C:\Foo Bar\Lorem.txt}"
+		Multiple files/folders: "C:\Foo\Bar1.txt C:\Foo\Ba2.txt"
+		Multiple files/folders with spaces in paths: 
+			- "C:\Foo\Bar1.txt {C:\Foo Bar\Lorem.txt}"
+			- "{C:\Foo Bar\Lorem.txt} C:\Foo\Bar1.txt"
+			- "{C:\Foo Bar\Lorem1.txt} {C:\Foo Bar\Lorem2.txt}"
+		"""
 		for i in tmp:
 			if i=="{":
 				within = True
@@ -136,15 +149,20 @@ def inputSelected(draggedFile):
 		allFiles = []
 		files = []
 
+		# Check each thing dragged by user
 		for i in res:
+			# If there is a directory, recursively add all files to 'allFiles'
 			if isdir(i):
+				# Record the directory for secure wipe (if necessary)
 				draggedFolderPaths.append(i)
 				tmp = Path(i).rglob("*")
 				for p in tmp:
 					allFiles.append(abspath(p))
+			# Just a file, add it to files
 			else:
 				files.append(i)
 
+		# If there's only one file, set it as input file
 		if len(files)==1 and len(allFiles)==0:
 			inputFile = files[0]
 			files = []
@@ -210,7 +228,7 @@ def inputSelected(draggedFile):
 		nFiles = len(files)
 		nFolders = len(draggedFolderPaths)
 
-		# Show selected file(s)
+		# Show selected file(s) and folder(s)
 		if (allFiles or files) and not draggedFolderPaths:
 			inputString.set(f"{nFiles} files selected (will encrypt).")
 		elif draggedFolderPaths and not files:
@@ -222,11 +240,6 @@ def inputSelected(draggedFile):
 			)
 		else:
 			inputString.set(inputFile.split("/")[-1]+suffix)
-		'''if allFiles or files:
-			inputString.set(f"{len(allFiles) or len(files)}"+
-				" files selected (will encrypt).")
-		else:
-			inputString.set(inputFile.split("/")[-1]+suffix)'''
 
 		# Enable password box, etc.
 		passwordInput["state"] = "normal"
@@ -242,7 +255,7 @@ def inputSelected(draggedFile):
 		statusString.set(corruptedNotice)
 		progress["value"] = 100
 
-	# No file selected, do nothing
+	# No file(s) selected, do nothing
 	except:
 		inputString.set("Drag and drop file(s) and folder(s) into this window.")
 		resetUI()
@@ -252,6 +265,7 @@ def inputSelected(draggedFile):
 		dummy.focus()
 		working = False
 
+# Clears the selected files
 def clearInputs():
 	dummy.focus()
 	resetUI()
@@ -534,7 +548,7 @@ def start():
 		password,
 		salt,
 		time_cost=8, # 8 iterations
-		memory_cost=2**10, # 2^20 Kibibytes (1GiB)
+		memory_cost=2**20, # 2^20 Kibibytes (1GiB)
 		parallelism=8, # 8 parallel threads
 		hash_len=32,
 		type=Type.ID
@@ -1072,7 +1086,7 @@ def createRsc():
 	sys.exit(0)
 	
 def prepare():
-	system("sdelete64.exe /accepteula -nobanner")
+	system("sdelete64.exe /accepteula")
 
 # Close window only if not encrypting or decrypting
 def onClose():
