@@ -73,15 +73,16 @@ keepNotice = "Keep decrypted output even if it's corrupted or modified"
 eraseNotice = "Securely erase and delete original file"
 erasingNotice = "Securely erasing original file(s)..."
 overwriteNotice = "Output file already exists. Would you like to overwrite it?"
+cancelNotice = "Picocrypt is still working. Are you sure?"
 rsNotice = "Prevent corruption using Reed-Solomon"
 rscNotice = "Creating Reed-Solomon tables..."
 unknownErrorNotice = "Unknown error occured. Please try again."
 
 # Create root Tk
 tk = TkinterDnD.Tk()
-tk.geometry("480x480")
+tk.geometry("480x470")
 tk.title("Picocrypt")
-tk.configure(background="#f5f6f7")
+tk.configure(background="#ffffff")
 tk.resizable(0,0)
 
 # Try setting window icon if included with Picocrypt
@@ -93,12 +94,13 @@ except:
 
 # Some styling
 s = tkinter.ttk.Style()
-s.configure("TCheckbutton",background="#f5f6f7")
+s.configure("TCheckbutton",background="#ffffff")
 
 # Event when user selects an input file
 def inputSelected(draggedFile):
 	global inputFile,working,headerRsc,allFiles
 	global draggedFolderPaths,files
+	resetUI()
 	dummy.focus()
 	status.config(cursor="")
 	status.bind("<Button-1>",lambda e:None)
@@ -180,6 +182,8 @@ def inputSelected(draggedFile):
 			adArea.delete("1.0",tkinter.END)
 			adArea.insert("1.0",ad)
 			adArea["state"] = "disabled"
+
+			# Update UI
 			adLabelString.set("File metadata (read only):")
 			keepBtn["state"] = "normal"
 			eraseBtn["state"] = "disabled"
@@ -200,19 +204,37 @@ def inputSelected(draggedFile):
 			cpasswordInput["state"] = "normal"
 			cpasswordInput.delete(0,"end")
 			cpasswordString.set("Confirm password:")
+			cpasswordLabel["state"] = "normal"
+			adLabel["state"] = "normal"
+
+		nFiles = len(files)
+		nFolders = len(draggedFolderPaths)
 
 		# Show selected file(s)
-		if allFiles or files:
-			inputString.set(f"{len(allFiles) or len(files)}"+
-				" file(s) selected (will encrypt).")
+		if (allFiles or files) and not draggedFolderPaths:
+			inputString.set(f"{nFiles} files selected (will encrypt).")
+		elif draggedFolderPaths and not files:
+			inputString.set(f"{nFolders} folder{'s' if nFolders!=1 else ''} selected (will encrypt).")
+		elif draggedFolderPaths and (allFiles or files):
+			inputString.set(
+				f"{nFiles} file{'s' if nFiles!=1 else ''} and "+
+				f"{nFolders} folder{'s' if nFolders!=1 else ''} selected (will encrypt)."
+			)
 		else:
 			inputString.set(inputFile.split("/")[-1]+suffix)
+		'''if allFiles or files:
+			inputString.set(f"{len(allFiles) or len(files)}"+
+				" files selected (will encrypt).")
+		else:
+			inputString.set(inputFile.split("/")[-1]+suffix)'''
 
 		# Enable password box, etc.
 		passwordInput["state"] = "normal"
 		passwordInput.delete(0,"end")
+		passwordLabel["state"] = "normal"
 		startBtn["state"] = "normal"
 		statusString.set("Ready.")
+		status["state"] = "enabled"
 		progress["value"] = 0
 
 	# File decode error
@@ -222,7 +244,7 @@ def inputSelected(draggedFile):
 
 	# No file selected, do nothing
 	except:
-		inputString.set("Please drag and drop files here.")
+		inputString.set("Drag and drop file(s) and folder(s) into this window.")
 		resetUI()
 
 	# Focus the dummy button to remove ugly borders
@@ -230,21 +252,40 @@ def inputSelected(draggedFile):
 		dummy.focus()
 		working = False
 
+def clearInputs():
+	dummy.focus()
+	resetUI()
+
 # Allow drag and drop
 def onDrop(e):
-	inputSelected(e.data)
+	global working
+	if not working:
+		inputSelected(e.data)
 tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
 
 # Label that displays selected input file
 inputString = tkinter.StringVar(tk)
-inputString.set("Please drag and drop files here.")
+inputString.set("Drag and drop file(s) and folder(s) into this window.")
 selectedInput = tkinter.ttk.Label(
 	tk,
 	textvariable=inputString
 )
-selectedInput.config(background="#f5f6f7")
-selectedInput.place(x=17,y=20)
+selectedInput.config(background="#ffffff")
+selectedInput.place(x=17,y=16)
+
+# Clear input files
+clearInput = tkinter.ttk.Button(
+	tk,
+	text="Clear",
+	command=clearInputs
+)
+clearInput.place(x=421,y=14,width=40,height=24)
+
+separator = tkinter.ttk.Separator(
+	tk
+)
+separator.place(x=20,y=36,width=440)
 
 # Label that prompts user to enter a password
 passwordString = tkinter.StringVar(tk)
@@ -253,8 +294,9 @@ passwordLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=passwordString
 )
-passwordLabel.place(x=17,y=56)
-passwordLabel.config(background="#f5f6f7")
+passwordLabel.place(x=17,y=46)
+passwordLabel.config(background="#ffffff")
+passwordLabel["state"] = "disabled"
 
 # A frame to make password input fill width
 passwordFrame = tkinter.Frame(
@@ -262,7 +304,7 @@ passwordFrame = tkinter.Frame(
 	width=440,
 	height=22
 )
-passwordFrame.place(x=20,y=76)
+passwordFrame.place(x=20,y=66)
 passwordFrame.columnconfigure(0,weight=10)
 passwordFrame.grid_propagate(False)
 # Password input box
@@ -279,8 +321,9 @@ cpasswordLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=cpasswordString
 )
-cpasswordLabel.place(x=17,y=106)
-cpasswordLabel.config(background="#f5f6f7")
+cpasswordLabel.place(x=17,y=96)
+cpasswordLabel.config(background="#ffffff")
+cpasswordLabel["state"] = "disabled"
 
 # A frame to make confirm password input fill width
 cpasswordFrame = tkinter.Frame(
@@ -288,7 +331,7 @@ cpasswordFrame = tkinter.Frame(
 	width=440,
 	height=22
 )
-cpasswordFrame.place(x=20,y=126)
+cpasswordFrame.place(x=20,y=116)
 cpasswordFrame.columnconfigure(0,weight=10)
 cpasswordFrame.grid_propagate(False)
 # Confirm password input box
@@ -329,7 +372,7 @@ def start():
 	# Check if file already exists (getsize() throws error if file not found)
 	try:
 		getsize(outputFile)
-		force = messagebox.askyesno("Warning",overwriteNotice)
+		force = messagebox.askyesno("Confirmation",overwriteNotice)
 		dummy.focus()
 		if force!=1:
 			return
@@ -654,44 +697,37 @@ def start():
 				data = cipher.decrypt(piece)
 
 		# Calculate speed, ETA, etc.
-		first = False
 		elapsed = (datetime.now()-previousTime).total_seconds() or 0.0001
 		sinceStart = (datetime.now()-startTime).total_seconds() or 0.0001
 		previousTime = datetime.now()
-		# Prevent divison by zero
-		if not elapsed:
-			elapsed = 0.1**6
+
 		percent = done*100/total
 		progress["value"] = percent
-		rPercent = round(percent)
-		speed = (done/sinceStart)/10**6
-		# Prevent divison by zero
-		if not speed:
-			first = True
-			speed = 0.1**6
-		rSpeed = str(round(speed,2))
-		# Right-pad with zeros to large prevent layout shifts
-		while len(rSpeed.split(".")[1])!=2:
-			rSpeed += "0"
+
+		speed = (done/sinceStart)/10**6 or 0.0001
 		eta = round((total-done)/(speed*10**6))
+
 		# Seconds to minutes if seconds more than 59
 		if eta>=60:
-			eta = f"{eta//60}m {eta%60}"
+			# Set blank ETA if just starting
+			if sinceStart<0.5:
+				eta = "..."
+			else:
+				eta = f"{eta//60}m {eta%60}"
 		if isinstance(eta,int) or isinstance(eta,float):
 			if eta<0:
 				eta = 0
-		# If it's the first round and no data/predictions yet...
-		if first:
-			statusString.set("...% at ... MB/s (ETA: ...s)")
-		else:
-			# Update status
-			info = f"{rPercent}% at {rSpeed} MB/s (ETA: {eta}s)"
-			if reedsolo and mode=="decrypt" and reedsoloFixedCount:
-				eng = "s" if reedsoloFixedCount!=1 else ""
-				info += f", fixed {reedsoloFixedCount} corrupted byte{eng}"
-			if reedsolo and mode=="decrypt" and reedsoloErrorCount:
-				info += f", {reedsoloErrorCount} MB unrecoverable"
-			statusString.set(info)
+
+		# Update status
+		info = f"{percent:.0f}% at {speed:.2f} MB/s (ETA: {eta}s)"
+
+		if reedsolo and mode=="decrypt" and reedsoloFixedCount:
+			tmp = "s" if reedsoloFixedCount!=1 else ""
+			info += f", fixed {reedsoloFixedCount} corrupted byte{tmp}"
+		if reedsolo and mode=="decrypt" and reedsoloErrorCount:
+			info += f", {reedsoloErrorCount} MB unrecoverable"
+
+		statusString.set(info)
 		
 		# Increase done and write to output
 		done += 1104905 if (reedsolo and mode=="decrypt") else chunkSize
@@ -750,6 +786,7 @@ def start():
 	
 	# Reset variables and UI states
 	resetUI()
+	status["state"] = "normal"
 	inputFile = ""
 	outputFile = ""
 	password = ""
@@ -853,16 +890,20 @@ def resetUI():
 	adArea["state"] = "normal"
 	adArea.delete("1.0",tkinter.END)
 	adArea["state"] = "disabled"
+	adLabel["state"] = "disabled"
 	startBtn["state"] = "disabled"
 	passwordInput["state"] = "normal"
 	passwordInput.delete(0,"end")
 	passwordInput["state"] = "disabled"
+	passwordLabel["state"] = "disabled"
 	cpasswordInput["state"] = "normal"
 	cpasswordInput.delete(0,"end")
 	cpasswordInput["state"] = "disabled"
 	cpasswordString.set("Confirm password:")
+	cpasswordLabel["state"] = "disabled"
+	status["state"] = "disabled"
 	progress["value"] = 0
-	inputString.set("Please drag and drop files here.")
+	inputString.set("Drag and drop file(s) and folder(s) into this window.")
 	keepBtn["state"] = "normal"
 	keep.set(0)
 	keepBtn["state"] = "disabled"
@@ -891,8 +932,9 @@ adLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=adLabelString
 )
-adLabel.place(x=17,y=158)
-adLabel.config(background="#f5f6f7")
+adLabel.place(x=17,y=148)
+adLabel.config(background="#ffffff")
+adLabel["state"] = "disabled"
 
 # Frame so metadata text box can fill width
 adFrame = tkinter.Frame(
@@ -900,7 +942,7 @@ adFrame = tkinter.Frame(
 	width=440,
 	height=100
 )
-adFrame.place(x=20,y=178)
+adFrame.place(x=20,y=168)
 adFrame.columnconfigure(0,weight=10)
 adFrame.grid_propagate(False)
 
@@ -923,7 +965,7 @@ keepBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-keepBtn.place(x=18,y=290)
+keepBtn.place(x=18,y=280)
 keepBtn["state"] = "disabled"
 
 # Check box for securely erasing original file
@@ -936,7 +978,7 @@ eraseBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-eraseBtn.place(x=18,y=310)
+eraseBtn.place(x=18,y=300)
 eraseBtn["state"] = "disabled"
 
 # Check box for Reed Solomon
@@ -949,7 +991,7 @@ rsBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-rsBtn.place(x=18,y=330)
+rsBtn.place(x=18,y=320)
 rsBtn["state"] = "disabled"
 
 # Frame so start button can fill width
@@ -958,7 +1000,7 @@ startFrame = tkinter.Frame(
 	width=442,
 	height=25
 )
-startFrame.place(x=19,y=360)
+startFrame.place(x=19,y=350)
 startFrame.columnconfigure(0,weight=10)
 startFrame.grid_propagate(False)
 # Start button
@@ -977,7 +1019,7 @@ progress = tkinter.ttk.Progressbar(
 	length=440,
 	mode="determinate"
 )
-progress.place(x=20,y=388)
+progress.place(x=20,y=378)
 
 # Status label
 statusString = tkinter.StringVar(tk)
@@ -986,8 +1028,9 @@ status = tkinter.ttk.Label(
 	tk,
 	textvariable=statusString
 )
-status.place(x=17,y=416)
-status.config(background="#f5f6f7")
+status.place(x=17,y=406)
+status.config(background="#ffffff")
+status["state"] = "disabled"
 
 # Credits :)
 hint = "Created by Evan Su. Click for details and source."
@@ -999,8 +1042,8 @@ credits = tkinter.ttk.Label(
 	cursor="hand2"
 )
 credits["state"] = "disabled"
-credits.config(background="#f5f6f7")
-credits.place(x=17,y=446)
+credits.config(background="#ffffff")
+credits.place(x=17,y=436)
 source = "https://github.com/HACKERALERT/Picocrypt"
 credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
@@ -1012,8 +1055,8 @@ version = tkinter.ttk.Label(
 	textvariable=versionString
 )
 version["state"] = "disabled"
-version.config(background="#f5f6f7")
-version.place(x=430,y=446)
+version.config(background="#ffffff")
+version.place(x=430,y=436)
 
 # Dummy button to remove focus from other buttons
 # and prevent ugly border highlighting
@@ -1033,8 +1076,13 @@ def prepare():
 
 # Close window only if not encrypting or decrypting
 def onClose():
+	global outputFile
 	if not working:
 		tk.destroy()
+	else:
+		force = messagebox.askyesno("Confirmation",cancelNotice)
+		if force:
+			tk.destroy()
 
 # Main application loop
 if __name__=="__main__":
