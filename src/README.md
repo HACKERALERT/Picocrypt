@@ -1,5 +1,5 @@
 # Instructions For Running Manually
-If you want to run from source or want to use Picocrypt on any Linux distro, you're in the right place. To run Picocrypt from source, first install Python3 (any version >3.6 will do). Next, install these dependencies via <code>pip</code>: <code>argon2-cffi</code>, <code>pycryptodome</code>, and <code>reedsolo</code>.
+If you want to run from source or would like to use Picocrypt on any platform that supports Python, you're in the right place. To run Picocrypt from source, first install Python3 (any version >3.6 will do). Next, install these dependencies via <code>pip</code>: <code>argon2-cffi</code>, <code>pycryptodome</code>, and <code>reedsolo</code>.
 
 # Work in progress, be patient
 
