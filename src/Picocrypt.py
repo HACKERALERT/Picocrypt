@@ -2,7 +2,7 @@
 
 """
 
-Picocrypt v1.11 (Beta)
+Picocrypt v1.11
 Dependencies: argon2-cffi, pycryptodome, reedsolo, tkinterdnd2
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
