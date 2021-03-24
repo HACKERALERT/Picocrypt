@@ -1,6 +1,7 @@
 # v1.12 (soon to be released)
 <ul>
 	<li>Add cancel button to cancel encryption/decryption</li>
+	<li>(Bug) Delete existing file only if password is correct</li>
 	<li>Minor aesthetic fixes</li>
 </ul>
 
