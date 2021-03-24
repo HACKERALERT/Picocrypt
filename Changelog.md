@@ -1,3 +1,9 @@
+# v1.12 (soon to be released)
+<ul>
+	<li>Add cancel button to cancel encryption/decryption</li>
+	<li>Minor aesthetic fixes</li>
+</ul>
+
 # v1.11 (released 3/23/2021)
 <ul>
 	<li>Much more secure wipe via <code>sdelete64</code> for Windows, <code>shred</code> for Linux, and <code>rm -P</code> for MacOS</li>
