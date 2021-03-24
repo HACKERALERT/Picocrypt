@@ -1,5 +1,5 @@
 # Instructions For Running Manually
-If you want to run from source or would like to use Picocrypt on any platform that supports Python, you're in the right place. To run Picocrypt from source, first make sure you have Python3 installed (any version >3.6 will do). Then, download <code>Picocrypt.py</code> from above. Now, install these dependencies via <code>pip</code>: <code>argon2-cffi</code>, <code>pycryptodome</code>, <code>reedsolo</code>, and <code>cython</code>.
+If you want to run from source or would like to use Picocrypt on any platform that supports Python, you're in the right place. To run Picocrypt from source, first make sure you have Python3 installed (any version >3.6 will do). Then, download <code>Picocrypt.py</code> from above (you can download a zip file of the files above from the homepage). Now, install these dependencies via <code>pip</code>: <code>argon2-cffi</code>, <code>pycryptodome</code>, <code>reedsolo</code>, and <code>cython</code>.
 
 Next, download <code>tkinterdnd2.zip</code> from above. Extract it and go into it. Inside, you'll see two Python files and a directory called <code>tkdnd</code>.
 
