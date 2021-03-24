@@ -580,7 +580,6 @@ def start():
 				statusString.set(passwordNotice)
 				fin.close()
 				fout.close()
-				remove(outputFile)
 				# Reset UI
 				resetDecryptionUI()
 				return
