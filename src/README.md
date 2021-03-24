@@ -4,9 +4,9 @@ If you want to run from source or would like to use Picocrypt on any platform th
 Next, download <code>tkinterdnd2.zip</code> from above. Extract it and go into it. Inside, you'll see two Python files and a directory called <code>tkdnd</code>.
 
 Now, find the directory where Python is installed. On Windows, for example, this folder would probably be here:
-<code>C:\Users\(Your username)\AppData\Local\Programs\Python\PythonXX</code>.
+<code>C:\Users\(Your username)\AppData\Local\Programs\Python\PythonXX</code>. Go to there.
 
-Now, go into <code>Lib/</code> and then <code>site-packages</code>. Create a folder named <code>tkinterdnd2</code>. Go into there and copy <code>__init__.py</code> and <code>TkinterDnD.py</code> from the folder you extracted (<code>tkinterdnd2</code>) earlier to here.
+Now, go into <code>Lib/</code> and then <code>site-packages</code>. Create a folder named <code>tkinterdnd2</code>. Go into there and copy <code>\__init__.py</code> and <code>TkinterDnD.py</code> from the folder you extracted (<code>tkinterdnd2</code>) earlier to here.
 
 Next, go back to the directory where Python is installed. Go into <code>tcl/</code> and then <code>tclX.X</code>. Go into the same folder you extracted earlier (<code>tkinterdnd2</code>) and go into <code>tkdnd/</code>, and then go into your respective platform folder. Copy all the files there into the <code>tclX.X</code> directory you just went into.
 
