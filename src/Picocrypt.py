@@ -372,7 +372,7 @@ def start():
 	chunkSize = 2**20
 
 	# Decide if encrypting or decrypting
-	if inputFile.endswith(".pcv"):
+	if not inputFile.endswith(".pcv"):
 		mode = "encrypt"
 		gMode = "encrypt"
 		outputFile = inputFile+".pcv"
