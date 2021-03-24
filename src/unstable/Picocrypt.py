@@ -1122,9 +1122,15 @@ if __name__=="__main__":
 	# Create Reed-Solomon header codec
 	tmp = Thread(target=createRsc,daemon=True)
 	tmp.start()
+
 	# Prepare application
 	tmp = Thread(target=prepare,daemon=True)
 	tmp.start()
+	
+	# Context menu selected file
+	if len(sys.argv)==2:
+		inputSelected("{"+sys.argv[1]+"}")
+
 	# Start tkinter
 	tk.protocol("WM_DELETE_WINDOW",onClose)
 	tk.mainloop()
