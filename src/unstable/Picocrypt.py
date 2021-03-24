@@ -2,7 +2,7 @@
 
 """
 
-Picocrypt v1.11 (Beta)
+Picocrypt v1.12
 Dependencies: argon2-cffi, pycryptodome, reedsolo, tkinterdnd2
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
@@ -252,6 +252,7 @@ def inputSelected(draggedFile):
 		statusString.set("Ready.")
 		status["state"] = "enabled"
 		progress["value"] = 0
+		clearInput["state"] = "normal"
 
 	# File decode error
 	except UnicodeDecodeError:
@@ -298,14 +299,15 @@ clearInput = tkinter.ttk.Button(
 	command=clearInputs
 )
 if platform.system()=="Darwin":
-	clearInput.place(x=398,y=14,width=64,height=24)
+	clearInput.place(x=398,y=15,width=64,height=25)
 else:
-	clearInput.place(x=421,y=14,width=40,height=24)
+	clearInput.place(x=421,y=15,width=40,height=25)
+clearInput["state"] = "disabled"
 
 separator = tkinter.ttk.Separator(
 	tk
 )
-separator.place(x=20,y=36,width=440)
+separator.place(x=20,y=38,width=440)
 
 # Label that prompts user to enter a password
 passwordString = tkinter.StringVar(tk)
@@ -840,6 +842,7 @@ def wrapper():
 
 		statusString.set(unknownErrorNotice)
 		dummy.focus()
+		working = False
 	finally:
 		sys.exit(0)
 
@@ -878,17 +881,20 @@ def secureWipe(fin):
 def disableAllInputs():
 	passwordInput["state"] = "disabled"
 	cpasswordInput["state"] = "disabled"
+	clearInput["state"] = "disabled"
 	adArea["state"] = "disabled"
 	startBtn["state"] = "disabled"
 	eraseBtn["state"] = "disabled"
 	keepBtn["state"] = "disabled"
 	rsBtn["state"] = "disabled"
+	
 
 # Reset UI to encryption state
 def resetEncryptionUI():
 	global working
 	passwordInput["state"] = "normal"
 	cpasswordInput["state"] = "normal"
+	clearInput["state"] = "disabled"
 	adArea["state"] = "normal"
 	startBtn["state"] = "normal"
 	eraseBtn["state"] = "normal"
@@ -902,6 +908,7 @@ def resetEncryptionUI():
 def resetDecryptionUI():
 	global working
 	passwordInput["state"] = "normal"
+	clearInput["state"] = "normal"
 	adArea["state"] = "normal"
 	startBtn["state"] = "normal"
 	keepBtn["state"] = "normal"
@@ -926,6 +933,7 @@ def resetUI():
 	cpasswordInput["state"] = "disabled"
 	cpasswordString.set("Confirm password:")
 	cpasswordLabel["state"] = "disabled"
+	clearInput["state"] = "normal"
 	status["state"] = "disabled"
 	progress["value"] = 0
 	inputString.set("Drag and drop file(s) and folder(s) into this window.")
