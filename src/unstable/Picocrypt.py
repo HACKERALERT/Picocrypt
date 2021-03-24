@@ -23,12 +23,12 @@ from secrets import compare_digest
 from os import urandom,fsync,remove,system
 from os.path import getsize,expanduser,isdir
 from os.path import dirname,abspath,realpath
-from os.path import join as pathJoin
-from os.path import split as pathSplit
+from os.path import join as pathJoin,basename
+from os.path import split as pathSplit,exists
 from tkinterdnd2 import TkinterDnD,DND_FILES
 from zipfile import ZipFile
 from pathlib import Path
-from shutil import rmtree
+from shutil import rmtree,copyfile,copytree
 import sys
 import tkinter
 import tkinter.ttk
@@ -80,7 +80,7 @@ unknownErrorNotice = "Unknown error occured. Please try again."
 
 # Create root Tk
 tk = TkinterDnD.Tk()
-tk.geometry("480x470")
+tk.geometry("480x540")
 tk.title("Picocrypt")
 if platform.system()=="Darwin":
 	tk.configure(background="#edeced")
@@ -204,6 +204,10 @@ def inputSelected(draggedFile):
 			adArea.insert("1.0",ad)
 			adArea["state"] = "disabled"
 
+			outputFrame.config(width=440)
+			outputCheck.delete(0,tkinter.END)
+			outputCheck.insert(0,inputFile[:-4])
+
 			# Update UI
 			adLabelString.set("File metadata (read only):")
 			keepBtn["state"] = "normal"
@@ -227,6 +231,10 @@ def inputSelected(draggedFile):
 			cpasswordString.set("Confirm password:")
 			cpasswordLabel["state"] = "normal"
 			adLabel["state"] = "normal"
+
+			outputFrame.config(width=414)
+			outputCheck.delete(0,tkinter.END)
+			outputCheck.insert(0,inputFile)
 
 		nFiles = len(files)
 		nFolders = len(draggedFolderPaths)
@@ -260,7 +268,8 @@ def inputSelected(draggedFile):
 		progress["value"] = 100
 
 	# No file(s) selected, do nothing
-	except:
+	except Exception as e:
+		print(e)
 		inputString.set("Drag and drop file(s) and folder(s) into this window.")
 		resetUI()
 
@@ -268,6 +277,67 @@ def inputSelected(draggedFile):
 	finally:
 		dummy.focus()
 		working = False
+
+def checkContextMenuBinded():
+	tmp = pathJoin(expanduser("~"),*"/AppData/Roaming/Microsoft/Windows/SendTo/Picocrypt.exe".split("/"))
+	if exists(tmp):
+		contextMenuMenuOn.set(1)
+		contextMenuMenuOff.set(0)
+	else:
+		contextMenuMenuOn.set(0)
+		contextMenuMenuOff.set(1)
+
+def bindContextMenu():
+	target = pathJoin(expanduser("~"),*"/AppData/Roaming/Microsoft/Windows/SendTo/Picocrypt.exe".split("/"))
+	force = messagebox.askyesno("Confirmation","Please select Picocrypt.exe in the next step.")
+	if force:
+		tmp = filedialog.askopenfilename(
+			initialdir=expanduser("~")
+		)
+		if not tmp:
+			return
+		copyfile(tmp,target)
+		checkContextMenuBinded()
+
+def unbindContextMenu():
+	tmp = pathJoin(expanduser("~"),*"/AppData/Roaming/Microsoft/Windows/SendTo/Picocrypt.exe".split("/"))
+	try:
+		remove(tmp)
+	except:
+		pass
+	checkContextMenuBinded()	
+
+def donothing(e):
+	pass
+
+menu = tkinter.Menu(tk)
+
+settings = tkinter.Menu(menu,tearoff=0)
+
+contextMenuMenu = tkinter.Menu(settings,tearoff=0)
+contextMenuMenuOn = tkinter.IntVar()
+contextMenuMenuOff = tkinter.IntVar()
+contextMenuMenu.add_checkbutton(
+	label="On",
+	variable=contextMenuMenuOn,
+	command=bindContextMenu,
+	onvalue=1,
+	offvalue=0
+)
+contextMenuMenu.add_checkbutton(
+	label="Off",
+	variable=contextMenuMenuOff,
+	command=unbindContextMenu,
+	onvalue=1,
+	offvalue=0
+)
+
+settings.add_cascade(label="Context menu option   ",menu=contextMenuMenu)
+
+menu.add_cascade(label="Settings",menu=settings)
+
+
+tk.config(menu=menu)
 
 # Clears the selected files
 def clearInputs():
@@ -309,6 +379,39 @@ separator = tkinter.ttk.Separator(
 )
 separator.place(x=20,y=38,width=440)
 
+outputString = tkinter.StringVar(tk)
+outputString.set("Save output as:")
+outputLabel = tkinter.ttk.Label(
+	tk,
+	textvariable=outputString
+)
+outputLabel.place(x=17,y=46)
+outputLabel.config(background="#ffffff")
+outputLabel["state"] = "disabled"
+
+pvcString = tkinter.StringVar(tk)
+pvcString.set(".pcv")
+pvcLabel = tkinter.ttk.Label(
+	tk,
+	textvariable=pvcString
+)
+pvcLabel.place(x=436,y=66)
+pvcLabel.config(background="#ffffff")
+
+# A frame to make password input fill width
+outputFrame = tkinter.Frame(
+	tk,
+	width=440,
+	height=22
+)
+outputFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=66)
+outputFrame.columnconfigure(0,weight=10)
+outputFrame.grid_propagate(False)
+outputCheck = tkinter.ttk.Entry(
+	outputFrame
+)
+outputCheck.grid(sticky="nesw")
+
 # Label that prompts user to enter a password
 passwordString = tkinter.StringVar(tk)
 passwordString.set("Password:")
@@ -316,7 +419,7 @@ passwordLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=passwordString
 )
-passwordLabel.place(x=17,y=46)
+passwordLabel.place(x=17,y=96)
 passwordLabel.config(background="#ffffff")
 passwordLabel["state"] = "disabled"
 
@@ -326,7 +429,7 @@ passwordFrame = tkinter.Frame(
 	width=(445 if platform.system()=="Darwin" else 440),
 	height=22
 )
-passwordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=66)
+passwordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=116)
 passwordFrame.columnconfigure(0,weight=10)
 passwordFrame.grid_propagate(False)
 # Password input box
@@ -343,7 +446,7 @@ cpasswordLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=cpasswordString
 )
-cpasswordLabel.place(x=17,y=96)
+cpasswordLabel.place(x=17,y=146)
 cpasswordLabel.config(background="#ffffff")
 cpasswordLabel["state"] = "disabled"
 
@@ -353,7 +456,7 @@ cpasswordFrame = tkinter.Frame(
 	width=(445 if platform.system()=="Darwin" else 440),
 	height=22
 )
-cpasswordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=116)
+cpasswordFrame.place(x=(17 if platform.system()=="Darwin" else 20),y=166)
 cpasswordFrame.columnconfigure(0,weight=10)
 cpasswordFrame.grid_propagate(False)
 # Confirm password input box
@@ -374,7 +477,7 @@ def start():
 	chunkSize = 2**20
 
 	# Decide if encrypting or decrypting
-	if ".pcv" not in inputFile:
+	if not inputFile.endswith(".pcv"):
 		mode = "encrypt"
 		gMode = "encrypt"
 		outputFile = inputFile+".pcv"
@@ -391,15 +494,6 @@ def start():
 		# Decrypted output is just input file without the extension
 		outputFile = inputFile[:-4]
 
-	# Check if file already exists (getsize() throws error if file not found)
-	try:
-		getsize(outputFile)
-		force = messagebox.askyesno("Confirmation",overwriteNotice)
-		dummy.focus()
-		if force!=1:
-			return
-	except:
-		pass
 
 	# Disable inputs and buttons while encrypting/decrypting
 	disableAllInputs()
@@ -556,7 +650,7 @@ def start():
 		password,
 		salt,
 		time_cost=8, # 8 iterations
-		memory_cost=2**20, # 2^20 Kibibytes (1GiB)
+		memory_cost=2**10, # 2^20 Kibibytes (1GiB)
 		parallelism=8, # 8 parallel threads
 		hash_len=32,
 		type=Type.ID
@@ -580,6 +674,7 @@ def start():
 				statusString.set(passwordNotice)
 				fin.close()
 				fout.close()
+				remove(outputFile)
 				# Reset UI
 				resetDecryptionUI()
 				return
@@ -851,6 +946,17 @@ def startWorker():
 	thread = Thread(target=wrapper,daemon=True)
 	thread.start()
 
+def begin(already=False):
+	if not already:
+		try:
+			getsize(outputCheck.get())
+			askQuestion.pack(anchor=tkinter.W,fill=tkinter.BOTH,expand=True,side=tkinter.LEFT)
+		except:
+			startWorker()
+	else:
+		askQuestion.pack_forget()
+		startWorker()
+
 # Securely wipe file
 def secureWipe(fin):
 	statusString.set(erasingNotice)
@@ -964,7 +1070,7 @@ adLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=adLabelString
 )
-adLabel.place(x=17,y=148)
+adLabel.place(x=17,y=198)
 adLabel.config(background="#ffffff")
 adLabel["state"] = "disabled"
 
@@ -974,17 +1080,19 @@ adFrame = tkinter.Frame(
 	width=440,
 	height=100
 )
-adFrame.place(x=20,y=168)
+adFrame.place(x=20,y=218)
 adFrame.columnconfigure(0,weight=10)
 adFrame.grid_propagate(False)
 
 # Metadata text box
-adArea = tkinter.Text(
+import tkinter.scrolledtext
+adArea = tkinter.scrolledtext.ScrolledText(
 	adFrame,
-	exportselection=0
+	exportselection=0,
+        height = 5,
 )
 adArea.config(font=("Consolas",12))
-adArea.grid(sticky="we")
+adArea.grid(sticky="nesw")
 adArea["state"] = "disabled"
 
 # Check box for keeping corrupted/modified output
@@ -997,7 +1105,7 @@ keepBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-keepBtn.place(x=18,y=280)
+keepBtn.place(x=18,y=330)
 keepBtn["state"] = "disabled"
 
 # Check box for securely erasing original file
@@ -1010,7 +1118,7 @@ eraseBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-eraseBtn.place(x=18,y=300)
+eraseBtn.place(x=18,y=350)
 eraseBtn["state"] = "disabled"
 
 # Check box for Reed Solomon
@@ -1023,7 +1131,7 @@ rsBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-rsBtn.place(x=18,y=320)
+rsBtn.place(x=18,y=370)
 rsBtn["state"] = "disabled"
 
 # Frame so start button can fill width
@@ -1032,14 +1140,14 @@ startFrame = tkinter.Frame(
 	width=442,
 	height=24
 )
-startFrame.place(x=19,y=350)
+startFrame.place(x=19,y=400)
 startFrame.columnconfigure(0,weight=10)
 startFrame.grid_propagate(False)
 # Start button
 startBtn = tkinter.ttk.Button(
 	startFrame,
 	text="Start",
-	command=startWorker
+	command=begin
 )
 startBtn.grid(sticky="nesw")
 startBtn["state"] = "disabled"
@@ -1051,7 +1159,7 @@ progress = tkinter.ttk.Progressbar(
 	length=440,
 	mode="determinate"
 )
-progress.place(x=20,y=378)
+progress.place(x=20,y=428)
 
 # Status label
 statusString = tkinter.StringVar(tk)
@@ -1060,7 +1168,7 @@ status = tkinter.ttk.Label(
 	tk,
 	textvariable=statusString
 )
-status.place(x=17,y=406)
+status.place(x=17,y=456)
 status.config(background="#ffffff")
 status["state"] = "disabled"
 
@@ -1075,7 +1183,7 @@ credits = tkinter.ttk.Label(
 )
 credits["state"] = "disabled"
 credits.config(background="#ffffff")
-credits.place(x=17,y=436)
+credits.place(x=17,y=486)
 source = "https://github.com/HACKERALERT/Picocrypt"
 credits.bind("<Button-1>",lambda e:webbrowser.open(source))
 
@@ -1088,7 +1196,31 @@ version = tkinter.ttk.Label(
 )
 version["state"] = "disabled"
 version.config(background="#ffffff")
-version.place(x=(420 if platform.system()=="Darwin" else 430),y=436)
+version.place(x=(420 if platform.system()=="Darwin" else 430),y=486)
+
+# Helper to ask/confirm operations
+askQuestion = tkinter.Frame(tk)
+askQuestion.config(background="#ffffff")
+questionString = tkinter.StringVar(tk)
+questionString.set(overwriteNotice)
+question = tkinter.ttk.Label(
+	askQuestion,
+	textvariable=questionString
+)
+question.place(x=90,y=170)
+question.config(background="#ffffff")
+yes = tkinter.ttk.Button(
+	askQuestion,
+	text="Yes",
+	command=lambda:begin(True)
+)
+yes.place(x=160,y=210)
+no = tkinter.ttk.Button(
+	askQuestion,
+	text="No",
+	command=lambda:askQuestion.pack_forget()
+)
+no.place(x=240,y=210)
 
 # Dummy button to remove focus from other buttons
 # and prevent ugly border highlighting
@@ -1106,6 +1238,7 @@ def createRsc():
 def prepare():
 	if platform.system()=="Windows":
 		system("sdelete64.exe /accepteula")
+		checkContextMenuBinded()
 
 # Close window only if not encrypting or decrypting
 def onClose():
@@ -1122,13 +1255,12 @@ if __name__=="__main__":
 	# Create Reed-Solomon header codec
 	tmp = Thread(target=createRsc,daemon=True)
 	tmp.start()
-
 	# Prepare application
 	tmp = Thread(target=prepare,daemon=True)
 	tmp.start()
-	
-	# Context menu selected file
-	if len(sys.argv)==2:
+
+	# Context menu select file
+	if len(sys.argv)>1:
 		inputSelected("{"+sys.argv[1]+"}")
 
 	# Start tkinter
