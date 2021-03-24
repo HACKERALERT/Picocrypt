@@ -16,10 +16,11 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # In progress (will be in next release)
 <ul>
-	<li>Drag and drop files (thanks u/your_username)</li>
+	<li></li>
 </ul>
 
 # Completed
 <ul>
+	<li>Drag and drop files (thanks u/your_username)</li>
 	<li>Create MacOS executables</li>
 </ul>
