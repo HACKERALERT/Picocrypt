@@ -1243,7 +1243,7 @@ def prepare():
 
 def awaitFiles():
 	global filesLoaded
-	selectedInput.set("Loading the file(s) and folder(s) you selected...")
+	inputString.set("Loading the file(s) and folder(s) you selected...")
 	a = open(files,"rb")
 	b = a.read().decode("utf-8")
 	a.close()
