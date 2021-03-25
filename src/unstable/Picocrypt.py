@@ -65,6 +65,7 @@ headerRsc = False
 allFiles = False
 draggedFolderPaths = False
 files = False
+filesLoaded = False
 adString = "File metadata (used to store some text along with the file):"
 compressingNotice = "Compressing files together..."
 passwordNotice = "Error. The provided password is incorrect."
@@ -1241,6 +1242,8 @@ def prepare():
 			bindContextMenu()
 
 def awaitFiles():
+	global filesLoaded
+	selectedInput.set("Loading the file(s) and folder(s) you selected...")
 	a = open(files,"rb")
 	b = a.read().decode("utf-8")
 	a.close()
@@ -1257,13 +1260,17 @@ def awaitFiles():
 	b = b.replace("\r\n"," ").replace('"',"")
 	remove(files)
 	remove(files.replace("files.txt","tmp.txt"))
-	inputSelected(b)
+	try:
+		inputSelected(b)
+	except:
+		pass
+	filesLoaded = True
 	sys.exit(0)
 
 # Close window only if not encrypting or decrypting
 def onClose():
-	global outputFile
-	if not working:
+	global outputFile,filesLoaded
+	if not working and filesLoaded:
 		tk.destroy()
 	else:
 		force = messagebox.askyesno("Confirmation",cancelNotice)
@@ -1288,7 +1295,7 @@ if __name__=="__main__":
 			tmp = Thread(target=awaitFiles,daemon=True)
 			tmp.start()
 		except:
-			pass
+			filesLoaded = True
 
 	# Start tkinter
 	tk.protocol("WM_DELETE_WINDOW",onClose)
