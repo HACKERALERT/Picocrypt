@@ -10,7 +10,7 @@ Now, go into <code>Lib/</code> and then <code>site-packages</code>. Create a fol
 
 Next, go back to the directory where Python is installed. Go into <code>tcl/</code> and then <code>tclX.X</code>. Go into the same folder you extracted earlier and go into <code>tkdnd/</code>, and then go into your respective platform folder. Copy all the files there into the <code>tclX.X</code> directory from above.
 
-Finally, download <code>reedsolo.zip</code> from above, extract it, and go into the folder. Open up a terminal and <code>python setup.py install</code>. When that's finished, go into <code>Build/<code> and then <code>lib.XXXXXXX</code>. You should now have a Python extension called <code>creedsolo.pyd</code> on Windows, <code>creedsolo.so</code> or <code>creedsolo.dylib</code> on MacOS, and <code>creedsolo.so</code> on Linux. Copy this file to the same directory where <code>Picocrypt.py</code> is.
+Finally, download <code>reedsolo.zip</code> from above, extract it, and go into the folder. Open up a terminal and <code>python setup.py install</code>. When that's finished, go into <code>Build/</code> and then <code>lib.XXXXXXX</code>. You should now have a Python extension called <code>creedsolo.pyd</code> on Windows, <code>creedsolo.so</code> or <code>creedsolo.dylib</code> on MacOS, and <code>creedsolo.so</code> on Linux. Copy this file to the same directory where <code>Picocrypt.py</code> is.
 
 Now you're all good. Just <code>python3 Picocrypt.py</code> and enjoy!
 
