@@ -52,7 +52,6 @@ except:
 
 # Global variables and strings
 rootDir = dirname(realpath(__file__))
-
 inputFile = ""
 outputFile = ""
 outputPath = ""
@@ -87,7 +86,7 @@ unknownErrorNotice = "Unknown error occured. Please try again."
 
 # Create root Tk
 tk = TkinterDnD.Tk()
-tk.geometry("480x540")
+tk.geometry("480x520")
 tk.title("Picocrypt")
 if platform.system()=="Darwin":
 	tk.configure(background="#edeced")
@@ -108,7 +107,8 @@ s.configure("TCheckbutton",background="#ffffff")
 
 # Event when user drags file(s) and folder(s) into window
 def inputSelected(draggedFile):
-	global inputFile,working,headerRsc,allFiles,draggedFolderPaths,files
+	global inputFile,working,headerRsc,allFiles
+	global draggedFolderPaths,files,gMode
 	resetUI()
 	dummy.focus()
 	status.config(cursor="")
@@ -161,7 +161,7 @@ def inputSelected(draggedFile):
 
 		# Check each thing dragged by user
 		for i in res:
-			# If there is a directory, recursively add all files to 'allFiles'
+			# If it's a directory, recursively add all files to 'allFiles'
 			if isdir(i):
 				# Record the directory for secure wipe (if necessary)
 				draggedFolderPaths.append(i)
@@ -211,6 +211,9 @@ def inputSelected(draggedFile):
 			adArea.insert("1.0",ad)
 			adArea["state"] = "disabled"
 
+			# Insert the file name into output entry
+			gMode = "decrypt"
+			outputCheck["state"] = "normal"
 			outputFrame.config(width=440)
 			outputCheck.delete(0,tkinter.END)
 			outputCheck.insert(0,inputFile[:-4])
@@ -239,9 +242,19 @@ def inputSelected(draggedFile):
 			cpasswordLabel["state"] = "normal"
 			adLabel["state"] = "normal"
 
+			# Insert the file name into output entry
+			gMode = "encrypt"
+			outputCheck["state"] = "normal"
 			outputFrame.config(width=414)
 			outputCheck.delete(0,tkinter.END)
-			outputCheck.insert(0,inputFile)
+			if inputFile:
+				outputCheck.insert(0,inputFile)
+			else:
+				if files:
+					tmp = Path(files[0]).parent.absolute()
+				else:
+					tmp = Path(draggedFolderPaths[0]).parent.absolute()
+				outputCheck.insert(0,pathJoin(tmp,"Encrypted.zip"))
 
 		nFiles = len(files)
 		nFolders = len(draggedFolderPaths)
@@ -263,6 +276,7 @@ def inputSelected(draggedFile):
 		passwordInput["state"] = "normal"
 		passwordInput.delete(0,"end")
 		passwordLabel["state"] = "normal"
+		outputLabel["state"] = "enabled"
 		startBtn["state"] = "normal"
 		statusString.set("Ready.")
 		status["state"] = "enabled"
@@ -285,15 +299,19 @@ def inputSelected(draggedFile):
 		dummy.focus()
 		working = False
 
+# Add an open on right click in Windows Explorer
+# to open the files in Picocrypt (Windows only)
 def bindContextMenu():
 	tmp = Path(rootDir).parent.absolute()
 	target = pathJoin(expanduser("~"),"Picocrypt")
 	vbs = pathJoin(target,"add_files.vbs")
 
+	# Remove existing installation
 	if exists(target):
 		rmtree(target)
 	copytree(tmp,target)
 
+	# Directory registry key
 	keyVal = "Directory\\Shell\\Open in Picocrypt\\command"
 	try:
 		key = wr.OpenKey(
@@ -309,6 +327,7 @@ def bindContextMenu():
 	wr.SetValueEx(key,"",0,wr.REG_SZ,regEntry)
 	wr.CloseKey(key)
 
+	# File registry key
 	keyVal = "*\\Shell\\Open in Picocrypt\\command"
 	try:
 		key = wr.OpenKey(
@@ -323,6 +342,7 @@ def bindContextMenu():
 	wr.SetValueEx(key,"",0,wr.REG_SZ,regEntry)
 	wr.CloseKey(key)
 
+	# Replace placeholders in files with correct paths
 	a = open(vbs,"rb")
 	b = a.read().decode("utf-8")
 	a.close()
@@ -349,6 +369,7 @@ def onDrop(e):
 	global working
 	if not working:
 		inputSelected(e.data)
+# Bind drag and drop
 tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
 
@@ -374,11 +395,13 @@ else:
 	clearInput.place(x=421,y=15,width=40,height=25)
 clearInput["state"] = "disabled"
 
+# Separator for aesthetics
 separator = tkinter.ttk.Separator(
 	tk
 )
 separator.place(x=20,y=38,width=440)
 
+# Text box where user can change output file
 outputString = tkinter.StringVar(tk)
 outputString.set("Save output as:")
 outputLabel = tkinter.ttk.Label(
@@ -389,14 +412,15 @@ outputLabel.place(x=17,y=46)
 outputLabel.config(background="#ffffff")
 outputLabel["state"] = "disabled"
 
-pvcString = tkinter.StringVar(tk)
-pvcString.set(".pcv")
-pvcLabel = tkinter.ttk.Label(
+# A string that says ".pcv" (next to outputLabel)
+pcvString = tkinter.StringVar(tk)
+pcvString.set(".pcv")
+pcvLabel = tkinter.ttk.Label(
 	tk,
-	textvariable=pvcString
+	textvariable=pcvString
 )
-pvcLabel.place(x=436,y=66)
-pvcLabel.config(background="#ffffff")
+pcvLabel.place(x=436,y=66)
+pcvLabel.config(background="#ffffff")
 
 # A frame to make password input fill width
 outputFrame = tkinter.Frame(
@@ -411,6 +435,7 @@ outputCheck = tkinter.ttk.Entry(
 	outputFrame
 )
 outputCheck.grid(sticky="nesw")
+outputCheck["state"] = "disabled"
 
 # Label that prompts user to enter a password
 passwordString = tkinter.StringVar(tk)
@@ -440,6 +465,7 @@ passwordInput = tkinter.ttk.Entry(
 passwordInput.grid(sticky="nesw")
 passwordInput["state"] = "disabled"
 
+# Confirm password
 cpasswordString = tkinter.StringVar(tk)
 cpasswordString.set("Confirm password:")
 cpasswordLabel = tkinter.ttk.Label(
@@ -477,12 +503,14 @@ def start():
 	chunkSize = 2**20
 
 	# Decide if encrypting or decrypting
-	if not inputFile.endswith(".pcv"):
+	if gMode=="encrypt":
+		outputFile = outputCheck.get()+".pcv"
 		mode = "encrypt"
 		gMode = "encrypt"
-		outputFile = inputFile+".pcv"
+		#outputFile = inputFile+".pcv"
 		reedsolo = rs.get()==1
 	else:
+		outputFile = outputCheck.get()
 		mode = "decrypt"
 		gMode = "decrypt"
 		# Check if Reed-Solomon was enabled by checking for "+"
@@ -491,8 +519,6 @@ def start():
 		test.close()
 		if decider=="+":
 			reedsolo = True
-		# Decrypted output is just input file without the extension
-		outputFile = inputFile[:-4]
 
 
 	# Disable inputs and buttons while encrypting/decrypting
@@ -517,13 +543,13 @@ def start():
 	# Compress files together if user dragged multiple files
 	if allFiles or files:
 		statusString.set(compressingNotice)
-		tmp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+		tmp = outputFile[:-4]
 		if files:
 			zfPath = Path(files[0]).parent.absolute()
 		else:
 			zfPath = Path(dirname(allFiles[0])).parent.absolute()
 		zfOffset = len(str(zfPath))
-		zfName = pathJoin(zfPath,tmp+".zip")
+		zfName = pathJoin(zfPath,tmp)
 		zf = ZipFile(zfName,"w")
 		for i in allFiles:
 			zf.write(i,i[zfOffset:])
@@ -556,7 +582,10 @@ def start():
 	if reedsolo and mode=="decrypt":
 		# Move pointer one forward
 		fin.read(1)
-	fout = open(outputFile,"wb+")
+
+	if mode=="encrypt":
+		fout = open(outputFile,"wb+")
+
 	if reedsolo and mode=="encrypt":
 		# Signal that Reed-Solomon was enabled with a "+"
 		fout.write(b"+")
@@ -634,7 +663,7 @@ def start():
 			if keep.get()!=1:
 				statusString.set(veryCorruptedNotice)
 				fin.close()
-				fout.close()
+				#fout.close()
 				remove(outputFile)
 				# Reset UI
 				resetDecryptionUI()
@@ -673,11 +702,12 @@ def start():
 			if not headerBroken:
 				statusString.set(passwordNotice)
 				fin.close()
-				fout.close()
-				remove(outputFile)
+				#fout.close()
 				# Reset UI
 				resetDecryptionUI()
 				return
+				
+		fout = open(outputFile,"wb+")
 
 	# Create XChaCha20-Poly1305 object
 	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
@@ -863,13 +893,15 @@ def start():
 				secureWipe(i)
 		if files:
 			for i in range(len(files)):
-				statusString.set(erasingNotice+f" ({i}/{len(files)}")
+				statusString.set(
+					erasingNotice+f" ({i}/{len(files)}"
+				)
 				progress["value"] = i/len(files)
 				secureWipe(files[i])
 		secureWipe(inputFile)
 	# Secure wipe not enabled
 	else:
-		if allFiles:
+		if allFiles or files:
 			# Remove temporary zip file if created
 			remove(inputFile)
 
@@ -924,9 +956,9 @@ def start():
 def wrapper():
 	global working,gMode
 	# Try start() and handle errors
-	try:
-		start()
-	except:
+	#try:
+	start()
+	'''except:
 		# Reset UI accordingly
 
 		if gMode=="decrypt":
@@ -938,7 +970,7 @@ def wrapper():
 		dummy.focus()
 		working = False
 	finally:
-		sys.exit(0)
+		sys.exit(0)'''
 
 # Encryption/decrypt is done is a separate thread so the UI
 # isn't blocked. This is a wrapper to spawn a thread and start it.
@@ -946,10 +978,15 @@ def startWorker():
 	thread = Thread(target=wrapper,daemon=True)
 	thread.start()
 
+# A wrapper around startWorker to check if output already exists
 def begin(already=False):
+	global gMode
 	if not already:
 		try:
-			getsize(outputCheck.get())
+			if gMode=="encrypt":
+				getsize(outputCheck.get()+".pcv")
+			else:
+				getsize(outputCheck.get())
 			askConfirmOverwrite.pack(anchor=tkinter.W,fill=tkinter.BOTH,expand=True,side=tkinter.LEFT)
 		except:
 			startWorker()
@@ -992,13 +1029,14 @@ def disableAllInputs():
 	eraseBtn["state"] = "disabled"
 	keepBtn["state"] = "disabled"
 	rsBtn["state"] = "disabled"
-	
+	outputCheck["state"] = "disabled"
 
 # Reset UI to encryption state
 def resetEncryptionUI():
 	global working
 	passwordInput["state"] = "normal"
 	cpasswordInput["state"] = "normal"
+	outputCheck["state"] = "normal"
 	clearInput["state"] = "disabled"
 	adArea["state"] = "normal"
 	startBtn["state"] = "normal"
@@ -1014,6 +1052,7 @@ def resetDecryptionUI():
 	global working
 	passwordInput["state"] = "normal"
 	clearInput["state"] = "normal"
+	outputCheck["state"] = "normal"
 	adArea["state"] = "normal"
 	startBtn["state"] = "normal"
 	keepBtn["state"] = "normal"
@@ -1038,7 +1077,12 @@ def resetUI():
 	cpasswordInput["state"] = "disabled"
 	cpasswordString.set("Confirm password:")
 	cpasswordLabel["state"] = "disabled"
+	outputFrame.config(width=440)
+	outputCheck["state"] = "normal"
+	outputCheck.delete(0,tkinter.END)
+	outputCheck["state"] = "disabled"
 	clearInput["state"] = "normal"
+	outputLabel["state"] = "disabled"
 	status["state"] = "disabled"
 	progress["value"] = 0
 	inputString.set("Drag and drop file(s) and folder(s) into this window.")
