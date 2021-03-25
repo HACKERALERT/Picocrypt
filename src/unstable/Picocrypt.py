@@ -52,6 +52,7 @@ except:
 
 # Global variables and strings
 rootDir = dirname(realpath(__file__))
+
 inputFile = ""
 outputFile = ""
 outputPath = ""
@@ -283,15 +284,6 @@ def inputSelected(draggedFile):
 		dummy.focus()
 		working = False
 
-def checkContextMenuBinded():
-	tmp = pathJoin(expanduser("~"),*"/AppData/Roaming/Microsoft/Windows/SendTo/Picocrypt.exe".split("/"))
-	if exists(tmp):
-		contextMenuMenuOn.set(1)
-		contextMenuMenuOff.set(0)
-	else:
-		contextMenuMenuOn.set(0)
-		contextMenuMenuOff.set(1)
-
 def bindContextMenu():
 	tmp = Path(rootDir).parent.absolute()
 	target = pathJoin(expanduser("~"),"Picocrypt")
@@ -301,7 +293,7 @@ def bindContextMenu():
 		rmtree(target)
 	copytree(tmp,target)
 
-	keyVal = "Directory\\Shell\\Enc\\command"
+	keyVal = "Directory\\Shell\\Open in Picocrypt\\command"
 	try:
 		key = wr.OpenKey(
 			wr.HKEY_CLASSES_ROOT, 
@@ -316,7 +308,7 @@ def bindContextMenu():
 	wr.SetValueEx(key,"",0,wr.REG_SZ,regEntry)
 	wr.CloseKey(key)
 
-	keyVal = "*\\Shell\\Enc\\command"
+	keyVal = "*\\Shell\\Open in Picocrypt\\command"
 	try:
 		key = wr.OpenKey(
 			wr.HKEY_CLASSES_ROOT, 
@@ -345,46 +337,6 @@ def bindContextMenu():
 	a = open(vbs.replace(".vbs",".bat"),"wb")
 	a.write(b.encode("utf-8"))
 	a.close()
-
-def unbindContextMenu():
-	tmp = pathJoin(expanduser("~"),*"/AppData/Roaming/Microsoft/Windows/SendTo/Picocrypt.exe".split("/"))
-	try:
-		remove(tmp)
-	except:
-		pass
-	checkContextMenuBinded()	
-
-def donothing(e):
-	pass
-
-menu = tkinter.Menu(tk)
-
-settings = tkinter.Menu(menu,tearoff=0)
-
-contextMenuMenu = tkinter.Menu(settings,tearoff=0)
-contextMenuMenuOn = tkinter.IntVar()
-contextMenuMenuOff = tkinter.IntVar()
-contextMenuMenu.add_checkbutton(
-	label="On",
-	variable=contextMenuMenuOn,
-	command=bindContextMenu,
-	onvalue=1,
-	offvalue=0
-)
-contextMenuMenu.add_checkbutton(
-	label="Off",
-	variable=contextMenuMenuOff,
-	command=unbindContextMenu,
-	onvalue=1,
-	offvalue=0
-)
-
-settings.add_cascade(label="Context menu option   ",menu=contextMenuMenu)
-
-menu.add_cascade(label="Settings",menu=settings)
-
-
-tk.config(menu=menu)
 
 # Clears the selected files
 def clearInputs():
@@ -997,11 +949,11 @@ def begin(already=False):
 	if not already:
 		try:
 			getsize(outputCheck.get())
-			askQuestion.pack(anchor=tkinter.W,fill=tkinter.BOTH,expand=True,side=tkinter.LEFT)
+			askConfirmOverwrite.pack(anchor=tkinter.W,fill=tkinter.BOTH,expand=True,side=tkinter.LEFT)
 		except:
 			startWorker()
 	else:
-		askQuestion.pack_forget()
+		askConfirmOverwrite.pack_forget()
 		startWorker()
 
 # Securely wipe file
@@ -1246,26 +1198,26 @@ version.config(background="#ffffff")
 version.place(x=(420 if platform.system()=="Darwin" else 430),y=486)
 
 # Helper to ask/confirm operations
-askQuestion = tkinter.Frame(tk)
-askQuestion.config(background="#ffffff")
-questionString = tkinter.StringVar(tk)
-questionString.set(overwriteNotice)
-question = tkinter.ttk.Label(
-	askQuestion,
-	textvariable=questionString
+askConfirmOverwrite = tkinter.Frame(tk)
+askConfirmOverwrite.config(background="#ffffff")
+confirmOverwriteString = tkinter.StringVar(tk)
+confirmOverwriteString.set(overwriteNotice)
+confirmOverwrite = tkinter.ttk.Label(
+	askConfirmOverwrite,
+	textvariable=confirmOverwriteString
 )
-question.place(x=90,y=170)
-question.config(background="#ffffff")
+confirmOverwrite.place(x=90,y=170)
+confirmOverwrite.config(background="#ffffff")
 yes = tkinter.ttk.Button(
-	askQuestion,
+	askConfirmOverwrite,
 	text="Yes",
 	command=lambda:begin(True)
 )
 yes.place(x=160,y=210)
 no = tkinter.ttk.Button(
-	askQuestion,
+	askConfirmOverwrite,
 	text="No",
-	command=lambda:askQuestion.pack_forget()
+	command=lambda:askConfirmOverwrite.pack_forget()
 )
 no.place(x=240,y=210)
 
@@ -1285,7 +1237,8 @@ def createRsc():
 def prepare():
 	if platform.system()=="Windows":
 		system("sdelete64.exe /accepteula")
-		checkContextMenuBinded()
+		if windll.shell32.IsUserAnAdmin():
+			bindContextMenu()
 
 def awaitFiles():
 	a = open(files,"rb")
