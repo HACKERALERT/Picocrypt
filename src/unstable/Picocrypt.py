@@ -29,12 +29,17 @@ from tkinterdnd2 import TkinterDnD,DND_FILES
 from zipfile import ZipFile
 from pathlib import Path
 from shutil import rmtree,copyfile,copytree
+from time import sleep
 import sys
 import tkinter
 import tkinter.ttk
 import tkinter.scrolledtext
 import webbrowser
 import platform
+try:
+	import winreg as wr
+except:
+	pass
 from creedsolo import RSCodec,ReedSolomonError
 
 # Tk/Tcl is a little barbaric, so I'm disabling
@@ -288,16 +293,58 @@ def checkContextMenuBinded():
 		contextMenuMenuOff.set(1)
 
 def bindContextMenu():
-	target = pathJoin(expanduser("~"),*"/AppData/Roaming/Microsoft/Windows/SendTo/Picocrypt.exe".split("/"))
-	force = messagebox.askyesno("Confirmation","Please select Picocrypt.exe in the next step.")
-	if force:
-		tmp = filedialog.askopenfilename(
-			initialdir=expanduser("~")
+	tmp = Path(rootDir).parent.absolute()
+	target = pathJoin(expanduser("~"),"Picocrypt")
+	vbs = pathJoin(target,"add_files.vbs")
+
+	if exists(target):
+		rmtree(target)
+	copytree(tmp,target)
+
+	keyVal = "Directory\\Shell\\Enc\\command"
+	try:
+		key = wr.OpenKey(
+			wr.HKEY_CLASSES_ROOT, 
+			keyVal, 
+			0, 
+			wr.KEY_ALL_ACCESS
 		)
-		if not tmp:
-			return
-		copyfile(tmp,target)
-		checkContextMenuBinded()
+	except WindowsError:
+		key = wr.CreateKey(wr.HKEY_CLASSES_ROOT,keyVal)
+
+	regEntry = (r'wscript "{}" "%1"'.format(vbs))
+	wr.SetValueEx(key,"",0,wr.REG_SZ,regEntry)
+	wr.CloseKey(key)
+
+	keyVal = "*\\Shell\\Enc\\command"
+	try:
+		key = wr.OpenKey(
+			wr.HKEY_CLASSES_ROOT, 
+			keyVal, 
+			0, 
+			wr.KEY_ALL_ACCESS
+		)
+	except WindowsError:
+		key = wr.CreateKey(wr.HKEY_CLASSES_ROOT,keyVal)
+	regEntry = (r'wscript "{}" "%1"'.format(vbs))
+	wr.SetValueEx(key,"",0,wr.REG_SZ,regEntry)
+	wr.CloseKey(key)
+
+	a = open(vbs,"rb")
+	b = a.read().decode("utf-8")
+	a.close()
+	b = b.replace("PICOCRYPT_PATH",target)
+	a = open(vbs,"wb")
+	a.write(b.encode("utf-8"))
+	a.close()
+	
+	a = open(vbs.replace(".vbs",".bat"),"rb")
+	b = a.read().decode("utf-8")
+	a.close()
+	b = b.replace("PICOCRYPT_PATH",target)
+	a = open(vbs.replace(".vbs",".bat"),"wb")
+	a.write(b.encode("utf-8"))
+	a.close()
 
 def unbindContextMenu():
 	tmp = pathJoin(expanduser("~"),*"/AppData/Roaming/Microsoft/Windows/SendTo/Picocrypt.exe".split("/"))
@@ -1240,6 +1287,26 @@ def prepare():
 		system("sdelete64.exe /accepteula")
 		checkContextMenuBinded()
 
+def awaitFiles():
+	a = open(files,"rb")
+	b = a.read().decode("utf-8")
+	a.close()
+	while True:
+		sleep(5)
+		a = open(files,"rb")
+		c = a.read().decode("utf-8")
+		a.close()
+		if b==c:
+			b = c
+			break
+
+	a.close()
+	b = b.replace("\r\n"," ").replace('"',"")
+	remove(files)
+	remove(files.replace("files.txt","tmp.txt"))
+	inputSelected(b)
+	sys.exit(0)
+
 # Close window only if not encrypting or decrypting
 def onClose():
 	global outputFile
@@ -1255,13 +1322,20 @@ if __name__=="__main__":
 	# Create Reed-Solomon header codec
 	tmp = Thread(target=createRsc,daemon=True)
 	tmp.start()
+
 	# Prepare application
 	tmp = Thread(target=prepare,daemon=True)
 	tmp.start()
 
-	# Context menu select file
-	if len(sys.argv)>1:
-		inputSelected("{"+sys.argv[1]+"}")
+	# Windows context menu
+	if platform.system()=="Windows":
+		try:
+			files = pathJoin(Path(rootDir).parent.absolute(),"files.txt")
+			getsize(files)
+			tmp = Thread(target=awaitFiles,daemon=True)
+			tmp.start()
+		except:
+			pass
 
 	# Start tkinter
 	tk.protocol("WM_DELETE_WINDOW",onClose)
