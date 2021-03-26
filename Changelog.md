@@ -3,7 +3,9 @@
 	<li>Add cancel button to cancel encryption/decryption</li>
 	<li>(Bug) Delete existing file only if password is correct</li>
 	<li>Minor aesthetic fixes</li>
+	<li>Complete rewrite from scratch, implementing the audited Monocypher library instead of Pycryptodome, which is not audited.</li>
 </ul>
+<strong>Note: v1.12 will be INCOMPATIBLE with all previous releases!</strong>
 
 # v1.11 (released 3/23/2021)
 <ul>
