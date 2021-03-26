@@ -7,7 +7,6 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 	<li>Add to AUR (Arch User Repo) (thanks u/blackrosae)</li>
 	<li>Android/iOS support (thanks u/fzylqd), potentially via a web interface (thanks @Tutturuuu)</li>
 	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
-	<li>Right click in file explorer and display "Encrypt folder with Picocrypt" (thanks @beerisgood)</li>
 	<li>Full disk encryption (thanks u/playffy)</li>
 	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
 	<li>Hardware keys (thanks u/Tech99bananas)</li>
@@ -16,11 +15,12 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # In progress (will be in next release)
 <ul>
-	<li></li>
+	<li>Switch from Pycryptodome to Monocypher, which is an audited crypto library</li>
 </ul>
 
 # Completed
 <ul>
+	<li>Abandoned due to being unreliable and requires admin rights: Right click in file explorer and display "Encrypt folder with Picocrypt" (thanks @beerisgood)</li>
 	<li>Drag and drop files (thanks u/your_username)</li>
 	<li>Create MacOS executables</li>
 </ul>
