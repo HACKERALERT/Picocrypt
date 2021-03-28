@@ -1,11 +1,12 @@
 # v1.12 (soon to be released)
 <ul>
+	<li>Beautiful UI</li>
 	<li>Add cancel button to cancel encryption/decryption</li>
 	<li>(Bug) Delete existing file only if password is correct</li>
 	<li>Minor aesthetic fixes</li>
-	<li>Complete rewrite from scratch, implementing the audited Monocypher library instead of Pycryptodome, which is not audited</li>
-	<li>Better anti-corruption</li>
-	<li>Switch to BLAKE2b and Argon2d instead of Keccak and Argon2id for better security</li>
+	<li>Complete rewrite from scratch, to ensure reliability and security</li>
+	<li>Better anti-corruption (re-defined header format)</li>
+	<li>Switch to Argon2d instead Argon2id for better security</li>
 </ul>
 <strong>Note: v1.12 will be INCOMPATIBLE with all previous releases!</strong>
 
