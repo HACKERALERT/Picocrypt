@@ -258,7 +258,7 @@ metadataLabel["state"] = "disabled"
 # Frame so metadata box can fill width
 metadataFrame = tkinter.Frame(
 	tk,
-	width=440,
+	width=439,
 	height=99
 )
 metadataFrame.place(x=20,y=220)
@@ -271,13 +271,30 @@ metadataFrame.config(bg="#e5eaf0")
 metadataInput = tkinter.scrolledtext.ScrolledText(
 	metadataFrame,
 	exportselection=0,
-	height=5
+	height=5,
+	padx=5,
+	pady=5
 )
 metadataInput.config(font=("Consolas",12))
 metadataInput.grid(row=0,column=0,sticky="nesw",padx=1,pady=1)
 metadataInput.config(borderwidth=0)
 metadataInput.config(bg="#fbfcfc")
 metadataInput["state"] = "disabled"
+metadataInput.bind(
+	"<FocusIn>",
+	lambda e:metadataBoxUI("in")
+)
+metadataInput.bind(
+	"<FocusOut>",
+	lambda e:metadataBoxUI("out")
+)
+# Tkinter's Text() boxes are ugly, so I beautify it manually
+def metadataBoxUI(what):
+	if what=="in":
+		if metadataInput.cget("bg")=="#ffffff":
+			metadataFrame.config(bg="#78a7e5")
+	else:
+		metadataFrame.config(bg="#d8ddea")
 
 # Check box for keeping corrupted or modified output
 keep = tkinter.IntVar(tk)
@@ -291,7 +308,6 @@ keepBtn = tkinter.ttk.Checkbutton(
 )
 keepBtn.place(x=18,y=329)
 keepBtn["state"] = "disabled"
-
 
 # Check box for securely erasing original files
 erase = tkinter.IntVar(tk)
@@ -355,7 +371,7 @@ progress = tkinter.ttk.Progressbar(
 	length=440,
 	mode="determinate"
 )
-progress.place(x=20,y=438)
+progress.place(x=20,y=439)
 
 # Status label
 statusString = tkinter.StringVar(tk)
@@ -364,9 +380,9 @@ status = tkinter.ttk.Label(
 	tk,
 	textvariable=statusString
 )
-status.place(x=20,y=450)
+status.place(x=20,y=453)
 
-# Credits :)
+# Credits :D
 hint = "Created by Evan Su. Click for details and source."
 creditsString = tkinter.StringVar(tk)
 creditsString.set(hint)
@@ -382,13 +398,13 @@ credits["state"] = "disabled"
 
 # Version
 versionString = tkinter.StringVar(tk)
-versionString.set("v2.0")
+versionString.set("v1.12")
 version = tkinter.ttk.Label(
 	tk,
 	textvariable=versionString
 )
 version["state"] = "disabled"
-version.place(x=435,y=480)
+version.place(x=430,y=480)
 
 # Files have been dragged
 def filesDragged(draggedFiles):
@@ -879,6 +895,7 @@ def resetUI():
 	cPasswordInput["state"] = "disabled"
 	metadataFrame.config(bg="#e5eaf0")
 	metadataInput.config(bg="#fbfcfc")
+	metadataInput.config(fg="#000000")
 	metadataString.set(strings[0])
 	metadataLabel["state"] = "disabled"
 	metadataInput["state"] = "normal"
@@ -907,8 +924,9 @@ def setEncryptionUI():
 	cPasswordLabel["state"] = "normal"
 	cPasswordString.set("Confirm password:")
 	cPasswordInput["state"] = "normal"
-	metadataFrame.config(bg="#dfe4ee")
-	metadataInput.config(background="#ffffff")
+	metadataFrame.config(bg="#d8ddea")
+	metadataInput.config(bg="#ffffff")
+	metadataInput.config(fg="#000000")
 	metadataLabel["state"] = "normal"
 	metadataInput["state"] = "normal"
 	eraseBtn["state"] = "normal"
@@ -926,8 +944,9 @@ def setDecryptionUI():
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
 	cPasswordString.set("Confirm password (N/A):")
-	metadataFrame.config(bg="#959aa0")
-	metadataInput.config(background="#fbfcfc")
+	metadataFrame.config(bg="#e5eaf0")
+	metadataInput.config(bg="#fbfcfc")
+	metadataInput.config(fg="#666666")
 	metadataString.set(strings[19])
 	metadataInput["state"] = "disabled"
 	keepBtn["state"] = "normal"
@@ -944,7 +963,8 @@ def disableAllInputs():
 	cPasswordInput["state"] = "disabled"
 	cPasswordString.set("Confirm password:")
 	metadataFrame.config(bg="#e5eaf0")
-	metadataInput.config(background="#fbfcfc")
+	metadataInput.config(bg="#fbfcfc")
+	metadataInput.config(fg="#666666")
 	metadataInput["state"] = "disabled"
 	startBtn["state"] = "disabled"
 	eraseBtn["state"] = "disabled"
