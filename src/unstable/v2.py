@@ -2,7 +2,7 @@
 
 """
 
-Picocrypt v2.0
+Picocrypt v1.12
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -16,13 +16,13 @@ from threading import Thread
 from datetime import datetime
 from argon2.low_level import hash_secret_raw
 from argon2.low_level import Type as argonType
-from monocypher import lock,unlock,wipe,Blake2b
+from Crypto.Cipher import ChaCha20_Poly1305
+from Crypto.Hash import SHA3_512
 from hmac import compare_digest
 from reedsolo import RSCodec,ReedSolomonError
 from os import urandom,fsync,remove,system
 from os.path import getsize,expanduser,isdir,exists,dirname,abspath,realpath
 from os.path import join as pathJoin,split as pathSplit
-#from os.path import split as pathSplit
 from pathlib import Path
 from zipfile import ZipFile
 from tkinterdnd2 import TkinterDnD,DND_FILES
@@ -41,7 +41,6 @@ working = False
 mode = False
 inputFile = False
 outputFile = False
-kept = False
 rs128 = False
 rs13 = False
 allFiles = False
@@ -66,7 +65,7 @@ strings = [
 	"Output file already exists. Would you like to overwrite it?",
 	"Exiting now will lead to broken output. Are you sure?",
 	"Prevent corruption using Reed-Solomon",
-	"",
+	"Error. Folder(s) and/or file(s) are empty.",
 	"Unknown error occured. Please try again.",
 	"Drag and drop file(s) and folder(s) into this window.",
 	"File metadata (read-only):",
@@ -97,21 +96,21 @@ def Get_HWND_DPI(window_handle):
 		windll.shcore.GetDpiForMonitor(
 			monitorhandle,DPI_type,pointer(X),pointer(Y)
 		)
-		return X.value,Y.value,(X.value+Y.value)/(2*DPI100pc)
+		return X.value*2,Y.value*2,(X.value+Y.value)/(2*DPI100pc)
 	except Exception:
 		return 96,96,1
 def TkGeometryScale(s,cvtfunc):
-    patt = r"(?P<W>\d+)x(?P<H>\d+)\+(?P<X>\d+)\+(?P<Y>\d+)"
-    R = re.compile(patt).search(s)
-    G = str(cvtfunc(R.group("W")))+"x"
-    G += str(cvtfunc(R.group("H")))+"+"
-    G += str(cvtfunc(R.group("X")))+"+"
-    G += str(cvtfunc(R.group("Y")))
-    return G
+	patt = r"(?P<W>\d+)x(?P<H>\d+)\+(?P<X>\d+)\+(?P<Y>\d+)"
+	R = re.compile(patt).search(s)
+	G = str(cvtfunc(R.group("W")))+"x"
+	G += str(cvtfunc(R.group("H")))+"+"
+	G += str(cvtfunc(R.group("X")))+"+"
+	G += str(cvtfunc(R.group("Y")))
+	return G
 def MakeTkDPIAware(TKGUI):
-    TKGUI.DPI_X,TKGUI.DPI_Y,TKGUI.DPI_scaling = Get_HWND_DPI(TKGUI.winfo_id())
-    TKGUI.TkScale = lambda v:int(float(v)* TKGUI.DPI_scaling)
-    TKGUI.TkGeometryScale = lambda s:TkGeometryScale(s,TKGUI.TkScale)
+	TKGUI.DPI_X,TKGUI.DPI_Y,TKGUI.DPI_scaling = Get_HWND_DPI(TKGUI.winfo_id())
+	TKGUI.TkScale = lambda v:int(float(v)*TKGUI.DPI_scaling)
+	TKGUI.TkGeometryScale = lambda s:TkGeometryScale(s,TKGUI.TkScale)
 if platform.system()=="Windows":
 	MakeTkDPIAware(tk)
 
@@ -259,33 +258,25 @@ metadataLabel["state"] = "disabled"
 # Frame so metadata box can fill width
 metadataFrame = tkinter.Frame(
 	tk,
-	width=444,
+	width=440,
 	height=99
 )
 metadataFrame.place(x=20,y=220)
 metadataFrame.columnconfigure(0,weight=10)
 metadataFrame.rowconfigure(0,weight=10)
 metadataFrame.grid_propagate(False)
-metadataFrame.config(bg="#dfe4ee")
-
-# Metadata scrollbar
-metadataScrollbar = tkinter.ttk.Scrollbar(
-	metadataFrame,
-	cursor="hand2"
-)
-metadataScrollbar.grid(row=0,column=1,sticky="nesw")
+metadataFrame.config(bg="#e5eaf0")
 
 # Metadata text box
-metadataInput = tkinter.Text(
+metadataInput = tkinter.scrolledtext.ScrolledText(
 	metadataFrame,
 	exportselection=0,
-	height=5,
-	yscrollcommand=metadataScrollbar.set
+	height=5
 )
 metadataInput.config(font=("Consolas",12))
 metadataInput.grid(row=0,column=0,sticky="nesw",padx=1,pady=1)
 metadataInput.config(borderwidth=0)
-metadataScrollbar.config(command=metadataInput.yview)
+metadataInput.config(bg="#fbfcfc")
 metadataInput["state"] = "disabled"
 
 # Check box for keeping corrupted or modified output
@@ -295,7 +286,8 @@ keepBtn = tkinter.ttk.Checkbutton(
 	text=strings[10],
 	variable=keep,
 	onvalue=1,
-	offvalue=0
+	offvalue=0,
+	command=lambda:dummy.focus()
 )
 keepBtn.place(x=18,y=329)
 keepBtn["state"] = "disabled"
@@ -308,7 +300,8 @@ eraseBtn = tkinter.ttk.Checkbutton(
 	text=strings[11],
 	variable=erase,
 	onvalue=1,
-	offvalue=0
+	offvalue=0,
+	command=lambda:dummy.focus()
 )
 eraseBtn.place(x=18,y=349)
 eraseBtn["state"] = "disabled"
@@ -320,7 +313,8 @@ rsBtn = tkinter.ttk.Checkbutton(
 	text=strings[15],
 	variable=rs,
 	onvalue=1,
-	offvalue=0
+	offvalue=0,
+	command=lambda:dummy.focus()
 )
 rsBtn.place(x=18,y=369)
 rsBtn["state"] = "disabled"
@@ -468,11 +462,19 @@ def filesDragged(draggedFiles):
 			suffix = " (will decrypt)"
 	
 			# Read file metadata
+			fin = open(inputFile,"rb")
+			fin.read(129)
+			metadataLength = fin.read(138)
+			metadataLength = bytes(rs128.decode(metadataLength)[0])
+			metadataLength = metadataLength.replace(b"+",b"")
+			metadata = fin.read(int(metadataLength.decode("utf-8")))
+			metadata = bytes(rs128.decode(metadata)[0]).decode("utf-8")
 			metadataString.set("File metadata (read only):")
 			metadataInput["state"] = "normal"
 			metadataInput.delete("1.0",tkinter.END)
-			metadataInput.insert("1.0","hi")
+			metadataInput.insert("1.0",metadata)
 			metadataInput["state"] = "disabled"
+			fin.close()
 			
 			# Insert filename into output box
 			outputFrame.config(width=440)
@@ -522,9 +524,9 @@ def filesDragged(draggedFiles):
 		statusString.set(strings[20])
 		progress["value"] = 100
 	
-	# Nothing happened, reset UI
+	# Nothing happened
 	except:
-		resetUI()
+		pass
 	
 # Bind drag and drop to window
 def onDrop(e):
@@ -540,10 +542,16 @@ def work():
 	global inputFile,outputFile,working,mode,rs13,rs128,onlyFiles,onlyFolders,allFiles
 	disableAllInputs()
 	dummy.focus()
-	
+
 	# Set and get some variables
+	kept = False
+	shouldKeep = keep.get()==1
+	shouldErase = erase.get()==1
+	reedsolo = rs.get()==1
 	working = True
 	headerBroken = False
+	reedsoloFixed = 0
+	reedsoloErrors = 0
 	password = passwordInput.get().encode("utf-8")
 	metadata = metadataInput.get("1.0",tkinter.END).encode("utf-8")
 	
@@ -589,18 +597,16 @@ def work():
 		fin = open(inputFile,"rb")
 	except:
 		setEncryptionUI()
-		statusString.set("Error. Folder is empty.")
+		statusString.set(strings[16])
 		return
 	
 	if mode=="encrypt":
 		salt = urandom(16)
+		nonce = urandom(24)
 		fout = open(outputFile,"wb+")
-		#print(rs128.encode(b"-"))
-		if rs.get()==1:
-			reedsolo = True
+		if reedsolo:
 			fout.write(rs128.encode(b"+"))
 		else:
-			reedsolo = False
 			fout.write(rs128.encode(b"-"))
 	
 		metadata = rs128.encode(metadata)
@@ -608,36 +614,33 @@ def work():
 		tmp = f"{tmp:+<10}"
 		tmp = rs128.encode(tmp.encode("utf-8"))
 		
-		#print(tmp)
-		#print(metadata)
-		#print(rs128.encode(salt))
 		fout.write(tmp)
 		fout.write(metadata)
 		fout.write(rs128.encode(salt)) # Argon2 salt
-		fout.write(b"0"*192) # BLAKE2 of key
-		fout.write(b"0"*192) # BLAKE2 MAC
-		fout.write(b"0"*192) # BLAKE2 CRC
+		fout.write(rs128.encode(nonce)) # ChaCha20 nonce
+		fout.write(b"0"*192) # Hash of key
+		fout.write(b"0"*144) # Poly1305 MAC
+		fout.write(b"0"*192) # CRC
 	else:
 		tmp = fin.read(129)
-		#print(tmp)
 		if bytes(rs128.decode(tmp)[0])==b"+":
 			reedsolo = True
 		else:
 			reedsolo = False
+
 		metadataLength = fin.read(138)
-		#print(metadataLength)
 		metadataLength = bytes(rs128.decode(metadataLength)[0])
 		metadataLength = metadataLength.replace(b"+",b"")
-		#print(metadataLength)
 		fin.read(int(metadataLength.decode("utf-8")))
+
 		salt = fin.read(144)
-		#print(salt)
+		nonce = fin.read(152)
 		keycs = fin.read(192)
-		#print(keycs)
-		maccs = fin.read(192)
+		maccs = fin.read(144)
 		crccs = fin.read(192)
 		
 		salt = bytes(rs128.decode(salt)[0])
+		nonce = bytes(rs128.decode(nonce)[0])
 		keycs = bytes(rs128.decode(keycs)[0])
 		maccs = bytes(rs128.decode(maccs)[0])
 		crccs = bytes(rs128.decode(crccs)[0])
@@ -648,7 +651,7 @@ def work():
 		password,
 		salt,
 		time_cost=8,
-		memory_cost=2**20,
+		memory_cost=2**10,
 		parallelism=8,
 		hash_len=32,
 		type=argonType.D
@@ -658,9 +661,7 @@ def work():
 	progress.config(mode="determinate")
 	progress["value"] = 0
 	
-	check = Blake2b(hash_size=64)
-	check.update(key)
-	check = check.finalize()
+	check = SHA3_512.new(data=key).digest()
 	
 	if mode=="decrypt":
 		if not compare_digest(check,keycs):
@@ -671,67 +672,36 @@ def work():
 				return
 		fout = open(outputFile,"wb+")
 	
-	crc = Blake2b(hash_size=64)
-	subKey = Blake2b(hash_size=32)
-	subKey.update(key)
-	subKey = subKey.finalize()
-	mac = Blake2b(key=subKey,hash_size=64)
+	crc = SHA3_512.new()
+	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
 	
 	done = 0
 	total = getsize(inputFile)
 	
 	startTime = datetime.now()
 	previousTime = datetime.now()
-	
-	counter = 0
 	while True:
 		if mode=="encrypt":
-			piece = fin.read(2**25)
-			if not piece:
-				break
-			tag = f"{counter:+>32}".encode("utf-8")
-			piece += tag
+			piece = fin.read(2**20)
 		else:
-			piece = fin.read(2**25+200)
-			if not piece:
-				break
+			piece = fin.read(2**20)
+
+		if not piece:
+			break
+
 		if mode=="encrypt":
-			nonce = urandom(24)
-			digest,data = lock(key,nonce,piece)
-			crc.update(data)
-			mac.update(data)
-			fout.write(nonce)
-			fout.write(digest)
+			data = cipher.encrypt(piece)
 			fout.write(data)
-			#print(nonce)
-			#print("=====")
-			#print(digest)
-			#print("=======")
-			#print(data)
 		else:
-			nonce = piece[:24]
-			digest = piece[24:40]
-			piece = piece[40:]
-			#print(nonce)
-			#print("=====")
-			#print(digest)
-			#print("=======")
-			#print(piece)
-			crc.update(piece)
-			mac.update(piece)
-			data = unlock(key,nonce,digest,piece)
-			if int(data[-32:].replace(b"+",b"").decode("utf-8"))!=counter:
-				print("Counter failed")
-			fout.write(data[:-32])
+			data = cipher.decrypt(piece)
+			fout.write(data)
 			
-		counter += 1
 		elapsed = (datetime.now()-previousTime).total_seconds() or 0.0001
 		sinceStart = (datetime.now()-startTime).total_seconds() or 0.0001
 		previousTime = datetime.now()
-
 		percent = done*100/total
 		progress["value"] = percent
-
+		done += 2**20
 		speed = (done/sinceStart)/10**6 or 0.0001
 		eta = round((total-done)/(speed*10**6))
 		
@@ -745,19 +715,18 @@ def work():
 
 		statusString.set(info)
 		
-		# Increase done and write to output
-		done += 2**25
+		
 	
 	if mode=="encrypt":
 		fout.flush()
 		fout.close()
 		fout = open(outputFile,"r+b")
-		fout.seek(129+138+len(metadata)+144)
+		fout.seek(129+138+len(metadata)+144+152)
 		fout.write(rs128.encode(check))
-		fout.write(rs128.encode(mac.finalize()))
-		fout.write(rs128.encode(crc.finalize()))
+		fout.write(rs128.encode(cipher.digest()))
+		fout.write(rs128.encode(crc.digest()))
 	else:
-		if not compare_digest(crccs,crc.finalize()):
+		if not compare_digest(crccs,crc.digest()):
 			statusString.set(strings[3])
 			progress["value"] = 100
 			fin.close()
@@ -771,7 +740,9 @@ def work():
 				if not kept:
 					kept = "corrupted"
 		
-		if not compare_digest(maccs,mac.finalize()):
+		try:
+			cipher.verify(maccs)
+		except:
 			#if not reedsoloErrorCount and not headerBroken:
 			if True:
 				# File is modified
@@ -799,7 +770,7 @@ def work():
 	
 	print("DONEDONEDONEDONEDONEDONEDONEDONEDONEDONE")
 	# Securely wipe files as necessary
-	if wipe:
+	if shouldErase:
 		if onlyFolders:
 			for i in onlyFolders:
 				secureWipe(i)
@@ -854,12 +825,9 @@ def work():
 	resetUI()
 	inputFile = ""
 	outputFile = ""
-	password = ""
-	metadata = ""
-	kept = False
 	working = False
-	allFiles = False
-	onlyFolders = False
+	allFiles = []
+	onlyFolders = []
 	onlyFiles = []
 	
 	# Wipe keys for safety
@@ -909,6 +877,8 @@ def resetUI():
 	cPasswordInput["state"] = "normal"
 	cPasswordInput.delete(0,"end")
 	cPasswordInput["state"] = "disabled"
+	metadataFrame.config(bg="#e5eaf0")
+	metadataInput.config(bg="#fbfcfc")
 	metadataString.set(strings[0])
 	metadataLabel["state"] = "disabled"
 	metadataInput["state"] = "normal"
@@ -935,7 +905,10 @@ def setEncryptionUI():
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
 	cPasswordLabel["state"] = "normal"
+	cPasswordString.set("Confirm password:")
 	cPasswordInput["state"] = "normal"
+	metadataFrame.config(bg="#dfe4ee")
+	metadataInput.config(background="#ffffff")
 	metadataLabel["state"] = "normal"
 	metadataInput["state"] = "normal"
 	eraseBtn["state"] = "normal"
@@ -952,6 +925,9 @@ def setDecryptionUI():
 	outputFrame.config(width=440)
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
+	cPasswordString.set("Confirm password (N/A):")
+	metadataFrame.config(bg="#959aa0")
+	metadataInput.config(background="#fbfcfc")
 	metadataString.set(strings[19])
 	metadataInput["state"] = "disabled"
 	keepBtn["state"] = "normal"
@@ -966,6 +942,9 @@ def disableAllInputs():
 	outputInput["state"] = "disabled"
 	passwordInput["state"] = "disabled"
 	cPasswordInput["state"] = "disabled"
+	cPasswordString.set("Confirm password:")
+	metadataFrame.config(bg="#e5eaf0")
+	metadataInput.config(background="#fbfcfc")
 	metadataInput["state"] = "disabled"
 	startBtn["state"] = "disabled"
 	eraseBtn["state"] = "disabled"
