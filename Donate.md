@@ -2,6 +2,9 @@
 
 Total donations: $0 / ~$8500 USD
 
+# Open Collective (highly preferred)
+https://opencollective.com/picocrypt
+
 # Crypto
 <ul>
     <li>BTC: <code>1DAMBEKyfUCzRfaKThVYDBrmTdrcWakUnw</code></li>
