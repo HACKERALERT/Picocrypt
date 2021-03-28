@@ -23,9 +23,6 @@ https://opencollective.com/picocrypt
     <li>XMR: <code>44Ymf12fj5sZDfjSJHyNieLBXxJww2zhCBCv94DVzCFb48jwwyC9uEPfEZuMSUXgePeWniWi4Gm3qhhksaYSCzbtDGg186o</code></li>
 </ul>
 
-# Buy Me A Coffee
-https://www.buymeacoffee.com/Picocrypt
-
 # PayPal
 https://paypal.me/evanyiwensu
 
