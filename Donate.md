@@ -2,9 +2,6 @@
 
 Total donations: $0 / ~$8500 USD
 
-# Ko-Fi (preferred)
-https://ko-fi.com/picocrypt
-
 # Crypto
 <ul>
     <li>BTC: <code>1DAMBEKyfUCzRfaKThVYDBrmTdrcWakUnw</code></li>
