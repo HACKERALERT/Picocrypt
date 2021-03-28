@@ -15,7 +15,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # In progress (will be in next release)
 <ul>
-	<li>Switch from Pycryptodome to Monocypher, which is an audited crypto library</li>
+	<li>Rewrite from scratch to implement much better UI</li>
 </ul>
 
 # Completed
