@@ -17,7 +17,7 @@ from datetime import datetime
 from argon2.low_level import hash_secret_raw
 from argon2.low_level import Type as argonType
 from Crypto.Cipher import ChaCha20_Poly1305
-from Crypto.Hash import SHA3_512
+from Crypto.Hash import SHA3_512,BLAKE2b
 from hmac import compare_digest
 from reedsolo import RSCodec,ReedSolomonError
 from os import urandom,fsync,remove,system
@@ -27,6 +27,7 @@ from pathlib import Path
 from zipfile import ZipFile
 from tkinterdnd2 import TkinterDnD,DND_FILES
 from ttkthemes import ThemedStyle
+from time import sleep
 import re
 import sys
 import tkinter
@@ -46,6 +47,9 @@ rs13 = False
 allFiles = False
 onlyFolders = False
 onlyFiles = False
+startTime = False
+previousTime = False
+done = False
 
 # Strings
 strings = [
@@ -555,7 +559,8 @@ tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
 
 def work():
-	global inputFile,outputFile,working,mode,rs13,rs128,onlyFiles,onlyFolders,allFiles
+	global inputFile,outputFile,working,mode,rs13,rs128,done
+	global startTime,previousTime,onlyFiles,onlyFolders,allFiles
 	disableAllInputs()
 	dummy.focus()
 
@@ -688,7 +693,7 @@ def work():
 				return
 		fout = open(outputFile,"wb+")
 	
-	crc = SHA3_512.new()
+	crc = BLAKE2b.new(digest_bits=512)
 	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
 	
 	done = 0
@@ -696,6 +701,8 @@ def work():
 	
 	startTime = datetime.now()
 	previousTime = datetime.now()
+	
+	Thread(target=updateStats,daemon=True,args=(total,)).start()
 	while True:
 		if mode=="encrypt":
 			piece = fin.read(2**20)
@@ -707,31 +714,13 @@ def work():
 
 		if mode=="encrypt":
 			data = cipher.encrypt(piece)
-			fout.write(data)
+			#crc.update(data)
 		else:
+			#crc.update(piece)
 			data = cipher.decrypt(piece)
-			fout.write(data)
 			
-		elapsed = (datetime.now()-previousTime).total_seconds() or 0.0001
-		sinceStart = (datetime.now()-startTime).total_seconds() or 0.0001
-		previousTime = datetime.now()
-		percent = done*100/total
-		progress["value"] = percent
+		fout.write(data)
 		done += 2**20
-		speed = (done/sinceStart)/10**6 or 0.0001
-		eta = round((total-done)/(speed*10**6))
-		
-		info = f"{percent:.0f}% at {speed:.2f} MB/s (ETA: {eta}s)"
-
-		'''if reedsolo and mode=="decrypt" and reedsoloFixedCount:
-			tmp = "s" if reedsoloFixedCount!=1 else ""
-			info += f", fixed {reedsoloFixedCount} corrupted byte{tmp}"
-		if reedsolo and mode=="decrypt" and reedsoloErrorCount:
-			info += f", {reedsoloErrorCount} MB unrecoverable"'''
-
-		statusString.set(info)
-		
-		
 	
 	if mode=="encrypt":
 		fout.flush()
@@ -778,6 +767,7 @@ def work():
 						
 	# Flush outputs, close files
 	#if not kept:
+	working = False
 	if True:
 		fout.flush()
 		fsync(fout.fileno())
@@ -785,6 +775,7 @@ def work():
 	fin.close()
 	
 	print("DONEDONEDONEDONEDONEDONEDONEDONEDONEDONE")
+
 	# Securely wipe files as necessary
 	if shouldErase:
 		if onlyFolders:
@@ -841,14 +832,38 @@ def work():
 	resetUI()
 	inputFile = ""
 	outputFile = ""
-	working = False
 	allFiles = []
 	onlyFolders = []
 	onlyFiles = []
 	
 	# Wipe keys for safety
 	#del fin,fout,cipher,key
-	
+
+def updateStats(total):
+	global startTime,previousTime,done,working
+	while True:
+		if not working:
+			sys.exit(0)
+			break
+		elapsed = (datetime.now()-previousTime).total_seconds() or 0.0001
+		sinceStart = (datetime.now()-startTime).total_seconds() or 0.0001
+		previousTime = datetime.now()
+		percent = done*100/total
+		progress["value"] = percent
+		
+		speed = (done/sinceStart)/10**6 or 0.0001
+		eta = round((total-done)/(speed*10**6))
+		
+		info = f"{min(percent,100):.0f}% at {speed:.2f} MB/s (ETA: {max(eta,0)}s)"
+
+		'''if reedsolo and mode=="decrypt" and reedsoloFixedCount:
+			tmp = "s" if reedsoloFixedCount!=1 else ""
+			info += f", fixed {reedsoloFixedCount} corrupted byte{tmp}"
+		if reedsolo and mode=="decrypt" and reedsoloErrorCount:
+			info += f", {reedsoloErrorCount} MB unrecoverable"'''
+
+		statusString.set(info)
+		sleep(0.05)
 def secureWipe(fin):
 	statusString.set(strings[12])
 	# Check platform, erase accordingly
@@ -975,6 +990,7 @@ def prepareRsc():
 	global rs13,rs128
 	rs13 = RSCodec(13)
 	rs128 = RSCodec(128)
+	sys.exit(0)
 
 # Prepare Reed-Solomon codecs
 Thread(target=prepareRsc,daemon=True).start()
