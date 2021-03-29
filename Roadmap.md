@@ -20,6 +20,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # Completed
 <ul>
+	<li>Add Picocrypt vector logo to homepage (hacked together with Inkscape)</li>
 	<li>Abandoned due to being unreliable and requires admin rights: Right click in file explorer and display "Encrypt folder with Picocrypt" (thanks @beerisgood)</li>
 	<li>Drag and drop files (thanks u/your_username)</li>
 	<li>Create MacOS executables</li>
