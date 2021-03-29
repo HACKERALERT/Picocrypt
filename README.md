@@ -57,7 +57,7 @@ XChaCha20-Poly1305, Argon2, SHA3, and BLAKE2 are well-recognized within the fiel
 I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <code>argon2-cffi</code> and <code>pycryptodome</code> to do the heavy lifting, both of which are well known and popular within the Python community. For people who want to know how Picocrypt handles the crypto, or for the paranoid, here is a breakdown of how Picocrypt protects your data:
 
 <ol>
-	<li>A 16-byte salt (for Argon2) and a 24-byte nonce (for XChaCha20) is generated using a CSPRNG (Python's <code>os.urandom()</code>)</li>
+	<li>A 16-byte salt (for Argon2d) and a 24-byte nonce (for XChaCha20) is generated using a CSPRNG (Python's <code>os.urandom()</code>)</li>
 	<li>
 		The encryption/decryption key is generated through Argon2d using the salt above and the following parameters:
 		<ul>
