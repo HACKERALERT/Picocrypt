@@ -1,6 +1,7 @@
 # v1.12 (soon to be released)
 <ul>
 	<li>Beautiful UI</li>
+	<li>More than x2 as fast as previous versions, due to separate thread for UI</li>
 	<li>Add cancel button to cancel encryption/decryption</li>
 	<li>(Bug) Delete existing file only if password is correct</li>
 	<li>Minor aesthetic fixes</li>
