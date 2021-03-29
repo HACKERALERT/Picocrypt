@@ -7,6 +7,7 @@
 	<li>Complete rewrite from scratch, to ensure reliability and security</li>
 	<li>Better anti-corruption (re-defined header format)</li>
 	<li>Switch to Argon2d instead Argon2id for better security</li>
+	<li>Switch from SHA3 to BLAKE2b for corruption check</li>
 </ul>
 <strong>Note: v1.12 will be INCOMPATIBLE with all previous releases!</strong>
 
