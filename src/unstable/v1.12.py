@@ -19,7 +19,7 @@ from argon2.low_level import Type as argonType
 from Crypto.Cipher import ChaCha20_Poly1305
 from Crypto.Hash import SHA3_512,BLAKE2b
 from hmac import compare_digest
-from reedsolo import RSCodec,ReedSolomonError
+from creedsolo import RSCodec,ReedSolomonError
 from os import urandom,fsync,remove,system
 from os.path import getsize,expanduser,isdir,exists,dirname,abspath,realpath
 from os.path import join as pathJoin,split as pathSplit
@@ -50,6 +50,10 @@ onlyFiles = False
 startTime = False
 previousTime = False
 done = False
+stopUpdating = False
+reedsolo = False
+reedsoloFixed = False
+reedsoloErrors = False
 
 # Strings
 strings = [
@@ -132,7 +136,7 @@ except:
 dummy = tkinter.ttk.Button(tk)
 dummy.place(x=480,y=0)
 
-# Label that shows the input files
+# Label that shows the input file(s)
 inputString = tkinter.StringVar(tk)
 inputString.set(strings[18])
 inputLabel = tkinter.ttk.Label(
@@ -141,7 +145,7 @@ inputLabel = tkinter.ttk.Label(
 )
 inputLabel.place(x=20,y=18)
 
-# Clear input files
+# Clear input file(s)
 clearInput = tkinter.ttk.Button(
 	tk,
 	text="Clear",
@@ -386,7 +390,7 @@ status = tkinter.ttk.Label(
 )
 status.place(x=20,y=453)
 
-# Credits :D
+# Credits
 hint = "Created by Evan Su. Click for details and source."
 creditsString = tkinter.StringVar(tk)
 creditsString.set(hint)
@@ -416,7 +420,7 @@ def filesDragged(draggedFiles):
 	resetUI()
 	status.config(cursor="")
 	status.bind("<Button-1>",lambda e:None)
-	
+	# Use try to catch file errors
 	try:
 		# Create lists to track files dragged
 		onlyFiles = []
@@ -559,8 +563,9 @@ tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
 
 def work():
-	global inputFile,outputFile,working,mode,rs13,rs128,done
-	global startTime,previousTime,onlyFiles,onlyFolders,allFiles
+	global inputFile,outputFile,working,mode,rs13,rs128,reedsolo
+	global done,stopUpdating,startTime,previousTime,onlyFiles
+	global onlyFolders,allFiles,reedsoloFixed,reedsoloErrors
 	disableAllInputs()
 	dummy.focus()
 
@@ -570,6 +575,7 @@ def work():
 	shouldErase = erase.get()==1
 	reedsolo = rs.get()==1
 	working = True
+	stopUpdating = False
 	headerBroken = False
 	reedsoloFixed = 0
 	reedsoloErrors = 0
@@ -629,7 +635,7 @@ def work():
 			fout.write(rs128.encode(b"+"))
 		else:
 			fout.write(rs128.encode(b"-"))
-	
+
 		metadata = rs128.encode(metadata)
 		tmp = len(metadata)
 		tmp = f"{tmp:+<10}"
@@ -641,7 +647,7 @@ def work():
 		fout.write(rs128.encode(nonce)) # ChaCha20 nonce
 		fout.write(b"0"*192) # Hash of key
 		fout.write(b"0"*144) # Poly1305 MAC
-		fout.write(b"0"*192) # CRC
+		fout.write(b"0"*192) # BLAKE2b CRC
 	else:
 		tmp = fin.read(129)
 		if bytes(rs128.decode(tmp)[0])==b"+":
@@ -660,11 +666,47 @@ def work():
 		maccs = fin.read(144)
 		crccs = fin.read(192)
 		
-		salt = bytes(rs128.decode(salt)[0])
-		nonce = bytes(rs128.decode(nonce)[0])
-		keycs = bytes(rs128.decode(keycs)[0])
-		maccs = bytes(rs128.decode(maccs)[0])
-		crccs = bytes(rs128.decode(crccs)[0])
+		try:
+			salt,_,fixed = rs128.decode(salt)
+			salt = bytes(salt)
+			reedsoloFixed += len(fixed)
+		except:
+			headerBroken = True
+		try:
+			nonce,_,fixed = rs128.decode(nonce)
+			nonce = bytes(nonce)
+			reedsoloFixed += len(fixed)
+		except:
+			headerBroken = True
+		try:
+			keycs,_,fixed = rs128.decode(keycs)
+			keycs = bytes(keycs)
+			reedsoloFixed += len(fixed)
+		except:
+			headerBroken = True
+		try:
+			maccs,_,fixed = rs128.decode(maccs)
+			maccs = bytes(maccs)
+			reedsoloFixed += len(fixed)
+		except:
+			headerBroken = True
+		try:
+			crccs,_,fixed = rs128.decode(crccs)
+			crccs = bytes(crccs)
+			reedsoloFixed += len(fixed)
+		except:
+			headerBroken = True
+		
+		if headerBroken:
+			if not shouldKeep:
+				statusString.set(strings[8])
+				fin.close()
+				fout.close()
+				remove(outputFile)
+				setDecryptionUI()
+				return
+			else:
+				kept = "badlyCorrupted"
 				
 	statusString.set(strings[9])
 	
@@ -695,29 +737,63 @@ def work():
 	
 	crc = BLAKE2b.new(digest_bits=512)
 	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
-	
 	done = 0
 	total = getsize(inputFile)
-	
 	startTime = datetime.now()
 	previousTime = datetime.now()
-	
+
 	Thread(target=updateStats,daemon=True,args=(total,)).start()
 	while True:
-		if mode=="encrypt":
-			piece = fin.read(2**20)
+		if mode=="decrypt" and reedsolo:
+			piece = fin.read(1104905)
 		else:
 			piece = fin.read(2**20)
-
 		if not piece:
 			break
 
 		if mode=="encrypt":
 			data = cipher.encrypt(piece)
-			#crc.update(data)
+			if reedsolo:
+				data = bytes(rs13.encode(data))
+			crc.update(data)
 		else:
-			#crc.update(piece)
-			data = cipher.decrypt(piece)
+			crc.update(piece)
+			if reedsolo:
+				try:
+					data,_,fixed = rs13.decode(piece)
+				except ReedSolomonError:
+					# File is really corrupted
+					if not reedsoloErrors and not shouldKeep:
+						statusString.set(strings[8])
+					
+					if not shouldKeep:
+						fin.close()
+						fout.close()
+						remove(outputFile)
+						setDecryptionUI()
+						return
+					
+					kept = "badlyCorrupted"
+					# Attempt to recover badly corrupted data
+					data = b""
+					piece = piece[:-13]
+					counter = 0
+					while True:
+						# Basically just strip the Reed-Solomon bytes
+						# and return the original non-encoded data
+						if counter<1104905:
+							data += piece[counter:counter+242]
+							counter += 255 # 255 bytes, 242 original
+						else:
+							break
+					fixed = bytearray()
+					reedsoloErrors += 1
+				
+				reedsoloFixed += len(fixed)
+				data = cipher.decrypt(data)
+
+			else:
+				data = cipher.decrypt(piece)
 			
 		fout.write(data)
 		done += 2**20
@@ -748,8 +824,7 @@ def work():
 		try:
 			cipher.verify(maccs)
 		except:
-			#if not reedsoloErrorCount and not headerBroken:
-			if True:
+			if not reedsoloErrors and not headerBroken:
 				# File is modified
 				statusString.set(modifiedNotice)
 				progress["value"] = 100
@@ -766,15 +841,12 @@ def work():
 						kept = "modified"
 						
 	# Flush outputs, close files
-	#if not kept:
-	working = False
-	if True:
+	if not kept:
 		fout.flush()
 		fsync(fout.fileno())
 	fout.close()
 	fin.close()
-	
-	print("DONEDONEDONEDONEDONEDONEDONEDONEDONEDONE")
+	stopUpdating = True
 
 	# Securely wipe files as necessary
 	if shouldErase:
@@ -783,36 +855,34 @@ def work():
 				secureWipe(i)
 		if onlyFiles:
 			for i in range(len(onlyFiles)):
-				statusString.set(
-					strings[12]+f" ({i}/{len(onlyFiles)}"
-				)
+				statusString.set(strings[12]+f" ({i}/{len(onlyFiles)}")
 				progress["value"] = i/len(onlyFiles)
 				secureWipe(onlyFiles[i])
 		secureWipe(inputFile)
+
 	# Secure wipe not enabled
 	else:
 		if allFiles or onlyFiles:
 			# Remove temporary zip file if created
 			remove(inputFile)
 
+	print(kept,reedsoloFixed)
 	# Show appropriate notice if file corrupted or modified
-	#if not kept:
-	if True:
+	if not kept:
 		statusString.set(f"Completed. (Click here to show output)")
-
 		# Show Reed-Solomon stats if it fixed corrupted bytes
-		if mode=="decrypt" and reedsolo and reedsoloFixedCount:
+		if mode=="decrypt" and reedsoloFixed:
 			statusString.set(
-				f"Completed with {reedsoloFixedCount}"+
-				f" bytes fixed. (Output: {output})"
+				f"Completed with {reedsoloFixed}"+
+				f" bytes fixed. (Click here to show output)"
 			)
 	else:
 		if kept=="modified":
-			statusString.set(kModifiedNotice)
+			statusString.set(strings[7])
 		elif kept=="corrupted":
-			statusString.set(kCorruptedNotice)
+			statusString.set(strings[6])
 		else:
-			statusString.set(kVeryCorruptedNotice)
+			statusString.set(strings[8])
 	
 	status.config(cursor="hand2")
 	
@@ -828,6 +898,7 @@ def work():
 		status.bind("<Button-1>",
 			lambda e:showOutput(output)
 		)
+
 	# Reset variables and UI states
 	resetUI()
 	inputFile = ""
@@ -835,35 +906,39 @@ def work():
 	allFiles = []
 	onlyFolders = []
 	onlyFiles = []
-	
-	# Wipe keys for safety
-	#del fin,fout,cipher,key
+	working = False
 
 def updateStats(total):
-	global startTime,previousTime,done,working
+	global startTime,previousTime,done,stopUpdating,reedsolo,reedsoloFixed,reedsoloErrors
 	while True:
-		if not working:
+		validStatus = (
+			statusString.get().startswith("Working") or statusString.get().startswith("Deriving")
+		)
+		if not stopUpdating and validStatus:
+			elapsed = (datetime.now()-previousTime).total_seconds() or 0.0001
+			sinceStart = (datetime.now()-startTime).total_seconds() or 0.0001
+			previousTime = datetime.now()
+			percent = done*100/total
+			progress["value"] = percent
+			
+			speed = (done/sinceStart)/10**6 or 0.0001
+			eta = round((total-done)/(speed*10**6))
+			
+			info = f"Working... {min(percent,100):.0f}% at {speed:.2f} MB/s (ETA: {max(eta,0)}s)"
+
+			if reedsolo and mode=="decrypt" and reedsoloFixed:
+				tmp = "s" if reedsoloFixed!=1 else ""
+				info += f", fixed {reedsoloFixed} corrupted byte{tmp}"
+
+			if reedsolo and mode=="decrypt" and reedsoloErrors:
+				info += f", {reedsoloErrors} MB unrecoverable"
+
+			statusString.set(info)
+			sleep(0.05)
+		else:
 			sys.exit(0)
 			break
-		elapsed = (datetime.now()-previousTime).total_seconds() or 0.0001
-		sinceStart = (datetime.now()-startTime).total_seconds() or 0.0001
-		previousTime = datetime.now()
-		percent = done*100/total
-		progress["value"] = percent
-		
-		speed = (done/sinceStart)/10**6 or 0.0001
-		eta = round((total-done)/(speed*10**6))
-		
-		info = f"{min(percent,100):.0f}% at {speed:.2f} MB/s (ETA: {max(eta,0)}s)"
 
-		'''if reedsolo and mode=="decrypt" and reedsoloFixedCount:
-			tmp = "s" if reedsoloFixedCount!=1 else ""
-			info += f", fixed {reedsoloFixedCount} corrupted byte{tmp}"
-		if reedsolo and mode=="decrypt" and reedsoloErrorCount:
-			info += f", {reedsoloErrorCount} MB unrecoverable"'''
-
-		statusString.set(info)
-		sleep(0.05)
 def secureWipe(fin):
 	statusString.set(strings[12])
 	# Check platform, erase accordingly
