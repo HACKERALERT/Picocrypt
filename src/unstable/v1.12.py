@@ -120,7 +120,7 @@ def MakeTkDPIAware(TKGUI):
 	TKGUI.TkScale = lambda v:int(float(v)*TKGUI.DPI_scaling)
 	TKGUI.TkGeometryScale = lambda s:TkGeometryScale(s,TKGUI.TkScale)
 if platform.system()=="Windows":
-	MakeTkDPIAware(tk)
+	pass#MakeTkDPIAware(tk)
 
 # Add some styling
 style = tkinter.ttk.Style()
@@ -146,10 +146,14 @@ inputLabel = tkinter.ttk.Label(
 inputLabel.place(x=20,y=18)
 
 # Clear input file(s)
+def clearInputs():
+	resetUI()
+	prompt.pack(expand=1,fill=tkinter.BOTH)
+	onDropLeave(None)
 clearInput = tkinter.ttk.Button(
 	tk,
 	text="Clear",
-	command = lambda:resetUI()
+	command=clearInputs
 )
 clearInput.place(x=400,y=12,width=60,height=28)
 clearInput["state"] = "disabled"
@@ -238,7 +242,7 @@ cPasswordLabel["state"] = "disabled"
 # Allow confirm password input to fill width
 cPasswordFrame = tkinter.Frame(
 	tk,
-	width=440,
+	width=418,
 	height=24
 )
 cPasswordFrame.place(x=20,y=168)
@@ -252,6 +256,41 @@ cPasswordInput = tkinter.ttk.Entry(
 )
 cPasswordInput.grid(sticky="nesw")
 cPasswordInput["state"] = "disabled"
+
+# Check if passwords match
+def doPasswordsMatch(key,which):
+
+	if which=="p":
+		matches = passwordInput.get()+key.char==cPasswordInput.get()
+	else:
+		matches = passwordInput.get()==cPasswordInput.get()+key.char
+	if passwordInput.get() and matches:
+		#passwordMatches["state"] = "normal"
+		passwordMatches.matchInt.set(1)
+		#passwordMatches["state"] = "disabled"
+		startBtn["state"] = "normal"
+	else:
+		#passwordMatches["state"] = "normal"
+		passwordMatches.matchInt.set(0)
+		#passwordMatches["state"] = "disabled"
+		startBtn["state"] = "disabled"
+
+passwordInput.bind("<Key>",lambda key:doPasswordsMatch(key,"p"))
+cPasswordInput.bind("<Key>",lambda key:doPasswordsMatch(key,"c"))
+
+# Check box that indicates if password match
+passwordMatches = tkinter.ttk.Checkbutton(
+	tk,
+	onvalue=1,
+	offvalue=0,
+    command=lambda:[
+        dummy.focus(),passwordMatches.matchInt.set(0 if passwordMatches.matchInt.get() else 1)
+    ]
+)
+passwordMatches.matchInt = tkinter.IntVar(tk)
+passwordMatches.config(variable=passwordMatches.matchInt)
+passwordMatches.place(x=441,y=170)
+#passwordMatches["state"] = "disabled"
 
 # Prompt user for optional metadata
 metadataString = tkinter.StringVar(tk)
@@ -279,11 +318,10 @@ metadataFrame.config(bg="#e5eaf0")
 metadataInput = tkinter.scrolledtext.ScrolledText(
 	metadataFrame,
 	exportselection=0,
-	height=5,
 	padx=5,
 	pady=5
 )
-metadataInput.config(font=("Consolas",12))
+metadataInput.config(font=("Consolas",10))
 metadataInput.grid(row=0,column=0,sticky="nesw",padx=1,pady=1)
 metadataInput.config(borderwidth=0)
 metadataInput.config(bg="#fbfcfc")
@@ -300,7 +338,7 @@ metadataInput.bind(
 def metadataBoxUI(what):
 	if what=="in":
 		if metadataInput.cget("bg")=="#ffffff":
-			metadataFrame.config(bg="#78a7e5")
+			metadataFrame.config(bg="#5294e2")
 	else:
 		metadataFrame.config(bg="#d8ddea")
 
@@ -414,6 +452,31 @@ version = tkinter.ttk.Label(
 version["state"] = "disabled"
 version.place(x=430,y=480)
 
+# Drag files window
+prompt = tkinter.Frame(tk)
+prompt.config(bg="#f5f6f7")
+prompt.pack(expand=1,fill=tkinter.BOTH)
+
+promptString = tkinter.StringVar(tk)
+promptString.set("Drag and drop file(s) and folder(s) here.")
+promptLabel = tkinter.ttk.Label(
+	prompt,
+	textvariable=promptString
+)
+promptLabel.place(x=135,y=306)
+promptIconHor = tkinter.Frame(
+	prompt,
+	bg="#6f737d",
+	height=4
+)
+promptIconHor.place(x=208,y=256,width=64)
+promptIconVer = tkinter.Frame(
+	prompt,
+	bg="#6f737d",
+	width=4
+)
+promptIconVer.place(x=238,y=226,height=64)
+
 # Files have been dragged
 def filesDragged(draggedFiles):
 	global inputFile,rs128,onlyFiles,mode,onlyFolders,allFiles
@@ -513,7 +576,8 @@ def filesDragged(draggedFiles):
 
 			# Update UI
 			setEncryptionUI()
-			
+			startBtn["state"] = "disabled"
+
 			# Update output box with appropriate name
 			if inputFile:
 				outputInput.insert(0,inputFile)
@@ -542,6 +606,8 @@ def filesDragged(draggedFiles):
 			)
 		else:
 			inputString.set(inputFile.split("/")[-1]+suffix)
+
+		prompt.pack_forget()
 	
 	# UTF-8 decode error
 	except UnicodeDecodeError:
@@ -559,8 +625,16 @@ def onDrop(e):
 		filesDragged(e.data)
 	clearInput["state"] = "normal"
 	clearInput.config(cursor="hand2")
+def onDropEnter(e):
+	promptIconHor.config(bg="#00a86b")
+	promptIconVer.config(bg="#00a86b")
+def onDropLeave(e):
+	promptIconHor.config(bg="#6f737d")
+	promptIconVer.config(bg="#6f737d")
 tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
+tk.dnd_bind("<<DropEnter>>",onDropEnter)
+tk.dnd_bind("<<DropLeave>>",onDropLeave)
 
 def work():
 	global inputFile,outputFile,working,mode,rs13,rs128,reedsolo
@@ -1014,7 +1088,7 @@ def setEncryptionUI():
 	cPasswordLabel["state"] = "normal"
 	cPasswordString.set("Confirm password:")
 	cPasswordInput["state"] = "normal"
-	metadataFrame.config(bg="#d8ddea")
+	metadataFrame.config(bg="#cfd6e6")
 	metadataInput.config(bg="#ffffff")
 	metadataInput.config(fg="#000000")
 	metadataLabel["state"] = "normal"
