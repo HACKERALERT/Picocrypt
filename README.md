@@ -44,7 +44,7 @@ Picocrypt is about as simple as it gets. Just drag and drop the file(s) and fold
 </ul>
 
 # Security
-I have a solid understanding of cryptography, so I can say with very high confidence that Picocrypt is very secure. I was in need of a secure, reliable, and future-proof encryption tool that didn't require bloatware and containers, but I couldn't find one. That's why I created Picocrypt, which is a simple, but very secure encryption tool. It uses XChaCha20-Poly1305, which is a revision of the eStream winner, Salsa20. XChaCha20-Poly1305 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the modern suite of symmetric encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies.
+I have a solid understanding of cryptography, so I can say with very high confidence that Picocrypt is very secure. It uses XChaCha20-Poly1305, which is a revision of the eSTREAM winner, Salsa20. ChaCha20 has been through a significant amount of cryptanalysis and was selected by security engineers at Google to be used in modern TLS suites. It's considered to be the modern suite of symmetric encryption, and makes Picocrypt more secure than Bitlocker, NordLocker, and 7-Zip. It's used by Cloudflare, Google, and many other forward-thinking companies.
 
 In terms of practical security, I have 2FA enabled on all accounts with a tie to Picocrypt, so you can rest assured that the official Picocrypt repository won't be hacked.
 
@@ -69,9 +69,9 @@ I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <
 	<li>If decrypting, compare the derived key with the SHA3-512 hash of the correct key stored in the ciphertext. If encrypting, compute the SHA3-512 of the derived key and add to ciphertext.</li>
 	<li>Encryption/decryption start, reading in 1MB chunks at a time. For each chunk, it is first encrypted by XChaCha20, and then a BLAKE2b CRC is updated.</li>
 	<li>If anti-corruption is checked, the 1MB chunk will be split into 128 byte chunks and 13 additional Reed-Solomon (parity) bytes will be added. If decrypting, decode the encoded 1MB chunk to get the raw data.</li>
-	<li>When encryption/decryption is finished, the MAC tag (Poly1305) will be added to the ciphertext or verified, depending on if you're encrypting or decrypting. If 'Secure wipe' is enabled, the original file is securely deleted via system internals.</li>
-	<li>Similar to above, the CRC is either checked or added to the ciphertext depending on the operation.</li>
-	<li>If decrypting, both the CRC and the MAC tag are verified. If either don't match, decryption is unsuccessful and an error message will be displayed. Otherwise, decryption is considered successful and the process is done.</li>
+	<li>When encryption/decryption is finished, the MAC tag (Poly1305) will be added to the ciphertext or verified, depending on if you're encrypting or decrypting. If 'Secure wipe' is enabled, the original file is securely deleted via system internals (<code>sdelete64</code> for Windows, <code>rm -P</code> for MacOS, and <code>shred</code> on Linux).</li>
+	<li>Similar to above, the BLAKE2 CRC is either checked or added to the ciphertext depending on the operation.</li>
+	<li>If decrypting and both the BLAKE2 CRC and Poly1305 tag are correct decryption is considered successful and the process is done. If either don't match, decryption is unsuccessful and an error message will be displayed.</li>
 </ol>
 
 Note: the list above is simplified. A lot more is actually happening.
@@ -91,7 +91,7 @@ These are the official Picocrypt social groups and accounts. Be aware of scammer
 # Limitations
 
 <ul>
-	<li>Max file size is 256GB, due to ChaCha20 cipher itself. The reason for this is that the counter for ChaCha20 will overflow out of the 32-bit range at 256GB. You can split files into chunks for files larger than 256GB.</li>
+	<li>Max file size of a single file is 256GB, due to ChaCha20 cipher itself. This is because the counter for ChaCha20 will overflow out of the 32-bit range at 256GB. You can split files into chunks for files larger than 256GB.</li>
 	<li>Argon2 may take a while to derive a key, but realize that this is all for security. Security and speed were never friends and there is always a trade-off between security and speed.</li>
 	<li>The portable executables can be detected as viruses. I've done my best and submitted them as false positives to a couple antivirus companies to deal with this. If your antivirus is detecting Picocrypt as a virus, please help the community and submit it as a false positive to your antivirus provider.</li>
 </ul>
