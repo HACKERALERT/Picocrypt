@@ -146,14 +146,10 @@ inputLabel = tkinter.ttk.Label(
 inputLabel.place(x=20,y=18)
 
 # Clear input file(s)
-def clearInputs():
-	resetUI()
-	prompt.pack(expand=1,fill=tkinter.BOTH)
-	onDropLeave(None)
 clearInput = tkinter.ttk.Button(
 	tk,
 	text="Clear",
-	command=clearInputs
+	command=lambda:resetUI()
 )
 clearInput.place(x=400,y=12,width=60,height=28)
 clearInput["state"] = "disabled"
@@ -259,38 +255,27 @@ cPasswordInput["state"] = "disabled"
 
 # Check if passwords match
 def doPasswordsMatch(key,which):
-
 	if which=="p":
 		matches = passwordInput.get()+key.char==cPasswordInput.get()
 	else:
 		matches = passwordInput.get()==cPasswordInput.get()+key.char
 	if passwordInput.get() and matches:
-		#passwordMatches["state"] = "normal"
-		passwordMatches.matchInt.set(1)
-		#passwordMatches["state"] = "disabled"
+		passwordMatchesString.set("✔")
 		startBtn["state"] = "normal"
 	else:
-		#passwordMatches["state"] = "normal"
-		passwordMatches.matchInt.set(0)
-		#passwordMatches["state"] = "disabled"
+		passwordMatchesString.set("×")
 		startBtn["state"] = "disabled"
 
 passwordInput.bind("<Key>",lambda key:doPasswordsMatch(key,"p"))
 cPasswordInput.bind("<Key>",lambda key:doPasswordsMatch(key,"c"))
 
 # Check box that indicates if password match
-passwordMatches = tkinter.ttk.Checkbutton(
+passwordMatchesString = tkinter.StringVar(tk)
+passwordMatches = tkinter.ttk.Label(
 	tk,
-	onvalue=1,
-	offvalue=0,
-    command=lambda:[
-        dummy.focus(),passwordMatches.matchInt.set(0 if passwordMatches.matchInt.get() else 1)
-    ]
+	textvariable=passwordMatchesString
 )
-passwordMatches.matchInt = tkinter.IntVar(tk)
-passwordMatches.config(variable=passwordMatches.matchInt)
 passwordMatches.place(x=441,y=170)
-#passwordMatches["state"] = "disabled"
 
 # Prompt user for optional metadata
 metadataString = tkinter.StringVar(tk)
@@ -381,6 +366,16 @@ rsBtn = tkinter.ttk.Checkbutton(
 rsBtn.place(x=18,y=369)
 rsBtn["state"] = "disabled"
 
+# "Reed-Solomon" which links to Wikipedia
+helpString = tkinter.StringVar(tk)
+helpString.set("(?)")
+help = tkinter.ttk.Label(
+	tk,
+	textvariable=helpString,
+	cursor="hand2"
+)
+help.place(x=279,y=373)
+
 # Frame so start and cancel button can fill width
 startFrame = tkinter.Frame(
 	tk,
@@ -417,7 +412,7 @@ progress = tkinter.ttk.Progressbar(
 	length=440,
 	mode="determinate"
 )
-progress.place(x=20,y=439)
+progress.place(x=20,y=440)
 
 # Status label
 statusString = tkinter.StringVar(tk)
@@ -426,7 +421,7 @@ status = tkinter.ttk.Label(
 	tk,
 	textvariable=statusString
 )
-status.place(x=20,y=453)
+status.place(x=20,y=455)
 
 # Credits
 hint = "Created by Evan Su. Click for details and source."
@@ -455,7 +450,7 @@ version.place(x=430,y=480)
 # Drag files window
 prompt = tkinter.Frame(tk)
 prompt.config(bg="#f5f6f7")
-prompt.pack(expand=1,fill=tkinter.BOTH)
+#prompt.pack(expand=1,fill=tkinter.BOTH)
 
 promptString = tkinter.StringVar(tk)
 promptString.set("Drag and drop file(s) and folder(s) here.")
@@ -606,7 +601,7 @@ def filesDragged(draggedFiles):
 			)
 		else:
 			inputString.set(inputFile.split("/")[-1]+suffix)
-
+			
 		prompt.pack_forget()
 	
 	# UTF-8 decode error
@@ -626,11 +621,9 @@ def onDrop(e):
 	clearInput["state"] = "normal"
 	clearInput.config(cursor="hand2")
 def onDropEnter(e):
-	promptIconHor.config(bg="#00a86b")
-	promptIconVer.config(bg="#00a86b")
+	prompt.pack(expand=1,fill=tkinter.BOTH)
 def onDropLeave(e):
-	promptIconHor.config(bg="#6f737d")
-	promptIconVer.config(bg="#6f737d")
+	prompt.pack_forget()
 tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
 tk.dnd_bind("<<DropEnter>>",onDropEnter)
@@ -1057,6 +1050,7 @@ def resetUI():
 	cPasswordInput["state"] = "normal"
 	cPasswordInput.delete(0,"end")
 	cPasswordInput["state"] = "disabled"
+	passwordMatchesString.set("×")
 	metadataFrame.config(bg="#e5eaf0")
 	metadataInput.config(bg="#fbfcfc")
 	metadataInput.config(fg="#000000")
