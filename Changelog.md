@@ -1,7 +1,7 @@
 # v1.12 (soon to be released)
 <ul>
 	<li>Beautiful UI</li>
-	<li>More than x2 as fast as previous versions, due to separate thread for UI</li>
+	<li>About x2 as fast as previous versions</li>
 	<li>Add cancel button to cancel encryption/decryption</li>
 	<li>(Bug) Delete existing file only if password is correct</li>
 	<li>Minor aesthetic fixes</li>
@@ -9,6 +9,7 @@
 	<li>Better anti-corruption (re-defined header format)</li>
 	<li>Switch to Argon2d instead Argon2id for better security</li>
 	<li>Switch from SHA3 to BLAKE2b for corruption check</li>
+	<li>Better user flow</li>
 </ul>
 <strong>Note: v1.12 will be INCOMPATIBLE with all previous releases!</strong>
 
