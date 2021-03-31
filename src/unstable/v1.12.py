@@ -21,11 +21,13 @@ from Crypto.Hash import SHA3_512,BLAKE2b
 from hmac import compare_digest
 from creedsolo import RSCodec,ReedSolomonError
 from os import urandom,fsync,remove,system
-from os.path import getsize,expanduser,isdir,exists,dirname,abspath,realpath
+from os.path import getsize,expanduser,isdir,exists
+from os.path import basename,dirname,abspath,realpath
 from os.path import join as pathJoin,split as pathSplit
 from pathlib import Path
 from zipfile import ZipFile
 from tkinterdnd2 import TkinterDnD,DND_FILES
+from tkinter.filedialog import asksaveasfilename
 from ttkthemes import ThemedStyle
 from time import sleep
 import re
@@ -156,7 +158,7 @@ clearInput = tkinter.ttk.Button(
 	text="Clear",
 	command=lambda:[resetUI(),statusString.set("Ready.")]
 )
-clearInput.place(x=400,y=12,width=60,height=28)
+clearInput.place(x=396,y=12,width=64,height=28)
 clearInput["state"] = "disabled"
 
 # Separator for aesthetics
@@ -185,12 +187,12 @@ pcvLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=pcvString
 )
-pcvLabel.place(x=434,y=68)
+pcvLabel.place(x=314,y=68)
 
 # A frame to allow output box to fill width
 outputFrame = tkinter.Frame(
 	tk,
-	width=440,
+	width=320,
 	height=24
 )
 outputFrame.place(x=20,y=66)
@@ -201,6 +203,36 @@ outputFrame.grid_propagate(False)
 outputInput = tkinter.ttk.Entry(outputFrame)
 outputInput.grid(sticky="nesw")
 outputInput["state"] = "disabled"
+
+orString = tkinter.StringVar(tk)
+orString.set("or")
+orLabel = tkinter.ttk.Label(
+	tk,
+	textvariable=orString
+)
+orLabel.place(x=360,y=68)
+
+def saveAs():
+	global mode
+	dummy.focus()
+	encryptTypes = (("Picocrypt Volume","*.pcv"),("All Files","*.*"))
+	decryptTypes = (("All Files","*.*"),("Picocrypt Volume","*.pcv"))
+	tmp = asksaveasfilename(
+		initialdir=expanduser("~"),
+		initialfile=(
+			basename(inputFile)[:-4] if mode=="decrypt" else basename(inputFile)
+		),
+		filetypes=((encryptTypes) if mode=="encrypt" else (decryptTypes))
+	)
+	outputInput.delete(0,tkinter.END)
+	outputInput.insert(0,tmp)
+saveAsBtn = tkinter.ttk.Button(
+	tk,
+	text="Save as",
+	command=saveAs
+)
+saveAsBtn.place(x=396,y=64,width=64,height=27)
+saveAsBtn["state"] = "disabled"
 
 # Prompt user to enter password
 passwordString = tkinter.StringVar(tk)
@@ -291,13 +323,16 @@ def doPasswordsMatch():
 		passwordMatchesString.set("✔")
 		style.configure("PasswordMatches.TLabel",foreground="#149414")
 		startBtn["state"] = "normal"
+		startBtn.config(cursor="hand2")
 	elif passwordInput.get() and not matches:
 		passwordMatchesString.set("❌")
 		style.configure("PasswordMatches.TLabel",foreground="#e3242b")
 		startBtn["state"] = "disabled"
+		startBtn.config(cursor="")
 	elif not passwordInput.get():
 		passwordMatchesString.set("")
 		startBtn["state"] = "disabled"
+		startBtn.config(cursor="")
 
 passwordInput.bind("<KeyRelease>",lambda e:[showStrength(),doPasswordsMatch()])
 cPasswordInput.bind("<KeyRelease>",lambda e:doPasswordsMatch())
@@ -479,15 +514,15 @@ status.place(x=20,y=455)
 hint = "Created by Evan Su. Click for details and source."
 creditsString = tkinter.StringVar(tk)
 creditsString.set(hint)
-credits = tkinter.ttk.Label(
+creditsLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=creditsString,
 	cursor="hand2"
 )
-credits.place(x=20,y=480)
+creditsLabel.place(x=20,y=480)
 source = "https://github.com/HACKERALERT/Picocrypt"
-credits.bind("<Button-1>",lambda e:webbrowser.open(source))
-credits["state"] = "disabled"
+creditsLabel.bind("<Button-1>",lambda e:webbrowser.open(source))
+creditsLabel["state"] = "disabled"
 
 # Version
 versionString = tkinter.StringVar(tk)
@@ -624,6 +659,7 @@ def filesDragged(draggedFiles):
 			# Update UI
 			setEncryptionUI()
 			startBtn["state"] = "disabled"
+			startBtn.config(cursor="")
 
 			# Update output box with appropriate name
 			if inputFile:
@@ -702,6 +738,7 @@ def work():
 	password = passwordInput.get().encode("utf-8")
 	metadata = metadataInput.get("1.0",tkinter.END).encode("utf-8")
 	cancelBtn["state"] = "normal"
+	cancelBtn.config(cursor="hand2")
 	
 	# Decide if encrypting or decrypting
 	if mode=="encrypt":
@@ -1090,6 +1127,15 @@ def secureWipe(fin):
 	else:
 		system(f'shred -uz "{fin}" -n 4')
 
+def showOutput(file):
+	if platform.system()=="Windows":
+		system(f'explorer /select,"{file}"')
+	elif platform.system()=="Darwin":
+		system(f'cd "{dirname(file)}"; open -R "{pathSplit(file)[1]}"')
+		system(f'cd "{rootDir}"')
+	else:
+		system(f'xdg-open "{dirname(file)}"')
+
 # Reset UI to state where no files are selected
 def resetUI():
 	global working
@@ -1099,7 +1145,9 @@ def resetUI():
 	clearInput["state"] = "disabled"
 	clearInput.config(cursor="")
 	outputLabel["state"] = "disabled"
-	outputFrame.config(width=440)
+	saveAsBtn.config(cursor="")
+	saveAsBtn["state"] = "disabled"
+	outputFrame.config(width=320)
 	outputInput["state"] = "normal"
 	outputInput.delete(0,"end")
 	outputInput["state"] = "disabled"
@@ -1129,7 +1177,9 @@ def resetUI():
 	rs.set(0)
 	rsBtn["state"] = "disabled"
 	startBtn["state"] = "disabled"
+	startBtn.config(cursor="")
 	cancelBtn["state"] = "disabled"
+	cancelBtn.config(cursor="")
 	progress.stop()
 	progress.config(mode="determinate")
 	progress["value"] = 0
@@ -1141,9 +1191,11 @@ def setEncryptionUI():
 	working = False
 	clearInput["state"] = "normal"
 	clearInput.config(cursor="hand2")
+	saveAsBtn.config(cursor="hand2")
+	saveAsBtn["state"] = "normal"
 	outputLabel["state"] = "normal"
 	outputInput["state"] = "normal"
-	outputFrame.config(width=410)
+	outputFrame.config(width=290)
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
 	cPasswordLabel["state"] = "normal"
@@ -1157,7 +1209,9 @@ def setEncryptionUI():
 	eraseBtn["state"] = "normal"
 	rsBtn["state"] = "normal"
 	startBtn["state"] = "normal"
+	startBtn.config(cursor="hand2")
 	cancelBtn["state"] = "disabled"
+	cancelBtn.config(cursor="")
 	progress.stop()
 	progress.config(mode="determinate")
 	progress["value"] = 0
@@ -1168,9 +1222,11 @@ def setDecryptionUI():
 	working = False
 	clearInput["state"] = "normal"
 	clearInput.config(cursor="hand2")
+	saveAsBtn.config(cursor="hand2")
+	saveAsBtn["state"] = "normal"
 	outputLabel["state"] = "normal"
 	outputInput["state"] = "normal"
-	outputFrame.config(width=440)
+	outputFrame.config(width=320)
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
 	cPasswordString.set("Confirm password (N/A):")
@@ -1181,7 +1237,9 @@ def setDecryptionUI():
 	metadataInput["state"] = "disabled"
 	keepBtn["state"] = "normal"
 	startBtn["state"] = "normal"
+	startBtn.config(cursor="hand2")
 	cancelBtn["state"] = "disabled"
+	cancelBtn.config(cursor="")
 	progress.stop()
 	progress.config(mode="determinate")
 	progress["value"] = 0
@@ -1189,6 +1247,9 @@ def setDecryptionUI():
 # Disable all inputs while encrypting/decrypting
 def disableAllInputs():
 	clearInput["state"] = "disabled"
+	clearInput.config(cursor="")
+	saveAsBtn.config(cursor="")
+	saveAsBtn["state"] = "disabled"
 	outputInput["state"] = "disabled"
 	passwordInput["state"] = "disabled"
 	cPasswordInput["state"] = "disabled"
@@ -1198,18 +1259,21 @@ def disableAllInputs():
 	metadataInput.config(fg="#666666")
 	metadataInput["state"] = "disabled"
 	startBtn["state"] = "disabled"
+	startBtn.config(cursor="")
 	eraseBtn["state"] = "disabled"
 	keepBtn["state"] = "disabled"
 	rsBtn["state"] = "disabled"
 
-def prepareRsc():
+def prepare():
 	global rs13,rs128
 	rs13 = RSCodec(13)
 	rs128 = RSCodec(128)
+	if platform.system()=="Windows":
+		system("sdelete64.exe /accepteula")
 	sys.exit(0)
 
 # Prepare Reed-Solomon codecs
-Thread(target=prepareRsc,daemon=True).start()
+Thread(target=prepare,daemon=True).start()
 
 # Start tkinter
 tk.mainloop()
