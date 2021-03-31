@@ -5,6 +5,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 <ul>
 	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
 	<li>Add to AUR (Arch User Repo) (thanks u/blackrosae)</li>
+	<li>Secure password/mnemonic generator</li>
 	<li>Android/iOS support (thanks u/fzylqd), potentially via a web interface (thanks @Tutturuuu)</li>
 	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
 	<li>Full disk encryption (thanks u/playffy)</li>
