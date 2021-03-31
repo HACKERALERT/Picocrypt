@@ -213,19 +213,23 @@ orLabel = tkinter.ttk.Label(
 orLabel.place(x=360,y=68)
 
 def saveAs():
-	global mode
+	global mode,onlyFiles,onlyFolders
 	dummy.focus()
-	encryptTypes = (("Picocrypt Volume","*.pcv"),("All Files","*.*"))
-	decryptTypes = (("All Files","*.*"),("Picocrypt Volume","*.pcv"))
+	if inputFile:
+		saveDir = dirname(inputFile)
+	elif onlyFiles:
+		saveDir = dirname(onlyFiles[0])
+	else:
+		saveDir = Path(onlyFolders[0]).parent.absolute()
 	tmp = asksaveasfilename(
-		initialdir=expanduser("~"),
+		initialdir=saveDir,
 		initialfile=(
-			basename(inputFile)[:-4] if mode=="decrypt" else basename(inputFile)
+			basename(inputFile)[:-4] if mode=="decrypt" else basename(inputFile)+".pcv"
 		),
-		filetypes=((encryptTypes) if mode=="encrypt" else (decryptTypes))
+		confirmoverwrite=True
 	)
 	outputInput.delete(0,tkinter.END)
-	outputInput.insert(0,tmp)
+	outputInput.insert(0,(tmp if mode=="decrypt" else tmp[:-4]))
 saveAsBtn = tkinter.ttk.Button(
 	tk,
 	text="Save as",
@@ -671,6 +675,7 @@ def filesDragged(draggedFiles):
 					tmp = Path(onlyFolders[0]).parent.absolute()
 				tmp = pathJoin(tmp,"Encrypted.zip")
 				tmp = tmp.replace("\\","/")
+				inputFile = tmp
 				outputInput.insert(0,tmp)
 			suffix = " (will encrypt)"
 			
