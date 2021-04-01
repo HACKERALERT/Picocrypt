@@ -101,3 +101,10 @@ If you find a bug or security issue, please create an Issue. If the security pro
 
 # Donations
 If you find Picocrypt useful, please consider donating. I've spent countless hours on Picocrypt and I'd love to get Picocrypt along with its dependencies audited by a cybersecurity firm such as Cure53. Audits typically cost <i>thousands</i> of dollars, so I'm asking for your support. If every person who saw this message or uses Picocrypt donated a dollar or two, I'd have enough funds to get Picocrypt audited. For more information about donating, see <a href="Donate.md">here</a>.
+
+# Thank You's
+Thanks to Freepik from Flaticon for Picocrypt's key icon. Also a huge thanks to the following list of people, who were the first to donate to Picocrypt:
+<ul>
+	<li>W.Graham</li>	
+</ul>
+
