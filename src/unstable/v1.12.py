@@ -565,7 +565,7 @@ promptIconVer.place(x=238,y=226,height=64)
 
 confirmOverwrite = tkinter.Frame(tk)
 confirmOverwrite.config(bg="#f5f6f7")
-#confirmOverwrite.pack(expand=1,fill=tkinter.BOTH)
+
 confirmOverwriteString = tkinter.StringVar(tk)
 confirmOverwriteString.set(strings[13])
 confirmOverwriteLabel = tkinter.ttk.Label(
@@ -576,6 +576,7 @@ confirmOverwriteLabel.place(x=100,y=150)
 confirmOverwriteNo = tkinter.ttk.Button(
 	confirmOverwrite,
 	text="No",
+	cursor="hand2",
 	command=lambda:confirmOverwrite.pack_forget()
 )
 confirmOverwriteNo.place(x=100,y=200)
@@ -586,6 +587,7 @@ def overwriteConfirmed():
 confirmOverwriteYes = tkinter.ttk.Button(
 	confirmOverwrite,
 	text="Yes",
+	cursor="hand2",
 	command=overwriteConfirmed
 )
 confirmOverwriteYes.place(x=300,y=200)
@@ -960,7 +962,7 @@ def work():
 				except ReedSolomonError:
 					# File is really corrupted
 					if not reedsoloErrors and not shouldKeep:
-						statusString.set(strings[8])
+						statusString.set(strings[4])
 						fin.close()
 						fout.close()
 						remove(outputFile)
@@ -1061,12 +1063,12 @@ def work():
 	print(kept,reedsoloFixed)
 	# Show appropriate notice if file corrupted or modified
 	if not kept:
-		statusString.set(f"Completed. (Click here to show output)")
+		statusString.set(f"Completed. (Click here to show output ↗)")
 		# Show Reed-Solomon stats if it fixed corrupted bytes
 		if mode=="decrypt" and reedsoloFixed:
 			statusString.set(
 				f"Completed with {reedsoloFixed}"+
-				f" bytes fixed. (Click here to show output)"
+				f" bytes fixed. (Click here to show output ↗)"
 			)
 	else:
 		if kept=="modified":
@@ -1143,7 +1145,7 @@ def updateStats(total):
 
 			if reedsolo and mode=="decrypt" and reedsoloFixed:
 				tmp = "s" if reedsoloFixed!=1 else ""
-				info += f", fixed {reedsoloFixed} corrupted byte{tmp}"
+				info += f", fixed {reedsoloFixed} error{tmp}"
 
 			if reedsolo and mode=="decrypt" and reedsoloErrors:
 				info += f", {reedsoloErrors} MB unrecoverable"
@@ -1320,10 +1322,6 @@ def onClose():
 	global working
 	if not working:
 		tk.destroy()
-	else:
-		force = messagebox.askyesno("Confirmation",cancelNotice)
-		if force:
-			tk.destroy()
 
 def prepare():
 	global rs13,rs128
