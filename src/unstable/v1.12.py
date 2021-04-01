@@ -13,7 +13,7 @@ https://github.com/HACKERALERT/Picocrypt
 
 # Import dependencies
 from threading import Thread
-from datetime import datetime
+from datetime import datetime,timedelta
 from argon2.low_level import hash_secret_raw
 from argon2.low_level import Type as argonType
 from Crypto.Cipher import ChaCha20_Poly1305
@@ -478,7 +478,7 @@ startFrame.config(background="#ffffff")
 startBtn = tkinter.ttk.Button(
 	startFrame,
 	text="Start",
-	command=lambda:Thread(target=work,daemon=True).start()
+	command=lambda:Thread(target=wrapper,daemon=True).start()
 )
 startBtn.grid(row=0,column=0,stick="nesw")
 startBtn["state"] = "disabled"
@@ -562,6 +562,33 @@ promptIconVer = tkinter.Frame(
 	width=4
 )
 promptIconVer.place(x=238,y=226,height=64)
+
+confirmOverwrite = tkinter.Frame(tk)
+confirmOverwrite.config(bg="#f5f6f7")
+#confirmOverwrite.pack(expand=1,fill=tkinter.BOTH)
+confirmOverwriteString = tkinter.StringVar(tk)
+confirmOverwriteString.set(strings[13])
+confirmOverwriteLabel = tkinter.ttk.Label(
+	confirmOverwrite,
+	textvariable=confirmOverwriteString
+)
+confirmOverwriteLabel.place(x=100,y=150)
+confirmOverwriteNo = tkinter.ttk.Button(
+	confirmOverwrite,
+	text="No",
+	command=lambda:confirmOverwrite.pack_forget()
+)
+confirmOverwriteNo.place(x=100,y=200)
+
+def overwriteConfirmed():
+	confirmOverwrite.pack_forget()
+	Thread(target=wrapper,daemon=True,args=(True,)).start()
+confirmOverwriteYes = tkinter.ttk.Button(
+	confirmOverwrite,
+	text="Yes",
+	command=overwriteConfirmed
+)
+confirmOverwriteYes.place(x=300,y=200)
 
 # Files have been dragged
 def filesDragged(draggedFiles):
@@ -934,8 +961,6 @@ def work():
 					# File is really corrupted
 					if not reedsoloErrors and not shouldKeep:
 						statusString.set(strings[8])
-					
-					if not shouldKeep:
 						fin.close()
 						fout.close()
 						remove(outputFile)
@@ -978,7 +1003,6 @@ def work():
 	else:
 		if not compare_digest(crccs,crc.digest()):
 			statusString.set(strings[3])
-			progress["value"] = 100
 			fin.close()
 			fout.close()
 			
@@ -996,7 +1020,6 @@ def work():
 			if not reedsoloErrors and not headerBroken:
 				# File is modified
 				statusString.set(modifiedNotice)
-				progress["value"] = 100
 				fin.close()
 				fout.close()
 				# If keep file not checked...
@@ -1060,13 +1083,9 @@ def work():
 
 	# Bind the output file
 	if platform.system()=="Windows":
-		status.bind("<Button-1>",
-			lambda e:showOutput(output.replace("/","\\"))
-		)
+		status.bind("<Button-1>",lambda e:showOutput(output.replace("/","\\")))
 	else:
-		status.bind("<Button-1>",
-			lambda e:showOutput(output)
-		)
+		status.bind("<Button-1>",lambda e:showOutput(output))
 
 	# Reset variables and UI states
 	resetUI()
@@ -1076,6 +1095,32 @@ def work():
 	onlyFolders = []
 	onlyFiles = []
 	working = False
+
+def wrapper(yes=False):
+	global working,mode,outputFile
+	if mode=="encrypt":
+		outputFile = outputInput.get()+".pcv"
+	else:
+		outputFile = outputInput.get()
+	try:
+		getsize(outputFile)
+		if not yes:
+			confirmOverwrite.pack(expand=1,fill=tkinter.BOTH)
+			return
+	except:
+		pass
+	try:
+		work()
+	except:
+		if mode=="encrypt":
+			setEncryptionUI()
+		else:
+			setDecryptionUI()
+		statusString.set(strings[17])
+	finally:
+		dummy.focus()
+		working = False
+		sys.exit(0)
 
 def updateStats(total):
 	global startTime,previousTime,done,stopUpdating,reedsolo,reedsoloFixed,reedsoloErrors,working
@@ -1091,9 +1136,10 @@ def updateStats(total):
 			progress["value"] = percent
 			
 			speed = (done/sinceStart)/10**6 or 0.0001
-			eta = round((total-done)/(speed*10**6))
+			eta = max(round((total-done)/(speed*10**6)),0)
+			eta = str(timedelta(seconds=min(eta,86399))).zfill(8)
 			
-			info = f"Working... {min(percent,100):.0f}% at {speed:.2f} MB/s (ETA: {max(eta,0)}s)"
+			info = f"Working... {min(percent,100):.0f}% at {speed:.2f} MB/s (ETA: {eta})"
 
 			if reedsolo and mode=="decrypt" and reedsoloFixed:
 				tmp = "s" if reedsoloFixed!=1 else ""
@@ -1107,6 +1153,7 @@ def updateStats(total):
 		else:
 			sys.exit(0)
 			break
+
 
 def secureWipe(fin):
 	statusString.set(strings[12])
@@ -1269,6 +1316,15 @@ def disableAllInputs():
 	keepBtn["state"] = "disabled"
 	rsBtn["state"] = "disabled"
 
+def onClose():
+	global working
+	if not working:
+		tk.destroy()
+	else:
+		force = messagebox.askyesno("Confirmation",cancelNotice)
+		if force:
+			tk.destroy()
+
 def prepare():
 	global rs13,rs128
 	rs13 = RSCodec(13)
@@ -1280,5 +1336,8 @@ def prepare():
 # Prepare Reed-Solomon codecs
 Thread(target=prepare,daemon=True).start()
 
+tk.protocol("WM_DELETE_WINDOW",onClose)
 # Start tkinter
 tk.mainloop()
+
+sys.exit(0)
