@@ -50,9 +50,9 @@ In terms of practical security, I have 2FA enabled on all accounts with a tie to
 
 For key derivation, Picocrypt uses Argon2d, winner of the PHC (Password Hashing Competition), which was completed in 2015. Argon2 is even slower than Scrypt and Bcrypt (for those that don't understand crypto, this is a good thing), making GPU, ASIC, and FPGA attacks impractical due to the huge amount of RAM that is used and written to during the key derivation.
 
-For key checking, SHA3-512 (Keccak) is used. For corruption checking, BLAKE2b is used. Before decrypting, Picocrypt checks whether the password is correct by comparing <i>the derived key</i> to a SHA3-512 hash stored in the encrypted file. SHA3 is the latest standard for hashing recommended by the NIST. It's a modern and well-designed hash function that's open-source, unpatented, and royalty-free.
+For key checking, SHA3-512 (Keccak) is used. For corruption checking, BLAKE3 is used. Before decrypting, Picocrypt checks whether the password is correct by comparing <i>the derived key</i> to a SHA3-512 hash stored in the encrypted file. SHA3 is the latest standard for hashing recommended by the NIST. It's a modern and well-designed hash function that's open-source, unpatented, and royalty-free.
 
-XChaCha20-Poly1305, Argon2, SHA3, and BLAKE2 are well-recognized within the field of cryptography and are all considered to be mature and future-proof. You can rely on these ciphers and algorithms to protect your data, as they are all modern and have undergone a large amount of cryptanalysis.
+XChaCha20-Poly1305, Argon2, and SHA3 are all well-recognized within the field of cryptography and are all considered to be mature and future-proof. You can rely on these ciphers and algorithms to protect your data, as they are all modern and have undergone a large amount of cryptanalysis.
 
 I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <code>argon2-cffi</code> and <code>pycryptodome</code> to do the heavy lifting, both of which are well known and popular within the Python community. For people who want to know how Picocrypt handles the crypto, or for the paranoid, here is a breakdown of how Picocrypt protects your data:
 
@@ -67,11 +67,11 @@ I did not write the crypto for Picocrypt. Picocrypt uses two Python libraries, <
 		</ul>
 	</li>
 	<li>If decrypting, compare the derived key with the SHA3-512 hash of the correct key stored in the ciphertext. If encrypting, compute the SHA3-512 of the derived key and add to ciphertext.</li>
-	<li>Encryption/decryption start, reading in 1MB chunks at a time. For each chunk, it is first encrypted by XChaCha20, and then a BLAKE2b CRC is updated.</li>
+	<li>Encryption/decryption start, reading in 1MB chunks at a time. For each chunk, it is first encrypted by XChaCha20, and then a BLAKE3 CRC is updated.</li>
 	<li>If anti-corruption is checked, the 1MB chunk will be split into 128 byte chunks and 13 additional Reed-Solomon (parity) bytes will be added. If decrypting, decode the encoded 1MB chunk to get the raw data.</li>
 	<li>When encryption/decryption is finished, the MAC tag (Poly1305) will be added to the ciphertext or verified, depending on if you're encrypting or decrypting. If 'Secure wipe' is enabled, the original file is securely deleted via system internals (<code>sdelete64</code> for Windows, <code>rm -P</code> for MacOS, and <code>shred</code> on Linux).</li>
-	<li>Similar to above, the BLAKE2 CRC is either checked or added to the ciphertext depending on the operation.</li>
-	<li>If decrypting and both the BLAKE2 CRC and Poly1305 tag are correct decryption is considered successful and the process is done. If either don't match, decryption is unsuccessful and an error message will be displayed.</li>
+	<li>Similar to above, the BLAKE3 CRC is either checked or added to the ciphertext depending on the operation.</li>
+	<li>If decrypting and both the BLAKE3 CRC and Poly1305 tag are correct, decryption is considered successful and the process is done. If either don't match, decryption is unsuccessful and an error message will be displayed.</li>
 </ol>
 
 Note: the list above is simplified. A lot more is actually happening.
