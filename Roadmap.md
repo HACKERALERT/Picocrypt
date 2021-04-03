@@ -17,6 +17,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 # In progress (will be in next release)
 <ul>
 	<li>Rewrite from scratch to implement much better UI</li>
+	<li>Allow file splitting into chunks (thanks u/greenreddits)</li>
 </ul>
 
 # Completed
