@@ -93,7 +93,6 @@ ThemedStyle(tk).set_theme("arc")
 # Some styling
 style = tkinter.ttk.Style()
 style.configure("PasswordMatches.TLabel",foreground="#e3242b")
-style.configure("PasswordStrength.TLabel",foreground="")
 
 # Enable high DPI on Windows
 def Get_HWND_DPI(window_handle):
@@ -305,17 +304,22 @@ def showStrength():
 	containsSymbols = any(not i.isalnum() for i in password)
 	longEnough = len(password)>8
 	if containsLetters and containsNumbers and containsSymbols and longEnough:
-		style.configure("PasswordStrength.TLabel",foreground="#149414")
+		passwordStrength.config(width=218)
+		passwordStrength.config(bg="#149414")
 	elif containsLetters and containsNumbers and containsSymbols:
-		style.configure("PasswordStrength.TLabel",foreground="#fada52")
+		passwordStrength.config(width=140)
+		passwordStrength.config(bg="#fada52")
 	elif containsLetters and containsNumbers or \
 		(containsLetters and containsSymbols) or \
 		(containsNumbers and containsSymbols):
-		style.configure("PasswordStrength.TLabel",foreground="#ff781f")
+		passwordStrength.config(width=90)
+		passwordStrength.config(bg="#ff781f")
 	elif not password:
-		style.configure("PasswordStrength.TLabel",foreground="")
+		passwordStrength.config(width=218)
+		passwordStrength.config(bg="#cccccc")
 	else:
-		style.configure("PasswordStrength.TLabel",foreground="#e3242b")
+		passwordStrength.config(width=20)
+		passwordStrength.config(bg="#e3242b")
 
 # Check if passwords match
 def doPasswordsMatch():
@@ -342,15 +346,13 @@ passwordInput.bind("<KeyRelease>",lambda e:[showStrength(),doPasswordsMatch()])
 cPasswordInput.bind("<KeyRelease>",lambda e:doPasswordsMatch())
 
 # Show indicator of password strength
-passwordStrengthString = tkinter.StringVar(tk)
-passwordStrengthString.set("■")
-passwordStrength = tkinter.ttk.Label(
+passwordStrength = tkinter.Frame(
 	tk,
-	textvariable=passwordStrengthString
+	height=2
 )
-passwordStrength.config(style="PasswordStrength.TLabel")
-passwordStrength.place(x=245,y=122)
-
+passwordStrength.config(bg="#cccccc")
+passwordStrength.place(x=21,y=143)
+passwordStrength.config(width=218)
 
 # Check box that indicates if password match
 passwordMatchesString = tkinter.StringVar(tk)
