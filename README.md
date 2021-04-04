@@ -11,7 +11,7 @@ Picocrypt for Windows is as easy as it gets. To download the latest, standalone,
 
 <strong>MacOS</strong>
 
-Picocrypt for MacOS is also very easy to use. Download the latest, standalone, and portable executable for MacOS <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.11/Picocrypt.app.zip" target="_blank">here</a></u></strong>. Older releases are available under Releases. MacOS might show a notice that Picocrypt is malware (it isn't) and disable opening it. To fix this, open Finder, Ctrl and right click on Picocrypt, and hit "Open". You might have to do this two times to open Picocrypt. After opening Picocrypt, be patient while Picocrypt loads. It might take a couple seconds.
+Picocrypt for MacOS is also very easy to use. Download the latest, standalone, and portable executable for MacOS <u><strong><a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.11/Picocrypt.app.zip" target="_blank">here</a></u></strong>. Older releases are available under Releases. MacOS might show a notice that Picocrypt is malware (it isn't) and disable opening it. To fix this, open Finder, Ctrl and right click on Picocrypt, and hit "Open". You might have to do this twice to open Picocrypt. After opening Picocrypt, be patient while Picocrypt loads. It might take a couple seconds.
 
 <strong>Linux (Debian-based)</strong>
 
@@ -82,12 +82,11 @@ See <code>Roadmap.md</code> for a list of new features and improvements that I'm
 # Community
 Here's some places where you can see the latest news about Picocrypt and get involved:
 <ul>
-	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
+	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a> (I'm u/ProHackerEvan)</li>
 	<li><a href="https://discord.gg/ktzZSj853X
-">Discord</a></li>
-	<li><a href="https://twitter.com/picocrypt">Twitter</a></li>
+">Discord</a> (I'm Evannnnn)</li>
 </ul>
-These are the official Picocrypt social groups and accounts. Be aware of scammers and hackers that might try to impersonate me and get you to download malicious software. Only trust these accounts and only download from this Github repo.
+These are the official Picocrypt social groups. Be aware of scammers and hackers that might try to impersonate me and get you to download malicious software. Only trust these accounts and only download from this Github repo.
 
 # Limitations
 
