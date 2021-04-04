@@ -328,7 +328,7 @@ def doPasswordsMatch():
 		return
 	matches = passwordInput.get()==cPasswordInput.get()
 	if passwordInput.get() and matches:
-		passwordMatchesString.set("✔")
+		passwordMatchesString.set("✔️")
 		style.configure("PasswordMatches.TLabel",foreground="#149414")
 		startBtn["state"] = "normal"
 		startBtn.config(cursor="hand2")
