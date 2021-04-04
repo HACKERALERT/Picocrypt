@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """
 
@@ -17,7 +18,8 @@ from datetime import datetime,timedelta
 from argon2.low_level import hash_secret_raw
 from argon2.low_level import Type as argonType
 from Crypto.Cipher import ChaCha20_Poly1305
-from Crypto.Hash import SHA3_512,BLAKE2b
+from Crypto.Hash import SHA3_512
+from blake3 import blake3
 from hmac import compare_digest
 from creedsolo import RSCodec,ReedSolomonError
 from os import urandom,fsync,remove,system
@@ -37,6 +39,7 @@ import tkinter.ttk
 import tkinter.scrolledtext
 import webbrowser
 import platform
+import passwordmeter
 
 # Global variables
 rootDir = dirname(realpath(__file__))
@@ -73,7 +76,7 @@ strings = [
 	"Securely erase and delete original file",
 	"Securely erasing original file(s)...",
 	"Output file already exists. Would you like to overwrite it?",
-	"Exiting now will lead to broken output. Are you sure?",
+	"",#14
 	"Prevent corruption using Reed-Solomon",
 	"Error. Folder(s) and/or file(s) are empty.",
 	"Unknown error occured. Please try again.",
@@ -84,15 +87,11 @@ strings = [
 
 # Create root tk
 tk = TkinterDnD.Tk()
-tk.geometry("480x512")
+tk.geometry("480x500")
 tk.title("Picocrypt")
 tk.resizable(0,0)
 tk.configure(background="#f5f6f7")
 ThemedStyle(tk).set_theme("arc")
-
-# Some styling
-style = tkinter.ttk.Style()
-style.configure("PasswordMatches.TLabel",foreground="#e3242b")
 
 # Enable high DPI on Windows
 def Get_HWND_DPI(window_handle):
@@ -128,9 +127,6 @@ def MakeTkDPIAware(TKGUI):
 if platform.system()=="Windows":
 	pass#MakeTkDPIAware(tk)
 
-# Add some styling
-style = tkinter.ttk.Style()
-
 # Try setting window icon if it exists
 try:
 	favicon = tkinter.PhotoImage(file="./key.png")
@@ -157,7 +153,7 @@ clearInput = tkinter.ttk.Button(
 	text="Clear",
 	command=lambda:[resetUI(),statusString.set("Ready.")]
 )
-clearInput.place(x=396,y=12,width=64,height=28)
+clearInput.place(x=386,y=13,width=74,height=27)
 clearInput["state"] = "disabled"
 
 # Separator for aesthetics
@@ -175,7 +171,7 @@ outputLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=outputString
 )
-outputLabel.place(x=20,y=48)
+outputLabel.place(x=20,y=51)
 
 outputLabel["state"] = "disabled"
 
@@ -186,7 +182,7 @@ pcvLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=pcvString
 )
-pcvLabel.place(x=314,y=68)
+pcvLabel.place(x=314,y=71)
 
 # A frame to allow output box to fill width
 outputFrame = tkinter.Frame(
@@ -194,7 +190,7 @@ outputFrame = tkinter.Frame(
 	width=320,
 	height=24
 )
-outputFrame.place(x=20,y=66)
+outputFrame.place(x=20,y=69)
 outputFrame.columnconfigure(0,weight=10)
 outputFrame.grid_propagate(False)
 
@@ -209,7 +205,7 @@ orLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=orString
 )
-orLabel.place(x=360,y=68)
+orLabel.place(x=356,y=71)
 
 def saveAs():
 	global mode,onlyFiles,onlyFolders
@@ -234,7 +230,7 @@ saveAsBtn = tkinter.ttk.Button(
 	text="Save as",
 	command=saveAs
 )
-saveAsBtn.place(x=396,y=64,width=64,height=27)
+saveAsBtn.place(x=386,y=67,width=74,height=27)
 saveAsBtn["state"] = "disabled"
 
 # Prompt user to enter password
@@ -244,26 +240,46 @@ passwordLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=passwordString
 )
-passwordLabel.place(x=20,y=100)
+passwordLabel.place(x=20,y=103)
 passwordLabel["state"] = "disabled"
 
 # Allow password input to fill width
 passwordFrame = tkinter.Frame(
 	tk,
-	width=220,
+	width=210,
 	height=24
 )
-passwordFrame.place(x=20,y=118)
+passwordFrame.place(x=20,y=121)
 passwordFrame.columnconfigure(0,weight=10)
 passwordFrame.grid_propagate(False)
 
 # Password input box
 passwordInput = tkinter.ttk.Entry(
 	passwordFrame,
-	show="\u2022"
+	show="•"
 )
 passwordInput.grid(sticky="nesw")
 passwordInput["state"] = "disabled"
+
+def showPassword(e):
+	if passwordInput.cget("show"):
+		passwordInput.config(show="")
+		cPasswordInput.config(show="")
+	else:
+		passwordInput.config(show="•")
+		cPasswordInput.config(show="•")
+
+passwordShowString = tkinter.StringVar(tk)
+passwordShowString.set("👁")
+passwordShow = tkinter.ttk.Label(
+	tk,
+	textvariable=passwordShowString,
+	cursor="hand2",
+	font=("TkDefaultFont",14)
+)
+passwordShow.bind("<Button-1>",showPassword)
+passwordShow["state"] = "disabled"
+passwordShow.place(x=234,y=121)
 
 # Prompt user to confirm password
 cPasswordString = tkinter.StringVar(tk)
@@ -272,23 +288,23 @@ cPasswordLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=cPasswordString
 )
-cPasswordLabel.place(x=20,y=150)
+cPasswordLabel.place(x=20,y=158)
 cPasswordLabel["state"] = "disabled"
 
 # Allow confirm password input to fill width
 cPasswordFrame = tkinter.Frame(
 	tk,
-	width=220,
+	width=210,
 	height=24
 )
-cPasswordFrame.place(x=20,y=168)
+cPasswordFrame.place(x=20,y=176)
 cPasswordFrame.columnconfigure(0,weight=10)
 cPasswordFrame.grid_propagate(False)
 
 # Confirm password input box
 cPasswordInput = tkinter.ttk.Entry(
 	cPasswordFrame,
-	show="\u2022"
+	show="•"
 )
 cPasswordInput.grid(sticky="nesw")
 cPasswordInput["state"] = "disabled"
@@ -299,12 +315,18 @@ def showStrength():
 	if mode=="decrypt":
 		return
 	password = passwordInput.get()
-	containsLetters = any(i.isalpha() for i in password)
+	if password:
+		strength,_ = passwordmeter.test(password)
+		passwordStrength.config(width=round(210*strength))
+	else:
+		passwordStrength.config(width=210)
+		passwordStrength.config(bg="#e5eaf0")
+	"""containsLetters = any(i.isalpha() for i in password)
 	containsNumbers = any(i.isdigit() for i in password)
 	containsSymbols = any(not i.isalnum() for i in password)
 	longEnough = len(password)>8
 	if containsLetters and containsNumbers and containsSymbols and longEnough:
-		passwordStrength.config(width=218)
+		passwordStrength.config(width=210)
 		passwordStrength.config(bg="#149414")
 	elif containsLetters and containsNumbers and containsSymbols:
 		passwordStrength.config(width=140)
@@ -315,11 +337,11 @@ def showStrength():
 		passwordStrength.config(width=90)
 		passwordStrength.config(bg="#ff781f")
 	elif not password:
-		passwordStrength.config(width=218)
-		passwordStrength.config(bg="#cccccc")
+		passwordStrength.config(width=210)
+		passwordStrength.config(bg="#e5eaf0")
 	else:
 		passwordStrength.config(width=20)
-		passwordStrength.config(bg="#e3242b")
+		passwordStrength.config(bg="#e3242b")"""
 
 # Check if passwords match
 def doPasswordsMatch():
@@ -329,12 +351,10 @@ def doPasswordsMatch():
 	matches = passwordInput.get()==cPasswordInput.get()
 	if passwordInput.get() and matches:
 		passwordMatchesString.set("✔️")
-		style.configure("PasswordMatches.TLabel",foreground="#149414")
 		startBtn["state"] = "normal"
 		startBtn.config(cursor="hand2")
 	elif passwordInput.get() and not matches:
 		passwordMatchesString.set("❌")
-		style.configure("PasswordMatches.TLabel",foreground="#e3242b")
 		startBtn["state"] = "disabled"
 		startBtn.config(cursor="")
 	elif not passwordInput.get():
@@ -348,11 +368,11 @@ cPasswordInput.bind("<KeyRelease>",lambda e:doPasswordsMatch())
 # Show indicator of password strength
 passwordStrength = tkinter.Frame(
 	tk,
-	height=2
+	height=2,
+	width=210
 )
-passwordStrength.config(bg="#cccccc")
-passwordStrength.place(x=21,y=143)
-passwordStrength.config(width=218)
+passwordStrength.config(bg="#e5eaf0")
+passwordStrength.place(x=20,y=146)
 
 # Check box that indicates if password match
 passwordMatchesString = tkinter.StringVar(tk)
@@ -360,8 +380,7 @@ passwordMatches = tkinter.ttk.Label(
 	tk,
 	textvariable=passwordMatchesString
 )
-passwordMatches.config(style="PasswordMatches.TLabel")
-passwordMatches.place(x=242,y=172)
+passwordMatches.place(x=236,y=180)
 
 # Prompt user for optional metadata
 metadataString = tkinter.StringVar(tk)
@@ -370,7 +389,7 @@ metadataLabel = tkinter.ttk.Label(
 	tk,
 	textvariable=metadataString
 )
-metadataLabel.place(x=20,y=202)
+metadataLabel.place(x=20,y=210)
 metadataLabel["state"] = "disabled"
 
 # Frame so metadata box can fill width
@@ -379,7 +398,7 @@ metadataFrame = tkinter.Frame(
 	width=439,
 	height=99
 )
-metadataFrame.place(x=20,y=220)
+metadataFrame.place(x=20,y=228)
 metadataFrame.columnconfigure(0,weight=10)
 metadataFrame.rowconfigure(0,weight=10)
 metadataFrame.grid_propagate(False)
@@ -423,7 +442,7 @@ keepBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-keepBtn.place(x=18,y=329)
+keepBtn.place(x=17,y=337)
 keepBtn["state"] = "disabled"
 
 # Check box for securely erasing original files
@@ -436,7 +455,7 @@ eraseBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-eraseBtn.place(x=18,y=349)
+eraseBtn.place(x=17,y=357)
 eraseBtn["state"] = "disabled"
 
 # Check box for enabling Reed-Solomon anti-corruption
@@ -449,7 +468,7 @@ rsBtn = tkinter.ttk.Checkbutton(
 	offvalue=0,
 	command=lambda:dummy.focus()
 )
-rsBtn.place(x=18,y=369)
+rsBtn.place(x=17,y=377)
 rsBtn["state"] = "disabled"
 
 # "Reed-Solomon" which links to Wikipedia
@@ -459,9 +478,9 @@ rsHelp = tkinter.ttk.Label(
 	tk,
 	textvariable=rsHelpString,
 	cursor="hand2",
-	font=("TkDefaultFont",7)
+	font=("Helvetica",7)
 )
-rsHelp.place(x=259,y=374)
+rsHelp.place(x=259,y=382)
 rsHelpLink = "https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction"
 rsHelp.bind("<Button-1>",lambda e:webbrowser.open(rsHelpLink))
 
@@ -471,7 +490,7 @@ startFrame = tkinter.Frame(
 	width=440,
 	height=29
 )
-startFrame.place(x=20,y=402)
+startFrame.place(x=20,y=410)
 startFrame.columnconfigure(0,weight=10)
 startFrame.grid_propagate(False)
 startFrame.config(background="#ffffff")
@@ -502,10 +521,13 @@ cancelBtn["state"] = "disabled"
 progress = tkinter.ttk.Progressbar(
 	tk,	
 	orient=tkinter.HORIZONTAL,
-	length=440,
+	length=336,#length=440,
 	mode="determinate"
 )
-progress.place(x=20,y=440)
+progress.place(x=30,y=420)#.place(x=20,y=448)
+
+# Lift start frame in front of progress bar
+startFrame.lift()
 
 # Status label
 statusString = tkinter.StringVar(tk)
@@ -514,7 +536,7 @@ status = tkinter.ttk.Label(
 	tk,
 	textvariable=statusString
 )
-status.place(x=20,y=455)
+status.place(x=20,y=448)
 
 # Credits
 hint = "Created by Evan Su. Click for details and source."
@@ -525,7 +547,7 @@ creditsLabel = tkinter.ttk.Label(
 	textvariable=creditsString,
 	cursor="hand2"
 )
-creditsLabel.place(x=20,y=480)
+creditsLabel.place(x=20,y=468)
 source = "https://github.com/HACKERALERT/Picocrypt"
 creditsLabel.bind("<Button-1>",lambda e:webbrowser.open(source))
 creditsLabel["state"] = "disabled"
@@ -538,7 +560,7 @@ version = tkinter.ttk.Label(
 	textvariable=versionString
 )
 version["state"] = "disabled"
-version.place(x=430,y=480)
+version.place(x=430,y=468)
 
 # Drag files window
 prompt = tkinter.Frame(tk)
@@ -551,22 +573,23 @@ promptLabel = tkinter.ttk.Label(
 	prompt,
 	textvariable=promptString
 )
-promptLabel.place(x=135,y=306)
+promptLabel.place(x=135,y=311)
 promptIconHor = tkinter.Frame(
 	prompt,
 	bg="#6f737d",
 	height=4
 )
-promptIconHor.place(x=208,y=256,width=64)
+promptIconHor.place(x=208,y=261,width=64)
 promptIconVer = tkinter.Frame(
 	prompt,
 	bg="#6f737d",
 	width=4
 )
-promptIconVer.place(x=238,y=226,height=64)
+promptIconVer.place(x=238,y=231,height=64)
 
 confirmOverwrite = tkinter.Frame(tk)
 confirmOverwrite.config(bg="#f5f6f7")
+confirmOverwrite.pack(expand=1,fill=tkinter.BOTH)
 
 confirmOverwriteString = tkinter.StringVar(tk)
 confirmOverwriteString.set(strings[13])
@@ -574,25 +597,26 @@ confirmOverwriteLabel = tkinter.ttk.Label(
 	confirmOverwrite,
 	textvariable=confirmOverwriteString
 )
-confirmOverwriteLabel.place(x=100,y=150)
+confirmOverwriteLabel.place(x=94,y=200)
 confirmOverwriteNo = tkinter.ttk.Button(
 	confirmOverwrite,
 	text="No",
 	cursor="hand2",
 	command=lambda:confirmOverwrite.pack_forget()
 )
-confirmOverwriteNo.place(x=100,y=200)
+confirmOverwriteNo.place(x=150,y=245)
 
 def overwriteConfirmed():
 	confirmOverwrite.pack_forget()
 	Thread(target=wrapper,daemon=True,args=(True,)).start()
+
 confirmOverwriteYes = tkinter.ttk.Button(
 	confirmOverwrite,
 	text="Yes",
 	cursor="hand2",
 	command=overwriteConfirmed
 )
-confirmOverwriteYes.place(x=300,y=200)
+confirmOverwriteYes.place(x=250,y=245)
 
 # Files have been dragged
 def filesDragged(draggedFiles):
@@ -732,7 +756,6 @@ def filesDragged(draggedFiles):
 	# UTF-8 decode error
 	except UnicodeDecodeError:
 		statusString.set(strings[20])
-		progress["value"] = 100
 	
 	# Nothing happened
 	except:
@@ -747,6 +770,7 @@ def onDrop(e):
 	clearInput.config(cursor="hand2")
 def onDropEnter(e):
 	prompt.pack(expand=1,fill=tkinter.BOTH)
+	prompt.lift()
 def onDropLeave(e):
 	prompt.pack_forget()
 tk.drop_target_register(DND_FILES)
@@ -835,7 +859,7 @@ def work():
 		fout.write(rs128.encode(nonce)) # ChaCha20 nonce
 		fout.write(b"0"*192) # Hash of key
 		fout.write(b"0"*144) # Poly1305 MAC
-		fout.write(b"0"*192) # BLAKE2b CRC
+		fout.write(b"0"*160) # BLAKE3 CRC
 	else:
 		tmp = fin.read(129)
 		if bytes(rs128.decode(tmp)[0])==b"+":
@@ -852,7 +876,7 @@ def work():
 		nonce = fin.read(152)
 		keycs = fin.read(192)
 		maccs = fin.read(144)
-		crccs = fin.read(192)
+		crccs = fin.read(160)
 		
 		try:
 			salt,_,fixed = rs128.decode(salt)
@@ -922,14 +946,13 @@ def work():
 				setDecryptionUI()
 				return
 		fout = open(outputFile,"wb+")
-	
-	crc = BLAKE2b.new(digest_bits=512)
+
+	crc = blake3()#BLAKE2b.new(digest_bits=512)
 	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
 	done = 0
 	total = getsize(inputFile)
 	startTime = datetime.now()
 	previousTime = datetime.now()
-
 	Thread(target=updateStats,daemon=True,args=(total,)).start()
 	while True:
 		if not working:
@@ -1023,7 +1046,7 @@ def work():
 		except:
 			if not reedsoloErrors and not headerBroken:
 				# File is modified
-				statusString.set(modifiedNotice)
+				statusString.set(strings[5])
 				fin.close()
 				fout.close()
 				# If keep file not checked...
@@ -1065,12 +1088,12 @@ def work():
 	print(kept,reedsoloFixed)
 	# Show appropriate notice if file corrupted or modified
 	if not kept:
-		statusString.set(f"Completed. (Click here to show output ↗)")
+		statusString.set(f"Completed. (Click here to show output 🡪)")
 		# Show Reed-Solomon stats if it fixed corrupted bytes
 		if mode=="decrypt" and reedsoloFixed:
 			statusString.set(
 				f"Completed with {reedsoloFixed}"+
-				f" bytes fixed. (Click here to show output ↗)"
+				f" bytes fixed. (Click here to show output 🡪)"
 			)
 	else:
 		if kept=="modified":
@@ -1110,6 +1133,7 @@ def wrapper(yes=False):
 		getsize(outputFile)
 		if not yes:
 			confirmOverwrite.pack(expand=1,fill=tkinter.BOTH)
+			confirmOverwrite.lift()
 			return
 	except:
 		pass
@@ -1211,13 +1235,17 @@ def resetUI():
 	passwordInput["state"] = "normal"
 	passwordInput.delete(0,"end")
 	passwordInput["state"] = "disabled"
+	passwordInput.config(show="•")
+	passwordShow["state"] = "disabled"
 	cPasswordString.set("Confirm password:")
 	cPasswordLabel["state"] = "disabled"
 	cPasswordInput["state"] = "normal"
 	cPasswordInput.delete(0,"end")
 	cPasswordInput["state"] = "disabled"
+	cPasswordInput.config(show="•")
+	passwordStrength.config(width=206)
+	passwordStrength.config(bg="#e5eaf0")
 	passwordMatchesString.set("")
-	style.configure("PasswordStrength.TLabel",foreground="")
 	metadataFrame.config(bg="#e5eaf0")
 	metadataInput.config(bg="#fbfcfc")
 	metadataInput.config(fg="#000000")
@@ -1232,6 +1260,7 @@ def resetUI():
 	eraseBtn["state"] = "disabled"
 	rs.set(0)
 	rsBtn["state"] = "disabled"
+	startFrame.lift()
 	startBtn["state"] = "disabled"
 	startBtn.config(cursor="")
 	cancelBtn["state"] = "disabled"
@@ -1254,6 +1283,7 @@ def setEncryptionUI():
 	outputFrame.config(width=290)
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
+	passwordShow["state"] = "normal"
 	cPasswordLabel["state"] = "normal"
 	cPasswordString.set("Confirm password:")
 	cPasswordInput["state"] = "normal"
@@ -1264,6 +1294,7 @@ def setEncryptionUI():
 	metadataInput["state"] = "normal"
 	eraseBtn["state"] = "normal"
 	rsBtn["state"] = "normal"
+	startFrame.lift()
 	startBtn["state"] = "normal"
 	startBtn.config(cursor="hand2")
 	cancelBtn["state"] = "disabled"
@@ -1285,6 +1316,7 @@ def setDecryptionUI():
 	outputFrame.config(width=320)
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
+	passwordShow["state"] = "normal"
 	cPasswordString.set("Confirm password (N/A):")
 	metadataFrame.config(bg="#e5eaf0")
 	metadataInput.config(bg="#fbfcfc")
@@ -1292,6 +1324,7 @@ def setDecryptionUI():
 	metadataString.set(strings[19])
 	metadataInput["state"] = "disabled"
 	keepBtn["state"] = "normal"
+	startFrame.lift()
 	startBtn["state"] = "normal"
 	startBtn.config(cursor="hand2")
 	cancelBtn["state"] = "disabled"
@@ -1308,12 +1341,16 @@ def disableAllInputs():
 	saveAsBtn["state"] = "disabled"
 	outputInput["state"] = "disabled"
 	passwordInput["state"] = "disabled"
+	passwordInput.config(show="•")
+	passwordShow["state"] = "disabled"
 	cPasswordInput["state"] = "disabled"
+	cPasswordInput.config(show="•")
 	cPasswordString.set("Confirm password:")
 	metadataFrame.config(bg="#e5eaf0")
 	metadataInput.config(bg="#fbfcfc")
 	metadataInput.config(fg="#666666")
 	metadataInput["state"] = "disabled"
+	progress.lift()
 	startBtn["state"] = "disabled"
 	startBtn.config(cursor="")
 	eraseBtn["state"] = "disabled"
