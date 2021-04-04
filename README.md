@@ -83,7 +83,8 @@ See <code>Roadmap.md</code> for a list of new features and improvements that I'm
 Here's some places where you can see the latest news about Picocrypt and get involved:
 <ul>
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
-	<li><a href="">Discord (coming soon)</a></li>
+	<li><a href="https://discord.gg/ktzZSj853X
+">Discord</a></li>
 	<li><a href="https://twitter.com/picocrypt">Twitter</a></li>
 </ul>
 These are the official Picocrypt social groups and accounts. Be aware of scammers and hackers that might try to impersonate me and get you to download malicious software. Only trust these accounts and only download from this Github repo.
