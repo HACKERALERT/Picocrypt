@@ -39,7 +39,6 @@ import tkinter.ttk
 import tkinter.scrolledtext
 import webbrowser
 import platform
-import passwordmeter
 
 # Global variables
 rootDir = dirname(realpath(__file__))
@@ -315,13 +314,7 @@ def showStrength():
 	if mode=="decrypt":
 		return
 	password = passwordInput.get()
-	if password:
-		strength,_ = passwordmeter.test(password)
-		passwordStrength.config(width=round(210*strength))
-	else:
-		passwordStrength.config(width=210)
-		passwordStrength.config(bg="#e5eaf0")
-	"""containsLetters = any(i.isalpha() for i in password)
+	containsLetters = any(i.isalpha() for i in password)
 	containsNumbers = any(i.isdigit() for i in password)
 	containsSymbols = any(not i.isalnum() for i in password)
 	longEnough = len(password)>8
@@ -341,7 +334,7 @@ def showStrength():
 		passwordStrength.config(bg="#e5eaf0")
 	else:
 		passwordStrength.config(width=20)
-		passwordStrength.config(bg="#e3242b")"""
+		passwordStrength.config(bg="#e3242b")
 
 # Check if passwords match
 def doPasswordsMatch():
