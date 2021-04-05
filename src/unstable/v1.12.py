@@ -582,7 +582,6 @@ promptIconVer.place(x=238,y=231,height=64)
 
 confirmOverwrite = tkinter.Frame(tk)
 confirmOverwrite.config(bg="#f5f6f7")
-confirmOverwrite.pack(expand=1,fill=tkinter.BOTH)
 
 confirmOverwriteString = tkinter.StringVar(tk)
 confirmOverwriteString.set(strings[13])
