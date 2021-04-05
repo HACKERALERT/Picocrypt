@@ -918,7 +918,7 @@ def work():
 		password,
 		salt,
 		time_cost=8,
-		memory_cost=2**10,
+		memory_cost=2**20,
 		parallelism=8,
 		hash_len=32,
 		type=argonType.D
@@ -1235,7 +1235,7 @@ def resetUI():
 	cPasswordInput.delete(0,"end")
 	cPasswordInput["state"] = "disabled"
 	cPasswordInput.config(show="•")
-	passwordStrength.config(width=206)
+	passwordStrength.config(width=208)
 	passwordStrength.config(bg="#e5eaf0")
 	passwordMatchesString.set("")
 	metadataFrame.config(bg="#e5eaf0")
