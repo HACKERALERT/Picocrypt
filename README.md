@@ -107,6 +107,8 @@ A <i>huge</i> thanks to the following list of people, who were the first people 
 <ul>
 	<li>W.Graham</li>
 	<li>N. Chin</li>
+	<li>Manjot Singh</li>
+	<li>Phil P.</li>
 </ul>
 
 Also, thanks to Freepik from Flaticon for Picocrypt's key icon.
