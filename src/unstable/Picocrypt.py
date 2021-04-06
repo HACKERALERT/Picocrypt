@@ -1212,7 +1212,7 @@ def updateStats(total):
 			# Show the number of fixed and unrecoverable bytes
 			if reedsolo and mode=="decrypt" and reedsoloFixed:
 				tmp = "s" if reedsoloFixed!=1 else ""
-				info += f", fixed {reedsoloFixed} bytes{tmp}"
+				info += f", fixed {reedsoloFixed} byte{tmp}"
 
 			if reedsolo and mode=="decrypt" and reedsoloErrors:
 				info += f", {reedsoloErrors} MB unrecoverable"
