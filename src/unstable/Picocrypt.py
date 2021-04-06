@@ -689,14 +689,14 @@ def filesDragged(draggedFiles):
 			# Read file metadata
 			fin = open(inputFile,"rb")
 			fin.read(129)
-			metadataLength = fin.read(138)
-			metadataLength = bytes(rs128.decode(metadataLength)[0])
-			metadataLength = metadataLength.replace(b"+",b"")
-			metadata = fin.read(int(metadataLength.decode("utf-8")))
 			metadataString.set("File metadata (read only):")
 			metadataInput["state"] = "normal"
 			metadataInput.delete("1.0",tkinter.END)
 			try:
+				metadataLength = fin.read(138)
+				metadataLength = bytes(rs128.decode(metadataLength)[0])
+				metadataLength = metadataLength.replace(b"+",b"")
+				metadata = fin.read(int(metadataLength.decode("utf-8")))
 				metadata = bytes(rs128.decode(metadata)[0]).decode("utf-8")
 				metadataInput.insert("1.0",metadata)
 			except:
