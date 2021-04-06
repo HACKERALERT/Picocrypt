@@ -75,7 +75,7 @@ strings = [
 	"Securely erase and delete original file",
 	"Securely erasing original file(s)...",
 	"Output file already exists. Would you like to overwrite it?",
-	"",#14
+	"The input file's metadata is corrupted.",
 	"Prevent corruption using Reed-Solomon",
 	"Error. Folder(s) and/or file(s) are empty.",
 	"Unknown error occured. Please try again.",
@@ -98,19 +98,22 @@ ThemedStyle(tk).set_theme("arc")
 try:
 	from ctypes import windll
 	windll.shcore.SetProcessDpiAwareness(0)
+except:
+	pass
 
 # Try setting window icon if it exists
 try:
-	try:
-		# PyInstaller bundles files in _MEIPASS
-		from sys import _MEIPASS
-		favicon = tkinter.PhotoImage(file=pathJoin(_MEIPASS,"key.png"))
-	except:
-		# PyInstaller not used, load from same directory
-		favicon = tkinter.PhotoImage(file="key.png")
+	# PyInstaller bundles files in _MEIPASS
+	from sys import _MEIPASS
+	favicon = tkinter.PhotoImage(file=pathJoin(_MEIPASS,"key.png"))
 	tk.iconphoto(False,favicon)
 except:
-	pass
+	try:
+		# PyInstaller not used, load from same directory
+		favicon = tkinter.PhotoImage(file="key.png")
+		tk.iconphoto(False,favicon)
+	except:
+		pass
 
 # Dummy button used for removing ugly highlights
 dummy = tkinter.ttk.Button(tk)
