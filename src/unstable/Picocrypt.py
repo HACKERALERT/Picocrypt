@@ -1008,13 +1008,12 @@ def work():
 		# Encrypt, etc.
 		if mode=="encrypt":
 			data = cipher.encrypt(piece)
+			crc.update(data)
 			if reedsolo:
 				data = bytes(rs13.encode(data))
-			crc.update(data)
 		
 		# Decrypt, etc.
 		else:
-			crc.update(piece)
 			if reedsolo:
 				try:
 					data,_,fixed = rs13.decode(piece)
@@ -1035,7 +1034,6 @@ def work():
 					counter = 0
 					while True:
 						# Basically just strip off the Reed-Solomon bytes
-						# and return the original non-encoded data
 						if counter<1104905:
 							data += piece[counter:counter+242]
 							counter += 255 # 242 bytes + 13 Reed-Solomon
@@ -1045,9 +1043,11 @@ def work():
 					reedsoloErrors += 1
 				
 				reedsoloFixed += len(fixed)
+				crc.update(data)
 				data = cipher.decrypt(data)
 
 			else:
+				crc.update(piece)
 				data = cipher.decrypt(piece)
 		
 		# Write the data, increase the amount done
@@ -1130,7 +1130,7 @@ def work():
 			tmp = "s" if reedsoloFixed!=1 else ""
 			statusString.set(
 				f"Completed with {reedsoloFixed} byte{tmp}"+
-				"fixed. (Click here to show output 🡪)"
+				" fixed. (Click here to show output 🡪)"
 			)
 	else:
 		if kept=="modified":
