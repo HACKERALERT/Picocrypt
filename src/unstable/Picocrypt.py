@@ -81,7 +81,8 @@ strings = [
 	"Unknown error occured. Please try again.",
 	"Drag and drop file(s) and folder(s) into this window.",
 	"File metadata (read-only):",
-	"Error. The input file couldn't be decoded as UTF-8."
+	"Error. The input file couldn't be decoded as UTF-8.",
+	"Error. The input file is corrupted so badly that Picocrypt can't decrypt it."
 ]
 
 # Create root window
@@ -871,10 +872,15 @@ def work():
 	# If decrypting, read values from file
 	else:
 		tmp = fin.read(129)
-		if bytes(rs128.decode(tmp)[0])==b"+":
-			reedsolo = True
-		else:
-			reedsolo = False
+		try:
+			if bytes(rs128.decode(tmp)[0])==b"+":
+				reedsolo = True
+			else:
+				reedsolo = False
+		except:
+			setDecryptionUI()
+			statusString.set(strings[21])
+			return
 
 		metadataLength = fin.read(138)
 		metadataLength = bytes(rs128.decode(metadataLength)[0])
