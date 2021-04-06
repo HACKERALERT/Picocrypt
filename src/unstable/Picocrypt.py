@@ -895,30 +895,35 @@ def work():
 			reedsoloFixed += len(fixed)
 		except:
 			headerBroken = True
+			salt = salt[:16]
 		try:
 			nonce,_,fixed = rs128.decode(nonce)
 			nonce = bytes(nonce)
 			reedsoloFixed += len(fixed)
 		except:
 			headerBroken = True
+			nonce = nonce[:24]
 		try:
 			keycs,_,fixed = rs128.decode(keycs)
 			keycs = bytes(keycs)
 			reedsoloFixed += len(fixed)
 		except:
 			headerBroken = True
+			keycs = keycs[:64]
 		try:
 			maccs,_,fixed = rs128.decode(maccs)
 			maccs = bytes(maccs)
 			reedsoloFixed += len(fixed)
 		except:
 			headerBroken = True
+			maccs = maccs[:16]
 		try:
 			crccs,_,fixed = rs128.decode(crccs)
 			crccs = bytes(crccs)
 			reedsoloFixed += len(fixed)
 		except:
 			headerBroken = True
+			crccs = crccs[:32]
 		
 		# If the header is broken...
 		if headerBroken:
