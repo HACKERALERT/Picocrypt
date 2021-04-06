@@ -59,7 +59,7 @@ reedsolo = False
 reedsoloFixed = False
 reedsoloErrors = False
 
-# Strings
+# A list of strings and notices
 strings = [
 	"File metadata (optional):",
 	"Compressing files together...",
@@ -84,51 +84,30 @@ strings = [
 	"Error. The input file couldn't be decoded as UTF-8."
 ]
 
-# Create root tk
+# Create root window
 tk = TkinterDnD.Tk()
 tk.geometry("480x500")
 tk.title("Picocrypt")
 tk.resizable(0,0)
 tk.configure(background="#f5f6f7")
+
+# Set "arc" theme
 ThemedStyle(tk).set_theme("arc")
 
-# Enable high DPI on Windows
-def Get_HWND_DPI(window_handle):
-	from ctypes import windll,pointer,wintypes
-	windll.shcore.SetProcessDpiAwareness(1)
-	DPI100pc = 96
-	DPI_type = 0
-	winH = wintypes.HWND(window_handle)
-	monitorhandle = windll.user32.MonitorFromWindow(
-		winH,wintypes.DWORD(2)
-	)
-	X = wintypes.UINT()
-	Y = wintypes.UINT()
-	try:
-		windll.shcore.GetDpiForMonitor(
-			monitorhandle,DPI_type,pointer(X),pointer(Y)
-		)
-		return X.value*2,Y.value*2,(X.value+Y.value)/(2*DPI100pc)
-	except Exception:
-		return 96,96,1
-def TkGeometryScale(s,cvtfunc):
-	patt = r"(?P<W>\d+)x(?P<H>\d+)\+(?P<X>\d+)\+(?P<Y>\d+)"
-	R = re.compile(patt).search(s)
-	G = str(cvtfunc(R.group("W")))+"x"
-	G += str(cvtfunc(R.group("H")))+"+"
-	G += str(cvtfunc(R.group("X")))+"+"
-	G += str(cvtfunc(R.group("Y")))
-	return G
-def MakeTkDPIAware(TKGUI):
-	TKGUI.DPI_X,TKGUI.DPI_Y,TKGUI.DPI_scaling = Get_HWND_DPI(TKGUI.winfo_id())
-	TKGUI.TkScale = lambda v:int(float(v)*TKGUI.DPI_scaling)
-	TKGUI.TkGeometryScale = lambda s:TkGeometryScale(s,TKGUI.TkScale)
-if platform.system()=="Windows":
-	pass#MakeTkDPIAware(tk)
+# Disable high DPI on Windows to prevent ugly scaling
+try:
+	from ctypes import windll
+	windll.shcore.SetProcessDpiAwareness(0)
 
 # Try setting window icon if it exists
 try:
-	favicon = tkinter.PhotoImage(file="./key.png")
+	try:
+		# PyInstaller bundles files in _MEIPASS
+		from sys import _MEIPASS
+		favicon = tkinter.PhotoImage(file=pathJoin(_MEIPASS,"key.png"))
+	except:
+		# PyInstaller not used, load from same directory
+		favicon = tkinter.PhotoImage(file="key.png")
 	tk.iconphoto(False,favicon)
 except:
 	pass
@@ -171,7 +150,6 @@ outputLabel = tkinter.ttk.Label(
 	textvariable=outputString
 )
 outputLabel.place(x=20,y=51)
-
 outputLabel["state"] = "disabled"
 
 # A ".pcv" extension shown next to output box
@@ -198,6 +176,7 @@ outputInput = tkinter.ttk.Entry(outputFrame)
 outputInput.grid(sticky="nesw")
 outputInput["state"] = "disabled"
 
+# A "or" label between output box and "Save as" button
 orString = tkinter.StringVar(tk)
 orString.set("or")
 orLabel = tkinter.ttk.Label(
@@ -206,15 +185,20 @@ orLabel = tkinter.ttk.Label(
 )
 orLabel.place(x=356,y=71)
 
+# Save as custom file
 def saveAs():
 	global mode,onlyFiles,onlyFolders
 	dummy.focus()
+
+	# Get the root directory to ask user to save as
 	if inputFile:
 		saveDir = dirname(inputFile)
 	elif onlyFiles:
 		saveDir = dirname(onlyFiles[0])
 	else:
 		saveDir = Path(onlyFolders[0]).parent.absolute()
+	
+	# Ask user to save file
 	tmp = asksaveasfilename(
 		initialdir=saveDir,
 		initialfile=(
@@ -222,9 +206,13 @@ def saveAs():
 		),
 		confirmoverwrite=True
 	)
+	
+	# If a custom output is chosen, update the output box accordingly
 	if tmp:
 		outputInput.delete(0,tkinter.END)
 		outputInput.insert(0,(tmp if mode=="decrypt" else tmp[:-4]))
+
+# Button to allow custom output
 saveAsBtn = tkinter.ttk.Button(
 	tk,
 	text="Save as",
@@ -261,6 +249,7 @@ passwordInput = tkinter.ttk.Entry(
 passwordInput.grid(sticky="nesw")
 passwordInput["state"] = "disabled"
 
+# Toggle password visibility
 def showPassword(e):
 	if passwordInput.cget("show"):
 		passwordInput.config(show="")
@@ -269,6 +258,7 @@ def showPassword(e):
 		passwordInput.config(show="•")
 		cPasswordInput.config(show="•")
 
+# Eye icon to show password
 passwordShowString = tkinter.StringVar(tk)
 passwordShowString.set("👁")
 passwordShow = tkinter.ttk.Label(
@@ -343,19 +333,26 @@ def doPasswordsMatch():
 	if mode=="decrypt":
 		return
 	matches = passwordInput.get()==cPasswordInput.get()
+	
+	# Passwords match
 	if passwordInput.get() and matches:
 		passwordMatchesString.set("✔️")
 		startBtn["state"] = "normal"
 		startBtn.config(cursor="hand2")
+	
+	# Passwords don't match
 	elif passwordInput.get() and not matches:
 		passwordMatchesString.set("❌")
 		startBtn["state"] = "disabled"
 		startBtn.config(cursor="")
+	
+	# Password is empty
 	elif not passwordInput.get():
 		passwordMatchesString.set("")
 		startBtn["state"] = "disabled"
 		startBtn.config(cursor="")
 
+# Bind key releases to appropriate functions
 passwordInput.bind("<KeyRelease>",lambda e:[showStrength(),doPasswordsMatch()])
 cPasswordInput.bind("<KeyRelease>",lambda e:doPasswordsMatch())
 
@@ -368,7 +365,7 @@ passwordStrength = tkinter.Frame(
 passwordStrength.config(bg="#e5eaf0")
 passwordStrength.place(x=21,y=146)
 
-# Check box that indicates if password match
+# Label that indicates if passwords match
 passwordMatchesString = tkinter.StringVar(tk)
 passwordMatches = tkinter.ttk.Label(
 	tk,
@@ -410,6 +407,8 @@ metadataInput.grid(row=0,column=0,sticky="nesw",padx=1,pady=1)
 metadataInput.config(borderwidth=0)
 metadataInput.config(bg="#fbfcfc")
 metadataInput["state"] = "disabled"
+
+# Tkinter's Text() boxes are ugly, so I (painfully) beautify it manually
 metadataInput.bind(
 	"<FocusIn>",
 	lambda e:metadataBoxUI("in")
@@ -418,7 +417,6 @@ metadataInput.bind(
 	"<FocusOut>",
 	lambda e:metadataBoxUI("out")
 )
-# Tkinter's Text() boxes are ugly, so I beautify it manually
 def metadataBoxUI(what):
 	if what=="in":
 		if metadataInput.cget("bg")=="#ffffff":
@@ -439,7 +437,7 @@ keepBtn = tkinter.ttk.Checkbutton(
 keepBtn.place(x=17,y=337)
 keepBtn["state"] = "disabled"
 
-# Check box for securely erasing original files
+# Check box for securely erasing original file(s)
 erase = tkinter.IntVar(tk)
 eraseBtn = tkinter.ttk.Checkbutton(
 	tk,
@@ -498,9 +496,11 @@ startBtn = tkinter.ttk.Button(
 startBtn.grid(row=0,column=0,stick="nesw")
 startBtn["state"] = "disabled"
 
+# Cancel encrypting/decrypting
 def cancel():
 	global working
 	working = False
+
 # Cancel button
 cancelBtn = tkinter.ttk.Button(
 	startFrame,
@@ -520,7 +520,7 @@ progress = tkinter.ttk.Progressbar(
 )
 progress.place(x=30,y=420)#.place(x=20,y=448)
 
-# Lift start frame in front of progress bar
+# Lift start and cancel button in front of progress bar
 startFrame.lift()
 
 # Status label
@@ -556,11 +556,9 @@ version = tkinter.ttk.Label(
 version["state"] = "disabled"
 version.place(x=430,y=468)
 
-# Drag files window
+# Drag files indicator window
 prompt = tkinter.Frame(tk)
 prompt.config(bg="#f5f6f7")
-#prompt.pack(expand=1,fill=tkinter.BOTH)
-
 promptString = tkinter.StringVar(tk)
 promptString.set("Drag and drop file(s) and folder(s) here.")
 promptLabel = tkinter.ttk.Label(
@@ -581,9 +579,9 @@ promptIconVer = tkinter.Frame(
 )
 promptIconVer.place(x=238,y=231,height=64)
 
+# Ask user to confirm overwrite
 confirmOverwrite = tkinter.Frame(tk)
 confirmOverwrite.config(bg="#f5f6f7")
-
 confirmOverwriteString = tkinter.StringVar(tk)
 confirmOverwriteString.set(strings[13])
 confirmOverwriteLabel = tkinter.ttk.Label(
@@ -599,6 +597,7 @@ confirmOverwriteNo = tkinter.ttk.Button(
 )
 confirmOverwriteNo.place(x=150,y=245)
 
+# Start encryption/decryption after user confirms
 def overwriteConfirmed():
 	confirmOverwrite.pack_forget()
 	Thread(target=wrapper,daemon=True,args=(True,)).start()
@@ -617,6 +616,7 @@ def filesDragged(draggedFiles):
 	resetUI()
 	status.config(cursor="")
 	status.bind("<Button-1>",lambda e:None)
+
 	# Use try to catch file errors
 	try:
 		# Create lists to track files dragged
@@ -689,11 +689,15 @@ def filesDragged(draggedFiles):
 			metadataLength = bytes(rs128.decode(metadataLength)[0])
 			metadataLength = metadataLength.replace(b"+",b"")
 			metadata = fin.read(int(metadataLength.decode("utf-8")))
-			metadata = bytes(rs128.decode(metadata)[0]).decode("utf-8")
 			metadataString.set("File metadata (read only):")
 			metadataInput["state"] = "normal"
 			metadataInput.delete("1.0",tkinter.END)
-			metadataInput.insert("1.0",metadata)
+			try:
+				metadata = bytes(rs128.decode(metadata)[0]).decode("utf-8")
+				metadataInput.insert("1.0",metadata)
+			except:
+				# Metadata is corrupted, tell user
+				metadataInput.insert("1.0",strings[14])
 			metadataInput["state"] = "disabled"
 			fin.close()
 			
@@ -766,11 +770,14 @@ def onDropEnter(e):
 	prompt.lift()
 def onDropLeave(e):
 	prompt.pack_forget()
+
+# Bind functions to window
 tk.drop_target_register(DND_FILES)
 tk.dnd_bind("<<Drop>>",onDrop)
 tk.dnd_bind("<<DropEnter>>",onDropEnter)
 tk.dnd_bind("<<DropLeave>>",onDropLeave)
 
+# Main encryption/decryption function
 def work():
 	global inputFile,outputFile,working,mode,rs13,rs128,reedsolo
 	global done,stopUpdating,startTime,previousTime,onlyFiles
@@ -818,7 +825,6 @@ def work():
 			zf.write(i,i[zfOffset:])
 		for i in onlyFiles:
 			zf.write(i,pathSplit(i)[1])
-	
 		zf.close()
 		inputFile = zfName
 		outputFile = zfName+".pcv"
@@ -832,27 +838,34 @@ def work():
 		statusString.set(strings[16])
 		return
 	
+	# If encrypting, generate values for encryption
 	if mode=="encrypt":
-		salt = urandom(16)
-		nonce = urandom(24)
+		salt = urandom(16) # Argon2 salt
+		nonce = urandom(24) # XChaCha20 nonce
 		fout = open(outputFile,"wb+")
+		
+		# Indicate Reed-Solomon with "+"
 		if reedsolo:
 			fout.write(rs128.encode(b"+"))
 		else:
 			fout.write(rs128.encode(b"-"))
 
+		# Encode metadata and length of metadata
 		metadata = rs128.encode(metadata)
 		tmp = len(metadata)
 		tmp = f"{tmp:+<10}"
 		tmp = rs128.encode(tmp.encode("utf-8"))
 		
+		# Write to file
 		fout.write(tmp)
 		fout.write(metadata)
 		fout.write(rs128.encode(salt)) # Argon2 salt
-		fout.write(rs128.encode(nonce)) # ChaCha20 nonce
+		fout.write(rs128.encode(nonce)) # XChaCha20 nonce
 		fout.write(b"0"*192) # Hash of key
 		fout.write(b"0"*144) # Poly1305 MAC
 		fout.write(b"0"*160) # BLAKE3 CRC
+	
+	# If decrypting, read values from file
 	else:
 		tmp = fin.read(129)
 		if bytes(rs128.decode(tmp)[0])==b"+":
@@ -865,12 +878,14 @@ def work():
 		metadataLength = metadataLength.replace(b"+",b"")
 		fin.read(int(metadataLength.decode("utf-8")))
 
+		# Read values
 		salt = fin.read(144)
 		nonce = fin.read(152)
 		keycs = fin.read(192)
 		maccs = fin.read(144)
 		crccs = fin.read(160)
 		
+		# Try to decode each value, increase Reed-Solomon errors fixed if needed
 		try:
 			salt,_,fixed = rs128.decode(salt)
 			salt = bytes(salt)
@@ -902,7 +917,9 @@ def work():
 		except:
 			headerBroken = True
 		
+		# If the header is broken...
 		if headerBroken:
+			# Stop if user chose not to keep broken output
 			if not shouldKeep:
 				statusString.set(strings[8])
 				fin.close()
@@ -915,6 +932,7 @@ def work():
 				
 	statusString.set(strings[9])
 	
+	# Generate Argon2d key from master password
 	key = hash_secret_raw(
 		password,
 		salt,
@@ -925,29 +943,41 @@ def work():
 		type=argonType.D
 	)
 	
+	# Stop the indeterminate progress bar and set determinate
 	progress.stop()
 	progress.config(mode="determinate")
 	progress["value"] = 0
 	
+	# Hash of the derived Argon2 key
 	check = SHA3_512.new(data=key).digest()
 	
+	# Check if password is correct
 	if mode=="decrypt":
 		if not compare_digest(check,keycs):
+			# If header isn't broken...
 			if not headerBroken:
+				# Tell user password is incorrect
 				statusString.set(strings[2])
 				fin.close()
 				setDecryptionUI()
 				return
 		fout = open(outputFile,"wb+")
 
-	crc = blake3()#BLAKE2b.new(digest_bits=512)
-	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce)
+	crc = blake3() # Blake3 CRC
+	cipher = ChaCha20_Poly1305.new(key=key,nonce=nonce) # XChaCha20
+	
+	# Variables for calculating speeds, etc.
 	done = 0
 	total = getsize(inputFile)
 	startTime = datetime.now()
 	previousTime = datetime.now()
+	
+	# Update progress bar, etc. in another thread
 	Thread(target=updateStats,daemon=True,args=(total,)).start()
+	
+	# Start the encryption/decryption process
 	while True:
+		# Check if cancel button pressed
 		if not working:
 			fin.close()
 			fout.close()
@@ -960,18 +990,24 @@ def work():
 			dummy.focus()
 			return
 
+		# Read from file, read extra if Reed-Solomon was enabled
 		if mode=="decrypt" and reedsolo:
 			piece = fin.read(1104905)
 		else:
 			piece = fin.read(2**20)
+		
+		# End of file
 		if not piece:
 			break
 
+		# Encrypt, etc.
 		if mode=="encrypt":
 			data = cipher.encrypt(piece)
 			if reedsolo:
 				data = bytes(rs13.encode(data))
 			crc.update(data)
+		
+		# Decrypt, etc.
 		else:
 			crc.update(piece)
 			if reedsolo:
@@ -986,18 +1022,18 @@ def work():
 						remove(outputFile)
 						setDecryptionUI()
 						return
-					
-					kept = "badlyCorrupted"
+
 					# Attempt to recover badly corrupted data
+					kept = "badlyCorrupted"
 					data = b""
 					piece = piece[:-13]
 					counter = 0
 					while True:
-						# Basically just strip the Reed-Solomon bytes
+						# Basically just strip off the Reed-Solomon bytes
 						# and return the original non-encoded data
 						if counter<1104905:
 							data += piece[counter:counter+242]
-							counter += 255 # 255 bytes, 242 original
+							counter += 255 # 242 bytes + 13 Reed-Solomon
 						else:
 							break
 					fixed = bytearray()
@@ -1008,10 +1044,12 @@ def work():
 
 			else:
 				data = cipher.decrypt(piece)
-			
+		
+		# Write the data, increase the amount done
 		fout.write(data)
 		done += 2**20
 	
+	# Encryption is done, write appropriate values to file
 	if mode=="encrypt":
 		fout.flush()
 		fout.close()
@@ -1020,12 +1058,14 @@ def work():
 		fout.write(rs128.encode(check))
 		fout.write(rs128.encode(cipher.digest()))
 		fout.write(rs128.encode(crc.digest()))
+	
+	# Decryption is done, check for integrity and authenticity
 	else:
+		# File is corrupted
 		if not compare_digest(crccs,crc.digest()):
 			statusString.set(strings[3])
 			fin.close()
 			fout.close()
-			
 			if keep.get()!=1:
 				remove(outputFile)
 				setDecryptionUI()
@@ -1033,7 +1073,6 @@ def work():
 			else:
 				if not kept:
 					kept = "corrupted"
-		
 		try:
 			cipher.verify(maccs)
 		except:
@@ -1074,11 +1113,10 @@ def work():
 
 	# Secure wipe not enabled
 	else:
+		# Remove temporary zip file if created
 		if allFiles or onlyFiles:
-			# Remove temporary zip file if created
 			remove(inputFile)
-
-	print(kept,reedsoloFixed)
+					
 	# Show appropriate notice if file corrupted or modified
 	if not kept:
 		statusString.set(f"Completed. (Click here to show output 🡪)")
@@ -1098,10 +1136,10 @@ def work():
 	
 	status.config(cursor="hand2")
 	
-	# A little hack since strings are immutable
+	# A little hack to prevent reference nonsense
 	output = "".join([i for i in outputFile])
 
-	# Bind the output file
+	# Bind the output file to the status label
 	if platform.system()=="Windows":
 		status.bind("<Button-1>",lambda e:showOutput(output.replace("/","\\")))
 	else:
@@ -1116,6 +1154,7 @@ def work():
 	onlyFiles = []
 	working = False
 
+# Wraps the work() function and prevents overwrites
 def wrapper(yes=False):
 	global working,mode,outputFile
 	if mode=="encrypt":
@@ -1143,13 +1182,16 @@ def wrapper(yes=False):
 		working = False
 		sys.exit(0)
 
+# Update visuals with stats
 def updateStats(total):
 	global startTime,previousTime,done,stopUpdating,reedsolo,reedsoloFixed,reedsoloErrors,working
 	while True:
 		validStatus = (
 			statusString.get().startswith("Working") or statusString.get().startswith("Deriving")
 		)
+		# Make sure to stop updating if needed
 		if not stopUpdating and validStatus and working:
+			# Some basic math to calculate speed, ETA, etc.
 			elapsed = (datetime.now()-previousTime).total_seconds() or 0.0001
 			sinceStart = (datetime.now()-startTime).total_seconds() or 0.0001
 			previousTime = datetime.now()
@@ -1162,9 +1204,10 @@ def updateStats(total):
 			
 			info = f"Working... {min(percent,100):.0f}% at {speed:.2f} MB/s (ETA: {eta})"
 
+			# Show the number of fixed and unrecoverable bytes
 			if reedsolo and mode=="decrypt" and reedsoloFixed:
 				tmp = "s" if reedsoloFixed!=1 else ""
-				info += f", fixed {reedsoloFixed} error{tmp}"
+				info += f", fixed {reedsoloFixed} bytes{tmp}"
 
 			if reedsolo and mode=="decrypt" and reedsoloErrors:
 				info += f", {reedsoloErrors} MB unrecoverable"
@@ -1175,11 +1218,13 @@ def updateStats(total):
 			sys.exit(0)
 			break
 
-
+# Securely wipe file(s) via system internals
 def secureWipe(fin):
 	statusString.set(strings[12])
+
 	# Check platform, erase accordingly
 	if platform.system()=="Windows":
+		# Recursively delete folders
 		if isdir(fin):
 			paths = []
 			for i in Path(fin).rglob("*"):
@@ -1195,11 +1240,16 @@ def secureWipe(fin):
 			statusString.set(strings[12])
 			progress["value"] = 100
 			system(f'sdelete64.exe "{fin}" -p 4 -nobanner')
+
+	# MacOS
 	elif platform.system()=="Darwin":
 		system(f'rm -rfP "{fin}"')
+					
+	# Linux
 	else:
 		system(f'shred -uz "{fin}" -n 4')
 
+# Show output file in user's file manager
 def showOutput(file):
 	if platform.system()=="Windows":
 		system(f'explorer /select,"{file}"')
@@ -1350,15 +1400,19 @@ def disableAllInputs():
 	keepBtn["state"] = "disabled"
 	rsBtn["state"] = "disabled"
 
+# Allow window to close if not encrypting/decrypting
 def onClose():
 	global working
 	if not working:
 		tk.destroy()
 
+# Generate Reed-Solomon codecs
 def prepare():
 	global rs13,rs128
 	rs13 = RSCodec(13)
 	rs128 = RSCodec(128)
+	
+	# Accept sdelete64's EULA
 	if platform.system()=="Windows":
 		system("sdelete64.exe /accepteula")
 	sys.exit(0)
@@ -1366,8 +1420,9 @@ def prepare():
 # Prepare Reed-Solomon codecs
 Thread(target=prepare,daemon=True).start()
 
+# Bind tkinter close event
 tk.protocol("WM_DELETE_WINDOW",onClose)
+
 # Start tkinter
 tk.mainloop()
-
 sys.exit(0)
