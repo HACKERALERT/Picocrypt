@@ -61,7 +61,7 @@ reedsoloErrors = False
 
 # Strings
 strings = [
-	"File metadata (used to store some text along with the file):",
+	"File metadata (optional):",
 	"Compressing files together...",
 	"Error. The provided password is incorrect.",
 	"Error. The input file is corrupted.",
@@ -222,8 +222,9 @@ def saveAs():
 		),
 		confirmoverwrite=True
 	)
-	outputInput.delete(0,tkinter.END)
-	outputInput.insert(0,(tmp if mode=="decrypt" else tmp[:-4]))
+	if tmp:
+		outputInput.delete(0,tkinter.END)
+		outputInput.insert(0,(tmp if mode=="decrypt" else tmp[:-4]))
 saveAsBtn = tkinter.ttk.Button(
 	tk,
 	text="Save as",
