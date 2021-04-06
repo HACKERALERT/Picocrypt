@@ -1052,7 +1052,7 @@ def work():
 		
 		# Write the data, increase the amount done
 		fout.write(data)
-		done += 2**20
+		done += 1104905 if (mode=="decrypt" and reedsolo) else 2**20
 	
 	# Encryption is done, write appropriate values to file
 	if mode=="encrypt":
