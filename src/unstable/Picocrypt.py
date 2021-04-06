@@ -1020,6 +1020,7 @@ def work():
 				except ReedSolomonError:
 					# File is really corrupted
 					if not reedsoloErrors and not shouldKeep:
+						stopUpdating = True
 						statusString.set(strings[4])
 						fin.close()
 						fout.close()
@@ -1053,6 +1054,9 @@ def work():
 		# Write the data, increase the amount done
 		fout.write(data)
 		done += 1104905 if (mode=="decrypt" and reedsolo) else 2**20
+	
+	# Stop UI updater from overwriting potential messages
+	stopUpdating = True
 	
 	# Encryption is done, write appropriate values to file
 	if mode=="encrypt":
@@ -1102,7 +1106,6 @@ def work():
 		fsync(fout.fileno())
 	fout.close()
 	fin.close()
-	stopUpdating = True
 
 	# Securely wipe files as necessary
 	if shouldErase:
