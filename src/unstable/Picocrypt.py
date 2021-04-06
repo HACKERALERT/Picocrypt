@@ -924,10 +924,12 @@ def work():
 		if headerBroken:
 			# Stop if user chose not to keep broken output
 			if not shouldKeep:
-				statusString.set(strings[8])
+				statusString.set(strings[4])
 				fin.close()
-				fout.close()
-				remove(outputFile)
+				try:
+					remove(outputFile)
+				except:
+					pass
 				setDecryptionUI()
 				return
 			else:
