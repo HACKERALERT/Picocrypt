@@ -1127,9 +1127,10 @@ def work():
 		statusString.set(f"Completed. (Click here to show output 🡪)")
 		# Show Reed-Solomon stats if it fixed corrupted bytes
 		if mode=="decrypt" and reedsoloFixed:
+			tmp = "s" if reedsoloFixed!=1 else ""
 			statusString.set(
-				f"Completed with {reedsoloFixed}"+
-				f" bytes fixed. (Click here to show output 🡪)"
+				f"Completed with {reedsoloFixed} byte{tmp}"+
+				"fixed. (Click here to show output 🡪)"
 			)
 	else:
 		if kept=="modified":
