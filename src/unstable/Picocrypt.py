@@ -335,26 +335,32 @@ def showStrength():
 def doPasswordsMatch():
 	global mode
 	if mode=="decrypt":
-		return
-	matches = passwordInput.get()==cPasswordInput.get()
-	
-	# Passwords match
-	if passwordInput.get() and matches:
-		passwordMatchesString.set("✔️")
-		startBtn["state"] = "normal"
-		startBtn.config(cursor="hand2")
-	
-	# Passwords don't match
-	elif passwordInput.get() and not matches:
-		passwordMatchesString.set("❌")
-		startBtn["state"] = "disabled"
-		startBtn.config(cursor="")
-	
-	# Password is empty
-	elif not passwordInput.get():
-		passwordMatchesString.set("")
-		startBtn["state"] = "disabled"
-		startBtn.config(cursor="")
+		if passwordInput.get():
+			startBtn["state"] = "normal"
+			startBtn.config(cursor="hand2")
+		else:
+			startBtn["state"] = "disabled"
+			startBtn.config(cursor="")
+	else:
+		matches = passwordInput.get()==cPasswordInput.get()
+
+		# Passwords match
+		if passwordInput.get() and matches:
+			passwordMatchesString.set("✔️")
+			startBtn["state"] = "normal"
+			startBtn.config(cursor="hand2")
+
+		# Passwords don't match
+		elif passwordInput.get() and not matches:
+			passwordMatchesString.set("❌")
+			startBtn["state"] = "disabled"
+			startBtn.config(cursor="")
+
+		# Password is empty
+		elif not passwordInput.get():
+			passwordMatchesString.set("")
+			startBtn["state"] = "disabled"
+			startBtn.config(cursor="")
 
 # Bind key releases to appropriate functions
 passwordInput.bind("<KeyRelease>",lambda e:[showStrength(),doPasswordsMatch()])
@@ -592,14 +598,14 @@ confirmOverwriteLabel = tkinter.ttk.Label(
 	confirmOverwrite,
 	textvariable=confirmOverwriteString
 )
-confirmOverwriteLabel.place(x=94,y=200)
+confirmOverwriteLabel.place(x=91,y=200)
 confirmOverwriteNo = tkinter.ttk.Button(
 	confirmOverwrite,
 	text="No",
 	cursor="hand2",
 	command=lambda:confirmOverwrite.pack_forget()
 )
-confirmOverwriteNo.place(x=150,y=245)
+confirmOverwriteNo.place(x=147,y=245)
 
 # Start encryption/decryption after user confirms
 def overwriteConfirmed():
@@ -612,7 +618,7 @@ confirmOverwriteYes = tkinter.ttk.Button(
 	cursor="hand2",
 	command=overwriteConfirmed
 )
-confirmOverwriteYes.place(x=250,y=245)
+confirmOverwriteYes.place(x=249,y=245)
 
 # Files have been dragged
 def filesDragged(draggedFiles):
@@ -713,6 +719,8 @@ def filesDragged(draggedFiles):
 			
 			# Update UI
 			setDecryptionUI()
+			startBtn["state"] = "disabled"
+			startBtn.config(cursor="")
 		else:
 			mode = "encrypt"
 
