@@ -187,6 +187,7 @@ orLabel = tkinter.ttk.Label(
 	textvariable=orString
 )
 orLabel.place(x=356,y=71)
+orLabel["state"] = "disabled"
 
 # Save as custom file
 def saveAs():
@@ -1304,6 +1305,7 @@ def resetUI():
 	outputLabel["state"] = "disabled"
 	saveAsBtn.config(cursor="")
 	saveAsBtn["state"] = "disabled"
+	orLabel.place(x=356,y=71)
 	orLabel["state"] = "disabled"
 	outputFrame.config(width=320)
 	outputInput["state"] = "normal"
@@ -1356,6 +1358,7 @@ def setEncryptionUI():
 	clearInput.config(cursor="hand2")
 	saveAsBtn.config(cursor="hand2")
 	saveAsBtn["state"] = "normal"
+	orLabel.place(x=353,y=71)
 	orLabel["state"] = "normal"
 	outputLabel["state"] = "normal"
 	outputInput["state"] = "normal"
@@ -1391,6 +1394,7 @@ def setDecryptionUI():
 	clearInput.config(cursor="hand2")
 	saveAsBtn.config(cursor="hand2")
 	saveAsBtn["state"] = "normal"
+	orLabel.place(x=356,y=71)
 	orLabel["state"] = "normal"
 	outputLabel["state"] = "normal"
 	outputInput["state"] = "normal"
