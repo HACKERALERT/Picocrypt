@@ -1200,6 +1200,7 @@ def wrapper(yes=False):
 	try:
 		work()
 	except:
+		working = False
 		if mode=="encrypt":
 			setEncryptionUI()
 		else:
@@ -1207,7 +1208,6 @@ def wrapper(yes=False):
 		statusString.set(strings[17])
 	finally:
 		dummy.focus()
-		working = False
 		sys.exit(0)
 
 # Update visuals with stats
