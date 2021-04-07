@@ -1,4 +1,6 @@
-# v1.12 (soon to be released)
+# v1.13 (Soon to be released)
+
+# v1.12 (Released 04/07/2021)
 <ul>
 	<li>Beautiful UI</li>
 	<li>More than x2 as fast as previous versions</li>
@@ -13,7 +15,7 @@
 </ul>
 <strong>Note: v1.12 will be INCOMPATIBLE with all previous releases!</strong>
 
-# v1.11 (released 3/23/2021)
+# v1.11 (released 03/23/2021)
 <ul>
 	<li>Much more secure wipe via <code>sdelete64</code> for Windows, <code>shred</code> for Linux, and <code>rm -P</code> for MacOS</li>
 	<li>Much more beautiful UI for MacOS</li>
