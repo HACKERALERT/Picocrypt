@@ -139,12 +139,11 @@ clearInput.place(x=386,y=13,width=74,height=27)
 clearInput["state"] = "disabled"
 
 # Separator for aesthetics
-separator = tkinter.Frame(
+tkinter.Frame(
 	tk,
 	bg="#dfe3ed",
 	height=1
-)
-separator.place(x=20,y=39,width=438)
+).place(x=20,y=39,width=438)
 
 # Label to ask user what to save output as
 outputString = tkinter.StringVar(tk)
@@ -273,7 +272,7 @@ passwordShow = tkinter.ttk.Label(
 )
 passwordShow.bind("<Button-1>",showPassword)
 passwordShow["state"] = "disabled"
-passwordShow.place(x=234,y=121)
+passwordShow.place(x=235,y=121)
 
 # Prompt user to confirm password
 cPasswordString = tkinter.StringVar(tk)
@@ -396,7 +395,7 @@ metadataLabel["state"] = "disabled"
 # Frame so metadata box can fill width
 metadataFrame = tkinter.Frame(
 	tk,
-	width=209,
+	width=235,
 	height=99
 )
 metadataFrame.place(x=20,y=228)
@@ -433,6 +432,13 @@ def metadataBoxUI(what):
 			metadataFrame.config(bg="#5294e2")
 	else:
 		metadataFrame.config(bg="#d8ddea")
+
+# Another separator for aesthetics
+tkinter.Frame(
+	tk,
+	bg="#dfe3ed",
+	width=1
+).place(x=262,y=106,height=221)
 
 # Check box for keeping corrupted or modified output
 keep = tkinter.IntVar(tk)
@@ -1298,6 +1304,7 @@ def resetUI():
 	outputLabel["state"] = "disabled"
 	saveAsBtn.config(cursor="")
 	saveAsBtn["state"] = "disabled"
+	orLabel["state"] = "disabled"
 	outputFrame.config(width=320)
 	outputInput["state"] = "normal"
 	outputInput.delete(0,"end")
@@ -1349,12 +1356,14 @@ def setEncryptionUI():
 	clearInput.config(cursor="hand2")
 	saveAsBtn.config(cursor="hand2")
 	saveAsBtn["state"] = "normal"
+	orLabel["state"] = "normal"
 	outputLabel["state"] = "normal"
 	outputInput["state"] = "normal"
 	outputFrame.config(width=290)
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
 	passwordShow["state"] = "normal"
+	showStrength()
 	cPasswordLabel["state"] = "normal"
 	cPasswordString.set("Confirm password:")
 	cPasswordInput["state"] = "normal"
@@ -1382,6 +1391,7 @@ def setDecryptionUI():
 	clearInput.config(cursor="hand2")
 	saveAsBtn.config(cursor="hand2")
 	saveAsBtn["state"] = "normal"
+	orLabel["state"] = "normal"
 	outputLabel["state"] = "normal"
 	outputInput["state"] = "normal"
 	outputFrame.config(width=320)
@@ -1410,10 +1420,13 @@ def disableAllInputs():
 	clearInput.config(cursor="")
 	saveAsBtn.config(cursor="")
 	saveAsBtn["state"] = "disabled"
+	orLabel["state"] = "disabled"
 	outputInput["state"] = "disabled"
 	passwordInput["state"] = "disabled"
 	passwordInput.config(show="•")
 	passwordShow["state"] = "disabled"
+	passwordStrength.config(width=208)
+	passwordStrength.config(bg="#e5eaf0")
 	cPasswordInput["state"] = "disabled"
 	cPasswordInput.config(show="•")
 	cPasswordString.set("Confirm password:")
