@@ -26,7 +26,7 @@ Why should you use Picocrypt, instead of Bitlocker, NordLocker, VeraCrypt, or 7-
 <ul>
 	<li>The only safe encryption is the one you do yourself. Don't trust cloud providers to "encrypt" your data, because you'll never know if they do it or not. Picocrypt is meant to be the simplest tool to allow you to take control over your confidential data and protect it with the most secure and modern standards available.</li>
 	<li>Unlike NordLocker, Bitlocker, and most cloud storage providers, Picocrypt and its dependencies are FOSS (free open-source software) and can be audited. You can verify for yourself that there aren't any backdoors or flaws.</li>
-	<li>Picocrypt is portable and <i>tiny</i> (just 3MB for Windows!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). The standalone executables can run on any machine (Windows, MacOS, or Linux) and they run with no installation, dependencies, or admin privileges. Picocrypt floats your boat without any bloat.</li>
+	<li>Picocrypt is portable and <i>tiny</i> (just 4MB for Windows!). It's much lighter than NordLocker (>100MB) and VeraCrypt (>30MB). The standalone executables can run on any machine (Windows, MacOS, or Linux) and they run with no installation, dependencies, or admin privileges. Picocrypt floats your boat without any bloat.</li>
 	<li>It's infinitely easier to use than VeraCrypt (no need to create volumes) and a 5-year-old could probably use Picocrypt. All you need to do is select your file(s) and enter a password. The internals such as encryption, authentication, and anti-corruption are completely handled by Picocrypt, so you don't have to worry about a thing.</li>
 	<li>Picocrypt is built for security, using modern standards and secure settings. It's carefully designed and uses well-known libraries to do cryptography. See <strong>Security</strong> below for more info.</li>
 	<li>It supports file integrity checking through Poly1305, which means that you would know if a hacker has maliciously modified your data. This is useful for transfering sensitive data where authenticity is crucial.</li>
@@ -83,8 +83,7 @@ See <code>Roadmap.md</code> for a list of new features and improvements that I'm
 Here's some places where you can see the latest news about Picocrypt and get involved:
 <ul>
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a> (I'm u/ProHackerEvan)</li>
-	<li><a href="https://discord.gg/ktzZSj853X
-">Discord</a> (I'm Evannnnn)</li>
+	<li><a href="https://discord.gg/ktzZSj853X">Discord</a> (I'm Evannnnn)</li>
 </ul>
 These are the official Picocrypt social groups. Be aware of scammers and hackers that might try to impersonate me and get you to download malicious software. Only trust these accounts and only download from this Github repo.
 
