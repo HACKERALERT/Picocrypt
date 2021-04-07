@@ -16,12 +16,12 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # In progress (will be in next release)
 <ul>
-	<li>Rewrite from scratch to implement much better UI</li>
 	<li>Allow file splitting into chunks (thanks u/greenreddits)</li>
 </ul>
 
 # Completed
 <ul>
+	<li>Rewrite from scratch to implement much better UI</li>
 	<li>Add Picocrypt vector logo to homepage (hacked together with Inkscape)</li>
 	<li>Abandoned due to being unreliable and requires admin rights: Right click in file explorer and display "Encrypt folder with Picocrypt" (thanks @beerisgood)</li>
 	<li>Drag and drop files (thanks u/your_username)</li>
