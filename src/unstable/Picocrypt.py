@@ -264,7 +264,7 @@ def showPassword(e):
 
 # Eye icon to show password
 passwordShowString = tkinter.StringVar(tk)
-passwordShowString.set("👁" if platform.system()=="Windows" else "🔍")
+passwordShowString.set(("  " if platform.system()=="Darwin" else "")+"👁")
 passwordShow = tkinter.ttk.Label(
 	tk,
 	textvariable=passwordShowString,
@@ -273,7 +273,10 @@ passwordShow = tkinter.ttk.Label(
 )
 passwordShow.bind("<Button-1>",showPassword)
 passwordShow["state"] = "disabled"
-passwordShow.place(x=235,y=121)
+passwordShow.place(
+	x=(235 if platform.system()=="Windows" else 230),
+	y=(121 if platform.system()=="Windows" else 124)
+)
 
 # Prompt user to confirm password
 cPasswordString = tkinter.StringVar(tk)
@@ -487,9 +490,12 @@ rsHelp = tkinter.ttk.Label(
 	tk,
 	textvariable=rsHelpString,
 	cursor="hand2",
-	font=("Helvetica",7)
+	font=("Helvetica",(7 if platform.system()=="Windows" else 9))
 )
-rsHelp.place(x=259,y=382)
+rsHelp.place(
+	x=(259 if platform.system()=="Windows" else 289),
+	y=(382 if platform.system()=="Windows" else 384)
+)
 rsHelpLink = "https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction"
 rsHelp.bind("<Button-1>",lambda e:webbrowser.open(rsHelpLink))
 
@@ -532,10 +538,10 @@ cancelBtn["state"] = "disabled"
 progress = tkinter.ttk.Progressbar(
 	tk,	
 	orient=tkinter.HORIZONTAL,
-	length=336,#length=440,
+	length=(336 if platform.system()=="Windows" else 304),
 	mode="determinate"
 )
-progress.place(x=30,y=420)#.place(x=20,y=448)
+progress.place(x=30,y=420)
 
 # Lift start and cancel button in front of progress bar
 startFrame.lift()
@@ -571,7 +577,7 @@ version = tkinter.ttk.Label(
 	textvariable=versionString
 )
 version["state"] = "disabled"
-version.place(x=430,y=468)
+version.place(x=(430 if platform.system()=="Windows" else 423),y=468)
 
 # Drag files indicator window
 prompt = tkinter.Frame(tk)
@@ -1152,14 +1158,15 @@ def work():
 			remove(inputFile)
 					
 	# Show appropriate notice if file corrupted or modified
+	arrow = "" if platform.system()=="Darwin" else "🡪"
 	if not kept:
-		statusString.set(f"Completed. (Click here to show output 🡪)")
+		statusString.set(f"Completed. (Click here to show output {arrow})")
 		# Show Reed-Solomon stats if it fixed corrupted bytes
 		if mode=="decrypt" and reedsoloFixed:
 			tmp = "s" if reedsoloFixed!=1 else ""
 			statusString.set(
 				f"Completed with {reedsoloFixed} byte{tmp}"+
-				" fixed. (Click here to show output 🡪)"
+				f" fixed. (Click here to show output {arrow})"
 			)
 	else:
 		if kept=="modified":
