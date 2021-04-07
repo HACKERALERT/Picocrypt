@@ -1327,6 +1327,7 @@ def resetUI():
 	passwordStrength.config(width=208)
 	passwordStrength.config(bg="#e5eaf0")
 	passwordMatchesString.set("")
+	passwordMatches["state"] = "normal"
 	metadataFrame.config(bg="#e5eaf0")
 	metadataInput.config(bg="#fbfcfc")
 	metadataInput.config(fg="#000000")
@@ -1372,6 +1373,7 @@ def setEncryptionUI():
 	cPasswordLabel["state"] = "normal"
 	cPasswordString.set("Confirm password:")
 	cPasswordInput["state"] = "normal"
+	passwordMatches["state"] = "normal"
 	metadataFrame.config(bg="#cfd6e6")
 	metadataInput.config(bg="#ffffff")
 	metadataInput.config(fg="#000000")
@@ -1437,6 +1439,7 @@ def disableAllInputs():
 	cPasswordInput["state"] = "disabled"
 	cPasswordInput.config(show="•")
 	cPasswordString.set("Confirm password:")
+	passwordMatches["state"] = "disabled"
 	metadataFrame.config(bg="#e5eaf0")
 	metadataInput.config(bg="#fbfcfc")
 	metadataInput.config(fg="#666666")
