@@ -1311,6 +1311,7 @@ def resetUI():
 	outputInput["state"] = "normal"
 	outputInput.delete(0,"end")
 	outputInput["state"] = "disabled"
+	pcvLabel["state"] = "normal"
 	passwordLabel["state"] = "disabled"
 	passwordInput["state"] = "normal"
 	passwordInput.delete(0,"end")
@@ -1363,6 +1364,7 @@ def setEncryptionUI():
 	outputLabel["state"] = "normal"
 	outputInput["state"] = "normal"
 	outputFrame.config(width=290)
+	pcvLabel["state"] = "normal"
 	passwordLabel["state"] = "normal"
 	passwordInput["state"] = "normal"
 	passwordShow["state"] = "normal"
@@ -1426,6 +1428,7 @@ def disableAllInputs():
 	saveAsBtn["state"] = "disabled"
 	orLabel["state"] = "disabled"
 	outputInput["state"] = "disabled"
+	pcvLabel["state"] = "disabled"
 	passwordInput["state"] = "disabled"
 	passwordInput.config(show="•")
 	passwordShow["state"] = "disabled"
