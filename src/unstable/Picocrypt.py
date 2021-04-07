@@ -264,7 +264,7 @@ def showPassword(e):
 
 # Eye icon to show password
 passwordShowString = tkinter.StringVar(tk)
-passwordShowString.set("👁")
+passwordShowString.set("👁" if platform.system()=="Windows" else "🔍")
 passwordShow = tkinter.ttk.Label(
 	tk,
 	textvariable=passwordShowString,
@@ -497,7 +497,7 @@ rsHelp.bind("<Button-1>",lambda e:webbrowser.open(rsHelpLink))
 startFrame = tkinter.Frame(
 	tk,
 	width=440,
-	height=29
+	height=(29 if platform.system()=="Windows" else 30)
 )
 startFrame.place(x=20,y=410)
 startFrame.columnconfigure(0,weight=10)
