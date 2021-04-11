@@ -28,6 +28,7 @@ from os.path import basename,dirname,abspath,realpath
 from os.path import join as pathJoin,split as pathSplit
 from pathlib import Path
 from zipfile import ZipFile
+from shutil import rmtree
 from tkinterdnd2 import TkinterDnD,DND_FILES
 from tkinter.filedialog import asksaveasfilename
 from ttkthemes import ThemedStyle
@@ -1146,7 +1147,7 @@ def work():
 				secureWipe(i)
 		if onlyFiles:
 			for i in range(len(onlyFiles)):
-				statusString.set(strings[12]+f" ({i}/{len(onlyFiles)}")
+				statusString.set(strings[12]+f" ({i}/{len(onlyFiles)})")
 				progress["value"] = i/len(onlyFiles)
 				secureWipe(onlyFiles[i])
 		secureWipe(inputFile)
@@ -1263,7 +1264,7 @@ def updateStats(total):
 # Securely wipe file(s) via system internals
 def secureWipe(fin):
 	statusString.set(strings[12])
-
+	progress["value"] = 100
 	# Check platform, erase accordingly
 	if platform.system()=="Windows":
 		# Recursively delete folders
@@ -1272,6 +1273,7 @@ def secureWipe(fin):
 			for i in Path(fin).rglob("*"):
 				if dirname(i) not in paths:
 					paths.append(dirname(i))
+					print(dirname(i))
 			for i in range(len(paths)):
 				statusString.set(strings[12]+f" ({i}/{len(paths)})")
 				progress["value"] = 100*i/len(paths)
@@ -1279,8 +1281,8 @@ def secureWipe(fin):
 			system(f'cd "{rootDir}"')
 			rmtree(fin)
 		else:
-			statusString.set(strings[12])
-			progress["value"] = 100
+			#statusString.set(strings[12])
+			#progress["value"] = 100
 			system(f'sdelete64.exe "{fin}" -p 4 -nobanner')
 
 	# MacOS
