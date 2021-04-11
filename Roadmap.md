@@ -7,7 +7,6 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 	<li>Add to AUR (Arch User Repo) (thanks u/blackrosae)</li>
 	<li>Secure password/mnemonic generator</li>
 	<li>Android/iOS support (thanks u/fzylqd), potentially via a web interface (thanks @Tutturuuu)</li>
-	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
 	<li>Full disk encryption (thanks u/playffy)</li>
 	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
 	<li>Hardware keys (thanks u/Tech99bananas)</li>
@@ -16,6 +15,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # In progress (will be in next release)
 <ul>
+	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
 	<li>Allow file splitting into chunks (thanks u/greenreddits)</li>
 </ul>
 
