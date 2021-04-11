@@ -1273,16 +1273,13 @@ def secureWipe(fin):
 			for i in Path(fin).rglob("*"):
 				if dirname(i) not in paths:
 					paths.append(dirname(i))
-					print(dirname(i))
 			for i in range(len(paths)):
 				statusString.set(strings[12]+f" ({i}/{len(paths)})")
 				progress["value"] = 100*i/len(paths)
-				system(f'cd "{paths[i]}" && "{rootDir}/sdelete64.exe" * -p 4 -s -nobanner')
+				system(f'cd "{paths[i]}" && "{rootDir}/sdelete64.exe" * -p 4 -nobanner')
 			system(f'cd "{rootDir}"')
 			rmtree(fin)
 		else:
-			#statusString.set(strings[12])
-			#progress["value"] = 100
 			system(f'sdelete64.exe "{fin}" -p 4 -nobanner')
 
 	# MacOS
