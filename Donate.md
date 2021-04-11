@@ -22,9 +22,3 @@ https://opencollective.com/picocrypt
     <li>BCH: <code>bitcoincash:qqsk0reyz3c4x2pyqymxh2swfuve0n0efyx8cytgz3</code></li>
     <li>XMR: <code>44Ymf12fj5sZDfjSJHyNieLBXxJww2zhCBCv94DVzCFb48jwwyC9uEPfEZuMSUXgePeWniWi4Gm3qhhksaYSCzbtDGg186o</code></li>
 </ul>
-
-# PayPal
-https://paypal.me/evanyiwensu
-
-<br>
-Want to donate in another form? Let me know in an Issue. <strong>Thank you for your support for Picocrypt. I can't wait to get Picocrypt audited.</strong>
