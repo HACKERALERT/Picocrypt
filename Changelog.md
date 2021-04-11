@@ -1,4 +1,5 @@
 # v1.13 (Soon to be released)
+<strong>Note: v1.3 will be INCOMPATIBLE with all previous releases! This will likely be the last change in the header format, meaning that all future releases _should_ be compatible with v1.13 and on.</strong>
 
 # v1.12 (Released 04/07/2021)
 <ul>
