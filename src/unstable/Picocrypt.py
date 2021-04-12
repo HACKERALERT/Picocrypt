@@ -524,6 +524,7 @@ startBtn["state"] = "disabled"
 def cancel():
 	global working
 	working = False
+	dummy.focus()
 
 # Cancel button
 cancelBtn = tkinter.ttk.Button(
@@ -572,7 +573,7 @@ creditsLabel["state"] = "disabled"
 
 # Version
 versionString = tkinter.StringVar(tk)
-versionString.set("v1.12")
+versionString.set("v1.12.1")
 version = tkinter.ttk.Label(
 	tk,
 	textvariable=versionString
@@ -1144,9 +1145,13 @@ def work():
 	if shouldErase:
 		if onlyFolders:
 			for i in onlyFolders:
+				if not working:
+					break
 				secureWipe(i)
 		if onlyFiles:
 			for i in range(len(onlyFiles)):
+				if not working:
+					break
 				statusString.set(strings[12]+f" ({i}/{len(onlyFiles)})")
 				progress["value"] = i/len(onlyFiles)
 				secureWipe(onlyFiles[i])
@@ -1157,25 +1162,35 @@ def work():
 		# Remove temporary zip file if created
 		if allFiles or onlyFiles:
 			remove(inputFile)
-					
-	# Show appropriate notice if file corrupted or modified
+	
+	# Prevent Unicode nonsense on MacOS
 	arrow = "" if platform.system()=="Darwin" else "🡪"
-	if not kept:
-		statusString.set(f"Completed. (Click here to show output {arrow})")
-		# Show Reed-Solomon stats if it fixed corrupted bytes
-		if mode=="decrypt" and reedsoloFixed:
-			tmp = "s" if reedsoloFixed!=1 else ""
-			statusString.set(
-				f"Completed with {reedsoloFixed} byte{tmp}"+
-				f" fixed. (Click here to show output {arrow})"
-			)
-	else:
-		if kept=="modified":
-			statusString.set(strings[7])
-		elif kept=="corrupted":
-			statusString.set(strings[6])
+
+	# If user hit 'Cancel' during secure wiping...
+	if not working:
+		fin.close()
+		fout.close()
+		resetUI()
+		statusString.set(f"Secure wipe canceled, but encryption was successful. (Output {arrow})")
+	else:		
+		# Show appropriate notice if file corrupted or modified
+		
+		if not kept:
+			statusString.set(f"Completed. (Click here to show output {arrow})")
+			# Show Reed-Solomon stats if it fixed corrupted bytes
+			if mode=="decrypt" and reedsoloFixed:
+				tmp = "s" if reedsoloFixed!=1 else ""
+				statusString.set(
+					f"Completed with {reedsoloFixed} byte{tmp}"+
+					f" fixed. (Click here to show output {arrow})"
+				)
 		else:
-			statusString.set(strings[8])
+			if kept=="modified":
+				statusString.set(strings[7])
+			elif kept=="corrupted":
+				statusString.set(strings[6])
+			else:
+				statusString.set(strings[8])
 	
 	status.config(cursor="hand2")
 	
@@ -1263,6 +1278,7 @@ def updateStats(total):
 
 # Securely wipe file(s) via system internals
 def secureWipe(fin):
+	global working
 	statusString.set(strings[12])
 	progress["value"] = 100
 	# Check platform, erase accordingly
@@ -1274,6 +1290,8 @@ def secureWipe(fin):
 				if dirname(i) not in paths:
 					paths.append(dirname(i))
 			for i in range(len(paths)):
+				if not working:
+					return
 				statusString.set(strings[12]+f" ({i}/{len(paths)})")
 				progress["value"] = 100*i/len(paths)
 				system(f'cd "{paths[i]}" && "{rootDir}/sdelete64.exe" * -p 4 -nobanner')
