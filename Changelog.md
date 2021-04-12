@@ -1,7 +1,7 @@
 # v1.13 (Soon to be released)
 <strong>Note: v1.3 will be INCOMPATIBLE with all previous releases! This will likely be the last change in the header format, meaning that all future releases _should_ be compatible with v1.13 and on.</strong>
 
-# v1.12.1 (Bug fix patch)
+# v1.12.1 (Bug fix patch, released 04/11/2021)
 There was a major bug in v1.12 that caused the "Secure wipe" feature to show "Unknown error" when done. This wasn't anything serious security-wise and v1.12.1 has the fix for this bug. Also, a bug that causes "Secure wipe" to hang has been fixed.
 
 # v1.12 (Released 04/07/2021)
