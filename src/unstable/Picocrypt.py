@@ -3,7 +3,7 @@
 
 """
 
-Picocrypt v1.12
+Picocrypt v1.12.1
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
