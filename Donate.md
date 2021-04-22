@@ -1,6 +1,4 @@
-<strong>Thanks for expressing your interest in donating to Picocrypt. All donations will go toward getting Picocrypt audited. For transparency reasons, I'll periodically update the total amount of donations recieved and approximate how far I am from having enough money to purchase an audit for Picocrypt. If you've donated and would like your name to be shown here, contact me via the contacts on my <a href="https://evansu.cc/#contacts">website</a>.</strong>
-
-Total donations: $25.39 / ~$8500 USD
+<strong>Thanks for expressing your interest in donating to Picocrypt, I really appreciate it. Donations made on Open Collective will go toward providing Picocrypt with the needed funding to get it audited. Donations made in crypto will go toward supporting me and providing me with the support to continue improving Picocrypt. If you've donated and would like your name to be shown here, contact me via the contacts on my <a href="https://evansu.cc/#contacts">website</a>.</strong>
 
 # Open Collective (highly preferred)
 https://opencollective.com/picocrypt
