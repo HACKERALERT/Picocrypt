@@ -19,7 +19,9 @@ import (
 	"image/color"
 	g "github.com/AllenDang/giu"
 	ig "github.com/AllenDang/imgui-go"
-	_ "crypto/rand"
+	di "github.com/sqweek/dialog"
+	"crypto/rand"
+	"github.com/klauspost/reedsolomon"
 	_ "golang.org/x/crypto/argon2"
 	_ "github.com/HACKERALERT/Monocypher-Go/monocypher"
 )
@@ -39,6 +41,7 @@ var inputLabel = "Drag and drop file(s) and folder(s) into this window."
 var outputEntry string
 var outputWidth float32 = 376
 var orLabel = "or"
+var progressInfo = ""
 
 // User input variables
 var password string
@@ -47,6 +50,11 @@ var metadata string
 var keep bool
 var erase bool
 var reedsolo bool
+
+// Reed-Solomon encoders
+var rs10_128,_ = reedsolomon.New(10,128)
+var rs16_128,_ = reedsolomon.New(16,128)
+var rs24_128,_ = reedsolomon.New(24,128)
 
 // Create the user interface
 func startUI(){
@@ -73,7 +81,20 @@ func startUI(){
 					g.Line(
 						g.InputText("##output",&outputEntry).Size(outputWidth/dpi),
 						g.Label(orLabel),
-						g.Button("Save as"),
+						g.Button("Save as").OnClick(func(){
+							file,_ := di.File().Title("Save as").Save()
+
+							// Return if user canceled the file dialog
+							if file==""{
+								return
+							}
+
+							// Remove the extra ".pcv" extension if needed
+							if strings.HasSuffix(file,".pcv"){
+								file = file[:len(file)-4]
+							}
+							outputEntry = file
+						}),
 					),
 
 					// Prompt for password
@@ -100,12 +121,14 @@ func startUI(){
 					// Start and cancel buttons
 					g.Dummy(10,0),
 					g.Line(
-						g.Button("Start").Size(360,20),
+						g.Button("Start").Size(360,20).OnClick(func(){
+							go work()
+						}),
 						g.Button("Cancel").Size(95,20),
 					),
 
 					// Progress bar
-					g.ProgressBar(0).Size(-1,0).Overlay("0%"),
+					g.ProgressBar(0).Size(-1,0).Overlay(progressInfo),
 
 					// Status label
 					g.Dummy(10,0),
@@ -117,10 +140,12 @@ func startUI(){
 						g.Label("v1.13"),
 					),
 				),
+
 				// File shredder tab
 				g.TabItem("Shredder").Layout(
 
 				),
+
 				// File checksum generator tab
 				g.TabItem("Checksum generator").Layout(
 
@@ -138,6 +163,10 @@ func onDrop(names []string){
 	allFiles = nil
 	files,folders := 0,0
 
+	// Hide the ".pcv" label
+	orLabel = "or"
+	outputWidth = 376
+
 	// There's only one dropped item
 	if len(names)==1{
 		stat,_ := os.Stat(names[0])
@@ -149,6 +178,9 @@ func onDrop(names []string){
 
 			// Add the folder
 			onlyFolders = append(onlyFolders,names[0])
+
+			// Set 'outputEntry' to 'Encrypted.zip' in the same directory
+			outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted.zip")
 		}else{
 			files++
 			name := filepath.Base(names[0])
@@ -158,10 +190,6 @@ func onDrop(names []string){
 				mode = "decrypt"
 				inputLabel = name+" (will decrypt)"
 				outputEntry = names[0][:len(names[0])-4]
-
-				// Hide the ".pcv" file extension
-				orLabel = "or"
-				outputWidth = 376
 			}else{
 				mode = "encrypt"
 				inputLabel = name+" (will encrypt)"
@@ -174,6 +202,9 @@ func onDrop(names []string){
 
 			// Add the file
 			onlyFiles = append(onlyFiles,names[0])
+
+			// Set the file as 'outputEntry'
+			outputEntry = names[0]
 		}
 	}else{
 		// There are multiple dropped items, check each one
@@ -207,6 +238,9 @@ func onDrop(names []string){
 				inputLabel = fmt.Sprintf("%d files and %d folders selected.",files,folders)
 			}
 		}
+
+		// Set 'outputEntry' to 'Encrypted.zip' in the same directory
+		outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted.zip")
 	}
 
 	// If there are folders that were dropped, recusively add all files into 'allFiles'
@@ -215,7 +249,6 @@ func onDrop(names []string){
 			filepath.Walk(name,func(path string,_ os.FileInfo,_ error) error{
 				stat,_ := os.Stat(path)
 				if !stat.IsDir(){
-					fmt.Println(path)
 					allFiles = append(allFiles,path)
 				}
 				return nil
@@ -225,10 +258,78 @@ func onDrop(names []string){
 
 	// Update the UI
 	g.Update()
+}
 
-	fmt.Println(onlyFiles)
-	fmt.Println(onlyFolders)
-	fmt.Println(allFiles)
+// Start encryption/decryption
+func work(){
+	// Set some variables
+	working = true
+	//headerBroken := false
+	//reedsoloFixed := 0
+	//reedsoloErrors := 0
+
+	// Set the output file based on mode
+	if mode=="encrypt"{
+		outputFile = outputEntry+".pcv"
+	}else{
+		outputFile = outputEntry
+	}
+
+	// If encrypting, generate values. If decrypting, read values from file
+	if mode=="encrypt"{
+		fout,_ := os.OpenFile(
+			outputFile,
+			os.O_WRONLY|os.O_TRUNC|os.O_CREATE,
+			0666,
+		)
+
+		// Argon2 salt and XChaCha20 nonce
+		salt := make([]byte,16)
+		nonce := make([]byte,24)
+
+		// Encode the length of the metadata with Reed-Solomon
+		metadataLength := []byte(fmt.Sprintf("%010d",len(metadata)))
+		/*shards,_ := rs10_128.Split(metadataLength)
+		rs10_128.Encode(shards)
+		tmp := make([]byte,138)
+		for i,shard := range(shards){
+			tmp[i] = shard[0]
+		}
+		
+		fout.Write(tmp)*/
+		metadataLength = rsEncode(metadataLength,rs10_128,138)
+		fout.Write(metadataLength)
+
+		// Fill salt and nonce with Go's CSPRNG
+		rand.Read(salt)
+		rand.Read(nonce)
+
+		// Encode salt with Reed-Solomon and write to file
+		/*shards,_ = rs16_128.Split(salt)
+		rs16_128.Encode(shards)
+		tmp = make([]byte,144)
+		for i,shard := range(shards){
+			tmp[i] = shard[0]
+		}
+		fout.Write(tmp)*/
+		salt = rsEncode(salt,rs16_128,144)
+		fout.Write(salt)
+
+		// Encode nonce with Reed-Solomon and write to file
+		/*shards,_ = rs24_128.Split(nonce)
+		rs24_128.Encode(shards)
+		tmp = make([]byte,152)
+		for i,shard := range(shards){
+			tmp[i] = shard[0]
+		}
+		fout.Write(tmp)*/
+		nonce = rsEncode(nonce,rs24_128,152)
+		fout.Write(nonce)
+
+	}else{
+
+	}
+
 }
 
 // Reset the UI to a clean state with no nothing selected
@@ -238,6 +339,16 @@ func resetUI(){
 	orLabel = "or"
 	outputWidth = 376
 	g.Update()
+}
+
+func rsEncode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
+	shards,_ := encoder.Split(data)
+	encoder.Encode(shards)
+	tmp := make([]byte,size)
+	for i,shard := range(shards){
+		tmp[i] = shard[0]
+	}
+	return tmp
 }
 
 // Create the master window, set callbacks, and start the UI
