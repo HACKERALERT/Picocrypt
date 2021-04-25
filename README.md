@@ -87,6 +87,9 @@ Here's some places where you can see the latest news about Picocrypt and get inv
 </ul>
 These are the official Picocrypt social groups. Be aware of scammers and hackers that might try to impersonate me and get you to download malicious software. Only trust these accounts and only download from this Github repo.
 
+# Stargazers
+[![Stargazers over time](https://starchart.cc/HACKERALERT/Picocrypt.svg)](https://starchart.cc/HACKERALERT/Picocrypt)
+
 # Limitations
 
 <ul>
