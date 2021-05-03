@@ -17,6 +17,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 <ul>
 	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
 	<li>Allow file splitting into chunks (thanks u/greenreddits)</li>
+	<li>File shredder and file checksum generator</li>
 </ul>
 
 # Completed
