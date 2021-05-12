@@ -37,7 +37,7 @@ import (
 	//"github.com/AllenDang/imgui-go"
 	"github.com/klauspost/reedsolomon"
 	"golang.org/x/crypto/chacha20poly1305"
-	"github.com/HACKERALERT/Monocypher-Go/monocypher"
+	"github.com/HACKERALERT/Picocypher/monocypher"
 )
 
 // Global variables
@@ -244,7 +244,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("SHA1:",&sha1_selected),
-					g.Dummy(353,0),
+					g.Dummy(352,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_sha1)
 					}),
@@ -255,7 +255,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("SHA256:",&sha256_selected),
-					g.Dummy(341,0),
+					g.Dummy(338,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_sha256)
 					}),
@@ -266,7 +266,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("SHA3-256:",&sha3_256_selected),
-					g.Dummy(334,0),
+					g.Dummy(324,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_sha3_256)
 					}),
@@ -277,7 +277,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("BLAKE2b:",&blake2b_selected),
-					g.Dummy(320,0),
+					g.Dummy(332,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_blake2b)
 					}),
@@ -288,7 +288,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("BLAKE2s:",&blake2s_selected),
-					g.Dummy(320,0),
+					g.Dummy(332,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_blake2s)
 					}),
@@ -299,7 +299,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("BLAKE3:",&blake3_selected),
-					g.Dummy(323,0),
+					g.Dummy(338,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_blake3)
 					}),
@@ -710,7 +710,13 @@ func work(){
 		}else{
 			//fmt.Println("DECODE LOOP")
 			crc.Write(data)
-			data,_ := cipher.Open(nil,_nonce,data,nil)
+			if fast{
+				data,_ = cipher.Open(nil,_nonce,data,nil)
+			}else{
+				mac := data[len(data)-16:]
+				data = data[:len(data)-16]
+				data,_ = monocypher.Unlock(data,_nonce,key,mac)
+			}
 			fout.Write(data)
 			//fmt.Println(authentic)
 			//fmt.Println("DECRYPTED DATA: ",data)
