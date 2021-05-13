@@ -235,6 +235,7 @@ func startUI(){
 					g.Checkbox("MD5:",&md5_selected),
 					g.Dummy(360,0),
 					g.Button("Copy").OnClick(func(){
+						fmt.Println("MD5")
 						clipboard.WriteAll(cs_md5)
 					}),
 				),
@@ -244,8 +245,9 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("SHA1:",&sha1_selected),
-					g.Dummy(352,0),
+					g.Dummy(353,0),
 					g.Button("Copy").OnClick(func(){
+						fmt.Println("SHA1")
 						clipboard.WriteAll(cs_sha1)
 					}),
 				),
@@ -255,7 +257,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("SHA256:",&sha256_selected),
-					g.Dummy(338,0),
+					g.Dummy(339,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_sha256)
 					}),
@@ -266,7 +268,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("SHA3-256:",&sha3_256_selected),
-					g.Dummy(324,0),
+					g.Dummy(325,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_sha3_256)
 					}),
@@ -299,7 +301,7 @@ func startUI(){
 				g.Dummy(10,0),
 				g.Line(
 					g.Checkbox("BLAKE3:",&blake3_selected),
-					g.Dummy(338,0),
+					g.Dummy(339,0),
 					g.Button("Copy").OnClick(func(){
 						clipboard.WriteAll(cs_blake3)
 					}),
@@ -319,7 +321,7 @@ func startUI(){
 					}
 				}),
 				g.Dummy(30,0),
-				g.Label("Picocrypt, created by Evan Su (https://evansu.cc)"),
+				g.Label("Picocrypt v1.13, created by Evan Su (https://evansu.cc)"),
 			),
 		),
 	)
