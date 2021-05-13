@@ -234,8 +234,7 @@ func startUI(){
 				g.Line(
 					g.Checkbox("MD5:",&md5_selected),
 					g.Dummy(360,0),
-					g.Button("Copy").OnClick(func(){
-						fmt.Println("MD5")
+					g.Button("Copy##md5").OnClick(func(){
 						clipboard.WriteAll(cs_md5)
 					}),
 				),
@@ -246,8 +245,7 @@ func startUI(){
 				g.Line(
 					g.Checkbox("SHA1:",&sha1_selected),
 					g.Dummy(353,0),
-					g.Button("Copy").OnClick(func(){
-						fmt.Println("SHA1")
+					g.Button("Copy##sha1").OnClick(func(){
 						clipboard.WriteAll(cs_sha1)
 					}),
 				),
@@ -258,7 +256,7 @@ func startUI(){
 				g.Line(
 					g.Checkbox("SHA256:",&sha256_selected),
 					g.Dummy(339,0),
-					g.Button("Copy").OnClick(func(){
+					g.Button("Copy##sha256").OnClick(func(){
 						clipboard.WriteAll(cs_sha256)
 					}),
 				),
@@ -269,7 +267,7 @@ func startUI(){
 				g.Line(
 					g.Checkbox("SHA3-256:",&sha3_256_selected),
 					g.Dummy(325,0),
-					g.Button("Copy").OnClick(func(){
+					g.Button("Copy##sha3_256").OnClick(func(){
 						clipboard.WriteAll(cs_sha3_256)
 					}),
 				),
@@ -280,7 +278,7 @@ func startUI(){
 				g.Line(
 					g.Checkbox("BLAKE2b:",&blake2b_selected),
 					g.Dummy(332,0),
-					g.Button("Copy").OnClick(func(){
+					g.Button("Copy##blake2b").OnClick(func(){
 						clipboard.WriteAll(cs_blake2b)
 					}),
 				),
@@ -291,7 +289,7 @@ func startUI(){
 				g.Line(
 					g.Checkbox("BLAKE2s:",&blake2s_selected),
 					g.Dummy(332,0),
-					g.Button("Copy").OnClick(func(){
+					g.Button("Copy##blake2s").OnClick(func(){
 						clipboard.WriteAll(cs_blake2s)
 					}),
 				),
@@ -302,7 +300,7 @@ func startUI(){
 				g.Line(
 					g.Checkbox("BLAKE3:",&blake3_selected),
 					g.Dummy(339,0),
-					g.Button("Copy").OnClick(func(){
+					g.Button("Copy##blake3").OnClick(func(){
 						clipboard.WriteAll(cs_blake3)
 					}),
 				),
@@ -533,6 +531,14 @@ func work(){
 		// Write the actual metadata
 		fout.Write([]byte(metadata))
 
+		flags := make([]byte,5)
+		fmt.Println(flags)
+		if fast{
+			flags[0] = 1
+		}
+		flags = rsEncode(flags,rs5_128,133)
+		fout.Write(flags)
+
 		// Fill salt and nonce with Go's CSPRNG
 		rand.Read(salt)
 		rand.Read(nonce)
@@ -541,8 +547,8 @@ func work(){
 		//fmt.Println("Encrypting nonce: ",nonce)
 
 		// Encode salt with Reed-Solomon and write to file
-		salt = rsEncode(salt,rs16_128,144)
-		fout.Write(salt)
+		_salt := rsEncode(salt,rs16_128,144)
+		fout.Write(_salt)
 
 		// Encode nonce with Reed-Solomon and write to file
 		tmp := rsEncode(nonce,rs24_128,152)
@@ -575,6 +581,12 @@ func work(){
 
 		fin.Read(make([]byte,metadataLength))
 
+		flags := make([]byte,5)
+		fin.Read(flags)
+		flags = rsDecode(flags,rs5_128,5)
+		fmt.Println(flags)
+		fast = flags[0]==1
+
 		salt = make([]byte,144)
 		fin.Read(salt)
 		salt = rsDecode(salt,rs16_128,16)
@@ -604,6 +616,8 @@ func work(){
 	g.Update()
 	status = "Deriving key..."
 	
+	fmt.Println("password",[]byte(password))
+	fmt.Println("salt",salt)
 	// Derive encryption/decryption key
 	key := argon2.IDKey(
 		[]byte(password),
@@ -613,13 +627,14 @@ func work(){
 		4,
 		32,
 	)[:]
+	fmt.Println("key",key)
 	
-	key = make([]byte,32)
+	//key = make([]byte,32)
 	
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
 	keyHash = sha3_512.Sum(nil)
-	//fmt.Println("keyHash: ",keyHash)
+	fmt.Println("keyHash: ",keyHash)
 	
 	// Check is password is correct
 	
