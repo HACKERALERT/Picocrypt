@@ -18,7 +18,7 @@ import (
 	"time"
 	"strings"
 	"strconv"
-	//"image/color"
+	"image/color"
 	"crypto/md5"
 	"crypto/rand"
 	"crypto/sha1"
@@ -34,8 +34,8 @@ import (
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
 	"github.com/atotto/clipboard"
-	//"github.com/AllenDang/imgui-go"
 	"github.com/klauspost/reedsolomon"
+	ig "github.com/AllenDang/imgui-go"
 	"golang.org/x/crypto/chacha20poly1305"
 	"github.com/HACKERALERT/Picocypher/monocypher"
 )
@@ -89,6 +89,14 @@ var cs_sha3_256 string
 var cs_blake2b string
 var cs_blake2s string
 var cs_blake3 string
+var cs_validate string
+var md5_color = color.RGBA{0x10,0x10,0x10,255}
+var sha1_color = color.RGBA{0x10,0x10,0x10,255}
+var sha256_color = color.RGBA{0x10,0x10,0x10,255}
+var sha3_256_color = color.RGBA{0x10,0x10,0x10,255}
+var blake2b_color = color.RGBA{0x10,0x10,0x10,255}
+var blake2s_color = color.RGBA{0x10,0x10,0x10,255}
+var blake3_color = color.RGBA{0x10,0x10,0x10,255}
 var cs_progress float32 = 0
 var md5_selected = false
 var sha1_selected = false
@@ -101,225 +109,273 @@ var blake3_selected = false
 // Create the user interface
 func startUI(){
 	g.SingleWindow("Picocrypt").Layout(
-		// The tab bar, which contains different tabs for different features
-		g.TabBar("TabBar").Layout(
-			// File encryption/decryption tab
-			g.TabItem("Encryption/decryption").Layout(
-				// Update 'tab' to indicate active tab
-				g.Custom(func(){
-					if g.IsItemActive(){
-						tab = 0
-					}
-				}),
+		g.Style().SetColor(ig.StyleColorBorder,color.RGBA{0x10,0x10,0x10,255}).To(
+			// The tab bar, which contains different tabs for different features
+			g.TabBar("TabBar").Layout(
+				// File encryption/decryption tab
+				g.TabItem("Encryption/decryption").Layout(
+					// Update 'tab' to indicate active tab
+					g.Custom(func(){
+						if g.IsItemActive(){
+							tab = 0
+						}
+					}),
 
-				// Label listing the input files and button to clear input files
-				g.Dummy(30,0),
-				g.Line(
-					g.Label(inputLabel),
-					g.Button("Clear").OnClick(resetUI),
+					// Label listing the input files and a button to clear input files
+					g.Dummy(30,0),
+					g.Row(
+						g.Label(inputLabel),
+						g.Button("Clear").OnClick(resetUI),
+					),
+
+					// Allow user to choose a custom output path and name
+					g.Dummy(10,0),
+					g.Label("Save output as:"),
+					g.Row(
+						g.InputText("##output",&outputEntry).Size(outputWidth/dpi),
+						g.Label(orLabel),
+						g.Button("Save as").OnClick(func(){
+							file,_ := di.File().Title("Save as").Save()
+
+							// Return if user canceled the file dialog
+							if file==""{
+								return
+							}
+
+							// Remove the extra ".pcv" extension if needed
+							if strings.HasSuffix(file,".pcv"){
+								file = file[:len(file)-4]
+							}
+							outputEntry = file
+						}),
+					),
+
+					// Prompt for password
+					g.Dummy(10,0),
+					g.Label("Password:"),
+					g.Row(
+						g.InputText("##password",&password).Size(200/dpi).Flags(passwordState),
+						g.Button(passwordToggleString).OnClick(func(){
+							if passwordState==g.InputTextFlags_Password{
+								passwordState = g.InputTextFlags_None
+								passwordToggleString = "Hide"
+							}else{
+								passwordState = g.InputTextFlags_Password
+								passwordToggleString = "Show"
+							}
+							g.Update()
+						}),
+					),
+
+					// Prompt to confirm password
+					g.Dummy(10,0),
+					g.Label("Confirm password:"),
+					g.InputText("##cPassword",&cPassword).Size(200/dpi).Flags(passwordState),
+
+					// Optional metadata
+					g.Dummy(10,0),
+					g.Label("Metadata (optional):"),
+					g.InputTextMultiline("##metadata",&metadata).Size(200,80),
+
+					// Advanced options can be enabled with checkboxes
+					g.Dummy(10,0),
+					g.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
+					g.Checkbox("Securely erase and delete original file(s)",&erase),
+					g.Row(
+						g.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
+						g.Button("?").OnClick(func(){
+							browser.OpenURL("https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction")
+						}),
+					),
+					g.Row(
+						g.Checkbox("Split output into chunks of",&split),
+						g.InputText("##splitSize",&splitSize).Size(30).Flags(g.InputTextFlags_CharsDecimal),
+						g.Label("MB"),
+					),
+					g.Checkbox("Fast mode (less secure, not as durable)",&fast),
+
+					// Start and cancel buttons
+					g.Dummy(10,0),
+					g.Button("Start").Size(-1,20).OnClick(func(){
+						go work()
+					}),
+
+					/*// Progress bar
+					g.ProgressBar(progress).Size(-1,0).Overlay(progressInfo),
+
+					// Status label
+					g.Dummy(10,0),
+					g.Label(status),*/
+
+					// Credits and version
+					g.Row(
+						g.Label("Created by Evan Su. See the About tab for more info."),
+						g.Dummy(46,0),
+						g.Label("v1.13"),
+					),
 				),
 
-				// Allow user to choose a custom output path and name
-				g.Dummy(10,0),
-				g.Label("Save output as:"),
-				g.Line(
-					g.InputText("##output",&outputEntry).Size(outputWidth/dpi),
-					g.Label(orLabel),
-					g.Button("Save as").OnClick(func(){
-						file,_ := di.File().Title("Save as").Save()
+				// File shredder tab
+				g.TabItem("Shredder").Layout(
+					// Update 'tab' to indicate active tab
+					g.Custom(func(){
+						if g.IsItemActive(){
+							tab = 1
+						}
+					}),
 
-						// Return if user canceled the file dialog
-						if file==""{
+				),
+
+				// File checksum generator tab
+				g.TabItem("Checksum generator").Layout(
+					// Update 'tab' to indicate active tab
+					g.Custom(func(){
+						if g.IsItemActive(){
+							tab = 2
+						}
+					}),
+
+					g.Dummy(30,0),
+					g.Label("Toggle the hashes you would like to generate and drop a file here."),
+					
+					// MD5
+					g.Dummy(10,0),
+					g.Row(
+						g.Checkbox("MD5:",&md5_selected),
+						g.Dummy(360,0),
+						g.Button("Copy##md5").OnClick(func(){
+							clipboard.WriteAll(cs_md5)
+						}),
+					),
+					g.Style().SetColor(ig.StyleColorBorder,md5_color).To(
+						g.InputText("##cs_md5",&cs_md5).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					),
+
+					// SHA1
+					g.Dummy(10,0),
+					g.Row(
+						g.Checkbox("SHA1:",&sha1_selected),
+						g.Dummy(353,0),
+						g.Button("Copy##sha1").OnClick(func(){
+							clipboard.WriteAll(cs_sha1)
+						}),
+					),
+					g.Style().SetColor(ig.StyleColorBorder,sha1_color).To(
+						g.InputText("##cs_sha1",&cs_sha1).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					),
+
+					// SHA256
+					g.Dummy(10,0),
+					g.Row(
+						g.Checkbox("SHA256:",&sha256_selected),
+						g.Dummy(339,0),
+						g.Button("Copy##sha256").OnClick(func(){
+							clipboard.WriteAll(cs_sha256)
+						}),
+					),
+					g.Style().SetColor(ig.StyleColorBorder,sha256_color).To(
+						g.InputText("##cs_sha256",&cs_sha256).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					),
+
+					// SHA3-256
+					g.Dummy(10,0),
+					g.Row(
+						g.Checkbox("SHA3-256:",&sha3_256_selected),
+						g.Dummy(325,0),
+						g.Button("Copy##sha3_256").OnClick(func(){
+							clipboard.WriteAll(cs_sha3_256)
+						}),
+					),
+					g.Style().SetColor(ig.StyleColorBorder,sha3_256_color).To(
+						g.InputText("##cs_sha3_256",&cs_sha3_256).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					),
+
+					// BLAKE2b
+					g.Dummy(10,0),
+					g.Row(
+						g.Checkbox("BLAKE2b:",&blake2b_selected),
+						g.Dummy(332,0),
+						g.Button("Copy##blake2b").OnClick(func(){
+							clipboard.WriteAll(cs_blake2b)
+						}),
+					),
+					g.Style().SetColor(ig.StyleColorBorder,blake2b_color).To(
+						g.InputText("##cs_blake2b",&cs_blake2b).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					),
+
+					// BLAKE2s
+					g.Dummy(10,0),
+					g.Row(
+						g.Checkbox("BLAKE2s:",&blake2s_selected),
+						g.Dummy(332,0),
+						g.Button("Copy##blake2s").OnClick(func(){
+							clipboard.WriteAll(cs_blake2s)
+						}),
+					),
+					g.Style().SetColor(ig.StyleColorBorder,blake2s_color).To(
+						g.InputText("##cs_blake2s",&cs_blake2s).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					),
+
+					// BLAKE3
+					g.Dummy(10,0),
+					g.Row(
+						g.Checkbox("BLAKE3:",&blake3_selected),
+						g.Dummy(339,0),
+						g.Button("Copy##blake3").OnClick(func(){
+							clipboard.WriteAll(cs_blake3)
+						}),
+					),
+					g.Style().SetColor(ig.StyleColorBorder,blake3_color).To(
+						g.InputText("##cs_blake3",&cs_blake3).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					),
+					
+					// Input box for validating checksum
+					g.Dummy(10,0),
+					g.Label("Validate a checksum:"),
+					g.InputText("##cs_validate",&cs_validate).Size(-1).OnChange(func(){
+						md5_color = color.RGBA{0x10,0x10,0x10,255}
+						sha1_color = color.RGBA{0x10,0x10,0x10,255}
+						sha256_color = color.RGBA{0x10,0x10,0x10,255}
+						sha3_256_color = color.RGBA{0x10,0x10,0x10,255}
+						blake2b_color = color.RGBA{0x10,0x10,0x10,255}
+						blake2s_color = color.RGBA{0x10,0x10,0x10,255}
+						blake3_color = color.RGBA{0x10,0x10,0x10,255}
+						if cs_validate==""{
 							return
 						}
-
-						// Remove the extra ".pcv" extension if needed
-						if strings.HasSuffix(file,".pcv"){
-							file = file[:len(file)-4]
-						}
-						outputEntry = file
-					}),
-				),
-
-				// Prompt for password
-				g.Dummy(10,0),
-				g.Label("Password:"),
-				g.Line(
-					g.InputText("##password",&password).Size(200/dpi).Flags(passwordState),
-					g.Button(passwordToggleString).OnClick(func(){
-						if passwordState==g.InputTextFlags_Password{
-							passwordState = g.InputTextFlags_None
-							passwordToggleString = "Hide"
-						}else{
-							passwordState = g.InputTextFlags_Password
-							passwordToggleString = "Show"
+						if cs_validate==cs_md5{
+							md5_color = color.RGBA{0x00,0xff,0x00,255}
+						}else if cs_validate==cs_sha1{
+							sha1_color = color.RGBA{0x00,0xff,0x00,255}
+						}else if cs_validate==cs_sha256{
+							sha256_color = color.RGBA{0x00,0xff,0x00,255}
+						}else if cs_validate==cs_sha3_256{
+							sha3_256_color = color.RGBA{0x00,0xff,0x00,255}
+						}else if cs_validate==cs_blake2b{
+							blake2b_color = color.RGBA{0x00,0xff,0x00,255}
+						}else if cs_validate==cs_blake2s{
+							blake2s_color = color.RGBA{0x00,0xff,0x00,255}
+						}else if cs_validate==cs_blake3{
+							blake3_color = color.RGBA{0x00,0xff,0x00,255}
 						}
 						g.Update()
 					}),
+
+					// Progress bar
+					g.Dummy(10,0),
+					g.Label("Progress:"),
+					g.ProgressBar(cs_progress).Size(-1,0),
 				),
-
-				// Prompt to confirm password
-				g.Dummy(10,0),
-				g.Label("Confirm password:"),
-				g.InputText("##cPassword",&cPassword).Size(200/dpi).Flags(passwordState),
-
-				// Optional metadata
-				g.Dummy(10,0),
-				g.Label("Metadata (optional):"),
-				g.InputTextMultiline("##metadata",&metadata).Size(200,80),
-
-				// Advanced options can be enabled with checkboxes
-				g.Dummy(10,0),
-				g.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
-				g.Checkbox("Securely erase and delete original file(s)",&erase),
-				g.Line(
-					g.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
-					g.Button("?").OnClick(func(){
-						browser.OpenURL("https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction")
+				g.TabItem("About").Layout(
+					// Update 'tab' to indicate active tab
+					g.Custom(func(){
+						if g.IsItemActive(){
+							tab = 3
+						}
 					}),
+					g.Dummy(30,0),
+					g.Label("Picocrypt v1.13, created by Evan Su (https://evansu.cc)"),
 				),
-				g.Line(
-					g.Checkbox("Split output into chunks of",&split),
-					g.InputText("##splitSize",&splitSize).Size(30).Flags(g.InputTextFlags_CharsDecimal),
-					g.Label("MB"),
-				),
-				g.Checkbox("Fast mode (less secure, not as durable)",&fast),
-
-				// Start and cancel buttons
-				g.Dummy(10,0),
-				g.Button("Start").Size(-1,20).OnClick(func(){
-					go work()
-				}),
-
-				/*// Progress bar
-				g.ProgressBar(progress).Size(-1,0).Overlay(progressInfo),
-
-				// Status label
-				g.Dummy(10,0),
-				g.Label(status),*/
-
-				// Credits and version
-				g.Line(
-					g.Label("Created by Evan Su. See the About tab for more info."),
-					g.Dummy(46,0),
-					g.Label("v1.13"),
-				),
-			),
-
-			// File shredder tab
-			g.TabItem("Shredder").Layout(
-				// Update 'tab' to indicate active tab
-				g.Custom(func(){
-					if g.IsItemActive(){
-						tab = 1
-					}
-				}),
-
-			),
-
-			// File checksum generator tab
-			g.TabItem("Checksum generator").Layout(
-				// Update 'tab' to indicate active tab
-				g.Custom(func(){
-					if g.IsItemActive(){
-						tab = 2
-					}
-				}),
-
-				g.Dummy(30,0),
-				g.Label("Toggle the hashes you would like to generate and drop a file here."),
-				
-				// MD5
-				g.Dummy(10,0),
-				g.Line(
-					g.Checkbox("MD5:",&md5_selected),
-					g.Dummy(360,0),
-					g.Button("Copy##md5").OnClick(func(){
-						clipboard.WriteAll(cs_md5)
-					}),
-				),
-				g.InputText("##cs_md5",&cs_md5).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-
-				// SHA1
-				g.Dummy(10,0),
-				g.Line(
-					g.Checkbox("SHA1:",&sha1_selected),
-					g.Dummy(353,0),
-					g.Button("Copy##sha1").OnClick(func(){
-						clipboard.WriteAll(cs_sha1)
-					}),
-				),
-				g.InputText("##cs_sha1",&cs_sha1).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-
-				// SHA256
-				g.Dummy(10,0),
-				g.Line(
-					g.Checkbox("SHA256:",&sha256_selected),
-					g.Dummy(339,0),
-					g.Button("Copy##sha256").OnClick(func(){
-						clipboard.WriteAll(cs_sha256)
-					}),
-				),
-				g.InputText("##cs_sha256",&cs_sha256).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-
-				// SHA3-256
-				g.Dummy(10,0),
-				g.Line(
-					g.Checkbox("SHA3-256:",&sha3_256_selected),
-					g.Dummy(325,0),
-					g.Button("Copy##sha3_256").OnClick(func(){
-						clipboard.WriteAll(cs_sha3_256)
-					}),
-				),
-				g.InputText("##cs_sha3_256",&cs_sha3_256).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-
-				// BLAKE2b
-				g.Dummy(10,0),
-				g.Line(
-					g.Checkbox("BLAKE2b:",&blake2b_selected),
-					g.Dummy(332,0),
-					g.Button("Copy##blake2b").OnClick(func(){
-						clipboard.WriteAll(cs_blake2b)
-					}),
-				),
-				g.InputText("##cs_blake2b",&cs_blake2b).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-
-				// BLAKE2s
-				g.Dummy(10,0),
-				g.Line(
-					g.Checkbox("BLAKE2s:",&blake2s_selected),
-					g.Dummy(332,0),
-					g.Button("Copy##blake2s").OnClick(func(){
-						clipboard.WriteAll(cs_blake2s)
-					}),
-				),
-				g.InputText("##cs_blake2s",&cs_blake2s).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-
-				// BLAKE3
-				g.Dummy(10,0),
-				g.Line(
-					g.Checkbox("BLAKE3:",&blake3_selected),
-					g.Dummy(339,0),
-					g.Button("Copy##blake3").OnClick(func(){
-						clipboard.WriteAll(cs_blake3)
-					}),
-				),
-				g.InputText("##cs_blake3",&cs_blake3).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-
-				// Progress bar
-				g.Dummy(10,0),
-				g.Label("Progress:"),
-				g.ProgressBar(cs_progress).Size(-1,0),
-			),
-			g.TabItem("About").Layout(
-				// Update 'tab' to indicate active tab
-				g.Custom(func(){
-					if g.IsItemActive(){
-						tab = 3
-					}
-				}),
-				g.Dummy(30,0),
-				g.Label("Picocrypt v1.13, created by Evan Su (https://evansu.cc)"),
 			),
 		),
 	)
@@ -941,7 +997,7 @@ func rsDecode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 
 // Create the master window, set callbacks, and start the UI
 func main(){
-	window := g.NewMasterWindow("Picocrypt",480,466,g.MasterWindowFlagsNotResizable,nil)
+	window := g.NewMasterWindow("Picocrypt",480,500,g.MasterWindowFlagsNotResizable,nil)
 	window.SetDropCallback(onDrop)
 	dpi = g.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
