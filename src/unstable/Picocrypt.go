@@ -61,6 +61,33 @@ var passwordToggleString = "Show"
 var progress float32 = 0
 var progressInfo = ""
 var status = "Ready."
+var items = []string{
+	"Fast",
+	"Normal",
+	"Secure",
+	"Paranoid",
+}
+var itemSelected int32
+var shredder_info = []string{
+	"Provides a basic level of security; safe from casual theives and hackers.\n"+
+	"    1. Overwrites the file once\n"+
+	"    2. Deletes the file\n",
+	"Provides a moderate level of security; safe from hackers and most police.\n"+
+	"    1. Overwrites the file with 4 passes\n"+
+	"    2. Deletes the file\n"+
+	"    3. Trims the drive\n",
+	"Provides a high level of security; safe from just about anyone.\n"+
+	"    1. Trims the drive\n"+
+	"    2. Overwrites the file with 10 passes\n"+
+	"    3. Deletes the file\n"+
+	"    4. Trims the drive again\n",
+	"Provides a very high level of security; safe from three-letter agencies.\n"+
+	"    1. Trims the drive\n"+
+	"    2. Defragments the drive\n"+
+	"    3. Overwrites the file with 35 passes\n"+
+	"    4. Deletes the file\n"+
+	"    5. Trims the drive again\n",
+}
 
 // User input variables
 var password string
@@ -223,7 +250,12 @@ func startUI(){
 							tab = 1
 						}
 					}),
-
+					g.Dummy(30,0),
+					g.Label("Mode:"),
+					g.Dummy(10,0),
+					g.Combo("##shredder_mode",items[itemSelected],items,&itemSelected).Size(464),
+					g.Dummy(10,0),
+					g.Label(shredder_info[itemSelected]),
 				),
 
 				// File checksum generator tab
@@ -997,7 +1029,9 @@ func rsDecode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 
 // Create the master window, set callbacks, and start the UI
 func main(){
-	window := g.NewMasterWindow("Picocrypt",480,500,g.MasterWindowFlagsNotResizable,nil)
+	var width int = 480
+	var height int = 500
+	window := g.NewMasterWindow("Picocrypt",width,height,g.MasterWindowFlagsNotResizable)
 	window.SetDropCallback(onDrop)
 	dpi = g.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
