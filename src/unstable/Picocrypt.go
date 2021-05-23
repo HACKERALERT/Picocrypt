@@ -12,6 +12,7 @@ https://github.com/HACKERALERT/Picocrypt
 */
 
 import (
+	"io"
 	"os"
 	"fmt"
 	"math"
@@ -20,6 +21,7 @@ import (
 	"strconv"
 	"image/color"
 	"crypto/md5"
+	"archive/zip"
 	"crypto/rand"
 	"crypto/sha1"
 	"encoding/hex"
@@ -40,6 +42,8 @@ import (
 	"github.com/HACKERALERT/Picocypher/monocypher"
 )
 
+var version = "v1.13"
+
 // Global variables
 var dpi float32
 var mode string
@@ -57,10 +61,13 @@ var outputEntry string
 var outputWidth float32 = 376
 var orLabel = "or"
 var passwordState = g.InputTextFlags_Password
-var passwordToggleString = "Show"
+var showPassword = false
+var keyfile = false
 var progress float32 = 0
 var progressInfo = ""
 var status = "Ready."
+var _status = "adfs"
+var _status_color = color.RGBA{0xff,0xff,0xff,255}
 var items = []string{
 	"Fast",
 	"Normal",
@@ -149,10 +156,11 @@ func startUI(){
 					}),
 
 					// Label listing the input files and a button to clear input files
-					g.Dummy(30,0),
+					g.Dummy(10,0),
 					g.Row(
 						g.Label(inputLabel),
-						g.Button("Clear").OnClick(resetUI),
+						g.Dummy(-55,0),
+						g.Button("Clear").Size(46,0).OnClick(resetUI),
 					),
 
 					// Allow user to choose a custom output path and name
@@ -179,19 +187,23 @@ func startUI(){
 
 					// Prompt for password
 					g.Dummy(10,0),
-					g.Label("Password:"),
+					g.Row(
+						g.Label("Password:"),
+						g.Dummy(-200,0),
+						g.Label("Password:"),
+					),
 					g.Row(
 						g.InputText("##password",&password).Size(200/dpi).Flags(passwordState),
-						g.Button(passwordToggleString).OnClick(func(){
+						g.Checkbox("##showPassword",&showPassword).OnChange(func(){
 							if passwordState==g.InputTextFlags_Password{
 								passwordState = g.InputTextFlags_None
-								passwordToggleString = "Hide"
 							}else{
 								passwordState = g.InputTextFlags_Password
-								passwordToggleString = "Show"
 							}
 							g.Update()
 						}),
+						g.Dummy(-200,0),
+						g.Checkbox("Use a keyfile",&keyfile),
 					),
 
 					// Prompt to confirm password
@@ -202,7 +214,7 @@ func startUI(){
 					// Optional metadata
 					g.Dummy(10,0),
 					g.Label("Metadata (optional):"),
-					g.InputTextMultiline("##metadata",&metadata).Size(200,80),
+					g.InputTextMultiline("##metadata",&metadata).Size(226,100),
 
 					// Advanced options can be enabled with checkboxes
 					g.Dummy(10,0),
@@ -227,18 +239,9 @@ func startUI(){
 						go work()
 					}),
 
-					/*// Progress bar
-					g.ProgressBar(progress).Size(-1,0).Overlay(progressInfo),
-
-					// Status label
 					g.Dummy(10,0),
-					g.Label(status),*/
-
-					// Credits and version
-					g.Row(
-						g.Label("Created by Evan Su. See the About tab for more info."),
-						g.Dummy(46,0),
-						g.Label("v1.13"),
+					g.Style().SetColor(ig.StyleColor,_status_color).To(
+						g.Label(_status),
 					),
 				),
 
@@ -259,7 +262,7 @@ func startUI(){
 				),
 
 				// File checksum generator tab
-				g.TabItem("Checksum generator").Layout(
+				g.TabItem("Checksum").Layout(
 					// Update 'tab' to indicate active tab
 					g.Custom(func(){
 						if g.IsItemActive(){
@@ -274,12 +277,11 @@ func startUI(){
 					g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("MD5:",&md5_selected),
-						g.Dummy(360,0),
-						g.Button("Copy##md5").OnClick(func(){
+						g.Dummy(-45,0),
+						g.Button("Copy##md5").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_md5)
 						}),
-					),
-					g.Style().SetColor(ig.StyleColorBorder,md5_color).To(
+					),					g.Style().SetColor(ig.StyleColorBorder,md5_color).To(
 						g.InputText("##cs_md5",&cs_md5).Size(-1).Flags(g.InputTextFlags_ReadOnly),
 					),
 
@@ -287,8 +289,8 @@ func startUI(){
 					g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("SHA1:",&sha1_selected),
-						g.Dummy(353,0),
-						g.Button("Copy##sha1").OnClick(func(){
+						g.Dummy(-45,0),
+						g.Button("Copy##sha1").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_sha1)
 						}),
 					),
@@ -300,8 +302,8 @@ func startUI(){
 					g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("SHA256:",&sha256_selected),
-						g.Dummy(339,0),
-						g.Button("Copy##sha256").OnClick(func(){
+						g.Dummy(-45,0),
+						g.Button("Copy##sha256").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_sha256)
 						}),
 					),
@@ -313,8 +315,8 @@ func startUI(){
 					g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("SHA3-256:",&sha3_256_selected),
-						g.Dummy(325,0),
-						g.Button("Copy##sha3_256").OnClick(func(){
+						g.Dummy(-45,0),
+						g.Button("Copy##sha3_256").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_sha3_256)
 						}),
 					),
@@ -326,8 +328,8 @@ func startUI(){
 					g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("BLAKE2b:",&blake2b_selected),
-						g.Dummy(332,0),
-						g.Button("Copy##blake2b").OnClick(func(){
+						g.Dummy(-45,0),
+						g.Button("Copy##blake2b").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_blake2b)
 						}),
 					),
@@ -339,8 +341,8 @@ func startUI(){
 					g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("BLAKE2s:",&blake2s_selected),
-						g.Dummy(332,0),
-						g.Button("Copy##blake2s").OnClick(func(){
+						g.Dummy(-45,0),
+						g.Button("Copy##blake2s").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_blake2s)
 						}),
 					),
@@ -352,8 +354,8 @@ func startUI(){
 					g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("BLAKE3:",&blake3_selected),
-						g.Dummy(339,0),
-						g.Button("Copy##blake3").OnClick(func(){
+						g.Dummy(-45,0),
+						g.Button("Copy##blake3").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_blake3)
 						}),
 					),
@@ -406,7 +408,7 @@ func startUI(){
 						}
 					}),
 					g.Dummy(30,0),
-					g.Label("Picocrypt v1.13, created by Evan Su (https://evansu.cc)"),
+					g.Label("Picocrypt "+version+", created by Evan Su (https://evansu.cc)"),
 				),
 			),
 		),
@@ -417,17 +419,23 @@ func startUI(){
 			g.Label("Tips:"),
 			g.Label("    - Choose a strong password with more than 16 characters."),
 			g.Label("    - Use a unique password that isn't used anywhere else."),
+			g.Label("    - Trust no one but yourself and never give out your key."),
+			g.Label("    - For highly sensitive files, encrypt them while offline."),
+			g.Label("    - An antivirus can be beneficial to prevent keyloggers."),
+			g.Label("    - Encrypt your root filesystem for maximal security."),
+			g.Dummy(0,-50),
+			
 
 			// Progress bar
-			g.ProgressBar(progress).Size(-1,0).Overlay(progressInfo),
-
-			// Status label
+			g.Row(
+				g.ProgressBar(progress).Size(-54,0).Overlay(progressInfo),
+				g.Dummy(-59,0),
+				g.Button("Cancel").Size(50,0).OnClick(func(){
+					working = false
+				}),
+			),
 			g.Dummy(10,0),
 			g.Label(status),
-
-			g.Button("Cancel").Size(95,20).OnClick(func(){
-				working = false
-			}),
 		)
 	}
 }
@@ -462,6 +470,8 @@ func onDrop(names []string){
 
 				// Set 'outputEntry' to 'Encrypted.zip' in the same directory
 				outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted.zip")
+				
+				mode = "encrypt"
 			}else{
 				files++
 				name := filepath.Base(names[0])
@@ -503,6 +513,7 @@ func onDrop(names []string){
 				inputFile = names[0]
 			}
 		}else{
+			mode = "encrypt"
 			// There are multiple dropped items, check each one
 			for _,name := range names{
 				stat,_ := os.Stat(name)
@@ -568,23 +579,54 @@ func work(){
 	//headerBroken := false
 	//reedsoloFixed := 0
 	//reedsoloErrors := 0
-	
-	// Declare salt and nonce
 	var salt []byte
 	var nonce []byte
 	var keyHash []byte
+	var _keyHash []byte
 	var crcHash []byte
 	var nonces []byte
-	
-	stat,_ := os.Stat(inputFile)
-	total := stat.Size()
 
+	fmt.Println(mode)
 	// Set the output file based on mode
 	if mode=="encrypt"{
 		outputFile = outputEntry+".pcv"
+
+		// Compress files into a zip archive
+		if len(allFiles)>1{
+			rootDir := filepath.Dir(outputEntry)
+			inputFile = outputEntry
+			fmt.Println(inputFile)
+			file,_ := os.Create(inputFile)
+			defer file.Close()
+			
+			w := zip.NewWriter(file)
+			for _,path := range(allFiles){
+				fmt.Printf("Crawling: %#v\n",path)
+				if path==inputFile{
+					continue
+				}
+				stat,_ := os.Stat(path)
+				header,_ := zip.FileInfoHeader(stat)
+				header.Name = strings.Replace(path,rootDir,"",1)
+				header.Method = zip.Deflate
+				writer,_ := w.CreateHeader(header)
+
+				file,_ := os.Open(path)
+				defer file.Close()
+
+				io.Copy(writer,file)
+			}
+			w.Flush()
+			w.Close()
+		}
 	}else{
 		outputFile = outputEntry
 	}
+	
+	fmt.Println(inputFile)
+	stat,_ := os.Stat(inputFile)
+	total := stat.Size()
+	fmt.Println(total)
 	
 	// Open input file in read-only mode
 	fin,_ := os.Open(inputFile)
@@ -592,7 +634,7 @@ func work(){
 	
 	var fout *os.File
 
-	// If encrypting, generate values. If decrypting, read values from file
+	// If encrypting, generate values; If decrypting, read values from file
 	if mode=="encrypt"{
 		status = "Generating values..."
 		g.Update()
@@ -608,11 +650,13 @@ func work(){
 		nonce = make([]byte,24)
 		
 		// Write version to file
-		fout.Write(rsEncode([]byte("v1.13"),rs5_128,133))
+		fout.Write(rsEncode([]byte(version),rs5_128,133))
 
 		// Encode the length of the metadata with Reed-Solomon
 		metadataLength := []byte(fmt.Sprintf("%010d",len(metadata)))
+		//fmt.Println("metadataLength:",metadataLength)
 		metadataLength = rsEncode(metadataLength,rs10_128,138)
+		
 		// Write the length of the metadata to file
 		fout.Write(metadataLength)
 		
@@ -620,10 +664,10 @@ func work(){
 		fout.Write([]byte(metadata))
 
 		flags := make([]byte,5)
-		fmt.Println(flags)
 		if fast{
 			flags[0] = 1
 		}
+		//fmt.Println("flags:",flags)
 		flags = rsEncode(flags,rs5_128,133)
 		fout.Write(flags)
 
@@ -631,8 +675,8 @@ func work(){
 		rand.Read(salt)
 		rand.Read(nonce)
 		
-		//fmt.Println("Encrypting salt: ",salt)
-		//fmt.Println("Encrypting nonce: ",nonce)
+		fmt.Println("salt: ",salt)
+		fmt.Println("nonce: ",nonce)
 
 		// Encode salt with Reed-Solomon and write to file
 		_salt := rsEncode(salt,rs16_128,144)
@@ -656,8 +700,8 @@ func work(){
 		// Write placeholder for nonce/Poly1305 pairs
 		fout.Write(make([]byte,offset))
 	}else{
-		g.Update()
 		status = "Reading values..."
+		g.Update()
 		version := make([]byte,133)
 		fin.Read(version)
 		version = rsDecode(version,rs5_128,5)
@@ -666,13 +710,14 @@ func work(){
 		fin.Read(tmp)
 		tmp = rsDecode(tmp,rs10_128,10)
 		metadataLength,_ := strconv.Atoi(string(tmp))
+		//fmt.Println("metadataLength",metadataLength)
 
 		fin.Read(make([]byte,metadataLength))
 
-		flags := make([]byte,5)
+		flags := make([]byte,133)
 		fin.Read(flags)
 		flags = rsDecode(flags,rs5_128,5)
-		fmt.Println(flags)
+		//fmt.Println("flags",flags)
 		fast = flags[0]==1
 
 		salt = make([]byte,144)
@@ -683,50 +728,64 @@ func work(){
 		fin.Read(nonce)
 		nonce = rsDecode(nonce,rs24_128,24)
 		
-		//fmt.Println("Decrypting salt: ",salt)
-		//fmt.Println("Decrypting nonce: ",nonce)
+		fmt.Println("salt: ",salt)
+		fmt.Println("nonce: ",nonce)
 		
-		keyHash = make([]byte,192)
-		fin.Read(keyHash)
-		keyHash = rsDecode(keyHash,rs64_128,64)
+		_keyHash = make([]byte,192)
+		fin.Read(_keyHash)
+		_keyHash = rsDecode(_keyHash,rs64_128,64)
+		//fmt.Println("keyHash",keyHash)
 		
 		crcHash = make([]byte,160)
 		fin.Read(crcHash)
 		crcHash = rsDecode(crcHash,rs32_128,32)
+		//fmt.Println("crcHash",crcHash)
 		
-		_tmp := math.Ceil(float64(total-int64(metadataLength+1063))/float64(1048744))
+		_tmp := math.Ceil(float64(total-int64(metadataLength+1196))/float64(1048728))
 		nonces = make([]byte,int(_tmp*152)+144)
 		fin.Read(nonces)
-		
 		//fmt.Println("Nonces: ",nonces)
 	}
 	
 	g.Update()
 	status = "Deriving key..."
 	
-	fmt.Println("password",[]byte(password))
-	fmt.Println("salt",salt)
 	// Derive encryption/decryption key
+	var mem uint32 = 1048576;
+	if fast{
+		mem /= 2
+	}
 	key := argon2.IDKey(
 		[]byte(password),
 		salt,
-		4,
-		1048576/2,
-		4,
+		8,
+		mem,
+		8,
 		32,
 	)[:]
-	fmt.Println("key",key)
+	//fmt.Println("key",key)
 	
 	//key = make([]byte,32)
 	
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
 	keyHash = sha3_512.Sum(nil)
-	fmt.Println("keyHash: ",keyHash)
+	//fmt.Println("keyHash: ",keyHash)
 	
 	// Check is password is correct
-	
 	if mode=="decrypt"{
+		keyCorrect := true
+		for i,j := range(_keyHash){
+			if keyHash[i]!=j{
+				keyCorrect = false
+				break
+			}
+		}
+		if !keyCorrect{
+			working = false
+			_status = "Incorrect password."
+			return
+		}
 		fout,_ = os.OpenFile(
 			outputFile,
 			os.O_RDWR|os.O_CREATE|os.O_TRUNC,
@@ -746,7 +805,7 @@ func work(){
 	if mode=="decrypt"{
 		_mac := nonces[len(nonces)-144:]
 		_mac = rsDecode(_mac,rs16_128,16)
-		//fmt.Println("_mac len: ",len(_mac))
+		//fmt.Println("_mac ",_mac)
 		nonces = nonces[:len(nonces)-144]
 		var tmp []byte
 		var chunk []byte
@@ -760,16 +819,19 @@ func work(){
 				chunk = nil
 			}
 		}
-		for _,j := range(_mac){
+		/*for _,j := range(_mac){
 			tmp = append(tmp,j)
-		}
+		}*/
 		//fmt.Println("ENCRYPTED NONCES: ",tmp)
 		// XXXXXXXXXXXXXXXXFSFSDFFFSFF
-		nonces,_ = cipher.Open(nil,nonce,tmp,nil)
+		//nonces,_ = cipher.Open(nil,nonce,tmp,nil)
+		nonces,_ = monocypher.Unlock(nonces,nonce,key,_mac)
 		//fmt.Println("UNENCRYPTED NONCES: ",nonces)
 	}
 	for{
 		if !working{
+			fout.Close()
+			os.Remove(outputFile)
 			return
 		}
 		//fmt.Println("Encrypt/decrypt loop")
@@ -805,19 +867,23 @@ func work(){
 			if fast{
 				data = cipher.Seal(nil,_nonce,data,nil)
 				fout.Write(data)
+				//crc.Write(data)
 			}else{
 				mac,data := monocypher.Lock(data,_nonce,key)
 				fout.Write(data)
 				fout.Write(mac)
+				crc.Write(data)
+				crc.Write(mac)
 			}
-			crc.Write(data)
+
 			//fout.Write(data)
 		}else{
 			//fmt.Println("DECODE LOOP")
-			crc.Write(data)
+			//crc.Write(data)
 			if fast{
 				data,_ = cipher.Open(nil,_nonce,data,nil)
 			}else{
+				crc.Write(data)
 				mac := data[len(data)-16:]
 				data = data[:len(data)-16]
 				data,_ = monocypher.Unlock(data,_nonce,key,mac)
@@ -846,15 +912,16 @@ func work(){
 
 	if mode=="encrypt"{
 		//fmt.Println("'nonces' before RS: ",nonces)
-		fout.Seek(int64(567+len(metadata)),0)
+		fout.Seek(int64(700+len(metadata)),0)
 		fout.Write(rsEncode(keyHash,rs64_128,192))
 		fout.Write(rsEncode(crc.Sum(nil),rs32_128,160))
-		//fmt.Println("UNENCRYPTED NONCES: ",nonces)
-		tmp := cipher.Seal(nil,nonce,nonces,nil)
+
+		_mac,tmp := monocypher.Lock(nonces,nonce,key) 
+		//tmp := cipher.Seal(nil,nonce,nonces,nil)
 		//fmt.Println("ENCRYPTED NONCES: ",tmp)
-		_mac := tmp[len(tmp)-16:]
-		//fmt.Println("_mac len: ",len(_mac))
-		tmp = tmp[:len(tmp)-16]
+		//_mac := tmp[len(tmp)-16:]
+
+		//tmp = tmp[:len(tmp)-16]
 		var chunk []byte
 		//fmt.Println("<Nonces>")
 		for i,j := range(tmp){
@@ -868,8 +935,13 @@ func work(){
 		fout.Write(rsEncode(_mac,rs16_128,144))
 		//fmt.Println("</Nonces>")
 	}else{
-		fmt.Println("crcHash: ",crcHash)
-		fmt.Println("crc.Sum: ",crc.Sum(nil))
+		//fmt.Println("crcHash: ",crcHash)
+		//fmt.Println("crc.Sum: ",crc.Sum(nil))
+	}
+	
+	// Delete the temporary zip file
+	if len(allFiles)>1{
+		os.Remove(outputEntry)
 	}
 	fmt.Println("==============================")
 	resetUI()
@@ -1029,9 +1101,7 @@ func rsDecode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 
 // Create the master window, set callbacks, and start the UI
 func main(){
-	var width int = 480
-	var height int = 500
-	window := g.NewMasterWindow("Picocrypt",width,height,g.MasterWindowFlagsNotResizable)
+	window := g.NewMasterWindow("Picocrypt",480,496,g.MasterWindowFlagsNotResizable,nil)
 	window.SetDropCallback(onDrop)
 	dpi = g.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
