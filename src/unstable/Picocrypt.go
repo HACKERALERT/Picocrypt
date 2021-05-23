@@ -240,7 +240,7 @@ func startUI(){
 					}),
 
 					g.Dummy(10,0),
-					g.Style().SetColor(ig.StyleColor,_status_color).To(
+					g.Style().SetColor(ig.StyleColorText,_status_color).To(
 						g.Label(_status),
 					),
 				),
@@ -784,6 +784,7 @@ func work(){
 		if !keyCorrect{
 			working = false
 			_status = "Incorrect password."
+			_status_color = color.RGBA{0xff,0x00,0x00,255}
 			return
 		}
 		fout,_ = os.OpenFile(
@@ -945,7 +946,8 @@ func work(){
 	}
 	fmt.Println("==============================")
 	resetUI()
-	status = "Completed."
+	_status = "Completed."
+	_status_color = color.RGBA{0x00,0xff,0x00,255}
 	working = false
 }
 
