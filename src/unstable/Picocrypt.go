@@ -101,11 +101,13 @@ var password string
 var cPassword string
 var metadata string
 var keep bool
-var erase bool
 var reedsolo bool
 var split bool
 var splitSize string
 var fast bool
+
+
+var kept = false
 
 // Reed-Solomon encoders
 var rs5_128,_ = reedsolomon.New(5,128)
@@ -148,6 +150,11 @@ func startUI(){
 			g.TabBar("TabBar").Layout(
 				// File encryption/decryption tab
 				g.TabItem("Encryption/decryption").Layout(
+					g.PopupModal("Confirm").Layout(
+						g.Label("HI"),
+						g.Button("Yes").OnClick(func(){g.CloseCurrentPopup()}),
+						g.Button("No"),
+					),
 					// Update 'tab' to indicate active tab
 					g.Custom(func(){
 						if g.IsItemActive(){
@@ -214,12 +221,11 @@ func startUI(){
 					// Optional metadata
 					g.Dummy(10,0),
 					g.Label("Metadata (optional):"),
-					g.InputTextMultiline("##metadata",&metadata).Size(226,100),
+					g.InputTextMultiline("##metadata",&metadata).Size(226,126),
 
 					// Advanced options can be enabled with checkboxes
 					g.Dummy(10,0),
 					g.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
-					g.Checkbox("Securely erase and delete original file(s)",&erase),
 					g.Row(
 						g.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
 						g.Button("?").OnClick(func(){
@@ -442,6 +448,7 @@ func startUI(){
 
 // Handle files dropped into Picocrypt by user
 func onDrop(names []string){
+	_status = ""
 	if tab==0{
 		// Clear variables
 		onlyFiles = nil
@@ -514,6 +521,10 @@ func onDrop(names []string){
 			}
 		}else{
 			mode = "encrypt"
+			// Show the ".pcv" file extension
+			orLabel = ".pcv or"
+			outputWidth = 341
+
 			// There are multiple dropped items, check each one
 			for _,name := range names{
 				stat,_ := os.Stat(name)
@@ -583,10 +594,16 @@ func work(){
 	var nonce []byte
 	var keyHash []byte
 	var _keyHash []byte
-	var crcHash []byte
+	var keyfileHash []byte
 	var nonces []byte
 
-	fmt.Println(mode)
+
+	// Check if output file already exists
+	stat,err := os.Stat(outputFile)
+	if err==nil{
+		confirmOverwrite()
+	}
+	
 	// Set the output file based on mode
 	if mode=="encrypt"{
 		outputFile = outputEntry+".pcv"
@@ -624,7 +641,7 @@ func work(){
 	}
 	
 	fmt.Println(inputFile)
-	stat,_ := os.Stat(inputFile)
+	stat,_ = os.Stat(inputFile)
 	total := stat.Size()
 	fmt.Println(total)
 	
@@ -689,7 +706,7 @@ func work(){
 		// Write placeholder for hash of key
 		fout.Write(make([]byte,192))
 		
-		// Write placeholder for Blake3 CRC
+		// Write placeholder for hash of hash of keyfile
 		fout.Write(make([]byte,160))
 
 		
@@ -736,9 +753,9 @@ func work(){
 		_keyHash = rsDecode(_keyHash,rs64_128,64)
 		//fmt.Println("keyHash",keyHash)
 		
-		crcHash = make([]byte,160)
-		fin.Read(crcHash)
-		crcHash = rsDecode(crcHash,rs32_128,32)
+		keyfileHash = make([]byte,160)
+		fin.Read(keyfileHash)
+		keyfileHash = rsDecode(keyfileHash,rs32_128,32)
 		//fmt.Println("crcHash",crcHash)
 		
 		_tmp := math.Ceil(float64(total-int64(metadataLength+1196))/float64(1048728))
@@ -782,10 +799,13 @@ func work(){
 			}
 		}
 		if !keyCorrect{
-			working = false
-			_status = "Incorrect password."
-			_status_color = color.RGBA{0xff,0x00,0x00,255}
-			return
+			if keep{
+				kept = true
+			}else{
+				fout.Close()
+				broken()
+				return
+			}
 		}
 		fout,_ = os.OpenFile(
 			outputFile,
@@ -795,7 +815,7 @@ func work(){
 		defer fout.Close()
 	}
 
-	crc := blake3.New()
+	//crc := blake3.New()
 	
 	done := 0
 	counter := 0
@@ -825,8 +845,21 @@ func work(){
 		}*/
 		//fmt.Println("ENCRYPTED NONCES: ",tmp)
 		// XXXXXXXXXXXXXXXXFSFSDFFFSFF
-		//nonces,_ = cipher.Open(nil,nonce,tmp,nil)
-		nonces,_ = monocypher.Unlock(nonces,nonce,key,_mac)
+		//var err error
+		//nonces,err = cipher.Open(nil,nonce,tmp,nil)
+		//fmt.Println(err)
+		var authentic bool
+		nonces,authentic = monocypher.Unlock(tmp,nonce,key,_mac)
+		if !authentic{
+			if keep{
+				kept = true
+			}else{
+				working = false
+				_status = "The file is either corrupted or intentionally modified."
+				_status_color = color.RGBA{0xff,0x00,0x00,255}
+				return
+			}
+		}
 		//fmt.Println("UNENCRYPTED NONCES: ",nonces)
 	}
 	for{
@@ -873,8 +906,8 @@ func work(){
 				mac,data := monocypher.Lock(data,_nonce,key)
 				fout.Write(data)
 				fout.Write(mac)
-				crc.Write(data)
-				crc.Write(mac)
+				//crc.Write(data)
+				//crc.Write(mac)
 			}
 
 			//fout.Write(data)
@@ -884,10 +917,20 @@ func work(){
 			if fast{
 				data,_ = cipher.Open(nil,_nonce,data,nil)
 			}else{
-				crc.Write(data)
+				//crc.Write(data)
 				mac := data[len(data)-16:]
 				data = data[:len(data)-16]
-				data,_ = monocypher.Unlock(data,_nonce,key,mac)
+				var authentic bool
+				data,authentic = monocypher.Unlock(data,_nonce,key,mac)
+				if !authentic{
+					if keep{
+						kept = true
+					}else{
+						fout.Close()
+						broken()
+						return
+					}
+				}
 			}
 			fout.Write(data)
 			//fmt.Println(authentic)
@@ -915,9 +958,10 @@ func work(){
 		//fmt.Println("'nonces' before RS: ",nonces)
 		fout.Seek(int64(700+len(metadata)),0)
 		fout.Write(rsEncode(keyHash,rs64_128,192))
-		fout.Write(rsEncode(crc.Sum(nil),rs32_128,160))
+		fout.Write(rsEncode(make([]byte,32),rs32_128,160))
 
 		_mac,tmp := monocypher.Lock(nonces,nonce,key) 
+		fmt.Println(_mac)
 		//tmp := cipher.Seal(nil,nonce,nonces,nil)
 		//fmt.Println("ENCRYPTED NONCES: ",tmp)
 		//_mac := tmp[len(tmp)-16:]
@@ -946,9 +990,15 @@ func work(){
 	}
 	fmt.Println("==============================")
 	resetUI()
-	_status = "Completed."
-	_status_color = color.RGBA{0x00,0xff,0x00,255}
+	if kept{
+		_status = "The input is corrupted and/or modified. Please be careful."
+		_status_color = color.RGBA{0xff,0xff,0x00,255}
+	}else{
+		_status = "Completed."
+		_status_color = color.RGBA{0x00,0xff,0x00,255}
+	}
 	working = false
+	kept = false
 }
 
 // Generate file checksums
@@ -1065,14 +1115,26 @@ func resetUI(){
 	cPassword = ""
 	metadata = ""
 	keep = false
-	erase = false
 	reedsolo = false
 	split = false
 	splitSize = ""
 	fast = false
 	progress = 0
 	progressInfo = ""
+	_status = ""
+	_status_color = color.RGBA{0xff,0xff,0xff,255}
 	g.Update()
+}
+
+func confirmOverwrite(){
+	g.OpenPopup("Confirm")
+}
+
+func broken(){
+	working = false
+	_status = "The file is either corrupted or intentionally modified."
+	_status_color = color.RGBA{0xff,0x00,0x00,255}
+	os.Remove(outputFile)
 }
 
 func rsEncode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
