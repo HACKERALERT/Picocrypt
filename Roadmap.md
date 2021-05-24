@@ -13,14 +13,15 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 	<li>CLI (thanks u/your_username)</li>
 </ul>
 
-# In progress (will be in next release)
+# In progress (will be in an upcoming release)
 <ul>
+	<li>Picocrypt has been ported from Python to Go, thus completely rewritten</li>
 	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
 	<li>Allow file splitting into chunks (thanks u/greenreddits)</li>
 	<li>File shredder and file checksum generator</li>
 </ul>
 
-# Completed
+# Completed (most recent first)
 <ul>
 	<li>Rewrite from scratch to implement much better UI</li>
 	<li>Add Picocrypt vector logo to homepage (hacked together with Inkscape)</li>
