@@ -17,8 +17,10 @@ import (
 	"fmt"
 	"math"
 	"time"
+	"os/exec"
 	"strings"
 	"strconv"
+	"runtime"
 	"image/color"
 	"crypto/md5"
 	"archive/zip"
@@ -69,32 +71,10 @@ var status = "Ready."
 var _status = "adfs"
 var _status_color = color.RGBA{0xff,0xff,0xff,255}
 var items = []string{
-	"Fast",
 	"Normal",
-	"Secure",
 	"Paranoid",
 }
 var itemSelected int32
-var shredder_info = []string{
-	"Provides a basic level of security; safe from casual theives and hackers.\n"+
-	"    1. Overwrites the file once\n"+
-	"    2. Deletes the file\n",
-	"Provides a moderate level of security; safe from hackers and most police.\n"+
-	"    1. Overwrites the file with 4 passes\n"+
-	"    2. Deletes the file\n"+
-	"    3. Trims the drive\n",
-	"Provides a high level of security; safe from just about anyone.\n"+
-	"    1. Trims the drive\n"+
-	"    2. Overwrites the file with 10 passes\n"+
-	"    3. Deletes the file\n"+
-	"    4. Trims the drive again\n",
-	"Provides a very high level of security; safe from three-letter agencies.\n"+
-	"    1. Trims the drive\n"+
-	"    2. Defragments the drive\n"+
-	"    3. Overwrites the file with 35 passes\n"+
-	"    4. Deletes the file\n"+
-	"    5. Trims the drive again\n",
-}
 
 // User input variables
 var password string
@@ -150,17 +130,28 @@ func startUI(){
 			g.TabBar("TabBar").Layout(
 				// File encryption/decryption tab
 				g.TabItem("Encryption/decryption").Layout(
-					g.PopupModal("Confirm").Layout(
-						g.Label("HI"),
-						g.Button("Yes").OnClick(func(){g.CloseCurrentPopup()}),
-						g.Button("No"),
-					),
 					// Update 'tab' to indicate active tab
 					g.Custom(func(){
 						if g.IsItemActive(){
 							tab = 0
 						}
 					}),
+					
+					// Confirm overwrite with a modal
+					g.PopupModal("Confirmation").Layout(
+						g.Label("Output already exists. Overwrite?"),
+						g.Row(
+							g.Button("No").Size(110,0).OnClick(func(){
+								g.CloseCurrentPopup()
+							}),
+							g.Dummy(-118,0),
+							g.Button("Yes").Size(110,0).OnClick(func(){
+								g.CloseCurrentPopup()
+								go work()
+							}),
+							
+						),
+					),
 
 					// Label listing the input files and a button to clear input files
 					g.Dummy(10,0),
@@ -242,7 +233,17 @@ func startUI(){
 					// Start and cancel buttons
 					g.Dummy(10,0),
 					g.Button("Start").Size(-1,20).OnClick(func(){
-						go work()
+						if mode=="encrypt"{
+							outputFile = outputEntry+".pcv"
+						}else{
+							outputFile = outputEntry
+						}
+						_,err := os.Stat(outputFile)
+						if err==nil{
+							confirmOverwrite()
+						}else{
+							go work()
+						}
 					}),
 
 					g.Dummy(10,0),
@@ -264,7 +265,6 @@ func startUI(){
 					g.Dummy(10,0),
 					g.Combo("##shredder_mode",items[itemSelected],items,&itemSelected).Size(464),
 					g.Dummy(10,0),
-					g.Label(shredder_info[itemSelected]),
 				),
 
 				// File checksum generator tab
@@ -574,7 +574,7 @@ func onDrop(names []string){
 			}
 		}
 	}else if tab==1{
-
+		go shred(names)
 	}else if tab==2{
 		go generateChecksums(names[0])
 	}
@@ -596,13 +596,6 @@ func work(){
 	var _keyHash []byte
 	var keyfileHash []byte
 	var nonces []byte
-
-
-	// Check if output file already exists
-	stat,err := os.Stat(outputFile)
-	if err==nil{
-		confirmOverwrite()
-	}
 	
 	// Set the output file based on mode
 	if mode=="encrypt"{
@@ -641,7 +634,7 @@ func work(){
 	}
 	
 	fmt.Println(inputFile)
-	stat,_ = os.Stat(inputFile)
+	stat,_ := os.Stat(inputFile)
 	total := stat.Size()
 	fmt.Println(total)
 	
@@ -1105,6 +1098,30 @@ func generateChecksums(file string){
 	g.Update()
 }
 
+func shred(names []string){
+	for _,name := range(names){
+		if runtime.GOOS=="linux"{
+			if itemSelected==0{
+				cmd := exec.Command("shred","-uvfz -n 4 \""+name+"\"")
+				stdout,err := cmd.Output()
+				if err!=nil{
+					fmt.Println(err)
+				}
+				fmt.Println(string(stdout))
+			}else{
+
+			}
+		}else if runtime.GOOS=="windows"{
+		
+		}else if runtime.GOOS=="darwin"{
+			if itemSelected==0{
+				exec.Command("rm -rfP \""+name+"\"")
+			}
+		}
+		fmt.Println(name)
+	}
+}
+
 // Reset the UI to a clean state with no nothing selected
 func resetUI(){
 	inputLabel = "Drag and drop file(s) and folder(s) into this window."
@@ -1127,7 +1144,7 @@ func resetUI(){
 }
 
 func confirmOverwrite(){
-	g.OpenPopup("Confirm")
+	g.OpenPopup("Confirmation")
 }
 
 func broken(){
