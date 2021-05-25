@@ -21,6 +21,7 @@ import (
 	"strings"
 	"strconv"
 	"runtime"
+	"io/ioutil"
 	"image/color"
 	"crypto/md5"
 	"archive/zip"
@@ -45,6 +46,8 @@ import (
 )
 
 var version = "v1.13"
+var exe,_ = os.Executable()
+var rootDir = filepath.Dir(exe)
 
 // Global variables
 var dpi float32
@@ -75,6 +78,11 @@ var items = []string{
 	"Paranoid",
 }
 var itemSelected int32
+var shredProgress float32
+var shredDone float32
+var shredTotal float32
+var shredOverlay string
+var shredding = "Ready."
 
 // User input variables
 var password string
@@ -240,7 +248,7 @@ func startUI(){
 						}
 						_,err := os.Stat(outputFile)
 						if err==nil{
-							confirmOverwrite()
+							g.OpenPopup("Confirmation")
 						}else{
 							go work()
 						}
@@ -260,11 +268,15 @@ func startUI(){
 							tab = 1
 						}
 					}),
+
 					g.Dummy(30,0),
-					g.Label("Mode:"),
+					g.Label("Select a mode below and drop a file here."),
+					g.Label("Warning: Anything dropped here will be shredded immediately!"),
 					g.Dummy(10,0),
 					g.Combo("##shredder_mode",items[itemSelected],items,&itemSelected).Size(464),
 					g.Dummy(10,0),
+					g.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-1,0),
+					g.Label(shredding).Wrapped(true),
 				),
 
 				// File checksum generator tab
@@ -1099,7 +1111,23 @@ func generateChecksums(file string){
 }
 
 func shred(names []string){
+	shredTotal = 0
+	shredDone = 0
+	shredOverlay = "Calculating..."
 	for _,name := range(names){
+		filepath.Walk(name,func(path string,_ os.FileInfo,err error) error{
+			if err!=nil{
+				return nil
+			}
+			stat,_ := os.Stat(path)
+			if !stat.IsDir(){
+				shredTotal++
+			}
+			return nil
+		})
+	}
+	for _,name := range(names){
+		shredding = name
 		if runtime.GOOS=="linux"{
 			if itemSelected==0{
 				cmd := exec.Command("shred","-uvfz -n 4 \""+name+"\"")
@@ -1112,14 +1140,63 @@ func shred(names []string){
 
 			}
 		}else if runtime.GOOS=="windows"{
-		
+			stat,_ := os.Stat(name)
+			if stat.IsDir(){
+				filepath.Walk(name,func(path string,_ os.FileInfo,err error) error{
+					if err!=nil{
+						return nil
+					}
+					fmt.Println(path)
+					stat,_ := os.Stat(path)
+					if stat.IsDir(){
+						t := 0
+						files,_ := ioutil.ReadDir(path)
+						for _,f := range(files){
+							if !f.IsDir(){
+								t++
+							}
+						}
+						shredDone += float32(t)
+						shredUpdate()
+						tmp := filepath.Join(rootDir,"sdelete64.exe")
+						cmd := exec.Command(tmp,"*","-p","4")
+						cmd.Dir = path
+						cmd.Run()
+						shredding = strings.ReplaceAll(path,"\\","/")+"/*"
+					}
+					return nil
+				})
+				os.Remove(name)
+			}else{
+				exec.Command(filepath.Join(rootDir,"sdelete64.exe"),name,"-p","4").Run()
+				shredDone++
+				shredUpdate()
+			}
 		}else if runtime.GOOS=="darwin"{
 			if itemSelected==0{
 				exec.Command("rm -rfP \""+name+"\"")
 			}
 		}
 		fmt.Println(name)
+		g.Update()
 	}
+	if itemSelected==1&&runtime.GOOS=="windows"{
+		cmd := exec.Command("cipher","/w:\""+name+"\"")
+		stdout,err := cmd.Output()
+		if err!=nil{
+			fmt.Println(err)
+		}
+		fmt.Println(string(stdout))
+	}
+	shredding = "Ready."
+	shredProgress = 0
+	shredOverlay = ""
+}
+
+func shredUpdate(){
+	shredOverlay = fmt.Sprintf("%d/%d",int(shredDone),int(shredTotal))
+	shredProgress = shredDone/shredTotal
+	g.Update()
 }
 
 // Reset the UI to a clean state with no nothing selected
@@ -1141,10 +1218,6 @@ func resetUI(){
 	_status = ""
 	_status_color = color.RGBA{0xff,0xff,0xff,255}
 	g.Update()
-}
-
-func confirmOverwrite(){
-	g.OpenPopup("Confirmation")
 }
 
 func broken(){
@@ -1182,6 +1255,9 @@ func rsDecode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 
 // Create the master window, set callbacks, and start the UI
 func main(){
+	if runtime.GOOS=="windows"{
+		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
+	}
 	window := g.NewMasterWindow("Picocrypt",480,496,g.MasterWindowFlagsNotResizable,nil)
 	window.SetDropCallback(onDrop)
 	dpi = g.Context.GetPlatform().GetContentScale()
