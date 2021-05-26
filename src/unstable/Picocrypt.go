@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"math"
 	"time"
+	"sync"
 	"os/exec"
 	"strings"
 	"strconv"
@@ -30,6 +31,7 @@ import (
 	"encoding/hex"
 	"path/filepath"
 	"crypto/sha256"
+	"runtime/debug"
 	"github.com/pkg/browser"
 	"github.com/zeebo/blake3"
 	"golang.org/x/crypto/sha3"
@@ -162,7 +164,7 @@ func startUI(){
 					),
 
 					// Label listing the input files and a button to clear input files
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Label(inputLabel),
 						g.Dummy(-55,0),
@@ -170,7 +172,7 @@ func startUI(){
 					),
 
 					// Allow user to choose a custom output path and name
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Label("Save output as:"),
 					g.Row(
 						g.InputText("##output",&outputEntry).Size(outputWidth/dpi),
@@ -192,7 +194,7 @@ func startUI(){
 					),
 
 					// Prompt for password
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Label("Password:"),
 						g.Dummy(-200,0),
@@ -213,17 +215,17 @@ func startUI(){
 					),
 
 					// Prompt to confirm password
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Label("Confirm password:"),
 					g.InputText("##cPassword",&cPassword).Size(200/dpi).Flags(passwordState),
 
 					// Optional metadata
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Label("Metadata (optional):"),
 					g.InputTextMultiline("##metadata",&metadata).Size(226,126),
 
 					// Advanced options can be enabled with checkboxes
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
 					g.Row(
 						g.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
@@ -239,7 +241,7 @@ func startUI(){
 					g.Checkbox("Fast mode (less secure, not as durable)",&fast),
 
 					// Start and cancel buttons
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Button("Start").Size(-1,20).OnClick(func(){
 						if mode=="encrypt"{
 							outputFile = outputEntry+".pcv"
@@ -254,7 +256,7 @@ func startUI(){
 						}
 					}),
 
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Style().SetColor(ig.StyleColorText,_status_color).To(
 						g.Label(_status),
 					),
@@ -269,12 +271,11 @@ func startUI(){
 						}
 					}),
 
-					g.Dummy(30,0),
 					g.Label("Select a mode below and drop a file here."),
 					g.Label("Warning: Anything dropped here will be shredded immediately!"),
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Combo("##shredder_mode",items[itemSelected],items,&itemSelected).Size(464),
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-1,0),
 					g.Label(shredding).Wrapped(true),
 				),
@@ -288,11 +289,10 @@ func startUI(){
 						}
 					}),
 
-					g.Dummy(30,0),
 					g.Label("Toggle the hashes you would like to generate and drop a file here."),
 					
 					// MD5
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("MD5:",&md5_selected),
 						g.Dummy(-45,0),
@@ -304,7 +304,7 @@ func startUI(){
 					),
 
 					// SHA1
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("SHA1:",&sha1_selected),
 						g.Dummy(-45,0),
@@ -317,7 +317,7 @@ func startUI(){
 					),
 
 					// SHA256
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("SHA256:",&sha256_selected),
 						g.Dummy(-45,0),
@@ -330,7 +330,7 @@ func startUI(){
 					),
 
 					// SHA3-256
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("SHA3-256:",&sha3_256_selected),
 						g.Dummy(-45,0),
@@ -343,7 +343,7 @@ func startUI(){
 					),
 
 					// BLAKE2b
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("BLAKE2b:",&blake2b_selected),
 						g.Dummy(-45,0),
@@ -356,7 +356,7 @@ func startUI(){
 					),
 
 					// BLAKE2s
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("BLAKE2s:",&blake2s_selected),
 						g.Dummy(-45,0),
@@ -369,7 +369,7 @@ func startUI(){
 					),
 
 					// BLAKE3
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Row(
 						g.Checkbox("BLAKE3:",&blake3_selected),
 						g.Dummy(-45,0),
@@ -382,7 +382,7 @@ func startUI(){
 					),
 					
 					// Input box for validating checksum
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Label("Validate a checksum:"),
 					g.InputText("##cs_validate",&cs_validate).Size(-1).OnChange(func(){
 						md5_color = color.RGBA{0x10,0x10,0x10,255}
@@ -414,7 +414,7 @@ func startUI(){
 					}),
 
 					// Progress bar
-					g.Dummy(10,0),
+					//g.Dummy(10,0),
 					g.Label("Progress:"),
 					g.ProgressBar(cs_progress).Size(-1,0),
 				),
@@ -425,7 +425,7 @@ func startUI(){
 							tab = 3
 						}
 					}),
-					g.Dummy(30,0),
+					//g.Dummy(30,0),
 					g.Label("Picocrypt "+version+", created by Evan Su (https://evansu.cc)"),
 				),
 			),
@@ -433,7 +433,7 @@ func startUI(){
 	)
 	if working{
 		g.SingleWindow("Working..").IsOpen(&working).Layout(
-			g.Dummy(30,0),
+			//g.Dummy(30,0),
 			g.Label("Tips:"),
 			g.Label("    - Choose a strong password with more than 16 characters."),
 			g.Label("    - Use a unique password that isn't used anywhere else."),
@@ -452,7 +452,7 @@ func startUI(){
 					working = false
 				}),
 			),
-			g.Dummy(10,0),
+			//g.Dummy(10,0),
 			g.Label(status),
 		)
 	}
@@ -491,6 +491,9 @@ func onDrop(names []string){
 				outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted.zip")
 				
 				mode = "encrypt"
+				// Show the ".pcv" file extension
+				orLabel = ".pcv or"
+				outputWidth = 341
 			}else{
 				files++
 				name := filepath.Base(names[0])
@@ -564,6 +567,8 @@ func onDrop(names []string){
 					inputLabel = fmt.Sprintf("1 file and %d folders selected.",folders)
 				}else if folders==1&&files>1{
 					inputLabel = fmt.Sprintf("%d files and 1 folder selected.",files)
+				}else if folders==1&&files==1{
+					inputLabel = "1 file and 1 folder selected."
 				}else{
 					inputLabel = fmt.Sprintf("%d files and %d folders selected.",files,folders)
 				}
@@ -611,19 +616,15 @@ func work(){
 	
 	// Set the output file based on mode
 	if mode=="encrypt"{
-		outputFile = outputEntry+".pcv"
-
 		// Compress files into a zip archive
-		if len(allFiles)>1{
+		if len(allFiles)>1||len(onlyFolders)>0{
 			rootDir := filepath.Dir(outputEntry)
 			inputFile = outputEntry
 			fmt.Println(inputFile)
 			file,_ := os.Create(inputFile)
-			defer file.Close()
 			
 			w := zip.NewWriter(file)
 			for _,path := range(allFiles){
-				fmt.Printf("Crawling: %#v\n",path)
 				if path==inputFile{
 					continue
 				}
@@ -632,17 +633,14 @@ func work(){
 				header.Name = strings.Replace(path,rootDir,"",1)
 				header.Method = zip.Deflate
 				writer,_ := w.CreateHeader(header)
-
 				file,_ := os.Open(path)
-				defer file.Close()
-
 				io.Copy(writer,file)
+				file.Close()
 			}
 			w.Flush()
 			w.Close()
+			file.Close()
 		}
-	}else{
-		outputFile = outputEntry
 	}
 	
 	fmt.Println(inputFile)
@@ -652,9 +650,10 @@ func work(){
 	
 	// Open input file in read-only mode
 	fin,_ := os.Open(inputFile)
-	defer fin.Close()
 	
 	var fout *os.File
+	
+	fmt.Println(mode)
 
 	// If encrypting, generate values; If decrypting, read values from file
 	if mode=="encrypt"{
@@ -665,7 +664,6 @@ func work(){
 			os.O_RDWR|os.O_CREATE|os.O_TRUNC,
 			0755,
 		)
-		defer fout.Close()
 
 		// Argon2 salt and XChaCha20 nonce
 		salt = make([]byte,16)
@@ -788,7 +786,7 @@ func work(){
 	//fmt.Println("key",key)
 	
 	//key = make([]byte,32)
-	
+	fmt.Println("output",outputFile)
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
 	keyHash = sha3_512.Sum(nil)
@@ -807,7 +805,7 @@ func work(){
 			if keep{
 				kept = true
 			}else{
-				fout.Close()
+				fin.Close()
 				broken()
 				return
 			}
@@ -817,7 +815,6 @@ func work(){
 			os.O_RDWR|os.O_CREATE|os.O_TRUNC,
 			0755,
 		)
-		defer fout.Close()
 	}
 
 	//crc := blake3.New()
@@ -859,6 +856,8 @@ func work(){
 			if keep{
 				kept = true
 			}else{
+				fin.Close()
+				fout.Close()
 				working = false
 				_status = "The file is either corrupted or intentionally modified."
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
@@ -869,6 +868,7 @@ func work(){
 	}
 	for{
 		if !working{
+			fin.Close()
 			fout.Close()
 			os.Remove(outputFile)
 			return
@@ -920,7 +920,20 @@ func work(){
 			//fmt.Println("DECODE LOOP")
 			//crc.Write(data)
 			if fast{
-				data,_ = cipher.Open(nil,_nonce,data,nil)
+				data,err = cipher.Open(nil,_nonce,data,nil)
+				if err!=nil{
+					if keep{
+						kept = true
+						mac := data[len(data)-16:]
+						data = data[:len(data)-16]
+						data,_ = monocypher.Unlock(data,_nonce,key,mac)
+					}else{
+						fin.Close()
+						fout.Close()
+						broken()
+						return
+					}
+				}
 			}else{
 				//crc.Write(data)
 				mac := data[len(data)-16:]
@@ -931,6 +944,7 @@ func work(){
 					if keep{
 						kept = true
 					}else{
+						fin.Close()
 						fout.Close()
 						broken()
 						return
@@ -1004,6 +1018,12 @@ func work(){
 	}
 	working = false
 	kept = false
+	key = nil
+	fin.Close()
+	fout.Close()
+	status = "Ready."
+	debug.FreeOSMemory()
+	fmt.Println("Exit goroutine")
 }
 
 // Generate file checksums
@@ -1129,15 +1149,61 @@ func shred(names []string){
 	for _,name := range(names){
 		shredding = name
 		if runtime.GOOS=="linux"{
-			if itemSelected==0{
-				cmd := exec.Command("shred","-uvfz -n 4 \""+name+"\"")
-				stdout,err := cmd.Output()
-				if err!=nil{
-					fmt.Println(err)
+			stat,_ := os.Stat(name)
+			if stat.IsDir(){
+				var coming []string
+				filepath.Walk(name,func(path string,_ os.FileInfo,err error) error{
+					if err!=nil{
+						return nil
+					}
+					fmt.Println(path)
+					stat,_ := os.Stat(path)
+					if !stat.IsDir(){
+						if len(coming)==128{
+							var wg sync.WaitGroup
+							for i,j := range(coming){
+								wg.Add(1)
+								go func(wg *sync.WaitGroup,id int,j string){
+									defer wg.Done()
+									cmd := exec.Command("shred","-ufvz","-n","4",j)
+									output,err := cmd.Output()
+									fmt.Println(err)
+									fmt.Println(output)
+									shredding = j
+									shredDone++
+									shredUpdate()
+									g.Update()
+								}(&wg,i,j)
+								
+							}
+							wg.Wait()
+							coming = nil
+						}else{
+							coming = append(coming,path)
+						}
+					}
+					return nil
+				})
+				fmt.Println(coming)
+				for _,i := range(coming){
+					go func(){
+						cmd := exec.Command("shred","-ufvz","-n","4",i)
+						output,err := cmd.Output()
+						fmt.Println(err)
+						fmt.Println(output)
+						shredding = i
+						shredDone++
+						shredUpdate()
+						g.Update()
+					}()
 				}
-				fmt.Println(string(stdout))
+				os.RemoveAll(name)
 			}else{
-
+				cmd := exec.Command("shred","-ufvz","-n","4",name)
+				cmd.Run()
+				shredding = name+"/*"
+				shredDone++
+				shredUpdate()
 			}
 		}else if runtime.GOOS=="windows"{
 			stat,_ := os.Stat(name)
@@ -1166,7 +1232,7 @@ func shred(names []string){
 					}
 					return nil
 				})
-				os.Remove(name)
+				os.RemoveAll(name)
 			}else{
 				exec.Command(filepath.Join(rootDir,"sdelete64.exe"),name,"-p","4").Run()
 				shredDone++
@@ -1180,14 +1246,14 @@ func shred(names []string){
 		fmt.Println(name)
 		g.Update()
 	}
-	if itemSelected==1&&runtime.GOOS=="windows"{
+	/*if itemSelected==1&&runtime.GOOS=="windows"{
 		cmd := exec.Command("cipher","/w:\""+name+"\"")
 		stdout,err := cmd.Output()
 		if err!=nil{
 			fmt.Println(err)
 		}
 		fmt.Println(string(stdout))
-	}
+	}*/
 	shredding = "Ready."
 	shredProgress = 0
 	shredOverlay = ""
@@ -1258,7 +1324,7 @@ func main(){
 	if runtime.GOOS=="windows"{
 		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
 	}
-	window := g.NewMasterWindow("Picocrypt",480,496,g.MasterWindowFlagsNotResizable,nil)
+	window := g.NewMasterWindow("Picocrypt",480,480,g.MasterWindowFlagsNotResizable,nil)
 	window.SetDropCallback(onDrop)
 	dpi = g.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
