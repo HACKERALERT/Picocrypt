@@ -41,6 +41,7 @@ import (
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
 	"github.com/atotto/clipboard"
+	"golang.org/x/crypto/ripemd160"
 	"github.com/klauspost/reedsolomon"
 	ig "github.com/AllenDang/imgui-go"
 	"golang.org/x/crypto/chacha20poly1305"
@@ -70,6 +71,7 @@ var orLabel = "or"
 var passwordState = g.InputTextFlags_Password
 var showPassword = false
 var keyfile = false
+var keyfilePrompt = "Keyfile (optional):"
 var progress float32 = 0
 var progressInfo = ""
 var status = "Ready."
@@ -89,8 +91,11 @@ var shredding = "Ready."
 // User input variables
 var password string
 var cPassword string
+var keyfilePath string
+var keyfileLabel = "Use a keyfile"
 var metadata string
 var keep bool
+var erase bool
 var reedsolo bool
 var split bool
 var splitSize string
@@ -109,6 +114,7 @@ var rs64_128,_ = reedsolomon.New(64,128)
 
 // File checksum generator variables
 var cs_md5 string
+var cs_ripemd string
 var cs_sha1 string
 var cs_sha256 string
 var cs_sha3_256 string
@@ -117,6 +123,7 @@ var cs_blake2s string
 var cs_blake3 string
 var cs_validate string
 var md5_color = color.RGBA{0x10,0x10,0x10,255}
+var ripemd_color = color.RGBA{0x10,0x10,0x10,255}
 var sha1_color = color.RGBA{0x10,0x10,0x10,255}
 var sha256_color = color.RGBA{0x10,0x10,0x10,255}
 var sha3_256_color = color.RGBA{0x10,0x10,0x10,255}
@@ -125,6 +132,7 @@ var blake2s_color = color.RGBA{0x10,0x10,0x10,255}
 var blake3_color = color.RGBA{0x10,0x10,0x10,255}
 var cs_progress float32 = 0
 var md5_selected = false
+var ripemd_selected = false
 var sha1_selected = false
 var sha256_selected = false
 var sha3_256_selected = false
@@ -197,8 +205,8 @@ func startUI(){
 					//g.Dummy(10,0),
 					g.Row(
 						g.Label("Password:"),
-						g.Dummy(-200,0),
-						g.Label("Password:"),
+						g.Dummy(-220,0),
+						g.Label(keyfilePrompt),
 					),
 					g.Row(
 						g.InputText("##password",&password).Size(200/dpi).Flags(passwordState),
@@ -210,8 +218,20 @@ func startUI(){
 							}
 							g.Update()
 						}),
-						g.Dummy(-200,0),
-						g.Checkbox("Use a keyfile",&keyfile),
+						g.Dummy(-220,0),
+						g.Checkbox(keyfileLabel,&keyfile).OnChange(func(){
+							if !keyfile{
+								keyfileLabel = "Use a keyfile"
+								return
+							}
+							filename,err := di.File().Load()
+							if err!=nil{
+								keyfile = false
+								return
+							}
+							keyfileLabel = filename
+							keyfilePath = filename
+						}),
 					),
 
 					// Prompt to confirm password
@@ -222,11 +242,12 @@ func startUI(){
 					// Optional metadata
 					//g.Dummy(10,0),
 					g.Label("Metadata (optional):"),
-					g.InputTextMultiline("##metadata",&metadata).Size(226,126),
+					g.InputTextMultiline("##metadata",&metadata).Size(230,126),
 
 					// Advanced options can be enabled with checkboxes
 					//g.Dummy(10,0),
 					g.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
+					g.Checkbox("Securely shred the original file(s) and folder(s)",&erase),
 					g.Row(
 						g.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
 						g.Button("?").OnClick(func(){
@@ -271,7 +292,7 @@ func startUI(){
 						}
 					}),
 
-					g.Label("Select a mode below and drop a file here."),
+					g.Label("Select a mode below and drop file(s) and folder(s) here."),
 					g.Label("Warning: Anything dropped here will be shredded immediately!"),
 					//g.Dummy(10,0),
 					g.Combo("##shredder_mode",items[itemSelected],items,&itemSelected).Size(464),
@@ -299,8 +320,22 @@ func startUI(){
 						g.Button("Copy##md5").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_md5)
 						}),
-					),					g.Style().SetColor(ig.StyleColorBorder,md5_color).To(
+					),
+					g.Style().SetColor(ig.StyleColorBorder,md5_color).To(
 						g.InputText("##cs_md5",&cs_md5).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					),
+
+					// RIPEMD
+					//g.Dummy(10,0),
+					g.Row(
+						g.Checkbox("RIPEMD-160:",&ripemd_selected),
+						g.Dummy(-45,0),
+						g.Button("Copy##ripemd").Size(36,0).OnClick(func(){
+							clipboard.WriteAll(cs_ripemd)
+						}),
+					),
+					g.Style().SetColor(ig.StyleColorBorder,ripemd_color).To(
+						g.InputText("##cs_ripemd",&cs_ripemd).Size(-1).Flags(g.InputTextFlags_ReadOnly),
 					),
 
 					// SHA1
@@ -506,7 +541,6 @@ func onDrop(names []string){
 
 					// Open input file in read-only mode
 					fin,_ := os.Open(names[0])
-					defer fin.Close()
 
 					// Read metadata and insert into box
 					fin.Read(make([]byte,133))
@@ -519,6 +553,16 @@ func onDrop(names []string){
 					fin.Read(tmp)
 					metadata = string(tmp)
 
+					flags := make([]byte,133)
+					fin.Read(flags)
+					flags = rsDecode(flags,rs5_128,5)
+
+					if flags[1]==1{
+						keyfilePrompt = "Keyfile (required):"
+						keyfileLabel = "Click here to select keyfile."
+					}
+
+					fin.Close()
 				}else{
 					mode = "encrypt"
 					inputLabel = name+" (will encrypt)"
@@ -591,7 +635,7 @@ func onDrop(names []string){
 			}
 		}
 	}else if tab==1{
-		go shred(names)
+		go shred(names,true)
 	}else if tab==2{
 		go generateChecksums(names[0])
 	}
@@ -611,7 +655,9 @@ func work(){
 	var nonce []byte
 	var keyHash []byte
 	var _keyHash []byte
-	var keyfileHash []byte
+	var khash []byte
+	var khash_hash []byte
+	var _khash_hash []byte
 	var nonces []byte
 	
 	// Set the output file based on mode
@@ -687,6 +733,9 @@ func work(){
 		if fast{
 			flags[0] = 1
 		}
+		if keyfile{
+			flags[1] = 1
+		}
 		//fmt.Println("flags:",flags)
 		flags = rsEncode(flags,rs5_128,133)
 		fout.Write(flags)
@@ -739,6 +788,7 @@ func work(){
 		flags = rsDecode(flags,rs5_128,5)
 		//fmt.Println("flags",flags)
 		fast = flags[0]==1
+		keyfile = flags[1]==1
 
 		salt = make([]byte,144)
 		fin.Read(salt)
@@ -756,9 +806,9 @@ func work(){
 		_keyHash = rsDecode(_keyHash,rs64_128,64)
 		//fmt.Println("keyHash",keyHash)
 		
-		keyfileHash = make([]byte,160)
-		fin.Read(keyfileHash)
-		keyfileHash = rsDecode(keyfileHash,rs32_128,32)
+		_khash_hash = make([]byte,160)
+		fin.Read(_khash_hash)
+		_khash_hash = rsDecode(_khash_hash,rs32_128,32)
 		//fmt.Println("crcHash",crcHash)
 		
 		_tmp := math.Ceil(float64(total-int64(metadataLength+1196))/float64(1048728))
@@ -784,6 +834,24 @@ func work(){
 		32,
 	)[:]
 	//fmt.Println("key",key)
+
+	if keyfile{
+		kin,_ := os.Open(keyfilePath)
+		kstat,_ := os.Stat(keyfilePath)
+		fmt.Println(kstat.Size())
+		kbytes := make([]byte,kstat.Size())
+		kin.Read(kbytes)
+		kin.Close()
+		ksha3 := sha3.New256()
+		ksha3.Write(kbytes)
+		khash = ksha3.Sum(nil)
+
+		khash_sha3 := sha3.New256()
+		khash_sha3.Write(khash)
+		khash_hash = khash_sha3.Sum(nil)
+		fmt.Println("khash",khash)
+		fmt.Println("khash_hash",khash_hash)
+	}
 	
 	//key = make([]byte,32)
 	fmt.Println("output",outputFile)
@@ -795,21 +863,43 @@ func work(){
 	// Check is password is correct
 	if mode=="decrypt"{
 		keyCorrect := true
+		keyfileCorrect := true
+		var tmp bool
 		for i,j := range(_keyHash){
 			if keyHash[i]!=j{
 				keyCorrect = false
 				break
 			}
 		}
-		if !keyCorrect{
+		if keyfile{
+			for i,j := range(_khash_hash){
+				if khash_hash[i]!=j{
+					keyfileCorrect = false
+					break
+				}
+			}
+			tmp = !keyCorrect||!keyfileCorrect
+		}else{
+			tmp = !keyCorrect
+		}
+		if tmp{
 			if keep{
 				kept = true
 			}else{
 				fin.Close()
-				broken()
+				working = false
+				if !keyCorrect{
+					_status = "The provided password is incorrect."
+				}else{
+					_status = "The provided keyfile is incorrect."
+				}
+				_status_color = color.RGBA{0xff,0x00,0x00,255}
+				key = nil
+				debug.FreeOSMemory()
 				return
 			}
 		}
+
 		fout,_ = os.OpenFile(
 			outputFile,
 			os.O_RDWR|os.O_CREATE|os.O_TRUNC,
@@ -817,7 +907,16 @@ func work(){
 		)
 	}
 
-	//crc := blake3.New()
+	if keyfile{
+		// XOR key and keyfile
+		tmp := key
+		key = make([]byte,32)
+		for i,_ := range(key){
+			key[i] = tmp[i]^khash[i]
+		}
+		fmt.Println("key",key)
+	}
+
 	
 	done := 0
 	counter := 0
@@ -977,7 +1076,7 @@ func work(){
 		//fmt.Println("'nonces' before RS: ",nonces)
 		fout.Seek(int64(700+len(metadata)),0)
 		fout.Write(rsEncode(keyHash,rs64_128,192))
-		fout.Write(rsEncode(make([]byte,32),rs32_128,160))
+		fout.Write(rsEncode(khash_hash,rs32_128,160))
 
 		_mac,tmp := monocypher.Lock(nonces,nonce,key) 
 		fmt.Println(_mac)
@@ -1003,11 +1102,66 @@ func work(){
 		//fmt.Println("crc.Sum: ",crc.Sum(nil))
 	}
 	
+	fin.Close()
+	fout.Close()
+
 	// Delete the temporary zip file
 	if len(allFiles)>1{
-		os.Remove(outputEntry)
+		if erase{
+			shred([]string{outputEntry}[:],false)
+		}else{
+			os.Remove(outputEntry)
+		}
 	}
 	fmt.Println("==============================")
+	if erase{
+		shred(onlyFiles,false)
+		shred(onlyFolders,false)
+	}
+
+
+	if split{
+		status = "Splitting file..."
+		stat,_ := os.Stat(outputFile)
+		size := stat.Size()
+		finished := 0
+		fmt.Println(size)
+		chunkSize,_ := strconv.Atoi(splitSize)
+		chunkSize *= 1048576
+		chunks := int(math.Ceil(float64(size)/float64(chunkSize)))
+		fin,_ := os.Open(outputFile)
+		for i:=0;i<chunks;i++{
+			fmt.Println(fmt.Sprintf("%s.%d",outputFile,i))
+			fout,_ := os.OpenFile(
+				fmt.Sprintf("%s.%d",outputFile,i),
+				os.O_RDWR|os.O_CREATE|os.O_TRUNC,
+				0755,
+			)
+			done := 0
+			for{
+				data := make([]byte,1048576)
+				read,err := fin.Read(data)
+				if err!=nil{
+					break
+				}
+				data = data[:read]
+				fout.Write(data)
+				done += read
+				if done>=chunkSize{
+					break
+				}
+			}		
+			fout.Close()
+			finished++
+			progress = float32(finished)/float32(chunks)
+			progressInfo = fmt.Sprintf("%d/%d",finished,chunks)
+			g.Update()
+		}
+		fin.Close()
+		os.Remove(outputFile)
+	}
+
+
 	resetUI()
 	if kept{
 		_status = "The input is corrupted and/or modified. Please be careful."
@@ -1019,121 +1173,17 @@ func work(){
 	working = false
 	kept = false
 	key = nil
-	fin.Close()
-	fout.Close()
 	status = "Ready."
 	debug.FreeOSMemory()
 	fmt.Println("Exit goroutine")
 }
 
-// Generate file checksums
-func generateChecksums(file string){
-	fin,_ := os.Open(file)
-
-	cs_md5 = ""
-	cs_sha1 = ""
-	cs_sha256 = ""
-	cs_sha3_256 = ""
-	cs_blake2b = ""
-	cs_blake2s = ""
-	cs_blake3 = ""
-
-	if md5_selected{
-		cs_md5 = "Calculating..."
-	}
-	if sha1_selected{
-		cs_sha1 = "Calculating..."
-	}
-	if sha256_selected{
-		cs_sha256 = "Calculating..."
-	}
-	if sha3_256_selected{
-		cs_sha3_256 = "Calculating..."
-	}
-	if blake2b_selected{
-		cs_blake2b = "Calculating..."
-	}
-	if blake2s_selected{
-		cs_blake2s = "Calculating..."
-	}
-	if blake3_selected{
-		cs_blake3 = "Calculating..."
-	}
-
-	crc_md5 := md5.New()
-	crc_sha1 := sha1.New()
-	crc_sha256 := sha256.New()
-	crc_sha3_256 := sha3.New256()
-	crc_blake2b,_ := blake2b.New256(nil)
-	crc_blake2s,_ := blake2s.New256(nil)
-	crc_blake3 := blake3.New()
-	stat,_ := os.Stat(file)
-	total := stat.Size()
-	var done int64 = 0
-	for{
-		var data []byte
-		_data := make([]byte,1048576)
-		size,err := fin.Read(_data)
-		if err!=nil{
-			break
-		}
-		data = _data[:size]
-
-		if md5_selected{
-			crc_md5.Write(data)
-		}
-		if sha1_selected{
-			crc_sha1.Write(data)
-		}
-		if sha256_selected{
-			crc_sha256.Write(data)
-		}
-		if sha3_256_selected{
-			crc_sha3_256.Write(data)
-		}
-		if blake2b_selected{
-			crc_blake2b.Write(data)
-		}
-		if blake2s_selected{
-			crc_blake2s.Write(data)
-		}
-		if blake3_selected{
-			crc_blake3.Write(data)
-		}
-
-		done += int64(size)
-		cs_progress = float32(done)/float32(total)
-		g.Update()
-	}
-	cs_progress = 0
-	if md5_selected{
-		cs_md5 = hex.EncodeToString(crc_md5.Sum(nil))
-	}
-	if sha1_selected{
-		cs_sha1 = hex.EncodeToString(crc_sha1.Sum(nil))
-	}
-	if sha256_selected{
-		cs_sha256 = hex.EncodeToString(crc_sha256.Sum(nil))
-	}
-	if sha3_256_selected{
-		cs_sha3_256 = hex.EncodeToString(crc_sha3_256.Sum(nil))
-	}
-	if blake2b_selected{
-		cs_blake2b = hex.EncodeToString(crc_blake2b.Sum(nil))
-	}
-	if blake2s_selected{
-		cs_blake2s = hex.EncodeToString(crc_blake2s.Sum(nil))
-	}
-	if blake3_selected{
-		cs_blake3 = hex.EncodeToString(crc_blake3.Sum(nil))
-	}
-	g.Update()
-}
-
-func shred(names []string){
+func shred(names []string,separate bool){
 	shredTotal = 0
 	shredDone = 0
-	shredOverlay = "Calculating..."
+	if separate{
+		shredOverlay = "Calculating..."
+	}
 	for _,name := range(names){
 		filepath.Walk(name,func(path string,_ os.FileInfo,err error) error{
 			if err!=nil{
@@ -1171,7 +1221,7 @@ func shred(names []string){
 									fmt.Println(output)
 									shredding = j
 									shredDone++
-									shredUpdate()
+									shredUpdate(separate)
 									g.Update()
 								}(&wg,i,j)
 								
@@ -1193,7 +1243,7 @@ func shred(names []string){
 						fmt.Println(output)
 						shredding = i
 						shredDone++
-						shredUpdate()
+						shredUpdate(separate)
 						g.Update()
 					}()
 				}
@@ -1203,7 +1253,7 @@ func shred(names []string){
 				cmd.Run()
 				shredding = name+"/*"
 				shredDone++
-				shredUpdate()
+				shredUpdate(separate)
 			}
 		}else if runtime.GOOS=="windows"{
 			stat,_ := os.Stat(name)
@@ -1223,7 +1273,7 @@ func shred(names []string){
 							}
 						}
 						shredDone += float32(t)
-						shredUpdate()
+						shredUpdate(separate)
 						tmp := filepath.Join(rootDir,"sdelete64.exe")
 						cmd := exec.Command(tmp,"*","-p","4")
 						cmd.Dir = path
@@ -1234,9 +1284,10 @@ func shred(names []string){
 				})
 				os.RemoveAll(name)
 			}else{
-				exec.Command(filepath.Join(rootDir,"sdelete64.exe"),name,"-p","4").Run()
+				o,e := exec.Command(filepath.Join(rootDir,"sdelete64.exe"),name,"-p","4").Output()
+				fmt.Println(string(o),e)
 				shredDone++
-				shredUpdate()
+				shredUpdate(separate)
 			}
 		}else if runtime.GOOS=="darwin"{
 			if itemSelected==0{
@@ -1259,11 +1310,132 @@ func shred(names []string){
 	shredOverlay = ""
 }
 
-func shredUpdate(){
-	shredOverlay = fmt.Sprintf("%d/%d",int(shredDone),int(shredTotal))
-	shredProgress = shredDone/shredTotal
+func shredUpdate(separate bool){
+	if separate{
+		shredOverlay = fmt.Sprintf("%d/%d",int(shredDone),int(shredTotal))
+		shredProgress = shredDone/shredTotal
+	}else{
+		status = fmt.Sprintf("%d/%d",int(shredDone),int(shredTotal))
+		progress = shredDone/shredTotal
+	}
 	g.Update()
 }
+
+// Generate file checksums
+func generateChecksums(file string){
+	fin,_ := os.Open(file)
+
+	cs_md5 = ""
+	cs_ripemd = ""
+	cs_sha1 = ""
+	cs_sha256 = ""
+	cs_sha3_256 = ""
+	cs_blake2b = ""
+	cs_blake2s = ""
+	cs_blake3 = ""
+
+	if md5_selected{
+		cs_md5 = "Calculating..."
+	}
+	if ripemd_selected{
+		cs_ripemd = "Calculating..."
+	}
+	if sha1_selected{
+		cs_sha1 = "Calculating..."
+	}
+	if sha256_selected{
+		cs_sha256 = "Calculating..."
+	}
+	if sha3_256_selected{
+		cs_sha3_256 = "Calculating..."
+	}
+	if blake2b_selected{
+		cs_blake2b = "Calculating..."
+	}
+	if blake2s_selected{
+		cs_blake2s = "Calculating..."
+	}
+	if blake3_selected{
+		cs_blake3 = "Calculating..."
+	}
+
+	crc_md5 := md5.New()
+	crc_ripemd := ripemd160.New()
+	crc_sha1 := sha1.New()
+	crc_sha256 := sha256.New()
+	crc_sha3_256 := sha3.New256()
+	crc_blake2b,_ := blake2b.New256(nil)
+	crc_blake2s,_ := blake2s.New256(nil)
+	crc_blake3 := blake3.New()
+	stat,_ := os.Stat(file)
+	total := stat.Size()
+	var done int64 = 0
+	for{
+		var data []byte
+		_data := make([]byte,1048576)
+		size,err := fin.Read(_data)
+		if err!=nil{
+			break
+		}
+		data = _data[:size]
+
+		if md5_selected{
+			crc_md5.Write(data)
+		}
+		if ripemd_selected{
+			crc_ripemd.Write(data)
+		}
+		if sha1_selected{
+			crc_sha1.Write(data)
+		}
+		if sha256_selected{
+			crc_sha256.Write(data)
+		}
+		if sha3_256_selected{
+			crc_sha3_256.Write(data)
+		}
+		if blake2b_selected{
+			crc_blake2b.Write(data)
+		}
+		if blake2s_selected{
+			crc_blake2s.Write(data)
+		}
+		if blake3_selected{
+			crc_blake3.Write(data)
+		}
+
+		done += int64(size)
+		cs_progress = float32(done)/float32(total)
+		g.Update()
+	}
+	cs_progress = 0
+	if md5_selected{
+		cs_md5 = hex.EncodeToString(crc_md5.Sum(nil))
+	}
+	if ripemd_selected{
+		cs_ripemd = hex.EncodeToString(crc_ripemd.Sum(nil))
+	}
+	if sha1_selected{
+		cs_sha1 = hex.EncodeToString(crc_sha1.Sum(nil))
+	}
+	if sha256_selected{
+		cs_sha256 = hex.EncodeToString(crc_sha256.Sum(nil))
+	}
+	if sha3_256_selected{
+		cs_sha3_256 = hex.EncodeToString(crc_sha3_256.Sum(nil))
+	}
+	if blake2b_selected{
+		cs_blake2b = hex.EncodeToString(crc_blake2b.Sum(nil))
+	}
+	if blake2s_selected{
+		cs_blake2s = hex.EncodeToString(crc_blake2s.Sum(nil))
+	}
+	if blake3_selected{
+		cs_blake3 = hex.EncodeToString(crc_blake3.Sum(nil))
+	}
+	g.Update()
+}
+
 
 // Reset the UI to a clean state with no nothing selected
 func resetUI(){
@@ -1273,8 +1445,12 @@ func resetUI(){
 	outputWidth = 376
 	password = ""
 	cPassword = ""
+	keyfilePrompt = "Keyfile (optional):"
+	keyfileLabel = "Use a keyfile"
+	keyfile = false
 	metadata = ""
 	keep = false
+	erase = false
 	reedsolo = false
 	split = false
 	splitSize = ""
@@ -1291,6 +1467,7 @@ func broken(){
 	_status = "The file is either corrupted or intentionally modified."
 	_status_color = color.RGBA{0xff,0x00,0x00,255}
 	os.Remove(outputFile)
+	debug.FreeOSMemory()
 }
 
 func rsEncode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
@@ -1324,7 +1501,7 @@ func main(){
 	if runtime.GOOS=="windows"{
 		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
 	}
-	window := g.NewMasterWindow("Picocrypt",480,480,g.MasterWindowFlagsNotResizable,nil)
+	window := g.NewMasterWindow("Picocrypt",480,482,g.MasterWindowFlagsNotResizable,nil)
 	window.SetDropCallback(onDrop)
 	dpi = g.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
