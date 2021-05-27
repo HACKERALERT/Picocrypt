@@ -77,6 +77,12 @@ var progressInfo = ""
 var status = "Ready."
 var _status = "adfs"
 var _status_color = color.RGBA{0xff,0xff,0xff,255}
+var splitUnits = []string{
+	"KB",
+	"MB",
+	"GB",
+}
+var splitSelected int32
 var items = []string{
 	"Normal",
 	"Paranoid",
@@ -257,7 +263,8 @@ func startUI(){
 					g.Row(
 						g.Checkbox("Split output into chunks of",&split),
 						g.InputText("##splitSize",&splitSize).Size(30).Flags(g.InputTextFlags_CharsDecimal),
-						g.Label("MB"),
+						g.Combo("##splitter",splitUnits[splitSelected],splitUnits,&splitSelected).Size(40),
+						//g.Label("MB"),
 					),
 					g.Checkbox("Fast mode (less secure, not as durable)",&fast),
 
@@ -295,7 +302,7 @@ func startUI(){
 					g.Label("Select a mode below and drop file(s) and folder(s) here."),
 					g.Label("Warning: Anything dropped here will be shredded immediately!"),
 					//g.Dummy(10,0),
-					g.Combo("##shredder_mode",items[itemSelected],items,&itemSelected).Size(464),
+					g.Combo("##shredder_mode",items[itemSelected],items,&itemSelected).Size(463),
 					//g.Dummy(10,0),
 					g.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-1,0),
 					g.Label(shredding).Wrapped(true),
@@ -1063,7 +1070,7 @@ func work(){
 		elapsed:= float64(int64(time.Now().Sub(startTime)))/float64(1000000000)
 		
 		speed := (float64(done)/elapsed)/1000000
-		eta := float64(total-int64(done))/(speed*1000000)
+		eta := math.Abs(float64(total-int64(done))/(speed*1000000))
 		
 		progressInfo = fmt.Sprintf("%.2f%%",progress*100)
 		
@@ -1127,7 +1134,14 @@ func work(){
 		finished := 0
 		fmt.Println(size)
 		chunkSize,_ := strconv.Atoi(splitSize)
-		chunkSize *= 1048576
+		fmt.Println(splitSelected)
+		if splitSelected==0{
+			chunkSize *= 1024
+		}else if splitSelected==1{
+			chunkSize *= 1048576
+		}else{
+			chunkSize *= 1073741824
+		}
 		chunks := int(math.Ceil(float64(size)/float64(chunkSize)))
 		fin,_ := os.Open(outputFile)
 		for i:=0;i<chunks;i++{
@@ -1182,7 +1196,7 @@ func shred(names []string,separate bool){
 	shredTotal = 0
 	shredDone = 0
 	if separate{
-		shredOverlay = "Calculating..."
+		shredOverlay = "Shredding..."
 	}
 	for _,name := range(names){
 		filepath.Walk(name,func(path string,_ os.FileInfo,err error) error{
@@ -1215,7 +1229,7 @@ func shred(names []string,separate bool){
 								wg.Add(1)
 								go func(wg *sync.WaitGroup,id int,j string){
 									defer wg.Done()
-									cmd := exec.Command("shred","-ufvz","-n","4",j)
+									cmd := exec.Command("shred","-ufvz","-n","3",j)
 									output,err := cmd.Output()
 									fmt.Println(err)
 									fmt.Println(output)
@@ -1237,7 +1251,7 @@ func shred(names []string,separate bool){
 				fmt.Println(coming)
 				for _,i := range(coming){
 					go func(){
-						cmd := exec.Command("shred","-ufvz","-n","4",i)
+						cmd := exec.Command("shred","-ufvz","-n","3",i)
 						output,err := cmd.Output()
 						fmt.Println(err)
 						fmt.Println(output)
@@ -1249,7 +1263,7 @@ func shred(names []string,separate bool){
 				}
 				os.RemoveAll(name)
 			}else{
-				cmd := exec.Command("shred","-ufvz","-n","4",name)
+				cmd := exec.Command("shred","-ufvz","-n","3",name)
 				cmd.Run()
 				shredding = name+"/*"
 				shredDone++
@@ -1501,7 +1515,7 @@ func main(){
 	if runtime.GOOS=="windows"{
 		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
 	}
-	window := g.NewMasterWindow("Picocrypt",480,482,g.MasterWindowFlagsNotResizable,nil)
+	window := g.NewMasterWindow("Picocrypt",480,500,g.MasterWindowFlagsNotResizable,nil)
 	window.SetDropCallback(onDrop)
 	dpi = g.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
