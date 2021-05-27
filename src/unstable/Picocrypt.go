@@ -94,6 +94,9 @@ var shredTotal float32
 var shredOverlay string
 var shredding = "Ready."
 
+var recombine bool
+
+
 // User input variables
 var password string
 var cPassword string
@@ -178,7 +181,7 @@ func startUI(){
 					),
 
 					// Label listing the input files and a button to clear input files
-					//g.Dummy(10,0),
+					//g.Dummy(0,10),
 					g.Row(
 						g.Label(inputLabel),
 						g.Dummy(-55,0),
@@ -503,6 +506,7 @@ func startUI(){
 // Handle files dropped into Picocrypt by user
 func onDrop(names []string){
 	_status = ""
+	recombine = false
 	if tab==0{
 		// Clear variables
 		onlyFiles = nil
@@ -540,11 +544,29 @@ func onDrop(names []string){
 				files++
 				name := filepath.Base(names[0])
 
+				nums := []string{"0","1","2","3","4","5","6","7","8","9"}
+				endsNum := false
+				for _,i := range(nums){
+					if strings.HasSuffix(names[0],i){
+						endsNum = true
+					}
+				}
+				isSplit := strings.Contains(names[0],".pcv.")&&endsNum
+
 				// Decide if encrypting or decrypting
-				if strings.HasSuffix(names[0],".pcv"){
+				if strings.HasSuffix(names[0],".pcv")||isSplit{
 					mode = "decrypt"
 					inputLabel = name+" (will decrypt)"
-					outputEntry = names[0][:len(names[0])-4]
+				
+					if isSplit{
+						ind := strings.Index(names[0],".pcv")
+						names[0] = names[0][:ind]
+						outputEntry = names[0]
+						recombine = true
+					}else{
+						outputEntry = names[0][:len(names[0])-4]
+					}
+					
 
 					// Open input file in read-only mode
 					fin,_ := os.Open(names[0])
@@ -695,6 +717,44 @@ func work(){
 			file.Close()
 		}
 	}
+
+	if recombine{
+		status = "Recombining file..."
+		total := 0
+
+		for{
+			_,err := os.Stat(fmt.Sprintf("%s.%d",inputFile+".pcv",total))
+			if err!=nil{
+				break
+			}
+			total++
+		}
+		fout,_ := os.OpenFile(
+			outputEntry+".pcv",
+			os.O_RDWR|os.O_CREATE|os.O_TRUNC,
+			0755,
+		)
+		for i:=0;i<total;i++{
+			fin,_ := os.Open(fmt.Sprintf("%s.%d",inputFile+".pcv",i))
+			for{
+				data := make([]byte,1048576)
+				read,err := fin.Read(data)
+				if err!=nil{
+					break
+				}
+				data = data[:read]
+				fout.Write(data)
+			}
+			fin.Close()
+			progressInfo = fmt.Sprintf("%d/%d",i,total)
+			progress = float32(i)/float32(total)
+			g.Update()
+		}
+		fout.Close()
+		outputFile = outputEntry
+		inputFile = outputEntry+".pcv"
+		progressInfo = ""
+	}
 	
 	fmt.Println(inputFile)
 	stat,_ := os.Stat(inputFile)
@@ -828,19 +888,28 @@ func work(){
 	status = "Deriving key..."
 	
 	// Derive encryption/decryption key
-	var mem uint32 = 1048576;
+	var key []byte
 	if fast{
-		mem /= 2
+		key = argon2.IDKey(
+			[]byte(password),
+			salt,
+			4,
+			131072,
+			4,
+			32,
+		)[:]
+	}else{
+		key = argon2.IDKey(
+			[]byte(password),
+			salt,
+			8,
+			1048576,
+			8,
+			32,
+		)[:]
 	}
-	key := argon2.IDKey(
-		[]byte(password),
-		salt,
-		8,
-		mem,
-		8,
-		32,
-	)[:]
-	//fmt.Println("key",key)
+	
+	fmt.Println("key",key)
 
 	if keyfile{
 		kin,_ := os.Open(keyfilePath)
@@ -951,11 +1020,7 @@ func work(){
 		/*for _,j := range(_mac){
 			tmp = append(tmp,j)
 		}*/
-		//fmt.Println("ENCRYPTED NONCES: ",tmp)
-		// XXXXXXXXXXXXXXXXFSFSDFFFSFF
-		//var err error
-		//nonces,err = cipher.Open(nil,nonce,tmp,nil)
-		//fmt.Println(err)
+
 		var authentic bool
 		nonces,authentic = monocypher.Unlock(tmp,nonce,key,_mac)
 		if !authentic{
@@ -977,6 +1042,8 @@ func work(){
 			fin.Close()
 			fout.Close()
 			os.Remove(outputFile)
+			_status = "Operation cancelled by user."
+			_status_color = color.RGBA{0xff,0xff,0xff,255}
 			return
 		}
 		//fmt.Println("Encrypt/decrypt loop")
@@ -1112,26 +1179,12 @@ func work(){
 	fin.Close()
 	fout.Close()
 
-	// Delete the temporary zip file
-	if len(allFiles)>1{
-		if erase{
-			shred([]string{outputEntry}[:],false)
-		}else{
-			os.Remove(outputEntry)
-		}
-	}
-	fmt.Println("==============================")
-	if erase{
-		shred(onlyFiles,false)
-		shred(onlyFolders,false)
-	}
-
-
 	if split{
 		status = "Splitting file..."
 		stat,_ := os.Stat(outputFile)
 		size := stat.Size()
 		finished := 0
+		var splitted []string
 		fmt.Println(size)
 		chunkSize,_ := strconv.Atoi(splitSize)
 		fmt.Println(splitSelected)
@@ -1158,6 +1211,19 @@ func work(){
 				if err!=nil{
 					break
 				}
+				if !working{
+					fin.Close()
+					fout.Close()
+					_status = "Operation cancelled by user."
+					_status_color = color.RGBA{0xff,0xff,0xff,255}
+					for _,j := range(splitted){
+						os.Remove(j)
+					}
+					os.Remove(fmt.Sprintf("%s.%d",outputFile,i))
+					fmt.Println("outputFile",outputFile)
+					os.Remove(outputFile)
+					return
+				}
 				data = data[:read]
 				fout.Write(data)
 				done += read
@@ -1167,13 +1233,44 @@ func work(){
 			}		
 			fout.Close()
 			finished++
+			splitted = append(splitted,fmt.Sprintf("%s.%d",outputFile,i))
 			progress = float32(finished)/float32(chunks)
 			progressInfo = fmt.Sprintf("%d/%d",finished,chunks)
 			g.Update()
 		}
 		fin.Close()
-		os.Remove(outputFile)
+		if erase{
+			status = "Shredding the unsplitted file..."
+			progressInfo = ""
+			shred([]string{outputFile}[:],false)
+		}else{
+			os.Remove(outputFile)
+		}
 	}
+
+	if recombine{
+		os.Remove(inputFile)
+	}
+
+	// Delete the temporary zip file
+	if len(allFiles)>1{
+		if erase{
+			progressInfo = ""
+			status = "Shredding temporary files..."
+			shred([]string{outputEntry}[:],false)
+		}else{
+			os.Remove(outputEntry)
+		}
+	}
+	fmt.Println("==============================")
+	if erase{
+		progressInfo = ""
+		shred(onlyFiles,false)
+		shred(onlyFolders,false)
+	}
+
+
+	
 
 
 	resetUI()
