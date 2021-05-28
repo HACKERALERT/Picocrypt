@@ -37,10 +37,10 @@ import (
 	"golang.org/x/crypto/sha3"
 	"golang.org/x/crypto/argon2"
 	g "github.com/AllenDang/giu"
-	di "github.com/sqweek/dialog"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
 	"github.com/atotto/clipboard"
+	di "github.com/OpenDiablo2/dialog"
 	"github.com/klauspost/reedsolomon"
 	ig "github.com/AllenDang/imgui-go"
 	"golang.org/x/crypto/chacha20poly1305"
@@ -108,7 +108,7 @@ var reedsolo bool
 var split bool
 var splitSize string
 var fast bool
-
+var _fast bool
 
 var kept = false
 
@@ -270,6 +270,11 @@ func startUI(){
 					// Start and cancel buttons
 					//g.Dummy(10,0),
 					g.Button("Start").Size(-1,20).OnClick(func(){
+						if password!=cPassword{
+							_status = "Passwords don't match."
+							_status_color = color.RGBA{0xff,0x00,0x00,255}
+							return
+						}
 						if mode=="encrypt"{
 							outputFile = outputEntry+".pcv"
 						}else{
@@ -658,6 +663,7 @@ func onDrop(names []string){
 
 // Start encryption/decryption
 func work(){
+	debug.FreeOSMemory()
 	// Set some variables
 	working = true
 	//headerBroken := false
@@ -671,6 +677,7 @@ func work(){
 	var khash_hash []byte
 	var _khash_hash []byte
 	var nonces []byte
+	_fast = fast
 	
 	// Set the output file based on mode
 	if mode=="encrypt"{
@@ -869,6 +876,7 @@ func work(){
 	
 	g.Update()
 	status = "Deriving key..."
+	progress = 0
 	
 	// Derive encryption/decryption key
 	var key []byte
@@ -893,6 +901,13 @@ func work(){
 	}
 	
 	fmt.Println("key",key)
+	if !working{
+		_status = "Operation cancelled by user."
+		_status_color = color.RGBA{0xff,0xff,0xff,255}
+		fast = _fast
+		debug.FreeOSMemory()
+		return
+	}
 
 	if keyfile{
 		kin,_ := os.Open(keyfilePath)
@@ -954,6 +969,10 @@ func work(){
 				}
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
 				key = nil
+				fast = _fast
+				if recombine{
+					os.Remove(inputFile)
+				}
 				debug.FreeOSMemory()
 				return
 			}
@@ -1015,6 +1034,8 @@ func work(){
 				working = false
 				_status = "The file is either corrupted or intentionally modified."
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
+				fast = _fast
+				debug.FreeOSMemory()
 				return
 			}
 		}
@@ -1027,6 +1048,8 @@ func work(){
 			os.Remove(outputFile)
 			_status = "Operation cancelled by user."
 			_status_color = color.RGBA{0xff,0xff,0xff,255}
+			fast = _fast
+			debug.FreeOSMemory()
 			return
 		}
 		//fmt.Println("Encrypt/decrypt loop")
@@ -1087,6 +1110,8 @@ func work(){
 						fin.Close()
 						fout.Close()
 						broken()
+						fast = _fast
+						debug.FreeOSMemory()
 						return
 					}
 				}
@@ -1103,6 +1128,8 @@ func work(){
 						fin.Close()
 						fout.Close()
 						broken()
+						fast = _fast
+						debug.FreeOSMemory()
 						return
 					}
 				}
@@ -1205,6 +1232,8 @@ func work(){
 					os.Remove(fmt.Sprintf("%s.%d",outputFile,i))
 					fmt.Println("outputFile",outputFile)
 					os.Remove(outputFile)
+					fast = _fast
+					debug.FreeOSMemory()
 					return
 				}
 				data = data[:read]
@@ -1292,7 +1321,7 @@ func shred(names []string,separate bool){
 	}
 	for _,name := range(names){
 		shredding = name
-		if runtime.GOOS=="linux"{
+		if runtime.GOOS=="linux"||runtime.GOOS=="darwin"{
 			stat,_ := os.Stat(name)
 			if stat.IsDir(){
 				var coming []string
@@ -1309,7 +1338,12 @@ func shred(names []string,separate bool){
 								wg.Add(1)
 								go func(wg *sync.WaitGroup,id int,j string){
 									defer wg.Done()
-									cmd := exec.Command("shred","-ufvz","-n","3",j)
+									cmd := exec.Command("")
+									if runtime.GOOS=="linux"{
+										cmd = exec.Command("shred","-ufvz","-n","3",j)
+									}else{
+										cmd = exec.Command("rm","-rfP",j)
+									}
 									output,err := cmd.Output()
 									fmt.Println(err)
 									fmt.Println(output)
@@ -1331,7 +1365,12 @@ func shred(names []string,separate bool){
 				fmt.Println(coming)
 				for _,i := range(coming){
 					go func(){
-						cmd := exec.Command("shred","-ufvz","-n","3",i)
+						cmd := exec.Command("")
+						if runtime.GOOS=="linux"{
+							cmd = exec.Command("shred","-ufvz","-n","3",i)
+						}else{
+							cmd = exec.Command("rm","-rfP",i)
+						}
 						output,err := cmd.Output()
 						fmt.Println(err)
 						fmt.Println(output)
@@ -1343,7 +1382,12 @@ func shred(names []string,separate bool){
 				}
 				os.RemoveAll(name)
 			}else{
-				cmd := exec.Command("shred","-ufvz","-n","3",name)
+				cmd := exec.Command("")
+				if runtime.GOOS=="linux"{
+					cmd = exec.Command("shred","-ufvz","-n","3",name)
+				}else{
+					cmd = exec.Command("rm","-rfP",name)
+				}
 				cmd.Run()
 				shredding = name+"/*"
 				shredDone++
@@ -1382,10 +1426,6 @@ func shred(names []string,separate bool){
 				fmt.Println(string(o),e)
 				shredDone++
 				shredUpdate(separate)
-			}
-		}else if runtime.GOOS=="darwin"{
-			if itemSelected==0{
-				exec.Command("rm -rfP \""+name+"\"")
 			}
 		}
 		fmt.Println(name)
@@ -1581,6 +1621,7 @@ func rsDecode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 
 // Create the master window, set callbacks, and start the UI
 func main(){
+	di.Init()
 	if runtime.GOOS=="windows"{
 		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
 	}
