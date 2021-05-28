@@ -41,7 +41,6 @@ import (
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
 	"github.com/atotto/clipboard"
-	"golang.org/x/crypto/ripemd160"
 	"github.com/klauspost/reedsolomon"
 	ig "github.com/AllenDang/imgui-go"
 	"golang.org/x/crypto/chacha20poly1305"
@@ -123,7 +122,6 @@ var rs64_128,_ = reedsolomon.New(64,128)
 
 // File checksum generator variables
 var cs_md5 string
-var cs_ripemd string
 var cs_sha1 string
 var cs_sha256 string
 var cs_sha3_256 string
@@ -132,7 +130,6 @@ var cs_blake2s string
 var cs_blake3 string
 var cs_validate string
 var md5_color = color.RGBA{0x10,0x10,0x10,255}
-var ripemd_color = color.RGBA{0x10,0x10,0x10,255}
 var sha1_color = color.RGBA{0x10,0x10,0x10,255}
 var sha256_color = color.RGBA{0x10,0x10,0x10,255}
 var sha3_256_color = color.RGBA{0x10,0x10,0x10,255}
@@ -141,7 +138,6 @@ var blake2s_color = color.RGBA{0x10,0x10,0x10,255}
 var blake3_color = color.RGBA{0x10,0x10,0x10,255}
 var cs_progress float32 = 0
 var md5_selected = false
-var ripemd_selected = false
 var sha1_selected = false
 var sha256_selected = false
 var sha3_256_selected = false
@@ -333,19 +329,6 @@ func startUI(){
 					),
 					g.Style().SetColor(ig.StyleColorBorder,md5_color).To(
 						g.InputText("##cs_md5",&cs_md5).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-					),
-
-					// RIPEMD
-					//g.Dummy(10,0),
-					g.Row(
-						g.Checkbox("RIPEMD-160:",&ripemd_selected),
-						g.Dummy(-45,0),
-						g.Button("Copy##ripemd").Size(36,0).OnClick(func(){
-							clipboard.WriteAll(cs_ripemd)
-						}),
-					),
-					g.Style().SetColor(ig.StyleColorBorder,ripemd_color).To(
-						g.InputText("##cs_ripemd",&cs_ripemd).Size(-1).Flags(g.InputTextFlags_ReadOnly),
 					),
 
 					// SHA1
@@ -1437,7 +1420,6 @@ func generateChecksums(file string){
 	fin,_ := os.Open(file)
 
 	cs_md5 = ""
-	cs_ripemd = ""
 	cs_sha1 = ""
 	cs_sha256 = ""
 	cs_sha3_256 = ""
@@ -1447,9 +1429,6 @@ func generateChecksums(file string){
 
 	if md5_selected{
 		cs_md5 = "Calculating..."
-	}
-	if ripemd_selected{
-		cs_ripemd = "Calculating..."
 	}
 	if sha1_selected{
 		cs_sha1 = "Calculating..."
@@ -1471,7 +1450,6 @@ func generateChecksums(file string){
 	}
 
 	crc_md5 := md5.New()
-	crc_ripemd := ripemd160.New()
 	crc_sha1 := sha1.New()
 	crc_sha256 := sha256.New()
 	crc_sha3_256 := sha3.New256()
@@ -1492,9 +1470,6 @@ func generateChecksums(file string){
 
 		if md5_selected{
 			crc_md5.Write(data)
-		}
-		if ripemd_selected{
-			crc_ripemd.Write(data)
 		}
 		if sha1_selected{
 			crc_sha1.Write(data)
@@ -1522,9 +1497,6 @@ func generateChecksums(file string){
 	cs_progress = 0
 	if md5_selected{
 		cs_md5 = hex.EncodeToString(crc_md5.Sum(nil))
-	}
-	if ripemd_selected{
-		cs_ripemd = hex.EncodeToString(crc_ripemd.Sum(nil))
 	}
 	if sha1_selected{
 		cs_sha1 = hex.EncodeToString(crc_sha1.Sum(nil))
@@ -1612,7 +1584,7 @@ func main(){
 	if runtime.GOOS=="windows"{
 		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
 	}
-	window := g.NewMasterWindow("Picocrypt",480,500,g.MasterWindowFlagsNotResizable,nil)
+	window := g.NewMasterWindow("Picocrypt",480,488,g.MasterWindowFlagsNotResizable,nil)
 	window.SetDropCallback(onDrop)
 	dpi = g.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
