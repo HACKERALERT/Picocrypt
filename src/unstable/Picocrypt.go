@@ -75,7 +75,7 @@ var keyfilePrompt = "Keyfile (optional):"
 var progress float32 = 0
 var progressInfo = ""
 var status = "Ready."
-var _status = "adfs"
+var _status = ""
 var _status_color = color.RGBA{0xff,0xff,0xff,255}
 var splitUnits = []string{
 	"KB",
@@ -1622,19 +1622,20 @@ func rsDecode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 
 // Create the master window, set callbacks, and start the UI
 func main(){
-	v,err := http.Get("https://raw.githubusercontent.com/HACKERALERT/Picocrypt/main/internals/version.txt")
-	if err==nil{
-		fmt.Println(v)
-		body,err := io.ReadAll(v.Body)
-		v.Body.Close()
+	go func(){
+		v,err := http.Get("https://raw.githubusercontent.com/HACKERALERT/Picocrypt/main/internals/version.txt")
 		if err==nil{
-			if string(body[:5])!=version{
-				if di.Message("A newer version is available. Download it?").YesNo(){
-					browser.OpenURL("https://github.com/HACKERALERT/Picocrypt/releases")
+			fmt.Println(v)
+			body,err := io.ReadAll(v.Body)
+			v.Body.Close()
+			if err==nil{
+				if string(body[:5])!=version{
+					_status = "A newer version is available."
+					_status_color = color.RGBA{0,0xff,0,255}
 				}
 			}
 		}
-	}
+	}()
 	di.Init()
 	if runtime.GOOS=="windows"{
 		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
