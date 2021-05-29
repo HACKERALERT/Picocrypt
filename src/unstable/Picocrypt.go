@@ -22,6 +22,7 @@ import (
 	"strings"
 	"strconv"
 	"runtime"
+	"net/http"
 	"io/ioutil"
 	"image/color"
 	"crypto/md5"
@@ -254,7 +255,7 @@ func startUI(){
 					g.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
 					g.Checkbox("Securely shred the original file(s) and folder(s)",&erase),
 					g.Row(
-						g.Checkbox("(Not finished yet) Encode with Reed-Solomon to prevent corruption",&reedsolo),
+						g.Checkbox("(Not ready) Encode with Reed-Solomon to prevent corruption",&reedsolo),
 						g.Button("?").OnClick(func(){
 							browser.OpenURL("https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction")
 						}),
@@ -1621,6 +1622,19 @@ func rsDecode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 
 // Create the master window, set callbacks, and start the UI
 func main(){
+	v,err := http.Get("https://raw.githubusercontent.com/HACKERALERT/Picocrypt/main/internals/version.txt")
+	if err==nil{
+		fmt.Println(v)
+		body,err := io.ReadAll(v.Body)
+		v.Body.Close()
+		if err==nil{
+			if string(body[:5])!=version{
+				if di.Message("A newer version is available. Download it?").YesNo(){
+					browser.OpenURL("https://github.com/HACKERALERT/Picocrypt/releases")
+				}
+			}
+		}
+	}
 	di.Init()
 	if runtime.GOOS=="windows"{
 		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
