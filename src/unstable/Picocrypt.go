@@ -83,8 +83,8 @@ var splitUnits = []string{
 }
 var splitSelected int32
 var items = []string{
-	"Normal",
-	"Paranoid",
+	"Normal (4 passes)",
+	"Paranoid (Still in development, don't use)",
 }
 var itemSelected int32
 var shredProgress float32
@@ -254,7 +254,7 @@ func startUI(){
 					g.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
 					g.Checkbox("Securely shred the original file(s) and folder(s)",&erase),
 					g.Row(
-						g.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
+						g.Checkbox("(Not finished yet) Encode with Reed-Solomon to prevent corruption",&reedsolo),
 						g.Button("?").OnClick(func(){
 							browser.OpenURL("https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction")
 						}),
@@ -1170,7 +1170,7 @@ func work(){
 
 		//tmp = tmp[:len(tmp)-16]
 		var chunk []byte
-		//fmt.Println("<Nonces>")
+
 		for i,j := range(tmp){
 			chunk = append(chunk,j)
 			if (i+1)%24==0{
@@ -1180,7 +1180,7 @@ func work(){
 			}
 		}
 		fout.Write(rsEncode(_mac,rs16_128,144))
-		//fmt.Println("</Nonces>")
+
 	}else{
 		//fmt.Println("crcHash: ",crcHash)
 		//fmt.Println("crc.Sum: ",crc.Sum(nil))
