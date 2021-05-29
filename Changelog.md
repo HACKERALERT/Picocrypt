@@ -1,9 +1,13 @@
-# v1.13 (Soon to be released)
+# v1.14 (Soon to be released)
+
+# v1.13 (Released 5/29/2021)
 <strong>Note: v1.3 will be INCOMPATIBLE with all previous releases! This will likely be the last change in the header format, meaning that all future releases _should_ be compatible with v1.13 and on.</strong>
 <ul>
 	<li>Picocrypt has been ported from Python to Go, thus completely rewritten</li>
 	<li>Added fast mode, which can achieve ~250MB/s</li>
 	<li>Added file shredder and file checksum generator</li>
+	<li>Automatically checks for newer versions</li>
+	<li>Added file chunking support</li>
 </ul>
 
 # v1.12.1 (Bug fix patch, released 04/11/2021)
