@@ -75,7 +75,7 @@ var keyfilePrompt = "Keyfile (optional):"
 var progress float32 = 0
 var progressInfo = ""
 var status = "Ready."
-var _status = ""
+var _status = "Ready."
 var _status_color = color.RGBA{0xff,0xff,0xff,255}
 var splitUnits = []string{
 	"KB",
