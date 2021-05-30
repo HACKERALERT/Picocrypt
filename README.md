@@ -68,3 +68,10 @@ A huge thanks to the following list of five people, who were the first people to
 	<li>Phil P.</li>
 	<li>E. Zahard</li>
 </ul>
+
+Also thanks to these people:
+<ul>
+	<li>Fuderal on Discord for helping me setup a Discord server</li>
+	<li>u/greenreddits for constant feedback and support</li>
+	<li>u/Tall_Escape for helping me test Picocrypt</li>
+</ul>
