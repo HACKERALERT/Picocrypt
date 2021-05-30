@@ -15,14 +15,14 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # In progress (will be in an upcoming release)
 <ul>
-	<li>Picocrypt has been ported from Python to Go, thus completely rewritten</li>
-	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
-	<li>Allow file splitting into chunks (thanks u/greenreddits)</li>
-	<li>File shredder and file checksum generator</li>
 </ul>
 
 # Completed (most recent first)
 <ul>
+	<li>Picocrypt has been ported from Python to Go, thus completely rewritten</li>
+	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
+	<li>Allow file splitting into chunks (thanks u/greenreddits)</li>
+	<li>File shredder and file checksum generator</li>
 	<li>Rewrite from scratch to implement much better UI</li>
 	<li>Add Picocrypt vector logo to homepage (hacked together with Inkscape)</li>
 	<li>Abandoned due to being unreliable and requires admin rights: Right click in file explorer and display "Encrypt folder with Picocrypt" (thanks @beerisgood)</li>
