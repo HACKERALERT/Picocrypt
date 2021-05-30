@@ -5,7 +5,7 @@ If you would like to run Picocrypt from source, or an executable isn't available
 ```bash
 sudo apt-get install -y gcc make curl git tar wget xz-utils libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev libxxf86vm-dev libgtk-3-dev xdg-utils && sudo apt-get install -y libglx-dev || echo "" && sudo apt-get install -y xclip || sudo apt-get install xsel
 ```
-2. Install the Go Programming Language from <a href="https://golang.org/dl">here</a>.
+2. Install the Go Programming Language from <a href="https://golang.org/dl">here</a>, or from your package manager. Go 1.16 or higher is recommended.
 3. Download the source file `Picocrypt.go` from above or `git clone` this repository.
 4. Install Picocrypt's Go dependencies:
 ```bash
@@ -15,10 +15,10 @@ go get -u -v github.com/pkg/browser && go get -u -v github.com/zeebo/blake3 && g
 ```bash
 go mod init Picocrypt && go mod tidy
 ```
-7. Go to where `Picocrypt.go` is located and build from source:
+6. Go to where `Picocrypt.go` is located and build from source:
 - Windows: <code>go build -ldflags "-s -w -H=windowsgui -extldflags=-static" Picocrypt.go</code>
 - macOS: <code>go build -ldflags "-s -w -extldflags=-static" Picocrypt.go</code>
 - Linux: <code>go build -ldflags "-s -w" Picocrypt.go</code>
 
-6. You should now see a built executable (`Picocrypt.exe`/`Picocrypt.app`/`Picocrypt`) in your directory. If you're on Windows, go and download the `sdelete64.exe` from the list above and place it in the same directory as `Picocrypt.exe`.
-7. You are now complete and you can run the Picocrypt executable.
+7. You should now see a built executable (`Picocrypt.exe`/`Picocrypt.app`/`Picocrypt`) in your directory. If you're on Windows, go and download the `sdelete64.exe` from the list above and place it in the same directory as `Picocrypt.exe`.
+8. You are now complete. Go ahead and run the executable you just built. Enjoy!
