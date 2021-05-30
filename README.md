@@ -56,8 +56,8 @@ Only trust these communities and be aware of scammers and hackers that might try
 # Contribution
 If you find a bug or security issue, please create an Issue. If you find a severe security issue (unlikely), please contact me privately <a href="https://evansu.cc/#contacts">here</a> to ensure that it's not exploited by a hacker. Issues and PRs are welcome as well.
 
-# Donating
-If you find Picocrypt useful, consider supporting me on Patreon. As I'm providing this software completely free of charge, it would be nice to have some supporters showing me that my creation is making a difference in people's lives. Also, consider donating on Open Collective, where all donations will go toward a community fund which will be used to purchase an audit from a cybersecurity auditing firm such as Cure53. Thanks!
+# Donations
+If you find Picocrypt useful, consider supporting me on <a href="https://patreon.com/evansu">Patreon</a>. As I'm providing this software completely free of charge, it would be nice to have some supporters showing me that my creation is making a difference in people's lives. Also, consider donating on <a href="https://opencollective.com/picocrypt">Open Collective</a>, where all donations will go toward a community fund which will be used to purchase an audit from a cybersecurity auditing firm such as Cure53. Thanks!
 
 # Thank You's
 A huge thanks to the following list of five people, who were the first people to donate and support Picocrypt:
