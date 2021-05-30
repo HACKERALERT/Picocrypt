@@ -46,7 +46,7 @@ See <a href="Roadmap.md">Roadmap</a> for a list of new features and improvements
 Here's some places where you can see the latest news about Picocrypt and get involved:
 <ul>
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
-	<li><a href="https://discord.gg/ktzZSj853X">Discord</a></li>
+	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
 </ul>
 Only trust these communities and be aware of scammers and hackers that might try to impersonate me and get you to download malicious software.
 
