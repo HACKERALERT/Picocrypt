@@ -7,7 +7,7 @@ sudo apt-get install -y gcc make curl git tar wget xz-utils libx11-dev libxcurso
 ```
 2. Install the Go Programming Language from <a href="https://golang.org/dl">here</a>, or from your package manager. Go 1.16 or higher is recommended.
 3. Download the source file `Picocrypt.go` from above or `git clone` this repository.
-4. Install Picocrypt's Go dependencies:
+4. Install Picocrypt's Go dependencies (if macOS prompts you to install clang, do it and run this command again):
 ```bash
 go get -u -v github.com/pkg/browser && go get -u -v github.com/zeebo/blake3 && go get -u -v golang.org/x/crypto/sha3 && go get -u -v golang.org/x/crypto/argon2 && go get -u -v github.com/AllenDang/giu && go get -u -v github.com/OpenDiablo2/dialog && go get -u -v golang.org/x/crypto/blake2b && go get -u -v golang.org/x/crypto/blake2s && go get -u -v github.com/atotto/clipboard && go get -u -v github.com/klauspost/reedsolomon && go get -u -v golang.org/x/crypto/chacha20poly1305 && go get -u -v github.com/HACKERALERT/Picocypher/monocypher
 ```
