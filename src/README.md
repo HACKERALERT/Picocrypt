@@ -8,7 +8,7 @@ sudo apt-get install -y gcc make curl git tar wget xz-utils libx11-dev libxcurso
 ```
 macOS (make sure <a href="https://brew.sh/">Homebrew</a> is installed):
 ```bash
-sudo xcode-select install && brew install glfw3 glew
+sudo xcode-select --install && brew install glfw3 glew
 ```
 
 Windows: No prerequisites
