@@ -1,4 +1,4 @@
-# Running From Source
+# Running From Source (Work in progress)
 If you would like to run Picocrypt from source, or an executable isn't available for your platform, you've come to the right place. Running from source is very simple, and I've made it even easier with these simple instructions. Note that the instructions are generic and will work on any platform.
 
 1. Prerequisites (only for Linux):
