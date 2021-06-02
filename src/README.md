@@ -18,10 +18,10 @@ Download the corresponding installer for Go from <a href="https://golang.org/dl"
 # 3. Get the Source Files
 Download the source file `Picocrypt.go` from above or `git clone` this repository.
 
-# 4. Initialize Go and Tidy the Modules:
+# 4. Initialize Go:
 Go to where `Picocrypt.go` is located and initialize Go:
 ```bash
-go mod init Picocrypt && go mod tidy
+go mod init Picocrypt
 ```
 
 # 5. Install Picocrypt's Go Dependencies
@@ -30,10 +30,14 @@ go get -u -v github.com/pkg/browser && go get -u -v github.com/zeebo/blake3 && g
 ```
 Note: if macOS prompts you to install clang, do so and run the command again
 
-# 6. Build From Source
+# 6. Tidy the Modules:
+```bash
+go mod tidy
+```
+# 7. Build From Source
 - Windows: <code>go build -ldflags "-s -w -H=windowsgui -extldflags=-static" Picocrypt.go</code>
 - macOS: <code>go build -ldflags "-s -w" Picocrypt.go</code>
 - Linux: <code>go build -ldflags "-s -w" Picocrypt.go</code>
 
-# 7. You are now complete.
+# 8. You are now complete.
 You should now see a built executable (`Picocrypt.exe`/`Picocrypt.app`/`Picocrypt`) in your directory. You can run it by double-clicking or executing it in your terminal. If you're on Windows, go and download the `sdelete64.exe` from the list above and place it in the same directory as `Picocrypt.exe`.
