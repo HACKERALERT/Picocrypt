@@ -11,10 +11,10 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure cryp
 Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.13/Picocrypt.exe">here</a>. Note that Picocrypt may trigger your antivirus. Picocrypt is not a virus, so please submit it as a false positive to your antivirus provider to prevent this in the future. Older releases are available under the Releases tab.
 
 ## macOS
-Picocrypt for macOS is very simple to use. Download the latest, standalone, and portable executable for macOS here (<-- not ready yet).
+Coming soon...
 
 ## Linux
-A Snap for Linux is coming soon.
+A Snap is available for Linux. Make sure you have Snap installed and `sudo snap install picocrypt`.
 
 # Why Picocrypt?
 Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should use Picocrypt:
