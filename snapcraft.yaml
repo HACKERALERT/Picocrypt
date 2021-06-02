@@ -1,0 +1,29 @@
+name: picocrypt
+summary: A very small, very simple, yet very secure cryptography utility.
+description: A very small, very simple, yet very secure cryptography utility.
+version: '1.13'
+confinement: strict
+base: core20
+
+apps:
+  picocrypt:
+    command: picocrypt
+
+parts:
+  picocrypt:
+    plugin: go
+    source: .
+    go-importpath: picocrypt
+    build-packages:
+      - gcc
+      - make
+    stage-packages:
+      - xclip
+
+plugs:
+  picocrypt-home:
+    interface: home
+  picocrypt-network:
+    interface: network
+  picocrypt-system-files:
+    interface: system-files
