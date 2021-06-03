@@ -10,7 +10,7 @@ import (
 	errorspkg "errors"
 	"unsafe"
 
-	"golang.org/x/sys/internal/unsafeheader"
+	"github.com/HACKERALERT/Picocrypt/src/external/sys/internal/unsafeheader"
 )
 
 // EscapeArg rewrites command line argument s as prescribed

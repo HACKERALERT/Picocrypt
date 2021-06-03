@@ -10,7 +10,7 @@ package unix
 import (
 	"unsafe"
 
-	"golang.org/x/sys/internal/unsafeheader"
+	"github.com/HACKERALERT/Picocrypt/src/external/sys/internal/unsafeheader"
 )
 
 //sys	closedir(dir uintptr) (err error)

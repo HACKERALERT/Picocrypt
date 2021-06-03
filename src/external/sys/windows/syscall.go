@@ -30,7 +30,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"golang.org/x/sys/internal/unsafeheader"
+	"github.com/HACKERALERT/Picocrypt/src/external/sys/internal/unsafeheader"
 )
 
 // ByteSliceFromString returns a NUL-terminated slice of bytes

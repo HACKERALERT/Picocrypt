@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"golang.org/x/sys/internal/unsafeheader"
+	"github.com/HACKERALERT/Picocrypt/src/external/sys/internal/unsafeheader"
 )
 
 var (

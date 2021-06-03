@@ -12,7 +12,7 @@ import (
 	"time"
 	"unsafe"
 
-	"golang.org/x/sys/internal/unsafeheader"
+	"github.com/HACKERALERT/Picocrypt/src/external/sys/internal/unsafeheader"
 	"golang.org/x/sys/windows"
 )
 
