@@ -1,4 +1,4 @@
-package github.com/HACKERALERT/Picocrypt/src/external/w32
+package w32
 
 const (
 	ALPC_PORFLG_ALLOW_LPC_REQUESTS = 0x20000

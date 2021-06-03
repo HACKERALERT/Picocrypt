@@ -1,4 +1,4 @@
-package github.com/HACKERALERT/Picocrypt/src/external/w32
+package w32
 
 const (
 	WAIT_ABANDONED = 0x00000080
