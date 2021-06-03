@@ -2,3 +2,6 @@ sudo rm -rf Picocrypt-Builder && mkdir Picocrypt-Builder && cd Picocrypt-Builder
 
 
 brew install glfw3 && brew install glew
+
+
+sudo apt autoremove --purge snapd && sudo rm -rf /var/cache/snapd/ && sudo rm -rf ~/snap && sudo apt update && sudo apt install snapd && sudo snap install core && sudo snap install picocrypt
