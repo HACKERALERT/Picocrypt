@@ -869,7 +869,7 @@ func work(){
 		_khash_hash = rsDecode(_khash_hash,rs32_128,32)
 		//fmt.Println("crcHash",crcHash)
 		
-		_tmp := math.Ceil(float64(total-int64(metadataLength+1196))/float64(1048728))
+		_tmp := math.Ceil(float64(total-int64(metadataLength+1196))/float64(1048744))
 		nonces = make([]byte,int(_tmp*152)+144)
 		fin.Read(nonces)
 		//fmt.Println("Nonces: ",nonces)
