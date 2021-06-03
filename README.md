@@ -74,4 +74,5 @@ Also thanks to these people:
 	<li>Fuderal on Discord for helping me setup a Discord server</li>
 	<li>u/greenreddits for constant feedback and support</li>
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
+	<li>samuel-lucas6 (on GitHub) for valuable feedback and support</li>
 </ul>
