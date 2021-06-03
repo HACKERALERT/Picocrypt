@@ -14,7 +14,7 @@ Picocrypt for Windows is as simple as it gets. To download the latest, standalon
 Coming soon...
 
 ## Linux
-A Snap is available for Linux. Make sure you have Snap installed and `sudo snap install picocrypt`.
+A Snap is available for Linux. Make sure you have Snap installed. Next, ensure the core snap image is installed: `sudo snap install core`. Finally, install Picocrypt: `sudo snap install picocrypt`.
 
 # Why Picocrypt?
 Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should use Picocrypt:
