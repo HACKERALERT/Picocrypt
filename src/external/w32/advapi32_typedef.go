@@ -1,4 +1,4 @@
-package github.com/HACKERALERT/Picocrypt/src/external/w32
+package w32
 
 // http://msdn.microsoft.com/en-us/library/windows/desktop/aa374931(v=vs.85).aspx
 type ACL struct {
