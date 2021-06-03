@@ -1,5 +1,5 @@
-package github.com/HACKERALERT/Picocrypt/src/external/dialog
+module github.com/HACKERALERT/Picocrypt/src/dialog
 
 require (
-	github.com/HACKERALERT/Picocrypt/src/external/w32 main
+	github.com/TheTitanrain/w32 v0.0.0-20180517000239-4f5cfb03fabf
 )
