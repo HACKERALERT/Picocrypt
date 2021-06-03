@@ -1,4 +1,4 @@
-package w32
+package github.com/HACKERALERT/Picocrypt/src/external/w32
 
 // combase!_SECTION_IMAGE_INFORMATION
 //    +0x000 TransferAddress  : Ptr64 Void

@@ -1,4 +1,4 @@
-package w32
+package github.com/HACKERALERT/Picocrypt/src/external/w32
 
 // typedef struct _PROCESS_INFORMATION {
 //   HANDLE hProcess;

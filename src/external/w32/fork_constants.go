@@ -1,4 +1,4 @@
-package w32
+package github.com/HACKERALERT/Picocrypt/src/external/w32
 
 const (
 	RTL_CLONE_PROCESS_FLAGS_CREATE_SUSPENDED = 0x00000001
