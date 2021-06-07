@@ -1,1 +1,1 @@
-This directory stores old versions of Picocrypt for archival reasons. Don't use anything in here.
+This directory contains old versions of Picocrypt for archival purposes. Don't use anything in here.
