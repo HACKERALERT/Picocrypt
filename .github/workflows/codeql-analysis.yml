@@ -13,12 +13,11 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ main ]
+    paths:
+      - "src/Picocrypt.go"
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
-  schedule:
-    - cron: '22 0 * * 6'
 
 jobs:
   analyze:
