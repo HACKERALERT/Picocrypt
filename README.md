@@ -4,6 +4,9 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure cryp
 
 <p align="center"><img align="center" src="/images/Picocrypt.png" width="384" alt="Picocrypt"></p>
 
+# Funding
+Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> to raise money for an upcoming audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. Picocrypt needs support from its community.
+
 # Downloads
 <strong>Important:</strong> There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt.
 
@@ -57,7 +60,7 @@ Only trust these communities and be aware of scammers and hackers that might try
 If you find a bug or security issue, please create an Issue. If you find a severe security issue (unlikely), please contact me privately <a href="https://evansu.cc/#contacts">here</a> to ensure that it's not exploited by a hacker. Issues and PRs are welcome as well.
 
 # Donations
-If you find Picocrypt useful, consider supporting me on <a href="https://patreon.com/evansu">Patreon</a>. As I'm providing this software completely free of charge, it would be nice to have some supporters showing me that my creation is making a difference in people's lives. Also, consider donating on <a href="https://opencollective.com/picocrypt">Open Collective</a>, where all donations will go toward a community fund which will be used to purchase an audit from a cybersecurity auditing firm such as Cure53. Thanks!
+If you find Picocrypt useful, consider supporting me on <a href="https://patreon.com/evansu">Patreon</a>. As I'm providing this software completely free of charge, I would love to have some supporters that will motivate me to continue my work on Picocrypt.
 
 # Thank You's
 A huge thanks to the following list of five people, who were the first people to donate and support Picocrypt:
