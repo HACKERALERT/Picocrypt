@@ -1,1 +1,0 @@
-To harden Picocrypt's security dependency-wise, I have manually "forked" each of Picocrypt's dependencies and stored them here. If one of Picocrypt's dependencies gets compromised, Picocrypt would be using a secure copy of it and remain unaffected. All files in here are external and not written by me.
