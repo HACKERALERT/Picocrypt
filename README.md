@@ -5,7 +5,7 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure cryp
 <p align="center"><img align="center" src="/images/Picocrypt.png" width="384" alt="Picocrypt"></p>
 
 # Funding
-Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> to raise money for an upcoming audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. Picocrypt needs support from its community.
+Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> to raise money for a potential audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
 
 # Downloads
 <strong>Important:</strong> There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt.
