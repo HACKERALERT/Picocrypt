@@ -11,10 +11,10 @@ Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Ope
 <strong>Important:</strong> There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt.
 
 ## Windows
-Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.13/Picocrypt.exe">here</a>. Note that Picocrypt may trigger your antivirus. Picocrypt is not a virus, so please submit it as a false positive to your antivirus provider to prevent this in the future. Older releases are available under the Releases tab.
+Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.13/Picocrypt.exe">here</a>. Note that Picocrypt may trigger your antivirus. Picocrypt is not a virus, so please submit it as a false positive to your antivirus provider to prevent this in the future. Older releases are available under the Releases tab. If your browser is blocking Picocrypt from being downloaded, open a PowerShell prompt and `wget https://github.com/HACKERALERT/Picocrypt/releases/download/1.13/Picocrypt.exe -OutFile Picocrypt.exe` to download Picocrypt.
 
 ## macOS
-Coming soon...
+Coming in the next release...
 
 ## Linux
 A Snap is available for Linux. Make sure you have Snap installed. Next, ensure the core snap image is installed: `sudo snap install core`. Finally, install Picocrypt: `sudo snap install picocrypt`.
