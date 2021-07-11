@@ -40,7 +40,7 @@ Picocrypt is a very simple tool, and most users will understand how to use it in
 </ul>
 
 # Security
-For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the practical security of Picocrypt, let me assure you that this repository won't be hijacked. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Discord, etc.), so you can feel confident about using Picocrypt.
+For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the practical security of Picocrypt, let me assure you that this repository won't be hijacked. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Discord, etc.), so you can feel confident about using Picocrypt. Also, I fork all dependencies in a separate account (https://github.com/Picocrypt) and fetch upstream only when I have taken a look at the changes and am confident that there aren't any security issues.
 
 # Roadmap
 See <a href="Roadmap.md">Roadmap</a> for a list of new features and improvements that I'm considering.
