@@ -1,1 +1,1 @@
-This is the binding I wrote that binds Monocypher's C interface to Go so that Picocrypt can use it.
+This is Picocrypt's bindings to <a href="https://github.com/LoupVaillant/Monocypher">Monocypher</a>, the secure and audited library in which Picocrypt uses for ChaCha20. Monocypher's dual license (https://github.com/LoupVaillant/Monocypher/blob/master/LICENCE.md) applies.
