@@ -1,4 +1,10 @@
-# v1.14 (Soon to be released)
+# v1.14 (Expected to be released in ~1 month)
+<ul>
+	<li>Add an window icon for Windows using Resource Hacker (GLFW_ICON)</li>
+	<li>Switch to a new Reed-Solomon encoder that automatically corrects errors</li>
+	<li>Add a "Paranoid mode", which will use the Serpent cipher in addition to ChaCha20</li>
+	<li>Remove BLAKE3 from the checksum generator tab, as it has no practical use and requires a non-standard library</li>
+</ul>
 
 # v1.13 (Released 5/29/2021)
 <strong>Note: v1.13 will be INCOMPATIBLE with all previous releases! This will likely be the last change in the header format, meaning that all future releases _should_ be compatible with v1.13 and on.</strong>
