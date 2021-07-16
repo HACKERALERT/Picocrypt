@@ -1,4 +1,5 @@
 # v1.14 (Expected to be released in ~1 month)
+<strong>v1.14 will unfortunately be incompatible with v1.13, but because I have appended the encryptor version to the encrypted data in v1.13, v1.14 and on will be able to tell you which version your data was encrypted with so that you can fetch the correct verion of Picocrypt. There are no security issues in any previous versions of Picocrypt.</strong>
 <ul>
 	<li>Add an window icon for Windows using Resource Hacker (GLFW_ICON)</li>
 	<li>Switch to a new Reed-Solomon encoder that automatically corrects errors</li>
@@ -11,7 +12,7 @@
 </ul>
 
 # v1.13 (Released 5/29/2021)
-<strong>Note: v1.13 will be INCOMPATIBLE with all previous releases! This will likely be the last change in the header format, meaning that all future releases _should_ be compatible with v1.13 and on.</strong>
+<strong>Note: v1.13 will be INCOMPATIBLE with all previous releases! <s>This will likely be the last change in the header format, meaning that all future releases _should_ be compatible with v1.13 and on.</s></strong>
 <ul>
 	<li>Picocrypt has been ported from Python to Go, thus completely rewritten</li>
 	<li>Added fast mode, which can achieve ~250MB/s</li>
