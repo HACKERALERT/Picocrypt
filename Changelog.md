@@ -3,6 +3,10 @@
 	<li>Add an window icon for Windows using Resource Hacker (GLFW_ICON)</li>
 	<li>Switch to a new Reed-Solomon encoder that automatically corrects errors</li>
 	<li>Add a "Paranoid mode", which will use the Serpent cipher in addition to ChaCha20</li>
+	<li>Cleaner code with plenty of comments for people taking a look</li>
+	<li>Metadata is now Reed-Solomon encoded (everything bit of header data such as nonces and Poly1305s are RS-encoded)</li>
+	<li>Reed-Solomon checkbox is now enabled and Reed-Solomon works</li>
+	<li>Paranoid shredding now works on Windows</li>
 	<li>Remove BLAKE3 from the checksum generator tab, as it has no practical use and requires a non-standard library</li>
 </ul>
 
