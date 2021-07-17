@@ -72,6 +72,11 @@ A huge thanks to the following list of five people, who were the first people to
 	<li>E. Zahard</li>
 </ul>
 
+A big thanks as well to everyone else who donated:
+<ul>
+	<li>Guest (anonymous)</li>
+</ul>
+
 Also thanks to these people:
 <ul>
 	<li>Fuderal on Discord for helping me setup a Discord server</li>
