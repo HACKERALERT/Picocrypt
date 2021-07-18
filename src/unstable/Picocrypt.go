@@ -12,94 +12,103 @@ https://github.com/HACKERALERT/Picocrypt
 */
 
 import (
-	"io"
-	"os"
+	// Generic
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+	"os/exec"
 	"math"
 	"time"
 	"sync"
-	"os/exec"
+	_ "embed"
 	"strings"
 	"strconv"
 	"runtime"
 	"net/http"
-	"io/ioutil"
+	"runtime/debug"
 	"image/color"
-	"crypto/md5"
 	"archive/zip"
-	"crypto/rand"
-	"crypto/sha1"
 	"encoding/hex"
 	"path/filepath"
+
+	// Reed-Solomon
+	"github.com/HACKERALERT/infectious"
+
+	// Cryptography
+	"crypto/rand"
+	"crypto/md5"
+	"crypto/sha1"
 	"crypto/sha256"
-	"runtime/debug"
-	"github.com/pkg/browser"
-	"github.com/zeebo/blake3"
-	"golang.org/x/crypto/sha3"
 	"golang.org/x/crypto/argon2"
-	g "github.com/AllenDang/giu"
+	"golang.org/x/crypto/sha3"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
-	"github.com/atotto/clipboard"
-	di "github.com/OpenDiablo2/dialog"
-	"github.com/klauspost/reedsolomon"
-	ig "github.com/AllenDang/imgui-go"
 	"golang.org/x/crypto/chacha20poly1305"
-	"github.com/HACKERALERT/Picocypher/monocypher"
+	"github.com/HACKERALERT/Picocrypt/src/monocypher"
+
+	// GUI
+	"github.com/AllenDang/giu"
+
+	// Helpers
+	"github.com/HACKERALERT/clipboard"
+	"github.com/HACKERALERT/dialog"
+	"github.com/HACKERALERT/browser"
 )
 
-var version = "v1.13"
+//go:embed NotoSans-Regular.ttf
+var font []byte
+
+var version = "v1.14"
 var exe,_ = os.Executable()
 var rootDir = filepath.Dir(exe)
 
 // Global variables
-var dpi float32
-var mode string
-var working = false
-var onlyFiles []string
-var onlyFolders []string
-var allFiles []string
-var inputFile string
-var outputFile string
+var dpi float32 // Used to scale properly in high-resolution displays
+var mode string // Either "encrypt" or "decrypt" (self-explanatory)
+var working = false // True if encryption/decryption is in progress
+var onlyFiles []string // Only contains files not in a folder
+var onlyFolders []string // Only contains names of folders
+var allFiles []string // Contains all files including files in folders
+var inputFile string // Path of the input file to encrypt/decrypt
+var outputFile string // Path of the output file to encrypt/decrypt to
+var recombine bool // True if decrypting and the original file was splitted during encryption
 
 // UI-related global variables
-var tab = 0
+var tab = 0 // The index of the currently selected tab
 var inputLabel = "Drag and drop file(s) and folder(s) into this window."
-var outputEntry string
-var outputWidth float32 = 376
-var orLabel = "or"
-var passwordState = g.InputTextFlags_Password
+var outputEntry string // A modifiable text entry string variable containing path of output
+var outputWidth float32 = 376 // How wide 'outputEntry' is in pixels
+var orLabel = "or" // The text "or" separating 'outputEntry' and "Save as"
+var passwordState = giu.InputTextFlagsPassword // Changes to show/hide password
 var showPassword = false
-var keyfile = false
-var keyfilePrompt = "Keyfile (optional):"
-var progress float32 = 0
-var progressInfo = ""
-var status = "Ready."
-var _status = "Ready."
-var _status_color = color.RGBA{0xff,0xff,0xff,255}
+var keyfile = false // True if user chooses/chose to use a keyfile
+var keyfilePrompt = "Keyfile (optional):" // Changes if decrypting and keyfile was enabled
+var progress float32 = 0 // 0 is 0%, 1 is 100%
+var progressInfo = "" // Text inside the progress bar on the encrypting/decrypting window
+var status = "Ready." // Status text in encrypting/decrypting window
+var _status = "Ready." // Status text in main window
+var _status_color = color.RGBA{0xff,0xff,0xff,255} // Changes according to status (success, fail, etc.)
 var splitUnits = []string{
 	"KB",
 	"MB",
 	"GB",
-}
-var splitSelected int32
-var items = []string{
+} // Three choosable units for splitting output file when encrypting, in powers of 2
+var splitSelected int32 // Index of which splitting unit was chosen from above
+var shredModes = []string{
 	"Normal (4 passes)",
 	"Paranoid (Still in development, don't use)",
 }
-var itemSelected int32
-var shredProgress float32
+var shredMode int32
+var shredProgress float32 // Progress of shredding files
 var shredDone float32
-var shredTotal float32
-var shredOverlay string
+var shredTotal float32 // Total files to shred (recursive)
+var shredOverlay string // Text in shredding progress bar
 var shredding = "Ready."
-
-var recombine bool
-
 
 // User input variables
 var password string
-var cPassword string
+var cPassword string // Confirm password text entry string variable
 var keyfilePath string
 var keyfileLabel = "Use a keyfile"
 var metadata string
@@ -109,97 +118,91 @@ var reedsolo bool
 var split bool
 var splitSize string
 var fast bool
-var _fast bool
-
-var kept = false
+var _fast bool // Helper variable with the original checkbox state
+var kept = false // If a file was corrupted/modified, but the output was kept
 
 // Reed-Solomon encoders
-var rs5_128,_ = reedsolomon.New(5,128)
-var rs10_128,_ = reedsolomon.New(10,128)
-var rs16_128,_ = reedsolomon.New(16,128)
-var rs24_128,_ = reedsolomon.New(24,128)
-var rs32_128,_ = reedsolomon.New(32,128)
-var rs64_128,_ = reedsolomon.New(64,128)
+var rs5,_ = infectious.NewFEC(5,15) // 5 data shards, 15 total -> 10 parity shards
+var rs10,_ = infectious.NewFEC(10,30)
+var rs16,_ = infectious.NewFEC(16,48)
+var rs24,_ = infectious.NewFEC(24,72)
+var rs32,_ = infectious.NewFEC(32,96)
+var rs64,_ = infectious.NewFEC(64,192)
 
 // File checksum generator variables
-var cs_md5 string
+var cs_md5 string // A string containing a hex-encoded MD5 hash
 var cs_sha1 string
 var cs_sha256 string
 var cs_sha3_256 string
 var cs_blake2b string
 var cs_blake2s string
-var cs_blake3 string
 var cs_validate string
-var md5_color = color.RGBA{0x10,0x10,0x10,255}
+var md5_color = color.RGBA{0x10,0x10,0x10,255} // Border color that changes upon a match
 var sha1_color = color.RGBA{0x10,0x10,0x10,255}
 var sha256_color = color.RGBA{0x10,0x10,0x10,255}
 var sha3_256_color = color.RGBA{0x10,0x10,0x10,255}
 var blake2b_color = color.RGBA{0x10,0x10,0x10,255}
 var blake2s_color = color.RGBA{0x10,0x10,0x10,255}
-var blake3_color = color.RGBA{0x10,0x10,0x10,255}
 var cs_progress float32 = 0
-var md5_selected = false
+var md5_selected = false // Whether the checkbox was checked or not
 var sha1_selected = false
 var sha256_selected = false
 var sha3_256_selected = false
 var blake2b_selected = false
 var blake2s_selected = false
-var blake3_selected = false
 
-// Create the user interface
+// Create the UI
 func startUI(){
-	g.SingleWindow("Picocrypt").Layout(
-		g.Style().SetColor(ig.StyleColorBorder,color.RGBA{0x10,0x10,0x10,255}).To(
-			// The tab bar, which contains different tabs for different features
-			g.TabBar("TabBar").Layout(
+	giu.SingleWindow().Layout(
+		giu.Style().SetColor(giu.StyleColorBorder,color.RGBA{0x10,0x10,0x10,255}).To(
+			// The tab bar, which contains different tabs for different functions
+			giu.TabBar().TabItems(
 				// File encryption/decryption tab
-				g.TabItem("Encryption/decryption").Layout(
-					// Update 'tab' to indicate active tab
-					g.Custom(func(){
-						if g.IsItemActive(){
+				giu.TabItem("Encryption/decryption").Layout(
+					// Update 'tab' to indicate that this is the active tab
+					giu.Custom(func(){
+						if giu.IsItemActive(){
 							tab = 0
 						}
 					}),
 					
 					// Confirm overwrite with a modal
-					g.PopupModal("Confirmation").Layout(
-						g.Label("Output already exists. Overwrite?"),
-						g.Row(
-							g.Button("No").Size(110,0).OnClick(func(){
-								g.CloseCurrentPopup()
+					giu.PopupModal("Confirmation").Layout(
+						giu.Label("Output already exists. Overwrite?"),
+						giu.Row(
+							giu.Button("No").Size(110,0).OnClick(func(){
+								giu.CloseCurrentPopup()
 							}),
-							g.Dummy(-118,0),
-							g.Button("Yes").Size(110,0).OnClick(func(){
-								g.CloseCurrentPopup()
+							giu.Dummy(-118,0),
+							giu.Button("Yes").Size(110,0).OnClick(func(){
+								giu.CloseCurrentPopup()
 								go work()
 							}),
 							
 						),
 					),
 
-					// Label listing the input files and a button to clear input files
-					//g.Dummy(0,10),
-					g.Row(
-						g.Label(inputLabel),
-						g.Dummy(-55,0),
-						g.Button("Clear").Size(46,0).OnClick(resetUI),
+					// Label listing the input files and a button to clear them
+					giu.Row(
+						giu.Label(inputLabel),
+						giu.Dummy(-55,0),
+						giu.Button("Clear").Size(45,0).OnClick(resetUI),
 					),
 
-					// Allow user to choose a custom output path and name
-					//g.Dummy(10,0),
-					g.Label("Save output as:"),
-					g.Row(
-						g.InputText("##output",&outputEntry).Size(outputWidth/dpi),
-						g.Label(orLabel),
-						g.Button("Save as").OnClick(func(){
-							file,_ := di.File().Title("Save as").Save()
+					// Allow user to choose a custom output path and/or name
+					giu.Label("Save output as:"),
+					giu.Row(
+						giu.InputText(&outputEntry).Size(outputWidth/dpi),
+						giu.Label(orLabel),
+						giu.Button("Save as").OnClick(func(){
+							file,_ := dialog.File().Title("Save as").Save()
 
 							// Return if user canceled the file dialog
 							if file==""{
 								return
 							}
 
-							// Remove the extra ".pcv" extension if needed
+							// Remove the extra ".pcv" extension if necessary
 							if strings.HasSuffix(file,".pcv"){
 								file = file[:len(file)-4]
 							}
@@ -208,29 +211,28 @@ func startUI(){
 					),
 
 					// Prompt for password
-					//g.Dummy(10,0),
-					g.Row(
-						g.Label("Password:"),
-						g.Dummy(-220,0),
-						g.Label(keyfilePrompt),
+					giu.Row(
+						giu.Label("Password:"),
+						giu.Dummy(-220,0),
+						giu.Label(keyfilePrompt),
 					),
-					g.Row(
-						g.InputText("##password",&password).Size(200/dpi).Flags(passwordState),
-						g.Checkbox("##showPassword",&showPassword).OnChange(func(){
-							if passwordState==g.InputTextFlags_Password{
-								passwordState = g.InputTextFlags_None
+					giu.Row(
+						giu.InputText(&password).Size(200/dpi).Flags(passwordState),
+						giu.Checkbox("##showPassword",&showPassword).OnChange(func(){
+							if passwordState==giu.InputTextFlagsPassword{
+								passwordState = giu.InputTextFlagsNone
 							}else{
-								passwordState = g.InputTextFlags_Password
+								passwordState = giu.InputTextFlagsPassword
 							}
-							g.Update()
+							giu.Update()
 						}),
-						g.Dummy(-220,0),
-						g.Checkbox(keyfileLabel,&keyfile).OnChange(func(){
+						giu.Dummy(-220,0),
+						giu.Checkbox(keyfileLabel,&keyfile).OnChange(func(){
 							if !keyfile{
 								keyfileLabel = "Use a keyfile"
 								return
 							}
-							filename,err := di.File().Load()
+							filename,err := dialog.File().Load()
 							if err!=nil{
 								keyfile = false
 								return
@@ -241,36 +243,31 @@ func startUI(){
 					),
 
 					// Prompt to confirm password
-					//g.Dummy(10,0),
-					g.Label("Confirm password:"),
-					g.InputText("##cPassword",&cPassword).Size(200/dpi).Flags(passwordState),
+					giu.Label("Confirm password:"),
+					giu.InputText(&cPassword).Size(200/dpi).Flags(passwordState),
 
 					// Optional metadata
-					//g.Dummy(10,0),
-					g.Label("Metadata (optional):"),
-					g.InputTextMultiline("##metadata",&metadata).Size(230,126),
+					giu.Label("Metadata (optional):"),
+					giu.InputTextMultiline(&metadata).Size(230,126),
 
 					// Advanced options can be enabled with checkboxes
-					//g.Dummy(10,0),
-					g.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
-					g.Checkbox("Securely shred the original file(s) and folder(s)",&erase),
-					g.Row(
-						g.Checkbox("(Not ready) Encode with Reed-Solomon to prevent corruption",&reedsolo),
-						g.Button("?").OnClick(func(){
-							browser.OpenURL("https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction")
+					giu.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep),
+					giu.Checkbox("Securely shred the original file(s) and folder(s)",&erase),
+					giu.Row(
+						giu.Checkbox("(Not ready) Encode with Reed-Solomon to prevent corruption",&reedsolo),
+						giu.Button("?").OnClick(func(){
+							browser.OpenURL("https://bit.ly/reedsolomonwikipedia")
 						}),
 					),
-					g.Row(
-						g.Checkbox("Split output into chunks of",&split),
-						g.InputText("##splitSize",&splitSize).Size(30).Flags(g.InputTextFlags_CharsDecimal),
-						g.Combo("##splitter",splitUnits[splitSelected],splitUnits,&splitSelected).Size(40),
-						//g.Label("MB"),
+					giu.Row(
+						giu.Checkbox("Split output into chunks of",&split),
+						giu.InputText(&splitSize).Size(30).Flags(giu.InputTextFlagsCharsDecimal),
+						giu.Combo("##splitter",splitUnits[splitSelected],splitUnits,&splitSelected).Size(40),
 					),
-					g.Checkbox("Fast mode (less secure, not as durable)",&fast),
+					giu.Checkbox("Fast mode (less secure, not as durable)",&fast),
 
-					// Start and cancel buttons
-					//g.Dummy(10,0),
-					g.Button("Start").Size(-1,20).OnClick(func(){
+					// Start button
+					giu.Button("Start").Size(-1,20).OnClick(func(){
 						if password!=cPassword{
 							_status = "Passwords don't match."
 							_status_color = color.RGBA{0xff,0x00,0x00,255}
@@ -283,149 +280,125 @@ func startUI(){
 						}
 						_,err := os.Stat(outputFile)
 						if err==nil{
-							g.OpenPopup("Confirmation")
+							giu.OpenPopup("Confirmation")
 						}else{
 							go work()
 						}
 					}),
 
-					//g.Dummy(10,0),
-					g.Style().SetColor(ig.StyleColorText,_status_color).To(
-						g.Label(_status),
+					giu.Style().SetColor(giu.StyleColorText,_status_color).To(
+						giu.Label(_status),
 					),
 				),
 
 				// File shredder tab
-				g.TabItem("Shredder").Layout(
-					// Update 'tab' to indicate active tab
-					g.Custom(func(){
-						if g.IsItemActive(){
+				giu.TabItem("Shredder").Layout(
+					giu.Custom(func(){
+						if giu.IsItemActive(){
 							tab = 1
 						}
 					}),
 
-					g.Label("Select a mode below and drop file(s) and folder(s) here."),
-					g.Label("Warning: Anything dropped here will be shredded immediately!"),
-					//g.Dummy(10,0),
-					g.Combo("##shredder_mode",items[itemSelected],items,&itemSelected).Size(463),
-					//g.Dummy(10,0),
-					g.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-1,0),
-					g.Label(shredding).Wrapped(true),
+					giu.Label("Select a mode below and drop file(s) and folder(s) here."),
+					giu.Label("Warning: Anything dropped here will be shredded immediately!"),
+					//giu.Dummy(10,0),
+					giu.Combo("##shredder_mode",shredModes[shredMode],shredModes,&shredMode).Size(463),
+					//giu.Dummy(10,0),
+					giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-1,0),
+					giu.Label(shredding).Wrapped(true),
 				),
 
 				// File checksum generator tab
-				g.TabItem("Checksum").Layout(
-					// Update 'tab' to indicate active tab
-					g.Custom(func(){
-						if g.IsItemActive(){
+				giu.TabItem("Checksum").Layout(
+					giu.Custom(func(){
+						if giu.IsItemActive(){
 							tab = 2
 						}
 					}),
 
-					g.Label("Toggle the hashes you would like to generate and drop a file here."),
-					
+					giu.Label("Toggle the hashes you would like to generate and drop a file here."),
+
 					// MD5
-					//g.Dummy(10,0),
-					g.Row(
-						g.Checkbox("MD5:",&md5_selected),
-						g.Dummy(-45,0),
-						g.Button("Copy##md5").Size(36,0).OnClick(func(){
+					giu.Row(
+						giu.Checkbox("MD5:",&md5_selected),
+						giu.Dummy(-45,0),
+						giu.Button("Copy##md5").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_md5)
 						}),
 					),
-					g.Style().SetColor(ig.StyleColorBorder,md5_color).To(
-						g.InputText("##cs_md5",&cs_md5).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					giu.Style().SetColor(giu.StyleColorBorder,md5_color).To(
+						giu.InputText(&cs_md5).Size(-1).Flags(giu.InputTextFlagsReadOnly),
 					),
 
 					// SHA1
-					//g.Dummy(10,0),
-					g.Row(
-						g.Checkbox("SHA1:",&sha1_selected),
-						g.Dummy(-45,0),
-						g.Button("Copy##sha1").Size(36,0).OnClick(func(){
+					giu.Row(
+						giu.Checkbox("SHA1:",&sha1_selected),
+						giu.Dummy(-45,0),
+						giu.Button("Copy##sha1").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_sha1)
 						}),
 					),
-					g.Style().SetColor(ig.StyleColorBorder,sha1_color).To(
-						g.InputText("##cs_sha1",&cs_sha1).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					giu.Style().SetColor(giu.StyleColorBorder,sha1_color).To(
+						giu.InputText(&cs_sha1).Size(-1).Flags(giu.InputTextFlagsReadOnly),
 					),
 
 					// SHA256
-					//g.Dummy(10,0),
-					g.Row(
-						g.Checkbox("SHA256:",&sha256_selected),
-						g.Dummy(-45,0),
-						g.Button("Copy##sha256").Size(36,0).OnClick(func(){
+					giu.Row(
+						giu.Checkbox("SHA256:",&sha256_selected),
+						giu.Dummy(-45,0),
+						giu.Button("Copy##sha256").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_sha256)
 						}),
 					),
-					g.Style().SetColor(ig.StyleColorBorder,sha256_color).To(
-						g.InputText("##cs_sha256",&cs_sha256).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					giu.Style().SetColor(giu.StyleColorBorder,sha256_color).To(
+						giu.InputText(&cs_sha256).Size(-1).Flags(giu.InputTextFlagsReadOnly),
 					),
 
 					// SHA3-256
-					//g.Dummy(10,0),
-					g.Row(
-						g.Checkbox("SHA3-256:",&sha3_256_selected),
-						g.Dummy(-45,0),
-						g.Button("Copy##sha3_256").Size(36,0).OnClick(func(){
+					giu.Row(
+						giu.Checkbox("SHA3-256:",&sha3_256_selected),
+						giu.Dummy(-45,0),
+						giu.Button("Copy##sha3_256").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_sha3_256)
 						}),
 					),
-					g.Style().SetColor(ig.StyleColorBorder,sha3_256_color).To(
-						g.InputText("##cs_sha3_256",&cs_sha3_256).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					giu.Style().SetColor(giu.StyleColorBorder,sha3_256_color).To(
+						giu.InputText(&cs_sha3_256).Size(-1).Flags(giu.InputTextFlagsReadOnly),
 					),
 
 					// BLAKE2b
-					//g.Dummy(10,0),
-					g.Row(
-						g.Checkbox("BLAKE2b:",&blake2b_selected),
-						g.Dummy(-45,0),
-						g.Button("Copy##blake2b").Size(36,0).OnClick(func(){
+					giu.Row(
+						giu.Checkbox("BLAKE2b:",&blake2b_selected),
+						giu.Dummy(-45,0),
+						giu.Button("Copy##blake2b").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_blake2b)
 						}),
 					),
-					g.Style().SetColor(ig.StyleColorBorder,blake2b_color).To(
-						g.InputText("##cs_blake2b",&cs_blake2b).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					giu.Style().SetColor(giu.StyleColorBorder,blake2b_color).To(
+						giu.InputText(&cs_blake2b).Size(-1).Flags(giu.InputTextFlagsReadOnly),
 					),
 
 					// BLAKE2s
-					//g.Dummy(10,0),
-					g.Row(
-						g.Checkbox("BLAKE2s:",&blake2s_selected),
-						g.Dummy(-45,0),
-						g.Button("Copy##blake2s").Size(36,0).OnClick(func(){
+					giu.Row(
+						giu.Checkbox("BLAKE2s:",&blake2s_selected),
+						giu.Dummy(-45,0),
+						giu.Button("Copy##blake2s").Size(36,0).OnClick(func(){
 							clipboard.WriteAll(cs_blake2s)
 						}),
 					),
-					g.Style().SetColor(ig.StyleColorBorder,blake2s_color).To(
-						g.InputText("##cs_blake2s",&cs_blake2s).Size(-1).Flags(g.InputTextFlags_ReadOnly),
-					),
-
-					// BLAKE3
-					//g.Dummy(10,0),
-					g.Row(
-						g.Checkbox("BLAKE3:",&blake3_selected),
-						g.Dummy(-45,0),
-						g.Button("Copy##blake3").Size(36,0).OnClick(func(){
-							clipboard.WriteAll(cs_blake3)
-						}),
-					),
-					g.Style().SetColor(ig.StyleColorBorder,blake3_color).To(
-						g.InputText("##cs_blake3",&cs_blake3).Size(-1).Flags(g.InputTextFlags_ReadOnly),
+					giu.Style().SetColor(giu.StyleColorBorder,blake2s_color).To(
+						giu.InputText(&cs_blake2s).Size(-1).Flags(giu.InputTextFlagsReadOnly),
 					),
 					
-					// Input box for validating checksum
-					//g.Dummy(10,0),
-					g.Label("Validate a checksum:"),
-					g.InputText("##cs_validate",&cs_validate).Size(-1).OnChange(func(){
+					// Input entry for validating a checksum
+					giu.Label("Validate a checksum:"),
+					giu.InputText(&cs_validate).Size(-1).OnChange(func(){
 						md5_color = color.RGBA{0x10,0x10,0x10,255}
 						sha1_color = color.RGBA{0x10,0x10,0x10,255}
 						sha256_color = color.RGBA{0x10,0x10,0x10,255}
 						sha3_256_color = color.RGBA{0x10,0x10,0x10,255}
 						blake2b_color = color.RGBA{0x10,0x10,0x10,255}
 						blake2s_color = color.RGBA{0x10,0x10,0x10,255}
-						blake3_color = color.RGBA{0x10,0x10,0x10,255}
 						if cs_validate==""{
 							return
 						}
@@ -441,53 +414,45 @@ func startUI(){
 							blake2b_color = color.RGBA{0x00,0xff,0x00,255}
 						}else if cs_validate==cs_blake2s{
 							blake2s_color = color.RGBA{0x00,0xff,0x00,255}
-						}else if cs_validate==cs_blake3{
-							blake3_color = color.RGBA{0x00,0xff,0x00,255}
 						}
-						g.Update()
+						giu.Update()
 					}),
 
 					// Progress bar
-					//g.Dummy(10,0),
-					g.Label("Progress:"),
-					g.ProgressBar(cs_progress).Size(-1,0),
+					giu.Label("Progress:"),
+					giu.ProgressBar(cs_progress).Size(-1,0),
 				),
-				g.TabItem("About").Layout(
-					// Update 'tab' to indicate active tab
-					g.Custom(func(){
-						if g.IsItemActive(){
+				giu.TabItem("About").Layout(
+					giu.Custom(func(){
+						if giu.IsItemActive(){
 							tab = 3
 						}
 					}),
-					//g.Dummy(30,0),
-					g.Label("Picocrypt "+version+", created by Evan Su (https://evansu.cc)"),
+					giu.Label("Picocrypt "+version+", created by Evan Su (https://evansu.cc)"),
 				),
 			),
 		),
 	)
 	if working{
-		g.SingleWindow("Working..").IsOpen(&working).Layout(
-			//g.Dummy(30,0),
-			g.Label("Tips:"),
-			g.Label("    - Choose a strong password with more than 16 characters."),
-			g.Label("    - Use a unique password that isn't used anywhere else."),
-			g.Label("    - Trust no one but yourself and never give out your key."),
-			g.Label("    - For highly sensitive files, encrypt them while offline."),
-			g.Label("    - An antivirus can be beneficial to prevent keyloggers."),
-			g.Label("    - Encrypt your root filesystem for maximal security."),
-			g.Dummy(0,-50),
+		giu.SingleWindow().IsOpen(&working).Layout(
+			giu.Label("Tips:"),
+			giu.Label("    - Choose a strong password with more than 16 characters."),
+			giu.Label("    - Use a unique password that isn't used anywhere else."),
+			giu.Label("    - Trust no one but yourself and never give out your key."),
+			giu.Label("    - For highly sensitive files, encrypt them while offline."),
+			giu.Label("    - An antivirus can be beneficial to prevent keyloggers."),
+			giu.Label("    - Encrypt your root filesystem for maximal security."),
+			giu.Dummy(0,-50),
 			
-
 			// Progress bar
-			g.Row(
-				g.ProgressBar(progress).Size(-54,0).Overlay(progressInfo),
-				g.Dummy(-59,0),
-				g.Button("Cancel").Size(50,0).OnClick(func(){
+			giu.Row(
+				giu.ProgressBar(progress).Size(-54,0).Overlay(progressInfo),
+				giu.Dummy(-59,0),
+				giu.Button("Cancel").Size(50,0).OnClick(func(){
 					working = false
 				}),
 			),
-			//g.Dummy(10,0),
-			g.Label(status),
+			giu.Label(status),
 		)
 	}
 }
@@ -561,19 +526,19 @@ func onDrop(names []string){
 					fin,_ := os.Open(names[0])
 
 					// Read metadata and insert into box
-					fin.Read(make([]byte,133))
-					tmp := make([]byte,138)
+					fin.Read(make([]byte,15))
+					tmp := make([]byte,30)
 					fin.Read(tmp)
-					tmp = rsDecode(tmp,rs10_128,10)
+					tmp,_ = rsDecode(rs10,tmp)
 					metadataLength,_ := strconv.Atoi(string(tmp))
 					//fmt.Println(metadataLength)
 					tmp = make([]byte,metadataLength)
 					fin.Read(tmp)
 					metadata = string(tmp)
 
-					flags := make([]byte,133)
+					flags := make([]byte,15)
 					fin.Read(flags)
-					flags = rsDecode(flags,rs5_128,5)
+					flags,_ = rsDecode(rs5,flags)
 
 					if flags[1]==1{
 						keyfilePrompt = "Keyfile (required):"
@@ -659,7 +624,7 @@ func onDrop(names []string){
 	}
 
 	// Update the UI
-	g.Update()
+	giu.Update()
 }
 
 // Start encryption/decryption
@@ -675,7 +640,7 @@ func work(){
 	var keyHash []byte
 	var _keyHash []byte
 	var khash []byte
-	var khash_hash []byte
+	var khash_hash []byte = make([]byte,32)
 	var _khash_hash []byte
 	var nonces []byte
 	_fast = fast
@@ -686,7 +651,7 @@ func work(){
 		if len(allFiles)>1||len(onlyFolders)>0{
 			rootDir := filepath.Dir(outputEntry)
 			inputFile = outputEntry
-			fmt.Println(inputFile)
+			//fmt.Println(inputFile)
 			file,_ := os.Create(inputFile)
 			
 			w := zip.NewWriter(file)
@@ -739,7 +704,7 @@ func work(){
 			fin.Close()
 			progressInfo = fmt.Sprintf("%d/%d",i,total)
 			progress = float32(i)/float32(total)
-			g.Update()
+			giu.Update()
 		}
 		fout.Close()
 		outputFile = outputEntry
@@ -747,22 +712,22 @@ func work(){
 		progressInfo = ""
 	}
 	
-	fmt.Println(inputFile)
+	//fmt.Println(inputFile)
 	stat,_ := os.Stat(inputFile)
 	total := stat.Size()
-	fmt.Println(total)
+	//fmt.Println(total)
 	
 	// Open input file in read-only mode
 	fin,_ := os.Open(inputFile)
 	
 	var fout *os.File
 	
-	fmt.Println(mode)
+	//fmt.Println(mode)
 
 	// If encrypting, generate values; If decrypting, read values from file
 	if mode=="encrypt"{
 		status = "Generating values..."
-		g.Update()
+		giu.Update()
 		fout,_ = os.OpenFile(
 			outputFile,
 			os.O_RDWR|os.O_CREATE|os.O_TRUNC,
@@ -774,12 +739,12 @@ func work(){
 		nonce = make([]byte,24)
 		
 		// Write version to file
-		fout.Write(rsEncode([]byte(version),rs5_128,133))
+		fout.Write(rsEncode(rs5,[]byte(version)))
 
 		// Encode the length of the metadata with Reed-Solomon
 		metadataLength := []byte(fmt.Sprintf("%010d",len(metadata)))
 		//fmt.Println("metadataLength:",metadataLength)
-		metadataLength = rsEncode(metadataLength,rs10_128,138)
+		metadataLength = rsEncode(rs10,metadataLength)
 		
 		// Write the length of the metadata to file
 		fout.Write(metadataLength)
@@ -795,87 +760,102 @@ func work(){
 			flags[1] = 1
 		}
 		//fmt.Println("flags:",flags)
-		flags = rsEncode(flags,rs5_128,133)
+		flags = rsEncode(rs5,flags)
 		fout.Write(flags)
 
 		// Fill salt and nonce with Go's CSPRNG
 		rand.Read(salt)
 		rand.Read(nonce)
 		
-		fmt.Println("salt: ",salt)
-		fmt.Println("nonce: ",nonce)
+		//fmt.Println("salt: ",salt)
+		//fmt.Println("nonce: ",nonce)
 
 		// Encode salt with Reed-Solomon and write to file
-		_salt := rsEncode(salt,rs16_128,144)
+		_salt := rsEncode(rs16,salt)
 		fout.Write(_salt)
 
 		// Encode nonce with Reed-Solomon and write to file
-		tmp := rsEncode(nonce,rs24_128,152)
+		tmp := rsEncode(rs24,nonce)
 		fout.Write(tmp)
 		
 		// Write placeholder for hash of key
 		fout.Write(make([]byte,192))
 		
 		// Write placeholder for hash of hash of keyfile
-		fout.Write(make([]byte,160))
+		fout.Write(make([]byte,96))
 
 		
 		pairs := int(math.Ceil(float64(total)/1048576))
 		
-		offset := 152*pairs+144
+		offset := 72*pairs+48
 		
 		// Write placeholder for nonce/Poly1305 pairs
 		fout.Write(make([]byte,offset))
 	}else{
+		var err error
 		status = "Reading values..."
-		g.Update()
-		version := make([]byte,133)
+		giu.Update()
+		version := make([]byte,15)
 		fin.Read(version)
-		version = rsDecode(version,rs5_128,5)
+		version,err = rsDecode(rs5,version)
+		_ = err
+		//fmt.Println("version",err,string(version))
 
-		tmp := make([]byte,138)
+		tmp := make([]byte,30)
 		fin.Read(tmp)
-		tmp = rsDecode(tmp,rs10_128,10)
+		tmp,err = rsDecode(rs10,tmp)
 		metadataLength,_ := strconv.Atoi(string(tmp))
 		//fmt.Println("metadataLength",metadataLength)
+		//fmt.Println("metadataLength",err,metadataLength)
 
 		fin.Read(make([]byte,metadataLength))
 
-		flags := make([]byte,133)
+		flags := make([]byte,15)
 		fin.Read(flags)
-		flags = rsDecode(flags,rs5_128,5)
+		flags,err = rsDecode(rs5,flags)
 		//fmt.Println("flags",flags)
+		//fmt.Println("flags",err,flags)
 		fast = flags[0]==1
 		keyfile = flags[1]==1
 
-		salt = make([]byte,144)
+		salt = make([]byte,48)
 		fin.Read(salt)
-		salt = rsDecode(salt,rs16_128,16)
+		salt,err = rsDecode(rs16,salt)
+		//fmt.Println("salt",err,salt)
 		
-		nonce = make([]byte,152)
+		nonce = make([]byte,72)
 		fin.Read(nonce)
-		nonce = rsDecode(nonce,rs24_128,24)
+		nonce,err = rsDecode(rs24,nonce)
+		//fmt.Println("nonce",err,nonce)
 		
-		fmt.Println("salt: ",salt)
-		fmt.Println("nonce: ",nonce)
+		//fmt.Println("salt: ",salt)
+		//fmt.Println("nonce: ",nonce)
 		
 		_keyHash = make([]byte,192)
 		fin.Read(_keyHash)
-		_keyHash = rsDecode(_keyHash,rs64_128,64)
-		//fmt.Println("keyHash",keyHash)
+		//fmt.Println("ud",_keyHash)
+		_keyHash,err = rsDecode(rs64,_keyHash)
+		//fmt.Println("_keyHash",keyHash)
+		//fmt.Println("_keyHash",err)
 		
-		_khash_hash = make([]byte,160)
+		_khash_hash = make([]byte,96)
 		fin.Read(_khash_hash)
-		_khash_hash = rsDecode(_khash_hash,rs32_128,32)
+		_khash_hash,_ = rsDecode(rs32,_khash_hash)
 		//fmt.Println("crcHash",crcHash)
+		//fmt.Println("_khash_hash",err)
 		
-		_tmp := math.Ceil(float64(total-int64(metadataLength+1196))/float64(1048744))
-		nonces = make([]byte,int(_tmp*152)+144)
+		var _tmp float64
+		if fast{
+			_tmp = math.Ceil(float64(total-int64(metadataLength+468))/float64(1048664))
+		}else{
+			_tmp = math.Ceil(float64(total-int64(metadataLength+468))/float64(1048696))
+		}
+		nonces = make([]byte,int(_tmp*72)+48)
 		fin.Read(nonces)
 		//fmt.Println("Nonces: ",nonces)
 	}
 	
-	g.Update()
+	giu.Update()
 	status = "Deriving key..."
 	progress = 0
 	
@@ -901,7 +881,7 @@ func work(){
 		)[:]
 	}
 	
-	fmt.Println("key",key)
+	//fmt.Println("key",key)
 	if !working{
 		_status = "Operation cancelled by user."
 		_status_color = color.RGBA{0xff,0xff,0xff,255}
@@ -913,7 +893,7 @@ func work(){
 	if keyfile{
 		kin,_ := os.Open(keyfilePath)
 		kstat,_ := os.Stat(keyfilePath)
-		fmt.Println(kstat.Size())
+		//fmt.Println(kstat.Size())
 		kbytes := make([]byte,kstat.Size())
 		kin.Read(kbytes)
 		kin.Close()
@@ -924,12 +904,12 @@ func work(){
 		khash_sha3 := sha3.New256()
 		khash_sha3.Write(khash)
 		khash_hash = khash_sha3.Sum(nil)
-		fmt.Println("khash",khash)
-		fmt.Println("khash_hash",khash_hash)
+		//fmt.Println("khash",khash)
+		//fmt.Println("khash_hash",khash_hash)
 	}
 	
 	//key = make([]byte,32)
-	fmt.Println("output",outputFile)
+	//fmt.Println("output",outputFile)
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
 	keyHash = sha3_512.Sum(nil)
@@ -979,11 +959,7 @@ func work(){
 			}
 		}
 
-		fout,_ = os.OpenFile(
-			outputFile,
-			os.O_RDWR|os.O_CREATE|os.O_TRUNC,
-			0755,
-		)
+		fout,_ = os.Create(outputFile)
 	}
 
 	if keyfile{
@@ -993,7 +969,7 @@ func work(){
 		for i,_ := range(key){
 			key[i] = tmp[i]^khash[i]
 		}
-		fmt.Println("key",key)
+		//fmt.Println("key",key)
 	}
 
 	
@@ -1004,16 +980,16 @@ func work(){
 	cipher,_ := chacha20poly1305.NewX(key)
 	
 	if mode=="decrypt"{
-		_mac := nonces[len(nonces)-144:]
-		_mac = rsDecode(_mac,rs16_128,16)
+		_mac := nonces[len(nonces)-48:]
+		_mac,_ = rsDecode(rs16,_mac)
 		//fmt.Println("_mac ",_mac)
-		nonces = nonces[:len(nonces)-144]
+		nonces = nonces[:len(nonces)-48]
 		var tmp []byte
 		var chunk []byte
 		for i,j := range(nonces){
 			chunk = append(chunk,j)
-			if (i+1)%152==0{
-				chunk = rsDecode(chunk,rs24_128,24)
+			if (i+1)%72==0{
+				chunk,_ = rsDecode(rs24,chunk)
 				for _,k := range(chunk){
 					tmp = append(tmp,k)
 				}
@@ -1060,7 +1036,11 @@ func work(){
 		if mode=="encrypt"{
 			_data = make([]byte,1048576)
 		}else{
-			_data = make([]byte,1048592)
+			if fast{
+				_data = make([]byte,1048592)
+			}else{
+				_data = make([]byte,1048624)
+			}
 		}
 
 		size,err := fin.Read(_data)
@@ -1090,7 +1070,7 @@ func work(){
 			}else{
 				mac,data := monocypher.Lock(data,_nonce,key)
 				fout.Write(data)
-				fout.Write(mac)
+				fout.Write(rsEncode(rs16,mac))
 				//crc.Write(data)
 				//crc.Write(mac)
 			}
@@ -1118,8 +1098,8 @@ func work(){
 				}
 			}else{
 				//crc.Write(data)
-				mac := data[len(data)-16:]
-				data = data[:len(data)-16]
+				mac,_ := rsDecode(rs16,data[len(data)-48:])
+				data = data[:len(data)-48]
 				var authentic bool
 				data,authentic = monocypher.Unlock(data,_nonce,key,mac)
 				if !authentic{
@@ -1140,7 +1120,15 @@ func work(){
 			//fmt.Println("DECRYPTED DATA: ",data)
 		}
 		
-		done += 1048576
+		if mode=="encrypt"{
+			done += 1048576
+		}else{
+			if fast{
+				done += 1048592
+			}else{
+				done += 1048624
+			}
+		}
 		counter++
 
 		progress = float32(done)/float32(total)
@@ -1154,37 +1142,28 @@ func work(){
 		
 		status = fmt.Sprintf("Working at %.2f MB/s (ETA: %.1fs)",speed,eta)
 		
-		g.Update()
+		giu.Update()
 	}
 
 	if mode=="encrypt"{
 		//fmt.Println("'nonces' before RS: ",nonces)
-		fout.Seek(int64(700+len(metadata)),0)
-		fout.Write(rsEncode(keyHash,rs64_128,192))
-		fout.Write(rsEncode(khash_hash,rs32_128,160))
+		fout.Seek(int64(180+len(metadata)),0)
+		fout.Write(rsEncode(rs64,keyHash))
+		fout.Write(rsEncode(rs32,khash_hash))
 
 		_mac,tmp := monocypher.Lock(nonces,nonce,key) 
-		fmt.Println(_mac)
-		//tmp := cipher.Seal(nil,nonce,nonces,nil)
-		//fmt.Println("ENCRYPTED NONCES: ",tmp)
-		//_mac := tmp[len(tmp)-16:]
-
-		//tmp = tmp[:len(tmp)-16]
+		//fmt.Println(_mac)
 		var chunk []byte
 
 		for i,j := range(tmp){
 			chunk = append(chunk,j)
 			if (i+1)%24==0{
-				fout.Write(rsEncode(chunk,rs24_128,152))
-				//fmt.Println(rsEncode(chunk,rs24_128,152))
+				fout.Write(rsEncode(rs24,chunk))
 				chunk = nil
 			}
 		}
-		fout.Write(rsEncode(_mac,rs16_128,144))
+		fout.Write(rsEncode(rs16,_mac))
 
-	}else{
-		//fmt.Println("crcHash: ",crcHash)
-		//fmt.Println("crc.Sum: ",crc.Sum(nil))
 	}
 	
 	fin.Close()
@@ -1196,9 +1175,9 @@ func work(){
 		size := stat.Size()
 		finished := 0
 		var splitted []string
-		fmt.Println(size)
+		//fmt.Println(size)
 		chunkSize,_ := strconv.Atoi(splitSize)
-		fmt.Println(splitSelected)
+		//fmt.Println(splitSelected)
 		if splitSelected==0{
 			chunkSize *= 1024
 		}else if splitSelected==1{
@@ -1209,12 +1188,8 @@ func work(){
 		chunks := int(math.Ceil(float64(size)/float64(chunkSize)))
 		fin,_ := os.Open(outputFile)
 		for i:=0;i<chunks;i++{
-			fmt.Println(fmt.Sprintf("%s.%d",outputFile,i))
-			fout,_ := os.OpenFile(
-				fmt.Sprintf("%s.%d",outputFile,i),
-				os.O_RDWR|os.O_CREATE|os.O_TRUNC,
-				0755,
-			)
+			//fmt.Println(fmt.Sprintf("%s.%d",outputFile,i))
+			fout,_ := os.Create(fmt.Sprintf("%s.%d",outputFile,i))
 			done := 0
 			for{
 				data := make([]byte,1048576)
@@ -1231,7 +1206,7 @@ func work(){
 						os.Remove(j)
 					}
 					os.Remove(fmt.Sprintf("%s.%d",outputFile,i))
-					fmt.Println("outputFile",outputFile)
+					//fmt.Println("outputFile",outputFile)
 					os.Remove(outputFile)
 					fast = _fast
 					debug.FreeOSMemory()
@@ -1249,7 +1224,7 @@ func work(){
 			splitted = append(splitted,fmt.Sprintf("%s.%d",outputFile,i))
 			progress = float32(finished)/float32(chunks)
 			progressInfo = fmt.Sprintf("%d/%d",finished,chunks)
-			g.Update()
+			giu.Update()
 		}
 		fin.Close()
 		if erase{
@@ -1275,7 +1250,7 @@ func work(){
 			os.Remove(outputEntry)
 		}
 	}
-	fmt.Println("==============================")
+	//fmt.Println("==============================")
 	if erase{
 		progressInfo = ""
 		shred(onlyFiles,false)
@@ -1299,7 +1274,7 @@ func work(){
 	key = nil
 	status = "Ready."
 	debug.FreeOSMemory()
-	fmt.Println("Exit goroutine")
+	//fmt.Println("Exit goroutine")
 }
 
 func shred(names []string,separate bool){
@@ -1351,7 +1326,7 @@ func shred(names []string,separate bool){
 									shredding = j
 									shredDone++
 									shredUpdate(separate)
-									g.Update()
+									giu.Update()
 								}(&wg,i,j)
 								
 							}
@@ -1378,7 +1353,7 @@ func shred(names []string,separate bool){
 						shredding = i
 						shredDone++
 						shredUpdate(separate)
-						g.Update()
+						giu.Update()
 					}()
 				}
 				os.RemoveAll(name)
@@ -1430,9 +1405,9 @@ func shred(names []string,separate bool){
 			}
 		}
 		fmt.Println(name)
-		g.Update()
+		giu.Update()
 	}
-	/*if itemSelected==1&&runtime.GOOS=="windows"{
+	/*if shredMode==1&&runtime.GOOS=="windows"{
 		cmd := exec.Command("cipher","/w:\""+name+"\"")
 		stdout,err := cmd.Output()
 		if err!=nil{
@@ -1453,7 +1428,7 @@ func shredUpdate(separate bool){
 		status = fmt.Sprintf("%d/%d",int(shredDone),int(shredTotal))
 		progress = shredDone/shredTotal
 	}
-	g.Update()
+	giu.Update()
 }
 
 // Generate file checksums
@@ -1466,7 +1441,6 @@ func generateChecksums(file string){
 	cs_sha3_256 = ""
 	cs_blake2b = ""
 	cs_blake2s = ""
-	cs_blake3 = ""
 
 	if md5_selected{
 		cs_md5 = "Calculating..."
@@ -1486,17 +1460,12 @@ func generateChecksums(file string){
 	if blake2s_selected{
 		cs_blake2s = "Calculating..."
 	}
-	if blake3_selected{
-		cs_blake3 = "Calculating..."
-	}
-
 	crc_md5 := md5.New()
 	crc_sha1 := sha1.New()
 	crc_sha256 := sha256.New()
 	crc_sha3_256 := sha3.New256()
 	crc_blake2b,_ := blake2b.New256(nil)
 	crc_blake2s,_ := blake2s.New256(nil)
-	crc_blake3 := blake3.New()
 	stat,_ := os.Stat(file)
 	total := stat.Size()
 	var done int64 = 0
@@ -1527,13 +1496,10 @@ func generateChecksums(file string){
 		if blake2s_selected{
 			crc_blake2s.Write(data)
 		}
-		if blake3_selected{
-			crc_blake3.Write(data)
-		}
 
 		done += int64(size)
 		cs_progress = float32(done)/float32(total)
-		g.Update()
+		giu.Update()
 	}
 	cs_progress = 0
 	if md5_selected{
@@ -1554,10 +1520,7 @@ func generateChecksums(file string){
 	if blake2s_selected{
 		cs_blake2s = hex.EncodeToString(crc_blake2s.Sum(nil))
 	}
-	if blake3_selected{
-		cs_blake3 = hex.EncodeToString(crc_blake3.Sum(nil))
-	}
-	g.Update()
+	giu.Update()
 }
 
 
@@ -1583,7 +1546,7 @@ func resetUI(){
 	progressInfo = ""
 	_status = ""
 	_status_color = color.RGBA{0xff,0xff,0xff,255}
-	g.Update()
+	giu.Update()
 }
 
 func broken(){
@@ -1594,7 +1557,7 @@ func broken(){
 	debug.FreeOSMemory()
 }
 
-func rsEncode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
+/*func rsEncode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 	shards,_ := encoder.Split(data)
 	encoder.Encode(shards)
 	tmp := make([]byte,size)
@@ -1618,7 +1581,27 @@ func rsDecode(data []byte,encoder reedsolomon.Encoder,size int) []byte{
 		tmp[i] = shard[0]
 	}
 	return tmp
+}*/
+func rsEncode(rs *infectious.FEC,data []byte) []byte{
+	var res []byte
+	rs.Encode(data,func(s infectious.Share){
+		res = append(res,s.DeepCopy().Data[0])
+	})
+	return res
 }
+
+func rsDecode(rs *infectious.FEC,data []byte) ([]byte,error){
+	tmp := make([]infectious.Share,rs.Total())
+	for i:=0;i<rs.Total();i++{
+		tmp[i] = infectious.Share{
+			Number:i,
+			Data:[]byte{data[i]},
+		}
+	}
+	res,err := rs.Decode(nil,tmp)
+	return res,err
+}
+
 
 // Create the master window, set callbacks, and start the UI
 func main(){
@@ -1636,12 +1619,14 @@ func main(){
 			}
 		}
 	}()
-	di.Init()
+	dialog.Init()
 	if runtime.GOOS=="windows"{
 		exec.Command(filepath.Join(rootDir,"sdelete64.exe"),"/accepteula")
 	}
-	window := g.NewMasterWindow("Picocrypt",480,488,g.MasterWindowFlagsNotResizable,nil)
+
+	giu.SetDefaultFontFromBytes(font,18)
+	window := giu.NewMasterWindow("Picocrypt",480,500,giu.MasterWindowFlagsNotResizable)
 	window.SetDropCallback(onDrop)
-	dpi = g.Context.GetPlatform().GetContentScale()
+	dpi = giu.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
 }
