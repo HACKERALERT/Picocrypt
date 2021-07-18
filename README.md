@@ -58,7 +58,7 @@ Only trust these communities and be aware of scammers and hackers that might try
 [![Stargazers over time](https://starchart.cc/HACKERALERT/Picocrypt.svg)](https://starchart.cc/HACKERALERT/Picocrypt)
 
 # Contribution
-If you find a bug or have a feature request, please create an Issue. I'm open to collaborators, and all Issues and PRs are appreciated. If you find a security issue, please follow the instructions <a href="Security.md">here</a> to report it.
+If you find a bug or have a feature request, please create an Issue. I'm open to collaborators, and all Issues and PRs are appreciated. If you find a security issue, please follow the instructions <a href="Security.md">here</a> to report it. If you are multilingual and you know a language in which Picocrypt hasn't been translated to yet, I would love to have your help translating this page as well as Picocrypt's interface. The more languages, the more welcoming!
 
 # Donations
 If you find Picocrypt useful, consider supporting me on <a href="https://patreon.com/evansu">Patreon</a>. As I'm providing this software completely free of charge, I would love to have some supporters that will motivate me to continue my work on Picocrypt.
