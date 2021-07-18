@@ -74,13 +74,13 @@ Aşağıda listelenmiş olan beş kişiye, Picocrypt'e bağışta ve destekte bu
 	<li>E. Zahard</li>
 </ul>
 
-Picocrypt'i tercüme etmeye ve onu dünya için daha erişilebilir hale getirmeye yardımcı olan bu insanlara çok teşekkür ederiz:
+Picocrypt'i tercüme ettikleri ve dünya için daha erişilebilir hale getirmeye yardımcı oldukları için bu insanlara çok teşekkür ederim:
 <ul>
 	<li>Türkçe için @umitseyhan75</li>
 	<li>Almanca için @digitalblossom</li>
 </ul> 
 
-Ayrıca bu kişilere de teşekkürü bir borç bilrim:
+Ayrıca bu kişilere de teşekkürü bir borç bilirim:
 <ul>
 	<li>Bir Discord sunucusu kurmamdaki yarımlarından ötürü Discord'dan Fuderal</li>
 	<li>Düzenli geri bildirim ve desteklerinden ötürü u/greenreddits</li>
