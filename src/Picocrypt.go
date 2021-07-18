@@ -96,7 +96,6 @@ var shredding = "Ready."
 
 var recombine bool
 
-
 // User input variables
 var password string
 var cPassword string
