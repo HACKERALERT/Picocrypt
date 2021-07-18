@@ -78,6 +78,12 @@ A huge thanks to the following list of five people, who were the first people to
 	<li>Guest (anonymous)</li>
 </ul>-->
 
+A great thanks to these people, who have helped translate Picocrypt and make it more accessible to the world:
+<ul>
+	<li>@umitseyhan75 for Turkish</li>
+	<li>@digitalblossom for German</li>
+</ul>
+
 Also thanks to these people:
 <ul>
 	<li>Fuderal on Discord for helping me setup a Discord server</li>
