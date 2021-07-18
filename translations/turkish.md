@@ -1,71 +1,71 @@
-<p><a href="https://github.com/HACKERALERT/Picocrypt">English</a> | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | Türk | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">русский</a></p>
+<p><a href="https://github.com/HACKERALERT/Picocrypt">English</a> | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | Türkçe | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">русский</a></p>
 <p align="center"><img align="center" src="/images/Picocrypt.svg" width="512" alt="Picocrypt"></p>
 
 <!-- Translate below -->
-Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure cryptography utility that you can use to encrypt files, generate checksums, shred files, and much more. It's designed to be the <i>go-to</i> tool for encryption, with a focus on security, simplicity, and reliability. Picocrypt uses the secure XChaCha20 cipher and the Poly1305 message authentication code to provide a high level of security, even from three-letter agencies like the NSA. It's designed for maximal security, making absolutely no compromises security-wise, and is built with an audited cryptography library. <strong>Your privacy and security are under attack. Take it back with confidence by protecting your files with Picocrypt.</strong>
+Picocrypt; dosyalarınızı şifreleyebilmenizi, sağlama toplamları (checksums) oluşturabilmenizi, dosyalarınızı kalıcı olarak silebilmenizi ve daha fazlasını yapabilmenizi sağlayan oldukça küçük (bu yüzden <i>Pico</i>), oldukça basit ancak oldukça güvenli bir kriptografi aracıdır. Güvenlik, basitlik ve güvenilirliğe odaklanarak şifreleme için <i>ilk-tercih</i> bir araç olması için tasarlanmıştır. Picocrypt, NSA gibi üç harfli teşkilatlara karşı bile üst düzey güvenlik sağlamak için XChaCha20 şifrelemesi ve Poly1305 mesaj doğrulama kodunu kullanır. Olabilecek en üst düzey güvenlik için tasarlanmıştır, güvenlik açısından mutlak suretle taviz vermez ve denetlenmiş bir kriptografi kütüphanesi ile oluşturulmuştur. <strong>Gizliliğiniz ve güvenliğiniz saldırı altında. Dosyalarınızı Picocrypt ile koruyor olmanın verdiği güvenle buna bir son verin.</strong>
 
 <p align="center"><img align="center" src="/images/Picocrypt.png" width="384" alt="Picocrypt"></p>
 
-# Funding
-Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> to raise money for a potential audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
+# Finansman Sağlama
+Cure53 tarafından olası bir denetleme yaptırabilmem için gereken parayı toplayabilmem için lütfen Picocrypt'e <a href="https://opencollective.com/picocrypt">Open Collective</a> üzerinden bağışta bulunun. Bu projeyi hayata geçirebilmek için saatlerce çalıştım ve bundan herhangi bir parasal gelir elde etmiyorum, bu yüzden denetleme ücretini kendi başıma ödeyemem. <i>Picocrypt'in, topluluğunun desteğine ihtiyacı var.</i>
 
-# Downloads
-<strong>Important:</strong> There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt.
+# İndirmeler
+<strong>Önemli:</strong> İnternette en son 2005'te güncellenmiş PicoCrypt adlı eski, işe yaramaz ve terk edilmiş bir yazılım müsvettesi var. PicoCrypt'in, Picocrypt(bu proje) ile zerre alakası yoktur. Gerçek ve arka kapı içermeyen Picocrypt'i edindiğinizden emin olmak için özellikle bu depodan indirdiğinizden emin olun.
 
 ## Windows
-Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.13/Picocrypt.exe">here</a>. Note that Picocrypt may trigger your antivirus. Picocrypt is not a virus, so please submit it as a false positive to your antivirus provider to prevent this in the future. Older releases are available under the Releases tab. If your browser is blocking Picocrypt from being downloaded, open a PowerShell prompt and `wget https://github.com/HACKERALERT/Picocrypt/releases/download/1.13/Picocrypt.exe -OutFile Picocrypt.exe` to download Picocrypt.
+Windows için Picocrypt olabildiğince basittir. Windows için en güncel ve taşınabilir uygulamayı indirmek için <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.13/Picocrypt.exe">buraya</a> tıklayın. Bir ihtimal Picocrypt anti-virüs yazılımınızı tetikleyebilir. Picocrypt bir virüs değildir, bu yüzden lütfen gelecekte bu tür sorunların tekrar yaşanmaması için anti-virüs sağlayıcınıza bu durumun bir yanlış pozitif olduğunu belirtin. Daha eski sürümler, Sürümler sekmesinden erişilebilir. Eğer web tarayıcınız Picocrypt'in indirilmesini engelliyorsa, bir PowerShell istemcisi açın ve `wget https://github.com/HACKERALERT/Picocrypt/releases/download/1.13/Picocrypt.exe -OutFile Picocrypt.exe` komutunu girin.
 
 ## macOS
-Coming in the next release...
+Sonraki sürümde geliyor..
 
 ## Linux
-A Snap is available for Linux. Make sure you have Snap installed. Next, ensure the core snap image is installed: `sudo snap install core`. Finally, install Picocrypt: `sudo snap install picocrypt`.
+Linux için bir Snap paketi mevcut. Sisteminizde Snap yüklü olduğundan emin olun. Daha sonra, çekirdek snap görüntüsünün yüklü olduğunu garanti altına alın: `sudo snap install core`. Son olarak, Picocrypt'i yükleyin: `sudo snap install picocrypt`.
 
-# Why Picocrypt?
-Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should use Picocrypt:
+# Neden Picocrypt?
+Neden BitLocker, NordLocker, VeraCrypt, AxCrypt, ya da 7-Zip yerine Picocrypt kullanmalısınız? İşte size Picocrypt kullanmanız için birkaç sebep:
 <ul>
-	<li>Unlike NordLocker, BitLocker, AxCrypt, and most cloud storage providers, Picocrypt and its dependencies are completely open-source and auditable. You can verify for yourself that there aren't any backdoors or flaws.</li>
-	<li>Picocrypt is <i>tiny</i>. While NordLocker is over 100MB and VeraCrypt is over 30MB, Picocrypt sits at just 3MB, about the size of a high-resolution image. And that's not all - Picocrypt is portable, doesn't need to be installed, and doesn't require administrator/root privileges.</li>
-	<li>Picocrypt is easier and more productive to use than VeraCrypt. To encrypt files with VeraCrypt, you'd have to spend at least five minutes setting up a volume. With Picocrypt's simple UI, all you have to do is drag and drop your files, enter a password, and hit Start. All the complex settings are handled by Picocrypt internally.</li>
-	<li>Picocrypt is designed for security. 7-Zip is an archive utility and not an encryption tool, so its focus is not on security. Picocrypt, however, is built with security above everything. Every part of Picocrypt is there for a reason and anything that could impact the security of Picocrypt is removed. Picocrypt is cryptography you can trust.</li>
-	<li>Picocrypt authenticates data in addition to protecting it, preventing hackers from maliciously modifying sensitive data. This is useful when you are sending encrypted files over an insecure channel and want to be sure that it arrives untouched. Picocrypt uses Poly1305 for authenticity, which is a secure and respected message authentication code.</li>
-	<li>Picocrypt actively prevents protects your files from corruption by adding extra Reed-Solomon bits, so if your encrypted data corrupts (e.g., hard drive failure), Picocrypt can still recover your data with a high success rate.</li>
+	<li>NordLocker, BitLocker, AxCrypt, ve diğer pek çok bulut depolama çözümlerinin aksine, Picocrypt ve bağımlılıkları tamamen açık kaynaklı ve denetime müsaittir. Herhangi bir arka kapı veya kusur olmadığını bizzat kendiniz doğrulayabilirsiniz.</li>
+	<li>Picocrypt <i>ufaktır</i>. NordLocker 100MB'ın üzerinde ve VeraCrypt 30MB'tan fazlayken, Picocrypt sadece 3MB, -ki bu da yaklaşık olarak yüksek çözünürlüklü bir görsel kadardır. Ve hepsi bu kadar da değil, Picocrypt taşınabilirdir, yükleme gerektirmez, ve yönetici hakları ya da kök erişim iznine ihtiyaç duymaz.</li>
+	<li>Picocrypt, VeraCrypt'a oranla kullanımı daha basit ve daha verimlidir. VeraCrypt ile dosyalarınızı şifreleyebilmek için, bölüm oluştururken hiç olmazsa en azından beş dakika harcamanız gerekir. Picocrypt'in basit kullanıcı arayüzü sayesinde, tüm yapmanız gereken dosyaları sürükleyip bırakmak, bir parola belirlemek ve Başla tuşuna basmak. Picocrypt tüm karmaşık ayarları kendisi halleder.</li>
+	<li>Picocrypt güvenlik amacı güdülerek tasarlanmıştır. 7-Zip bir arşiv yazılımı olup asıl odağı şifreleme ya da güvenlik değildir. Lâkin Picocrypt, güvenliği her şeyin üstünde tutacak şekilde oluşturulmuştur. Picocrypt'e ait her bir parça bir sebepten ötürü var ve Picocrypt'in güvenliğine etki edebilecek her şey silinmiştir. Picocrypt güvenebileceğiniz bir kriptografidir.</li>
+	<li>Picocrypt dosyaları korumasının yanı sıra onları tasdik de eder, bilgisayar korsanlarının ilgili hassas veriyi zarara sebep olacak şekilde etklemesinin önüne geçer. Bu Bu, güvenli olmayan bir kanal üzerinden şifrelenmiş dosyalar gönderirken ve el değmeden ulaştığından emin olmak istediğinizde kullanışlı bir özellik halini alır. Picocrypt tasdik için güvenli saygınlığı yüksek bir mesaj doğrulama kodu olan Poly1305 kullanır.</li>
+	<li>Picocrypt dosyalarınızın bozulmalara karşı aktif olarak korunması için fazladan Reed-Solomon bitleri ekler, bu sayede eğer şifrelenmiş veriniz bozulursa (örneğin, sabit disk arızası gibi), Picocrypt verilerinizi yüksek başarı oranıyla kurtarabilir.</li>
 </ul>
 
-# Instructions
-Picocrypt is a very simple tool, and most users will understand how to use it in a few seconds. There are some advanced options, however, that you can use.
+# Talimatlar
+Picocrypt çok basit bir araçtır ve pek çok kullanıcı saniyeler içinde nasıl kullanılacağını anlayabilir. Yine de, kullanabileceğiniz bazı gelişmiş seçenekleri barındırır.
 <ul>
-	<li><strong>File metadata</strong>: Use this to store notes, information, and text along with the file (it won't be encrypted). For example, you can put a description of the file before sending it to someone. When the person you sent it to drops the file into Picocrypt, your description will be shown to that person.</li>
-	<li><strong>Keep decrypted output even if it's corrupted or modified</strong>: Picocrypt automatically checks for integrity upon decryption. If the file has been modified or is corrupted, Picocrypt will automatically delete the output for the user's safety. If you want to keep the corrupted or modified data after decryption, check this option. Also, if this option is checked and the Reed-Solomon feature was used on the encrypted file, Picocrypt will attempt to recover as much of the file as possible during decryption, if it's corrupted.</li>
-	<li><strong>Securely shred the original file(s) and folder(s)</strong>: If checked, Picocrypt will use system internals to shred the input file(s). This method is more secure than just deleting the original file because the original file, in that case, can still be recovered by hackers using special software. Picocrypt securely deletes the original file making sure that it's impossible to retrieve the original file(s) after being shredded.</li>
-	<li><strong>Prevent corruption using Reed-Solomon</strong>: This feature is very useful if you are planning to archive important data on a cloud provider or external hard drive for a long time. If checked, Picocrypt will use the Reed-Solomon error correction code to add 13 extra bytes for every 128 bytes to prevent file corruption. This means that up to ~5% of your file can corrupt and Picocrypt will still be able to correct the errors and decrypt your files with no corruption. Obviously, if your file corrupts very badly (e.g., you dropped your hard drive), Picocrypt won't be able to fully recover your files, but it will try its best to recover what it can. Note that this option will slow down encryption and decryption by a small amount.</li>
+	<li><strong>Dosya üstverisi</strong>: Bu, not almak, bilgilendirmek veya herhangi bir şekilde yazı eklemek (şifrelenmemiş bir şekilde) için kullanılabilir. Söz gelimi, dosyayı birisine göndermeden önce açıklama ekleyebilirsiniz. Gönderdiğiniz kişi ilgili dosyayı Picocrypt'a yerleştirdiği sırada, açıklamanız şifreleme öncesinde görüntülenecektir.</li>
+	<li><strong>Değişiklik yapılmış ya da bozulmuş olsa dâhi deşifre edilmiş dosyayı sakla</strong>: Picocrypt deşifrasyon sırasında dosyaların bütünlüğünü otomatik olarak kontrol eder. Eğer dosyada değişikik yapılmış ya da bozulmuşsa, Picocrypt çıktı verisini kullanıcının güvenliğinden taviz vermemek için otomatik olarak siler. Eğer üzerinde değişiklik yapılmış ya da bozulmuş çıktıyı yine de saklamak isterseniz bu ayarı seçin. Ayrıca, eğer bu ayar seçilliyse ve şifreli dosyada Reed-Solomon özelliği kullanılmışsa, Picocrypt, -eğer bozulmuşsa- deşifrasyon sırasında elinden geldiğince veriyi kurtarmaya çalışacaktır.</li>
+	<li><strong>Girdi dosyası/dosyalarını ve klasörünü/klasörlerini kalıcı olarak sil</strong>: Şâyet seçiliyse, Picocrypt girdi dosyalarını geri döndürülemez şekilde silmek için sistem dahililerini kullanır. Bu usûl ilgili dosyayı sadece silmekten çok daha güvenlidir, zirâ girdi drumundaki özgün dosya(lar) bilgisayar korsanları tarafından çeşitli özel yazılımlar aracılığıyla kurtarılabilmektedir. Picocrypt, özgün dosyaların geri döndürülemeyeceğinden emin olacak şekilde onları siler.</li>
+	<li><strong>Reed-Solomon kullanarak bozulmaların önüne geç</strong>: Bu ayar, önemli verileri bir bulut hizmetinde veya harici sabit diskte uzun süre arşivlemeyi planlıyorsanız oldukça kullanışlıdır. Şâyet seçiliyse, Picocrypt Reed-Solomon hata düzeltme kodunu, her 128 byte'a ek olarak 13 fazladan byte ekleyerek dosya bozulmalarının önüne geçer. Bu, dosyaların en fazla %5'e kadar bozulabileceğini ve Picocrypt'in buna rağmen ilgili bozunumu düzeltip hatasız bir şekilde dosyalarınızı deşifre edebileceği anlamına gelir. Yine de, -barizdir ki-,  eğer dosyanız oldukça fena bir şekilde bozulmuşsa (söz gelimi, sabit diskinizi düşürmeniz durumunda), Picocrypt dosyalarınızı tam anlamıyla kurtaramayacaktır, buna rağemen elinden geldiğince fazla veriyi kurtarmayı deneyecektir. Bu ayarın şifreleme ve deşifrasyon hızına ufak dâhi olsa etki edeceğini untumayın..</li>
 </ul>
 
-# Security
-For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the practical security of Picocrypt, let me assure you that this repository won't be hijacked. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Discord, etc.), so you can feel confident about using Picocrypt. Also, I fork all dependencies in a separate account (https://github.com/Picocrypt) and fetch upstream only when I have taken a look at the changes and am confident that there aren't any security issues.
+# Güvenlik
+Picocrypt'in kriptografi sürecini nasıl yürüttüüğyle ilgili daha fazla bilgi için <a href="Internals.md">Dahililer</a> bilgilendirmesini okuyun. Eğer Picocrypt'in pratikteki güvenliğiyle ilgili endişeleriniz varsa, bu deponun ele geçirilmeyeceğine dair sizi temin ederim. Picocrypt'e bağlı tüm hesaplarda (GitHub, Google, Reddit, Discord, vb.) 2 faktörlü kimlik doğrulamayı (TOTP) etkinleştirdim, böylece Picocrypt'i kullanma konusunda kendinizi güvende hissedebilirsiniz. Ayrıca, Tüm bağımlılıkları ayrı bir hesapta (https://github.com/Picocrypt) çatallıyorum ve sadece değişikliklere göz attıktan ve herhangi bir güvenlik sorunu olmadığından emin olduğumda ana akışa çekiyorum.
 
-# Roadmap
-See <a href="Roadmap.md">Roadmap</a> for a list of new features and improvements that I'm considering.
+# Yol Haritası
+Üzerinde düşündüğüm yeni özellik ve geliştirmeler için <a href="Roadmap.md">Roadmap</a> bilgilendirmesini okuyun.
 
-# Community
-Here's some places where you can see the latest news about Picocrypt and get involved:
+# Topluluk
+Picocrypt ile ilgili en son haberleri görebileceğiniz ve dahil olabileceğiniz bazı yerler:
 <ul>
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
 	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
 </ul>
-Only trust these communities and be aware of scammers and hackers that might try to impersonate me and get you to download malicious software.
+Yalnızca bu topluluklara güvenin ve benim kimliğime bürünüp size kötü amaçlı yazılım indirtmeyi deneyebilecek dolandırıcılara ve bilgisayar korsanlarına karşı dikkatli olun.
 
-# Stargazers
+# Yıldız Çizelgesi
 [![Stargazers over time](https://starchart.cc/HACKERALERT/Picocrypt.svg)](https://starchart.cc/HACKERALERT/Picocrypt)
 
-# Contribution
-If you find a bug or have a feature request, please create an Issue. I'm open to collaborators, and all Issues and PRs are appreciated. If you find a security issue, please follow the instructions <a href="Security.md">here</a> to report it.
+# Katkı
+Eğer bir hata bulduysanız ya da özellik talebiniz varsa, lütfen bir Sorun girdisi (Issue) oluşturun. Ortaklık edebilecek çalışma arkadaşlarına açığım, ayrıca tüm Sorun girdilerinin ve çekme taleplerinin (Pull Requests) başım üstünde yeri var. Eğer bir güvenlik açığı tespit ettiyseniz, lütfen bildirmek için <a href="Security.md">buradaki</a> talimatları takip edin.
 
-# Donations
-If you find Picocrypt useful, consider supporting me on <a href="https://patreon.com/evansu">Patreon</a>. As I'm providing this software completely free of charge, I would love to have some supporters that will motivate me to continue my work on Picocrypt.
+# Bağışlar
+Eğer Picocrypt'i sevdiyseniz, <a href="https://patreon.com/evansu">Patreon</a> üzerinden beni desteklemeyi düşünebilirsiniz. Bu yazılımı tamamen ücretsiz olarak sağladığım için, Picocrypt üzerinde çalışmaya devam etmem için beni motive edecek bazı destekçilere sahip olmayı çok isterim.
 
-# Thank You's
-A huge thanks to the following list of five people, who were the first people to donate and support Picocrypt:
+# Teşekkürler
+Aşağıda listelenmiş olan beş kişiye, Picocrypt'e bağışta ve destekte bulunan ilk kişiler olmalarından ötürü çok teşekkür ederim:
 <ul>
 	<li>W.Graham</li>
 	<li>N. Chin</li>
@@ -74,10 +74,10 @@ A huge thanks to the following list of five people, who were the first people to
 	<li>E. Zahard</li>
 </ul>
 
-Also thanks to these people:
+Ayrıca bu kişilere de teşekkürü bir borç bilrim:
 <ul>
-	<li>Fuderal on Discord for helping me setup a Discord server</li>
-	<li>u/greenreddits for constant feedback and support</li>
-	<li>u/Tall_Escape for helping me test Picocrypt</li>
-	<li>samuel-lucas6 (on GitHub) for valuable feedback and support</li>
+	<li>Bir Discord sunucusu kurmamdaki yarımlarından ötürü Discord'dan Fuderal</li>
+	<li>Düzenli geri bildirim ve desteklerinden ötürü u/greenreddits</li>
+	<li>Picocrypt'ı test etmemdeki yardımlarından ötürü u/Tall_Escape</li>
+	<li>Değerli geri bildirim ve desteklerinden ötürü (GitHub'dan)samuel-lucas6</li>
 </ul>
