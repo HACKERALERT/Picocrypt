@@ -8,7 +8,12 @@
 	<li>Metadata is now Reed-Solomon encoded (everything bit of header data such as nonces and Poly1305s are RS-encoded)</li>
 	<li>Reed-Solomon checkbox is now enabled and Reed-Solomon works</li>
 	<li>Paranoid shredding now works on Windows</li>
+	<li>Fixed Windows zip extract error notice that doesn't appear in 7-Zip</li>
+	<li>Optional shred temporary files checkbox</li>
 	<li>Remove BLAKE3 from the checksum generator tab, as it has no practical use and requires a non-standard library</li>
+	<li>Improved user flow</li>
+	<li>Code optimizations</li>
+	<li>Many bug fixes/stability improvments</li>
 </ul>
 
 # v1.13 (Released 5/29/2021)
