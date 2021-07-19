@@ -1,4 +1,4 @@
-# v1.14 (Expected to be released in ~1 month)
+# v1.14 (ETA: ~ 3 weeks)
 <strong>v1.14 will unfortunately be incompatible with v1.13, but because I have appended the encryptor version to the encrypted data in v1.13, v1.14 and on will be able to tell you which version your data was encrypted with so that you can fetch the correct verion of Picocrypt. There are no security issues in any previous versions of Picocrypt.</strong>
 <ul>
 	<li>Add an window icon for Windows using Resource Hacker (GLFW_ICON)</li>
