@@ -8,6 +8,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 	<li>Secure password/mnemonic generator</li>
 	<li>Android/iOS support (thanks u/fzylqd), potentially via a web interface (thanks @Tutturuuu)</li>
 	<li>Full disk encryption (thanks u/playffy)</li>
+	<li>Tweakable Argon2 parameters</li>
 	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
 	<li>Hardware keys (thanks u/Tech99bananas)</li>
 	<li>CLI (thanks u/your_username)</li>
