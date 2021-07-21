@@ -193,10 +193,33 @@ func startUI(){
 									}),
 									giu.Button("Yes").Size(width/2-4,0).OnClick(func(){
 										giu.CloseCurrentPopup()
-										go work()
+										giu.OpenPopup(" ")
+										go func (){
+											work()
+											working = false
+											debug.FreeOSMemory()
+										}()
 									}),
 								).Build()
 							}),
+						),
+
+						// Show encryption/decryption progress with a modal
+						giu.PopupModal(" ").Layout(
+							// Close modal if not working (encryption/decryption done)
+							giu.Custom(func(){
+								if !working{
+									giu.CloseCurrentPopup()
+								}
+							}),
+							// Progress bar
+							giu.Row(
+								giu.ProgressBar(progress).Size(280,0).Overlay(progressInfo),
+								giu.Button("Cancel").Size(58,0).OnClick(func(){
+									working = false
+								}),
+							),
+							giu.Label(status),
 						),
 
 						// Label listing the input files and a button to clear them
@@ -217,17 +240,25 @@ func startUI(){
 							giu.InputText(&outputEntry).Size(outputWidth/dpi),
 							giu.Label(orLabel),
 							giu.Button("Choose").OnClick(func(){
-								file,_ := dialog.File().Title("Save as").Save()
+								file,_ := dialog.File().Title("Save output as...").Save()
 
 								// Return if user canceled the file dialog
 								if file==""{
 									return
 								}
 
-								// Remove the extra ".pcv" extension if necessary
-								if strings.HasSuffix(file,".pcv"){
-									file = file[:len(file)-4]
+								if len(allFiles)>1||len(onlyFolders)>0{
+									// Remove the extra ".zip.pcv" extension if necessary
+									if strings.HasSuffix(file,".zip.pcv"){
+										file = file[:len(file)-8]
+									}
+								}else{
+									// Remove the extra ".pcv" extension if necessary
+									if strings.HasSuffix(file,".pcv"){
+										file = file[:len(file)-4]
+									}
 								}
+
 								outputEntry = file
 							}).Size(64,0),
 						),
@@ -298,7 +329,11 @@ func startUI(){
 								return
 							}
 							if mode=="encrypt"{
-								outputFile = outputEntry+".pcv"
+								if len(allFiles)>1||len(onlyFolders)>0{
+									outputFile = outputEntry+".zip.pcv"
+								}else{
+									outputFile = outputEntry+".pcv"
+								}
 							}else{
 								outputFile = outputEntry
 							}
@@ -306,7 +341,12 @@ func startUI(){
 							if err==nil{
 								giu.OpenPopup("Confirmation")
 							}else{
-								go work()
+								giu.OpenPopup(" ")
+								go func (){
+									work()
+									working = false
+									debug.FreeOSMemory()
+								}()
 							}
 						}),
 
@@ -458,28 +498,6 @@ func startUI(){
 			}),
 		),
 	)
-	if working{
-		giu.SingleWindow().IsOpen(&working).Layout(
-			giu.Label("Tips:"),
-			giu.Label("    - Choose a strong password with more than 16 characters."),
-			giu.Label("    - Use a unique password that isn't used anywhere else."),
-			giu.Label("    - Trust no one but yourself and never give out your key."),
-			giu.Label("    - For highly sensitive files, encrypt them while offline."),
-			giu.Label("    - An antivirus can be beneficial to prevent keyloggers."),
-			giu.Label("    - Encrypt your root filesystem for maximal security."),
-			giu.Dummy(0,-50),
-			
-			// Progress bar
-			giu.Row(
-				giu.ProgressBar(progress).Size(-54,0).Overlay(progressInfo),
-				giu.Dummy(-59,0),
-				giu.Button("Cancel").Size(50,0).OnClick(func(){
-					working = false
-				}),
-			),
-			giu.Label(status),
-		)
-	}
 }
 
 // Handle files dropped into Picocrypt by user
@@ -512,20 +530,20 @@ func onDrop(names []string){
 				// Add the folder
 				onlyFolders = append(onlyFolders,names[0])
 
-				// Set 'outputEntry' to 'Encrypted.zip' in the same directory
-				outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted.zip")
+				// Set 'outputEntry' to 'Encrypted'
+				outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted")
 				
 				mode = "encrypt"
-				// Show the ".pcv" file extension
-				orLabel = ".pcv or"
-				outputWidth = 342
+				// Show the ".zip.pcv" file extension
+				orLabel = ".zip.pcv  or"
+				outputWidth = 317
 			}else{
 				files++
 				name := filepath.Base(names[0])
 
 				nums := []string{"0","1","2","3","4","5","6","7","8","9"}
 				endsNum := false
-				for _,i := range(nums){
+				for _,i := range nums{
 					if strings.HasSuffix(names[0],i){
 						endsNum = true
 					}
@@ -577,20 +595,19 @@ func onDrop(names []string){
 					outputEntry = names[0]
 
 					// Show the ".pcv" file extension
-					orLabel = ".pcv or"
-					outputWidth = 342
+					orLabel = ".pcv  or"
+					outputWidth = 338
 				}
 
 				// Add the file
 				onlyFiles = append(onlyFiles,names[0])
-
 				inputFile = names[0]
 			}
 		}else{
 			mode = "encrypt"
-			// Show the ".pcv" file extension
-			orLabel = ".pcv or"
-			outputWidth = 342
+			// Show the ".zip.pcv" file extension
+			orLabel = ".zip.pcv  or"
+			outputWidth = 317
 
 			// There are multiple dropped items, check each one
 			for _,name := range names{
@@ -626,13 +643,13 @@ func onDrop(names []string){
 				}
 			}
 
-			// Set 'outputEntry' to 'Encrypted.zip' in the same directory
-			outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted.zip")
+			// Set 'outputEntry' to 'Encrypted'
+			outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted")
 		}
 
 		// If there are folders that were dropped, recusively add all files into 'allFiles'
 		if folders>0{
-			for _,name := range(onlyFolders){
+			for _,name := range onlyFolders{
 				filepath.Walk(name,func(path string,_ os.FileInfo,_ error) error{
 					stat,_ := os.Stat(path)
 					if !stat.IsDir(){
@@ -655,7 +672,6 @@ func onDrop(names []string){
 // Start encryption/decryption
 func work(){
 	status = "Starting..."
-	debug.FreeOSMemory()
 	// Set some variables
 	working = true
 	//headerBroken := false
@@ -684,16 +700,20 @@ func work(){
 				rootDir = filepath.Dir(onlyFiles[0])
 			}
 
-			inputFile = outputEntry
+			inputFile = outputEntry+".zip"
+			outputFile = inputFile+".pcv"
 			//fmt.Println(inputFile)
 			file,_ := os.Create(inputFile)
 			
 			w := zip.NewWriter(file)
-			for i,path := range(allFiles){
+			for i,path := range allFiles{
 				if !working{
 					w.Close()
 					file.Close()
 					os.Remove(inputFile)
+					_status = "Operation cancelled by user."
+					_status_color = color.RGBA{0xff,0xff,0xff,255}
+					fast = _fast
 					return
 				}
 				progressInfo = fmt.Sprintf("%d/%d",i,len(allFiles))
@@ -937,7 +957,15 @@ func work(){
 		_status = "Operation cancelled by user."
 		_status_color = color.RGBA{0xff,0xff,0xff,255}
 		fast = _fast
-		debug.FreeOSMemory()
+		fin.Close()
+		fout.Close()
+		if mode=="encrypt"&&(len(allFiles)>1||len(onlyFolders)>0){
+			os.Remove(outputEntry+".zip")
+		}
+		if recombine{
+			os.Remove(inputFile)
+		}
+		os.Remove(outputFile)
 		return
 	}
 
@@ -971,14 +999,14 @@ func work(){
 		keyCorrect := true
 		keyfileCorrect := true
 		var tmp bool
-		for i,j := range(_keyHash){
+		for i,j := range _keyHash{
 			if keyHash[i]!=j{
 				keyCorrect = false
 				break
 			}
 		}
 		if keyfile{
-			for i,j := range(_khash_hash){
+			for i,j := range _khash_hash{
 				if khash_hash[i]!=j{
 					keyfileCorrect = false
 					break
@@ -993,7 +1021,6 @@ func work(){
 				kept = true
 			}else{
 				fin.Close()
-				working = false
 				if !keyCorrect{
 					_status = "The provided password is incorrect."
 				}else{
@@ -1005,7 +1032,7 @@ func work(){
 				if recombine{
 					os.Remove(inputFile)
 				}
-				debug.FreeOSMemory()
+				os.Remove(outputFile)
 				return
 			}
 		}
@@ -1017,7 +1044,7 @@ func work(){
 		// XOR key and keyfile
 		tmp := key
 		key = make([]byte,32)
-		for i,_ := range(key){
+		for i,_ := range key{
 			key[i] = tmp[i]^khash[i]
 		}
 		//fmt.Println("key",key)
@@ -1037,19 +1064,16 @@ func work(){
 		nonces = nonces[:len(nonces)-48]
 		var tmp []byte
 		var chunk []byte
-		for i,j := range(nonces){
+		for i,j := range nonces{
 			chunk = append(chunk,j)
 			if (i+1)%72==0{
 				chunk,_ = rsDecode(rs24,chunk)
-				for _,k := range(chunk){
+				for _,k := range chunk{
 					tmp = append(tmp,k)
 				}
 				chunk = nil
 			}
 		}
-		/*for _,j := range(_mac){
-			tmp = append(tmp,j)
-		}*/
 
 		var authentic bool
 		nonces,authentic = monocypher.Unlock(tmp,nonce,key,_mac)
@@ -1059,11 +1083,13 @@ func work(){
 			}else{
 				fin.Close()
 				fout.Close()
-				working = false
 				_status = "The file is either corrupted or intentionally modified."
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
 				fast = _fast
-				debug.FreeOSMemory()
+				if recombine{
+					os.Remove(inputFile)
+				}
+				os.Remove(outputFile)
 				return
 			}
 		}
@@ -1071,13 +1097,18 @@ func work(){
 	}
 	for{
 		if !working{
-			fin.Close()
-			fout.Close()
-			os.Remove(outputFile)
 			_status = "Operation cancelled by user."
 			_status_color = color.RGBA{0xff,0xff,0xff,255}
 			fast = _fast
-			debug.FreeOSMemory()
+			fin.Close()
+			fout.Close()
+			if mode=="encrypt"&&(len(allFiles)>1||len(onlyFolders)>0){
+				os.Remove(outputEntry+".zip")
+			}
+			if recombine{
+				os.Remove(inputFile)
+			}
+			os.Remove(outputFile)
 			return
 		}
 		//fmt.Println("Encrypt/decrypt loop")
@@ -1104,7 +1135,7 @@ func work(){
 		if mode=="encrypt"{
 			_nonce = make([]byte,24)
 			rand.Read(_nonce)
-			for _,i := range(_nonce){
+			for _,i := range _nonce{
 				nonces = append(nonces,i)
 			}
 		}else{
@@ -1143,7 +1174,6 @@ func work(){
 						fout.Close()
 						broken()
 						fast = _fast
-						debug.FreeOSMemory()
 						return
 					}
 				}
@@ -1161,7 +1191,6 @@ func work(){
 						fout.Close()
 						broken()
 						fast = _fast
-						debug.FreeOSMemory()
 						return
 					}
 				}
@@ -1189,6 +1218,9 @@ func work(){
 		speed := (float64(done)/elapsed)/1000000
 		eta := math.Abs(float64(total-int64(done))/(speed*1000000))
 		
+		if progress>1{
+			progress = 1
+		}
 		progressInfo = fmt.Sprintf("%.2f%%",progress*100)
 		
 		status = fmt.Sprintf("Working at %.2f MB/s (ETA: %.1fs)",speed,eta)
@@ -1206,7 +1238,7 @@ func work(){
 		//fmt.Println(_mac)
 		var chunk []byte
 
-		for i,j := range(tmp){
+		for i,j := range tmp{
 			chunk = append(chunk,j)
 			if (i+1)%24==0{
 				fout.Write(rsEncode(rs24,chunk))
@@ -1238,8 +1270,8 @@ func work(){
 		}
 		chunks := int(math.Ceil(float64(size)/float64(chunkSize)))
 		fin,_ := os.Open(outputFile)
+
 		for i:=0;i<chunks;i++{
-			//fmt.Println(fmt.Sprintf("%s.%d",outputFile,i))
 			fout,_ := os.Create(fmt.Sprintf("%s.%d",outputFile,i))
 			done := 0
 			for{
@@ -1253,14 +1285,15 @@ func work(){
 					fout.Close()
 					_status = "Operation cancelled by user."
 					_status_color = color.RGBA{0xff,0xff,0xff,255}
-					for _,j := range(splitted){
+					for _,j := range splitted{
 						os.Remove(j)
 					}
 					os.Remove(fmt.Sprintf("%s.%d",outputFile,i))
-					//fmt.Println("outputFile",outputFile)
+					if len(allFiles)>1||len(onlyFolders)>0{
+						os.Remove(outputEntry+".zip")
+					}
 					os.Remove(outputFile)
 					fast = _fast
-					debug.FreeOSMemory()
 					return
 				}
 				data = data[:read]
@@ -1281,6 +1314,7 @@ func work(){
 		if shredTemp{
 			progressInfo = ""
 			status = "Shredding temporary files..."
+			fmt.Println(outputFile)
 			shred([]string{outputFile}[:],false)
 		}else{
 			os.Remove(outputFile)
@@ -1292,13 +1326,14 @@ func work(){
 	}
 
 	// Delete the temporary zip file if user chooses to
-	if len(allFiles)>1{
+	if len(allFiles)>1||len(onlyFolders)>0{
 		if shredTemp{
 			progressInfo = ""
 			status = "Shredding temporary files..."
-			shred([]string{outputEntry}[:],false)
+			giu.Update()
+			shred([]string{outputEntry+".zip"}[:],false)
 		}else{
-			os.Remove(outputEntry)
+			os.Remove(outputEntry+".zip")
 		}
 	}
 
@@ -1315,7 +1350,6 @@ func work(){
 	kept = false
 	key = nil
 	status = "Ready."
-	debug.FreeOSMemory()
 	//fmt.Println("Exit goroutine")
 }
 
@@ -1325,7 +1359,7 @@ func shred(names []string,separate bool){
 	if separate{
 		shredOverlay = "Shredding..."
 	}
-	for _,name := range(names){
+	for _,name := range names{
 		filepath.Walk(name,func(path string,_ os.FileInfo,err error) error{
 			if err!=nil{
 				return nil
@@ -1337,7 +1371,7 @@ func shred(names []string,separate bool){
 			return nil
 		})
 	}
-	for _,name := range(names){
+	for _,name := range names{
 		shredding = name
 		if runtime.GOOS=="linux"||runtime.GOOS=="darwin"{
 			stat,_ := os.Stat(name)
@@ -1352,7 +1386,7 @@ func shred(names []string,separate bool){
 					if !stat.IsDir(){
 						if len(coming)==128{
 							var wg sync.WaitGroup
-							for i,j := range(coming){
+							for i,j := range coming{
 								wg.Add(1)
 								go func(wg *sync.WaitGroup,id int,j string){
 									defer wg.Done()
@@ -1381,7 +1415,7 @@ func shred(names []string,separate bool){
 					return nil
 				})
 				fmt.Println(coming)
-				for _,i := range(coming){
+				for _,i := range coming{
 					go func(){
 						cmd := exec.Command("")
 						if runtime.GOOS=="linux"{
@@ -1423,7 +1457,7 @@ func shred(names []string,separate bool){
 					if stat.IsDir(){
 						t := 0
 						files,_ := ioutil.ReadDir(path)
-						for _,f := range(files){
+						for _,f := range files{
 							if !f.IsDir(){
 								t++
 							}
@@ -1594,8 +1628,10 @@ func broken(){
 	working = false
 	_status = "The file is either corrupted or intentionally modified."
 	_status_color = color.RGBA{0xff,0x00,0x00,255}
+	if recombine{
+		os.Remove(inputFile)
+	}
 	os.Remove(outputFile)
-	debug.FreeOSMemory()
 }
 
 func rsEncode(rs *infectious.FEC,data []byte) []byte{
