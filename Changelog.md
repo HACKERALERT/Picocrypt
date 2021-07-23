@@ -7,6 +7,7 @@
 	<li>Cleaner code with plenty of comments for people taking a look</li>
 	<li>Metadata is now Reed-Solomon encoded (everything bit of header data such as nonces and Poly1305s are RS-encoded)</li>
 	<li>Reed-Solomon checkbox is now enabled and Reed-Solomon works</li>
+	<li>Implemented Dropbox's zxcvbn password strength checker</li>
 	<li>Paranoid shredding now works on Windows</li>
 	<li>Fixed Windows zip extract error notice that doesn't appear in 7-Zip (edit: it was a backslash and forwardslash issue)</li>
 	<li>Optional shred temporary files checkbox</li>
