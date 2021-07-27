@@ -37,11 +37,11 @@ Picocrypt is a very simple tool, and most users will understand how to use it in
 	<li><strong>File metadata</strong>: Use this to store notes, information, and text along with the file (it won't be encrypted). For example, you can put a description of the file before sending it to someone. When the person you sent it to drops the file into Picocrypt, your description will be shown to that person.</li>
 	<li><strong>Keep decrypted output even if it's corrupted or modified</strong>: Picocrypt automatically checks for integrity upon decryption. If the file has been modified or is corrupted, Picocrypt will automatically delete the output for the user's safety. If you want to keep the corrupted or modified data after decryption, check this option. Also, if this option is checked and the Reed-Solomon feature was used on the encrypted file, Picocrypt will attempt to recover as much of the file as possible during decryption, if it's corrupted.</li>
 	<li><strong>Securely shred the original file(s) and folder(s)</strong>: If checked, Picocrypt will use system internals to shred the input file(s). This method is more secure than just deleting the original file because the original file, in that case, can still be recovered by hackers using special software. Picocrypt securely deletes the original file making sure that it's impossible to retrieve the original file(s) after being shredded.</li>
-	<li><strong>Prevent corruption using Reed-Solomon</strong>: This feature is very useful if you are planning to archive important data on a cloud provider or external hard drive for a long time. If checked, Picocrypt will use the Reed-Solomon error correction code to add 13 extra bytes for every 128 bytes to prevent file corruption. This means that up to ~5% of your file can corrupt and Picocrypt will still be able to correct the errors and decrypt your files with no corruption. Obviously, if your file corrupts very badly (e.g., you dropped your hard drive), Picocrypt won't be able to fully recover your files, but it will try its best to recover what it can. Note that this option will slow down encryption and decryption by a small amount.</li>
+	<li><strong>Prevent corruption using Reed-Solomon</strong>: This feature is very useful if you are planning to archive important data on a cloud provider or external hard drive for a long time. If checked, Picocrypt will use the Reed-Solomon error correction code to add 13 extra bytes for every 128 bytes to prevent file corruption. This means that up to ~5% of your file can corrupt and Picocrypt will still be able to correct the errors and decrypt your files with no corruption. Of course, if your file corrupts very badly (e.g., you dropped your hard drive), Picocrypt won't be able to fully recover your files, but it will try its best to recover what it can. Note that this option will slow down encryption and decryption by a small amount.</li>
 </ul>
 
 # Security
-For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the practical security of Picocrypt, let me assure you that this repository won't be hijacked. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Discord, etc.), so you can feel confident about using Picocrypt. Also, I fork all dependencies in a separate account (https://github.com/Picocrypt) and fetch upstream only when I have taken a look at the changes and am confident that there aren't any security issues.
+For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my own forks of dependencies and I fetch upstream only when I have taken a look at the changes and am confident that there aren't any security issues. You can feel confident about using Picocrypt.
 
 # Roadmap
 See <a href="Roadmap.md">Roadmap</a> for a list of new features and improvements that I'm considering.
@@ -64,6 +64,12 @@ If you find a bug or have a feature request, please create an Issue. I'm open to
 If you find Picocrypt useful, consider supporting me on <a href="https://patreon.com/evansu">Patreon</a>. As I'm providing this software completely free of charge, I would love to have some supporters that will motivate me to continue my work on Picocrypt.
 
 # Thank You's
+A huge thanks to my fellow supporters on Patreon:
+<ul>
+	<li>Frederick Doe</li>
+</ul>
+You are the people that inspire me to work on Picocrypt and provide it free of charge to everyone!
+
 A huge thanks to the following list of five people, who were the first people to donate and support Picocrypt:
 <ul>
 	<li>W.Graham</li>
