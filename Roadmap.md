@@ -3,6 +3,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # Under consideration
 <ul>
+	<li><strong>Patron request (higher priority)</strong>: Add to Fedora repos</li>
 	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
 	<li>Add to AUR (Arch User Repo) (thanks u/blackrosae)</li>
 	<li>Secure password/mnemonic generator</li>
