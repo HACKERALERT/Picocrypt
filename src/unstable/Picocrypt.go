@@ -945,7 +945,12 @@ func work(){
 		fin.Read(version)
 		version,err = rsDecode(rs5,version)
 		_ = err
-		//fmt.Println("version",err,string(version))
+		if string(version)=="v1.13"{
+			_status = "Please use Picocrypt v1.13 to decrypt this file."
+			_status_color = color.RGBA{0xff,0x00,0x00,255}
+			fin.Close()
+			return
+		}
 
 		tmp := make([]byte,30)
 		fin.Read(tmp)
