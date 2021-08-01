@@ -131,7 +131,8 @@ var fast bool
 var kept = false // If a file was corrupted/modified, but the output was kept
 
 // Reed-Solomon encoders
-var rs5,_ = infectious.NewFEC(5,15) // 5 data shards, 15 total -> 10 parity shards
+var rs1,_ = infectious.NewFEC(1,3) // 1 data shards, 3 total -> 2 parity shards
+var rs5,_ = infectious.NewFEC(5,15)
 var rs10,_ = infectious.NewFEC(10,30)
 var rs16,_ = infectious.NewFEC(16,48)
 var rs24,_ = infectious.NewFEC(24,72)
@@ -630,10 +631,20 @@ func onDrop(names []string){
 					fin.Read(tmp)
 					tmp,_ = rsDecode(rs10,tmp)
 					metadataLength,_ := strconv.Atoi(string(tmp))
-					//fmt.Println(metadataLength)
-					tmp = make([]byte,metadataLength)
+
+					tmp = make([]byte,metadataLength*3)
 					fin.Read(tmp)
-					metadata = string(tmp)
+					metadata = ""
+
+					for i:=0;i<metadataLength*3;i+=3{
+						fmt.Println(tmp[i:i+3])
+						t,err := rsDecode(rs1,tmp[i:i+3])
+						if err!=nil{
+							metadata = "Metadata is corrupted."
+							break
+						}
+						metadata += string(t)
+					}
 
 					flags := make([]byte,15)
 					fin.Read(flags)
@@ -881,7 +892,12 @@ func work(){
 		fout.Write(metadataLength)
 		
 		// Write the actual metadata
-		fout.Write([]byte(metadata))
+		//fout.Write([]byte(metadata))
+
+		// Reed-Solomon-encode the metadata and write to file
+		for _,i := range []byte(metadata){
+			fout.Write(rsEncode(rs1,[]byte{i}))
+		}
 
 		flags := make([]byte,5)
 		if fast{
@@ -944,7 +960,7 @@ func work(){
 		//fmt.Println("metadataLength",metadataLength)
 		//fmt.Println("metadataLength",err,metadataLength)
 
-		fin.Read(make([]byte,metadataLength))
+		fin.Read(make([]byte,metadataLength*3))
 
 		flags := make([]byte,15)
 		fin.Read(flags)
@@ -982,9 +998,9 @@ func work(){
 		
 		var _tmp float64
 		if fast{
-			_tmp = math.Ceil(float64(total-int64(metadataLength+468))/float64(1048664))
+			_tmp = math.Ceil(float64(total-int64(metadataLength*3+468))/float64(1048664))
 		}else{
-			_tmp = math.Ceil(float64(total-int64(metadataLength+468))/float64(1048696))
+			_tmp = math.Ceil(float64(total-int64(metadataLength*3+468))/float64(1048696))
 		}
 		nonces = make([]byte,int(_tmp*72)+48)
 		fin.Read(nonces)
@@ -1158,7 +1174,8 @@ func work(){
 		}
 		//fmt.Println("UNENCRYPTED NONCES: ",nonces)
 	}
-	crc_blake2b,_ := blake2b.New256(nil)
+
+	crc_blake2b := sha3.New256()
 	for{
 		if !working{
 			_status = "Operation cancelled by user."
@@ -1222,7 +1239,6 @@ func work(){
 
 			//fout.Write(data)
 		}else{
-			//fmt.Println("DECODE LOOP")
 			//crc.Write(data)
 			if fast{
 				data,err = cipher.Open(nil,_nonce,data,nil)
@@ -1257,10 +1273,9 @@ func work(){
 				}
 			}
 			fout.Write(data)
-			//fmt.Println(authentic)
-			//fmt.Println("DECRYPTED DATA: ",data)
 		}
-		
+	
+		// Update statistics
 		if mode=="encrypt"{
 			done += 1048576
 		}else{
@@ -1271,32 +1286,26 @@ func work(){
 			}
 		}
 		counter++
-
 		progress = float32(done)/float32(total)
-		
 		elapsed:= float64(int64(time.Now().Sub(startTime)))/float64(1000000000)
-		
 		speed := (float64(done)/elapsed)/1000000
 		eta := math.Abs(float64(total-int64(done))/(speed*1000000))
 		
 		if progress>1{
 			progress = 1
 		}
+
 		progressInfo = fmt.Sprintf("%.2f%%",progress*100)
-		
 		status = fmt.Sprintf("Working at %.2f MB/s (ETA: %.1fs)",speed,eta)
-		
 		giu.Update()
 	}
 
 	if mode=="encrypt"{
-		//fmt.Println("'nonces' before RS: ",nonces)
-		fout.Seek(int64(180+len(metadata)),0)
+		fout.Seek(int64(180+len(metadata)*3),0)
 		fout.Write(rsEncode(rs64,keyHash))
 		fout.Write(rsEncode(rs32,khash_hash))
 
 		_mac,tmp := monocypher.Lock(nonces,nonce,key) 
-		//fmt.Println(_mac)
 		var chunk []byte
 
 		for i,j := range tmp{
@@ -1313,15 +1322,16 @@ func work(){
 	fin.Close()
 	fout.Close()
 
+	// Split files into chunks
 	if split{
 		status = "Splitting file..."
 		stat,_ := os.Stat(outputFile)
 		size := stat.Size()
 		finished := 0
 		var splitted []string
-		//fmt.Println(size)
 		chunkSize,_ := strconv.Atoi(splitSize)
-		//fmt.Println(splitSelected)
+
+		// User can choose KiB, MiB, and GiB
 		if splitSelected==0{
 			chunkSize *= 1024
 		}else if splitSelected==1{
@@ -1346,6 +1356,8 @@ func work(){
 					fout.Close()
 					_status = "Operation cancelled by user."
 					_status_color = color.RGBA{0xff,0xff,0xff,255}
+
+					// If user cancels, remove the unfinished files
 					for _,j := range splitted{
 						os.Remove(j)
 					}
@@ -1381,11 +1393,12 @@ func work(){
 		}
 	}
 
+	// Remove the temporary file used to combine a splitted Picocrypt volume
 	if recombine{
 		os.Remove(inputFile)
 	}
 
-	// Delete the temporary zip file if user chooses to
+	// Delete the temporary zip file if user wishes
 	if len(allFiles)>1||len(onlyFolders)>0{
 		if shredTemp{
 			progressInfo = ""
@@ -1397,8 +1410,9 @@ func work(){
 		}
 	}
 
-
 	resetUI()
+
+	// If user chose to keep a corrupted/modified file, let them know
 	if kept{
 		_status = "The input is corrupted and/or modified. Please be careful."
 		_status_color = color.RGBA{0xff,0xff,0x00,255}
@@ -1406,17 +1420,19 @@ func work(){
 		_status = "Completed."
 		_status_color = color.RGBA{0x00,0xff,0x00,255}
 	}
+
+	// Clear UI state
 	working = false
 	kept = false
 	key = nil
 	status = "Ready."
-	//fmt.Println("Exit goroutine")
 }
 
-// Generate file checksums
+// Generate file checksums (pretty straightforward)
 func generateChecksums(file string){
 	fin,_ := os.Open(file)
 
+	// Clear UI state
 	cs_md5 = ""
 	cs_sha1 = ""
 	cs_sha256 = ""
@@ -1442,12 +1458,15 @@ func generateChecksums(file string){
 	if blake2s_selected{
 		cs_blake2s = "Calculating..."
 	}
+
+	// Create the checksum objects
 	crc_md5 := md5.New()
 	crc_sha1 := sha1.New()
 	crc_sha256 := sha256.New()
 	crc_sha3_256 := sha3.New256()
 	crc_blake2b,_ := blake2b.New256(nil)
 	crc_blake2s,_ := blake2s.New256(nil)
+
 	stat,_ := os.Stat(file)
 	total := stat.Size()
 	var done int64 = 0
@@ -1505,7 +1524,7 @@ func generateChecksums(file string){
 	giu.Update()
 }
 
-// Recursively shred all files passed in as 'names'
+// Recursively shred all file(s) and folder(s) passed in as 'names'
 func shred(names []string,separate bool){
 	shredTotal = 0
 	shredDone = 0
@@ -1558,9 +1577,7 @@ func shred(names []string,separate bool){
 									}else{
 										cmd = exec.Command("rm","-rfP",j)
 									}
-									output,err := cmd.Output()
-									fmt.Println(err)
-									fmt.Println(output)
+									cmd.Run()
 									shredding = j
 									shredDone++
 									shredUpdate(separate)
@@ -1583,9 +1600,7 @@ func shred(names []string,separate bool){
 						}else{
 							cmd = exec.Command("rm","-rfP",i)
 						}
-						output,err := cmd.Output()
-						fmt.Println(err)
-						fmt.Println(output)
+						cmd.Run()
 						shredding = i
 						shredDone++
 						shredUpdate(separate)
@@ -1632,17 +1647,17 @@ func shred(names []string,separate bool){
 					}
 					return nil
 				})
+				// sdelete64 doesn't delete the empty folder, so I'll do it manually
 				os.RemoveAll(name)
 			}else{
-				o,e := exec.Command(sdelete64path,name,"-p","4").Output()
-				fmt.Println(string(o),e)
+				exec.Command(sdelete64path,name,"-p","4").Run()
 				shredDone++
 				shredUpdate(separate)
 			}
 		}
-		fmt.Println(name)
 		giu.Update()
 	}
+	// Clear UI state
 	shredding = "Ready."
 	shredProgress = 0
 	shredOverlay = ""
