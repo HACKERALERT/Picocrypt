@@ -1,19 +1,29 @@
-# v1.14 (ETA: ~ 3 weeks)
-<strong>v1.14 will unfortunately be incompatible with v1.13, but because I have appended the encryptor version to the encrypted data in v1.13, v1.14 and on will be able to tell you which version your data was encrypted with so that you can fetch the correct verion of Picocrypt. There are no security issues in any previous versions of Picocrypt.</strong>
+# v1.15 (future)
 <ul>
-	<li>Add an window icon for Windows using Resource Hacker (GLFW_ICON)</li>
+	<li>Add cancel button to file shredder</li>
+</ul>
+
+# v1.14 (ETA: ~ 16 days)
+<strong>v1.14 will unfortunately be incompatible with v1.13, as I have dropped Poly1305 in favour of an HMAC. Because I have appended the encryptor version to the encrypted data in v1.13, however, v1.14 and on will be able to tell you which version your data was encrypted with so that you can fetch the correct verion of Picocrypt. There are no security issues in any previous versions of Picocrypt as long as you use a strong password.</strong>
+<ul>
+	<li>Low-severity security fix for the recently discovered <a href="https://eprint.iacr.org/2020/1491.pdf">partitioning oracle attacks</a></li>
+	<li>Move from Monocypher to Go's standard supplemental ChaCha20 in favour of being stateful</li>
+	<li>Removed ~100 lines of unnecessary code now that Picocrypt uses Go's ChaCha20 (cleaner and stabler code)</li>
+	<li>Added window icons</li>
 	<li>Switch to a new Reed-Solomon encoder that automatically corrects errors</li>
 	<li>Add a "Paranoid mode", which will use the Serpent cipher in addition to ChaCha20</li>
 	<li>Cleaner code with plenty of comments for people taking a look</li>
 	<li>Metadata is now Reed-Solomon encoded (everything bit of header data such as nonces and Poly1305s are RS-encoded)</li>
 	<li>Reed-Solomon checkbox is now enabled and Reed-Solomon works</li>
 	<li>Implemented Dropbox's zxcvbn password strength checker</li>
-	<li>Paranoid shredding now works on Windows</li>
+	<li>Removed paranoid shredding as it is too hard to implement correctly and not cross platform</li>
 	<li>Fixed Windows zip extract error notice that doesn't appear in 7-Zip (edit: it was a backslash and forwardslash issue)</li>
 	<li>Optional shred temporary files checkbox</li>
 	<li>Remove BLAKE3 from the checksum generator tab, as it has no practical use and requires a non-standard library</li>
-	<li>Improved user flow</li>
-	<li>Code optimizations</li>
+	<li>Advanced options are shown dynamically depending on whether encrypting or decrypting</li>
+	<li>Window closing disabled during encryption/decryption/shredding to prevent leakage of temporary files</li>
+	<li>Improved user flow as well as fix UI bugs</li>
+	<li>Code optimizations, better commenting, cleaner code</li>
 	<li>Many bug fixes/stability improvments</li>
 </ul>
 
