@@ -23,8 +23,10 @@ import (
 	"math"
 	"time"
 	"sync"
+	"hash"
 	"image"
 	"bytes"
+	"regexp"
 	"strings"
 	"strconv"
 	"runtime"
@@ -630,12 +632,31 @@ func onDrop(names []string){
 					// Open input file in read-only mode
 					fin,_ := os.Open(names[0])
 
+					// Use regex to test if input is a valid Picocrypt volume
+					tmp := make([]byte,30)
+					fin.Read(tmp)
+					if string(tmp[:5])=="v1.13"{
+						resetUI()
+						_status = "Please use Picocrypt v1.13 to decrypt this file."
+						_status_color = color.RGBA{0xff,0x00,0x00,255}
+						fin.Close()
+						return
+					}
+					if valid,_:=regexp.Match(`^v\d\.\d{2}.{10}0?\d+`,tmp);!valid{
+						resetUI()
+						_status = "This doesn't seem to be a Picocrypt file."
+						_status_color = color.RGBA{0xff,0x00,0x00,255}
+						fin.Close()
+						return
+					}
+					fin.Seek(0,0)
+
 					// Read metadata and insert into box
 					var err error
 					fin.Read(make([]byte,15))
-					tmp := make([]byte,30)
+					tmp = make([]byte,15)
 					fin.Read(tmp)
-					tmp,err = rsDecode(rs10,tmp)
+					tmp,err = rsDecode(rs5,tmp)
 
 					if err==nil{
 						metadataLength,_ := strconv.Atoi(string(tmp))
@@ -644,7 +665,7 @@ func onDrop(names []string){
 						metadata = ""
 
 						for i:=0;i<metadataLength*3;i+=3{
-							fmt.Println(tmp[i:i+3])
+							//fmt.Println(tmp[i:i+3])
 							t,err := rsDecode(rs1,tmp[i:i+3])
 							if err!=nil{
 								metadata = "Metadata is corrupted."
@@ -658,11 +679,9 @@ func onDrop(names []string){
 
 					flags := make([]byte,15)
 					fin.Read(flags)
-					flags,_ = rsDecode(rs5,flags)
-
-					// If not a Picocrypt file, Reed-Solomon will fail
-					if len(flags)==0{
-						_status = "This doesn't seem to be a Picocrypt file."
+					flags,err = rsDecode(rs5,flags)
+					if err!=nil{
+						_status = "File is corrupt and cannot be decrypted."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
 						return
 					}
@@ -891,9 +910,11 @@ func work(){
 		fout.Write(rsEncode(rs5,[]byte(version)))
 
 		// Encode the length of the metadata with Reed-Solomon
-		metadataLength := []byte(fmt.Sprintf("%010d",len(metadata)))
+		metadataLength := []byte(fmt.Sprintf("%05d",len(metadata)))
 		//fmt.Println("metadataLength:",metadataLength)
-		metadataLength = rsEncode(rs10,metadataLength)
+		metadataLength = rsEncode(rs5,metadataLength)
+
+		fmt.Println(metadataLength)
 		
 		// Write the length of the metadata to file
 		fout.Write(metadataLength)
@@ -954,17 +975,11 @@ func work(){
 		giu.Update()
 		version := make([]byte,15)
 		fin.Read(version)
-		version,err1 = rsDecode(rs5,version)
-		if string(version)=="v1.13"{
-			_status = "Please use Picocrypt v1.13 to decrypt this file."
-			_status_color = color.RGBA{0xff,0x00,0x00,255}
-			fin.Close()
-			return
-		}
+		_,err1 = rsDecode(rs5,version)
 
-		tmp := make([]byte,30)
+		tmp := make([]byte,15)
 		fin.Read(tmp)
-		tmp,err2 = rsDecode(rs10,tmp)
+		tmp,err2 = rsDecode(rs5,tmp)
 		metadataLength,_ := strconv.Atoi(string(tmp))
 
 		fin.Read(make([]byte,metadataLength*3))
@@ -1001,7 +1016,14 @@ func work(){
 
 		// Is there a better way?
 		if err1!=nil||err2!=nil||err3!=nil||err4!=nil||err5!=nil||err6!=nil||err7!=nil||err8!=nil||err9!=nil{
-			fmt.Println("Header error")
+			if keep{
+				kept = true
+			}else{
+				_status = "The header is corrupt and the file cannot be decrypted."
+				_status_color = color.RGBA{0xff,0x00,0x00,255}
+				fin.Close()
+				return
+			}
 		}
 	}
 
@@ -1123,13 +1145,20 @@ func work(){
 	done := 0
 	counter := 0
 	startTime := time.Now()
-
 	cipher,_ := chacha20.NewUnauthenticatedCipher(key,nonce)
 
+	// Use HKDF-SHA3 to generate a subkey
+	var mac hash.Hash
 	subkey := make([]byte,32)
 	hkdf := hkdf.New(sha3.New256,key,hkdfSalt,nil)
 	hkdf.Read(subkey)
-	mac := hmac.New(sha3.New512,subkey)
+	if fast{
+		// Keyed BLAKE2b
+		mac,_ = blake2b.New512(subkey)
+	}else{
+		// HMAC-SHA3
+		mac = hmac.New(sha3.New512,subkey)
+	}
 	for{
 		if !working{
 			_status = "Operation cancelled by user."
@@ -1185,7 +1214,7 @@ func work(){
 	}
 
 	if mode=="encrypt"{
-		fout.Seek(int64(276+len(metadata)*3),0)
+		fout.Seek(int64(261+len(metadata)*3),0)
 		fout.Write(rsEncode(rs64,keyHash))
 		fout.Write(rsEncode(rs32,khash_hash))
 		fout.Write(rsEncode(rs64,mac.Sum(nil)))
@@ -1201,6 +1230,7 @@ func work(){
 			}
 		}
 	}
+	fmt.Println(mac.Sum(nil),fileMac)
 	
 	fin.Close()
 	fout.Close()
