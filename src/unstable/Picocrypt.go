@@ -36,23 +36,25 @@ import (
 	"encoding/hex"
 	"path/filepath"
 
-	// Reed-Solomon
-	"github.com/HACKERALERT/infectious" // v0.0.0-20210730231340-8af02cb9ed0a
-
 	// Cryptography
 	"crypto/rand"
+	"crypto/hmac"
+	"crypto/subtle"
 	"crypto/md5"
 	"crypto/sha1"
 	"crypto/sha256"
 	"golang.org/x/crypto/argon2"
+	"golang.org/x/crypto/hkdf"
 	"golang.org/x/crypto/sha3"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
-	"golang.org/x/crypto/chacha20poly1305"
-	"github.com/HACKERALERT/Picocrypt/src/monocypher"
+	"golang.org/x/crypto/chacha20"
 
 	// GUI
 	"github.com/AllenDang/giu"
+
+	// Reed-Solomon
+	"github.com/HACKERALERT/infectious" // v0.0.0-20210730231340-8af02cb9ed0a
 
 	// Helpers
 	"github.com/HACKERALERT/clipboard" // v0.1.5-0.20210716140604-61d96bf4fc94
@@ -119,7 +121,7 @@ var shredding = "Ready."
 var password string
 var cPassword string // Confirm password text entry string variable
 var keyfilePath string
-var keyfileLabel = "Use a keyfile"
+var keyfileLabel = "Use a keyfile (experimental)"
 var metadata string
 var shredTemp bool
 var serpent bool
@@ -193,11 +195,13 @@ func startUI(){
 								}),
 								giu.Button("Yes").Size(100,0).OnClick(func(){
 									giu.CloseCurrentPopup()
+									giu.Update()
 									giu.OpenPopup(" ")
 									go func (){
 										work()
 										working = false
 										debug.FreeOSMemory()
+										giu.Update()
 									}()
 								}),
 							),
@@ -356,7 +360,7 @@ func startUI(){
 								giu.Row(
 									giu.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
 									giu.Button("?").Size(24,25).OnClick(func(){
-										browser.OpenURL("https://bit.ly/reedsolomonwikipedia")
+										browser.OpenURL("https://bit.ly/3A2V7LR")
 									}),
 								).Build()
 								giu.Row(
@@ -400,6 +404,7 @@ func startUI(){
 									work()
 									working = false
 									debug.FreeOSMemory()
+									giu.Update()
 								}()
 							}
 						}),
@@ -626,24 +631,29 @@ func onDrop(names []string){
 					fin,_ := os.Open(names[0])
 
 					// Read metadata and insert into box
+					var err error
 					fin.Read(make([]byte,15))
 					tmp := make([]byte,30)
 					fin.Read(tmp)
-					tmp,_ = rsDecode(rs10,tmp)
-					metadataLength,_ := strconv.Atoi(string(tmp))
+					tmp,err = rsDecode(rs10,tmp)
 
-					tmp = make([]byte,metadataLength*3)
-					fin.Read(tmp)
-					metadata = ""
+					if err==nil{
+						metadataLength,_ := strconv.Atoi(string(tmp))
+						tmp = make([]byte,metadataLength*3)
+						fin.Read(tmp)
+						metadata = ""
 
-					for i:=0;i<metadataLength*3;i+=3{
-						fmt.Println(tmp[i:i+3])
-						t,err := rsDecode(rs1,tmp[i:i+3])
-						if err!=nil{
-							metadata = "Metadata is corrupted."
-							break
+						for i:=0;i<metadataLength*3;i+=3{
+							fmt.Println(tmp[i:i+3])
+							t,err := rsDecode(rs1,tmp[i:i+3])
+							if err!=nil{
+								metadata = "Metadata is corrupted."
+								break
+							}
+							metadata += string(t)
 						}
-						metadata += string(t)
+					}else{
+						metadata = "Metadata is corrupted."
 					}
 
 					flags := make([]byte,15)
@@ -752,13 +762,14 @@ func work(){
 	//reedsoloFixed := 0
 	//reedsoloErrors := 0
 	var salt []byte
+	var hkdfSalt []byte
 	var nonce []byte
 	var keyHash []byte
 	var _keyHash []byte
 	var khash []byte
 	var khash_hash []byte = make([]byte,32)
 	var _khash_hash []byte
-	var nonces []byte
+	var fileMac []byte
 	
 	// Set the output file based on mode
 	if mode=="encrypt"{
@@ -854,17 +865,12 @@ func work(){
 		progressInfo = ""
 	}
 	
-	//fmt.Println(inputFile)
 	stat,_ := os.Stat(inputFile)
 	total := stat.Size()
-	//fmt.Println(total)
 	
 	// Open input file in read-only mode
 	fin,_ := os.Open(inputFile)
-	
 	var fout *os.File
-	
-	//fmt.Println(mode)
 
 	// If encrypting, generate values; If decrypting, read values from file
 	if mode=="encrypt"{
@@ -878,6 +884,7 @@ func work(){
 
 		// Argon2 salt and XChaCha20 nonce
 		salt = make([]byte,16)
+		hkdfSalt = make([]byte,32)
 		nonce = make([]byte,24)
 		
 		// Write version to file
@@ -890,9 +897,6 @@ func work(){
 		
 		// Write the length of the metadata to file
 		fout.Write(metadataLength)
-		
-		// Write the actual metadata
-		//fout.Write([]byte(metadata))
 
 		// Reed-Solomon-encode the metadata and write to file
 		for _,i := range []byte(metadata){
@@ -910,16 +914,18 @@ func work(){
 		flags = rsEncode(rs5,flags)
 		fout.Write(flags)
 
-		// Fill salt and nonce with Go's CSPRNG
+		// Fill salts and nonce with Go's CSPRNG
 		rand.Read(salt)
+		rand.Read(hkdfSalt)
 		rand.Read(nonce)
-		
-		//fmt.Println("salt: ",salt)
-		//fmt.Println("nonce: ",nonce)
 
 		// Encode salt with Reed-Solomon and write to file
 		_salt := rsEncode(rs16,salt)
 		fout.Write(_salt)
+
+		// Encode HKDF salt with Reed-Solomon and write to file
+		_hkdfSalt := rsEncode(rs32,hkdfSalt)
+		fout.Write(_hkdfSalt)
 
 		// Encode nonce with Reed-Solomon and write to file
 		tmp := rsEncode(rs24,nonce)
@@ -931,21 +937,24 @@ func work(){
 		// Write placeholder for hash of hash of keyfile
 		fout.Write(make([]byte,96))
 
-		
-		pairs := int(math.Ceil(float64(total)/1048576))
-		
-		offset := 72*pairs+48
-		
-		// Write placeholder for nonce/Poly1305 pairs
-		fout.Write(make([]byte,offset))
+		// Write placeholder for HMAC-BLAKE2b/HMAC-SHA3 of file
+		fout.Write(make([]byte,192))
 	}else{
-		var err error
+		var err1 error
+		var err2 error
+		var err3 error
+		var err4 error
+		var err5 error
+		var err6 error
+		var err7 error
+		var err8 error
+		var err9 error
+
 		status = "Reading values..."
 		giu.Update()
 		version := make([]byte,15)
 		fin.Read(version)
-		version,err = rsDecode(rs5,version)
-		_ = err
+		version,err1 = rsDecode(rs5,version)
 		if string(version)=="v1.13"{
 			_status = "Please use Picocrypt v1.13 to decrypt this file."
 			_status_color = color.RGBA{0xff,0x00,0x00,255}
@@ -955,64 +964,54 @@ func work(){
 
 		tmp := make([]byte,30)
 		fin.Read(tmp)
-		tmp,err = rsDecode(rs10,tmp)
+		tmp,err2 = rsDecode(rs10,tmp)
 		metadataLength,_ := strconv.Atoi(string(tmp))
-		//fmt.Println("metadataLength",metadataLength)
-		//fmt.Println("metadataLength",err,metadataLength)
 
 		fin.Read(make([]byte,metadataLength*3))
 
 		flags := make([]byte,15)
 		fin.Read(flags)
-		flags,err = rsDecode(rs5,flags)
-		//fmt.Println("flags",flags)
-		//fmt.Println("flags",err,flags)
+		flags,err3 = rsDecode(rs5,flags)
 		fast = flags[0]==1
 		keyfile = flags[1]==1
 
 		salt = make([]byte,48)
 		fin.Read(salt)
-		salt,err = rsDecode(rs16,salt)
-		//fmt.Println("salt",err,salt)
+		salt,err4 = rsDecode(rs16,salt)
+
+		hkdfSalt = make([]byte,96)
+		fin.Read(hkdfSalt)
+		hkdfSalt,err5 = rsDecode(rs32,hkdfSalt)
 		
 		nonce = make([]byte,72)
 		fin.Read(nonce)
-		nonce,err = rsDecode(rs24,nonce)
-		//fmt.Println("nonce",err,nonce)
-		
-		//fmt.Println("salt: ",salt)
-		//fmt.Println("nonce: ",nonce)
+		nonce,err6 = rsDecode(rs24,nonce)
 		
 		_keyHash = make([]byte,192)
 		fin.Read(_keyHash)
-		//fmt.Println("ud",_keyHash)
-		_keyHash,err = rsDecode(rs64,_keyHash)
-		//fmt.Println("_keyHash",keyHash)
-		//fmt.Println("_keyHash",err)
+		_keyHash,err7 = rsDecode(rs64,_keyHash)
 		
 		_khash_hash = make([]byte,96)
 		fin.Read(_khash_hash)
-		_khash_hash,_ = rsDecode(rs32,_khash_hash)
-		//fmt.Println("crcHash",crcHash)
-		//fmt.Println("_khash_hash",err)
-		
-		var _tmp float64
-		if fast{
-			_tmp = math.Ceil(float64(total-int64(metadataLength*3+468))/float64(1048664))
-		}else{
-			_tmp = math.Ceil(float64(total-int64(metadataLength*3+468))/float64(1048696))
+		_khash_hash,err8 = rsDecode(rs32,_khash_hash)
+
+		fileMac = make([]byte,192)
+		fin.Read(fileMac)
+		fileMac,err9 = rsDecode(rs64,fileMac)
+
+		// Is there a better way?
+		if err1!=nil||err2!=nil||err3!=nil||err4!=nil||err5!=nil||err6!=nil||err7!=nil||err8!=nil||err9!=nil{
+			fmt.Println("Header error")
 		}
-		nonces = make([]byte,int(_tmp*72)+48)
-		fin.Read(nonces)
-		//fmt.Println("Nonces: ",nonces)
 	}
+
 	
-	giu.Update()
 	status = "Deriving key..."
 	progress = 0
 	progressInfo = ""
+	giu.Update()
 	
-	// Derive encryption/decryption key
+	// Derive encryption/decryption key and subkeys
 	var key []byte
 	if fast{
 		key = argon2.IDKey(
@@ -1053,7 +1052,6 @@ func work(){
 	if keyfile{
 		kin,_ := os.Open(keyfilePath)
 		kstat,_ := os.Stat(keyfilePath)
-		//fmt.Println(kstat.Size())
 		kbytes := make([]byte,kstat.Size())
 		kin.Read(kbytes)
 		kin.Close()
@@ -1064,34 +1062,25 @@ func work(){
 		khash_sha3 := sha3.New256()
 		khash_sha3.Write(khash)
 		khash_hash = khash_sha3.Sum(nil)
-		//fmt.Println("khash",khash)
-		//fmt.Println("khash_hash",khash_hash)
 	}
 	
-	//key = make([]byte,32)
-	//fmt.Println("output",outputFile)
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
 	keyHash = sha3_512.Sum(nil)
-	//fmt.Println("keyHash: ",keyHash)
+
+	//fmt.Println(keyHash,_keyHash)
 	
 	// Check is password is correct
 	if mode=="decrypt"{
 		keyCorrect := true
 		keyfileCorrect := true
 		var tmp bool
-		for i,j := range _keyHash{
-			if keyHash[i]!=j{
-				keyCorrect = false
-				break
-			}
+		if subtle.ConstantTimeCompare(keyHash,_keyHash)==0{
+			keyCorrect = false
 		}
 		if keyfile{
-			for i,j := range _khash_hash{
-				if khash_hash[i]!=j{
-					keyfileCorrect = false
-					break
-				}
+			if subtle.ConstantTimeCompare(khash_hash,_khash_hash)==0{
+				keyfileCorrect = false
 			}
 			tmp = !keyCorrect||!keyfileCorrect
 		}else{
@@ -1135,47 +1124,12 @@ func work(){
 	counter := 0
 	startTime := time.Now()
 
-	cipher,_ := chacha20poly1305.NewX(key)
-	
-	if mode=="decrypt"{
-		_mac := nonces[len(nonces)-48:]
-		_mac,_ = rsDecode(rs16,_mac)
-		//fmt.Println("_mac ",_mac)
-		nonces = nonces[:len(nonces)-48]
-		var tmp []byte
-		var chunk []byte
-		for i,j := range nonces{
-			chunk = append(chunk,j)
-			if (i+1)%72==0{
-				chunk,_ = rsDecode(rs24,chunk)
-				for _,k := range chunk{
-					tmp = append(tmp,k)
-				}
-				chunk = nil
-			}
-		}
+	cipher,_ := chacha20.NewUnauthenticatedCipher(key,nonce)
 
-		var authentic bool
-		nonces,authentic = monocypher.Unlock(tmp,nonce,key,_mac)
-		if !authentic{
-			if keep{
-				kept = true
-			}else{
-				fin.Close()
-				fout.Close()
-				_status = "The file is either corrupted or intentionally modified."
-				_status_color = color.RGBA{0xff,0x00,0x00,255}
-				if recombine{
-					os.Remove(inputFile)
-				}
-				os.Remove(outputFile)
-				return
-			}
-		}
-		//fmt.Println("UNENCRYPTED NONCES: ",nonces)
-	}
-
-	crc_blake2b := sha3.New256()
+	subkey := make([]byte,32)
+	hkdf := hkdf.New(sha3.New256,key,hkdfSalt,nil)
+	hkdf.Read(subkey)
+	mac := hmac.New(sha3.New512,subkey)
 	for{
 		if !working{
 			_status = "Operation cancelled by user."
@@ -1191,100 +1145,30 @@ func work(){
 			os.Remove(outputFile)
 			return
 		}
-		//fmt.Println("Encrypt/decrypt loop")
-		var _data []byte
-		var data []byte
-		var _nonce []byte
-		if mode=="encrypt"{
-			_data = make([]byte,1048576)
-		}else{
-			if fast{
-				_data = make([]byte,1048592)
-			}else{
-				_data = make([]byte,1048624)
-			}
-		}
 
-		size,err := fin.Read(_data)
+		//var _data []byte
+		var data []byte
+		data = make([]byte,1048576)
+
+		size,err := fin.Read(data)
 		if err!=nil{
 			break
 		}
-		data = _data[:size]
-		
-		crc_blake2b.Write(data)
-		if mode=="encrypt"{
-			_nonce = make([]byte,24)
-			rand.Read(_nonce)
-			for _,i := range _nonce{
-				nonces = append(nonces,i)
-			}
-		}else{
-			_nonce = nonces[counter*24:counter*24+24]
-		}
-		
-		//fmt.Println("Data nonce: ",_nonce)
-		//fmt.Println("Data: ",data)
-		if mode=="encrypt"{
-			if fast{
-				data = cipher.Seal(nil,_nonce,data,nil)
-				fout.Write(data)
-				//crc.Write(data)
-			}else{
-				mac,data := monocypher.Lock(data,_nonce,key)
-				fout.Write(data)
-				fout.Write(rsEncode(rs16,mac))
-				//crc.Write(data)
-				//crc.Write(mac)
-			}
+		data = data[:size]
 
-			//fout.Write(data)
+		_data := make([]byte,len(data))
+
+		if mode=="encrypt"{
+			cipher.XORKeyStream(_data,data)
+			mac.Write(_data)
 		}else{
-			//crc.Write(data)
-			if fast{
-				data,err = cipher.Open(nil,_nonce,data,nil)
-				if err!=nil{
-					if keep{
-						kept = true
-						mac := data[len(data)-16:]
-						data = data[:len(data)-16]
-						data,_ = monocypher.Unlock(data,_nonce,key,mac)
-					}else{
-						fin.Close()
-						fout.Close()
-						broken()
-						return
-					}
-				}
-			}else{
-				//crc.Write(data)
-				mac,_ := rsDecode(rs16,data[len(data)-48:])
-				data = data[:len(data)-48]
-				var authentic bool
-				data,authentic = monocypher.Unlock(data,_nonce,key,mac)
-				if !authentic{
-					if keep{
-						kept = true
-					}else{
-						fin.Close()
-						fout.Close()
-						broken()
-						return
-					}
-				}
-			}
-			fout.Write(data)
+			mac.Write(data)
+			cipher.XORKeyStream(_data,data)
 		}
+		fout.Write(_data)
 	
 		// Update statistics
-		if mode=="encrypt"{
-			done += 1048576
-		}else{
-			if fast{
-				done += 1048592
-			}else{
-				done += 1048624
-			}
-		}
+		done += 1048576
 		counter++
 		progress = float32(done)/float32(total)
 		elapsed:= float64(int64(time.Now().Sub(startTime)))/float64(1000000000)
@@ -1301,22 +1185,21 @@ func work(){
 	}
 
 	if mode=="encrypt"{
-		fout.Seek(int64(180+len(metadata)*3),0)
+		fout.Seek(int64(276+len(metadata)*3),0)
 		fout.Write(rsEncode(rs64,keyHash))
 		fout.Write(rsEncode(rs32,khash_hash))
-
-		_mac,tmp := monocypher.Lock(nonces,nonce,key) 
-		var chunk []byte
-
-		for i,j := range tmp{
-			chunk = append(chunk,j)
-			if (i+1)%24==0{
-				fout.Write(rsEncode(rs24,chunk))
-				chunk = nil
+		fout.Write(rsEncode(rs64,mac.Sum(nil)))
+	}else{
+		if subtle.ConstantTimeCompare(mac.Sum(nil),fileMac)==0{
+			if keep{
+				kept = true
+			}else{
+				fin.Close()
+				fout.Close()
+				broken()
+				return
 			}
 		}
-		fout.Write(rsEncode(rs16,_mac))
-
 	}
 	
 	fin.Close()
@@ -1426,6 +1309,17 @@ func work(){
 	kept = false
 	key = nil
 	status = "Ready."
+}
+
+// This function is run if an issue occurs during decryption
+func broken(){
+	_status = "The file is either corrupted or intentionally modified."
+	_status_color = color.RGBA{0xff,0x00,0x00,255}
+	if recombine{
+		os.Remove(inputFile)
+	}
+	os.Remove(outputFile)
+	giu.Update()
 }
 
 // Generate file checksums (pretty straightforward)
@@ -1701,16 +1595,6 @@ func resetUI(){
 	giu.Update()
 }
 
-// This function is run if an issue occurs during decryption
-func broken(){
-	_status = "The file is either corrupted or intentionally modified."
-	_status_color = color.RGBA{0xff,0x00,0x00,255}
-	if recombine{
-		os.Remove(inputFile)
-	}
-	os.Remove(outputFile)
-}
-
 // Reed-Solomon encoder
 func rsEncode(rs *infectious.FEC,data []byte) []byte{
 	var res []byte
@@ -1730,7 +1614,10 @@ func rsDecode(rs *infectious.FEC,data []byte) ([]byte,error){
 		}
 	}
 	res,err := rs.Decode(nil,tmp)
-	return res,err
+	if err!=nil{
+		return data[:rs.Total()/3],err
+	}
+	return res,nil
 }
 
 func main(){
@@ -1766,8 +1653,15 @@ func main(){
 	icon,_ := png.Decode(r)
 	window.SetIcon([]image.Image{icon})
 
-	// Add drag and drop callback, set the screen DPI, start the UI
+	// Add callbacks, set the screen DPI, start the UI
 	window.SetDropCallback(onDrop)
+	window.SetCloseCallback(func() bool{
+		// Disable closing window if a Picocrypt is working to prevent temporary files
+		if working||shredding!="Ready."{
+			return false
+		}
+		return true
+	})
 	dpi = giu.Context.GetPlatform().GetContentScale()
 	window.Run(startUI)
 
