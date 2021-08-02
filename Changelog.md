@@ -5,15 +5,16 @@
 	<li>Localization support</li>
 </ul>
 
-# v1.14 (ETA: ~ 16 days)
+# v1.14 (ETA: ~ 15 days)
 <strong>v1.14 will unfortunately be incompatible with v1.13, as I have dropped Poly1305 in favour of an HMAC. Because I have appended the encryptor version to the encrypted data in v1.13, however, v1.14 and on will be able to tell you which version your data was encrypted with so that you can fetch the correct verion of Picocrypt. There are no security issues in any previous versions of Picocrypt as long as you use a strong password.</strong>
 <ul>
 	<li>Low-severity security fix for the recently discovered <a href="https://eprint.iacr.org/2020/1491.pdf">partitioning oracle attacks</a></li>
 	<li>Move from Monocypher to Go's standard supplemental ChaCha20 in favour of being the latter being stateful</li>
+	<li>Add SHA3 (normal mode) and BLAKE2b (fast mode) as HMAC to replace Poly1305 and prevent partitioning oracle attacks</li>
 	<li>Removed ~100 lines of unnecessary code now that Picocrypt uses Go's ChaCha20 (cleaner and stabler code)</li>
 	<li>Added window icons</li>
 	<li>Switch to a new Reed-Solomon encoder that automatically corrects errors</li>
-	<li>Add a "Paranoid mode", which will use the Serpent cipher in addition to ChaCha20</li>
+	<li>Add a "Paranoid mode", which will use the Serpent cipher in addition to XChaCha20</li>
 	<li>Cleaner code with plenty of comments for people taking a look</li>
 	<li>Metadata is now Reed-Solomon encoded (everything bit of header data is now RS-encoded for redundancy)</li>
 	<li>Reed-Solomon checkbox is now enabled and Reed-Solomon works</li>
@@ -24,6 +25,8 @@
 	<li>Remove BLAKE3 from the checksum generator tab, as it has no practical use and requires a non-standard library</li>
 	<li>Advanced options are shown dynamically depending on whether encrypting or decrypting</li>
 	<li>Window closing disabled during encryption/decryption/shredding to prevent leakage of temporary files</li>
+	<li>Reduce padding of metadataLength from 10 to 5 (you probably won't type more than 99999 metadata characters)</li>
+	<li>Use regex to check if an input file is a valid Picocrypt volume or not (during decryption)</li>
 	<li>Improved user flow as well as fix UI bugs</li>
 	<li>Code optimizations</li>
 	<li>Many bug fixes/stability improvments</li>
