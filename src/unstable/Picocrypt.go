@@ -379,7 +379,7 @@ func startUI(){
 							if mode=="encrypt"{
 								giu.Checkbox("Shred temporary files (can be slow for large files)",&shredTemp).Build()
 								giu.Checkbox("Fast mode (slightly less secure, not as durable)",&fast).Build()
-								giu.Checkbox("Paranoid mode (extremely secure, but a bit slower)",&paranoid).Build()
+								giu.Checkbox("Paranoid mode (extremely secure, but slower)",&paranoid).Build()
 								giu.Row(
 									giu.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
 									giu.Button("?").Size(24,25).OnClick(func(){
