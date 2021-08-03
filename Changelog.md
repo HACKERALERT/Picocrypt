@@ -4,6 +4,7 @@
 	<li>Password generator</li>
 	<li>Localization support</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
+	<li>Make keyfile support more reliable</li>
 </ul>
 
 # v1.14 (ETA: ~ 15 days)
