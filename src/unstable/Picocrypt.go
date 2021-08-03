@@ -42,6 +42,7 @@ import (
 	"crypto/rand"
 	"crypto/hmac"
 	"crypto/subtle"
+	"crypto/cipher"
 	"crypto/md5"
 	"crypto/sha1"
 	"crypto/sha256"
@@ -51,6 +52,7 @@ import (
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
 	"golang.org/x/crypto/chacha20"
+	"github.com/HACKERALERT/serpent" // v0.0.0-20210716182301-293b29869c66
 
 	// GUI
 	"github.com/AllenDang/giu"
@@ -63,6 +65,7 @@ import (
 	"github.com/HACKERALERT/dialog" // v0.0.0-20210716143851-223edea1d840
 	"github.com/HACKERALERT/browser" // v0.0.0-20210730230128-85901a8dd82f
 	"github.com/HACKERALERT/zxcvbn-go" // v0.0.0-20210730224720-b29e9dba62c2
+
 )
 
 var version = "v1.14"
@@ -99,9 +102,10 @@ var outputEntry string // A modifiable text entry string variable containing pat
 var outputWidth float32 = 370
 var orLabel = "or"
 var passwordStrength int
-var showPassword = false
 var keyfile = false // True if user chooses/chose to use a keyfile
 var keyfilePrompt = "Keyfile (optional):" // Changes if decrypting and keyfile was enabled
+var showConfirmation = false
+var showProgress = false
 var progress float32 = 0 // 0 is 0%, 1 is 100%
 var progressInfo = "" // Text inside the progress bar on the encrypting/decrypting window
 var status = "Ready." // Status text in encrypting/decrypting window
@@ -126,7 +130,7 @@ var keyfilePath string
 var keyfileLabel = "Use a keyfile (experimental)"
 var metadata string
 var shredTemp bool
-var serpent bool
+var paranoid bool
 var keep bool
 var reedsolo bool
 var split bool
@@ -189,43 +193,59 @@ func startUI(){
 						}),
 					
 						// Confirm overwrite with a modal
-						giu.PopupModal("Warning:").Layout(
-							giu.Label("Output already exists. Overwrite?"),
-							giu.Row(
-								giu.Button("No").Size(100,0).OnClick(func(){
-									giu.CloseCurrentPopup()
-								}),
-								giu.Button("Yes").Size(100,0).OnClick(func(){
-									giu.CloseCurrentPopup()
-									giu.Update()
-									giu.OpenPopup(" ")
-									go func (){
-										work()
-										working = false
-										debug.FreeOSMemory()
-										giu.Update()
-									}()
-								}),
-							),
-						),
+						giu.Custom(func(){
+							if showConfirmation{
+								giu.PopupModal("Warning:").Layout(
+									giu.Label("Output already exists. Overwrite?"),
+									giu.Row(
+										giu.Button("No").Size(100,0).OnClick(func(){
+											giu.CloseCurrentPopup()
+											showConfirmation = false
+										}),
+										giu.Button("Yes").Size(100,0).OnClick(func(){
+											giu.CloseCurrentPopup()
+											showConfirmation = false
+											giu.Update()
+											showProgress = true
+											giu.Update()
+											go func (){
+												work()
+												working = false
+												showProgress = false
+												debug.FreeOSMemory()
+												giu.Update()
+											}()
+										}),
+									),
+								).Build()
+								giu.OpenPopup("Warning:")
+								giu.Update()
+							}
+						}),
 
 						// Show encryption/decryption progress with a modal
-						giu.PopupModal(" ").Layout(
-							// Close modal if not working (encryption/decryption done)
-							giu.Custom(func(){
-								if !working{
-									giu.CloseCurrentPopup()
-								}
-							}),
-							// Progress bar
-							giu.Row(
-								giu.ProgressBar(progress).Size(280,0).Overlay(progressInfo),
-								giu.Button("Cancel").Size(58,0).OnClick(func(){
-									working = false
-								}),
-							),
-							giu.Label(status),
-						),
+						giu.Custom(func(){
+							if showProgress{
+								giu.PopupModal(" ").Layout(
+									// Close modal if not working (encryption/decryption done)
+									giu.Custom(func(){
+										if !working{
+											giu.CloseCurrentPopup()
+										}
+									}),
+									// Progress bar
+									giu.Row(
+										giu.ProgressBar(progress).Size(280,0).Overlay(progressInfo),
+										giu.Button("Cancel").Size(58,0).OnClick(func(){
+											working = false
+										}),
+									),
+									giu.Label(status),
+								).Build()
+								giu.OpenPopup(" ")
+								giu.Update()
+							}
+						}),
 
 						// Label listing the input files and a button to clear them
 						giu.Row(
@@ -358,7 +378,7 @@ func startUI(){
 							if mode=="encrypt"{
 								giu.Checkbox("Shred temporary files (can be slow for large files)",&shredTemp).Build()
 								giu.Checkbox("Fast mode (slightly less secure, not as durable)",&fast).Build()
-								giu.Checkbox("Paranoid mode (extremely secure, but a bit slower)",&serpent).Build()
+								giu.Checkbox("Paranoid mode (extremely secure, but a bit slower)",&paranoid).Build()
 								giu.Row(
 									giu.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
 									giu.Button("?").Size(24,25).OnClick(func(){
@@ -399,12 +419,15 @@ func startUI(){
 							}
 							_,err := os.Stat(outputFile)
 							if err==nil{
-								giu.OpenPopup("Warning:")
+								showConfirmation = true
+								giu.Update()
 							}else{
-								giu.OpenPopup(" ")
+								showProgress = true
+								giu.Update()
 								go func (){
 									work()
 									working = false
+									showProgress = false
 									debug.FreeOSMemory()
 									giu.Update()
 								}()
@@ -644,7 +667,7 @@ func onDrop(names []string){
 					}
 					if valid,_:=regexp.Match(`^v\d\.\d{2}.{10}0?\d+`,tmp);!valid{
 						resetUI()
-						_status = "This doesn't seem to be a Picocrypt file."
+						_status = "This doesn't seem to be a Picocrypt volume."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
 						fin.Close()
 						return
@@ -782,6 +805,7 @@ func work(){
 	//reedsoloErrors := 0
 	var salt []byte
 	var hkdfSalt []byte
+	var serpentSalt []byte
 	var nonce []byte
 	var keyHash []byte
 	var _keyHash []byte
@@ -886,6 +910,13 @@ func work(){
 	
 	stat,_ := os.Stat(inputFile)
 	total := stat.Size()
+
+	// XChaCha20's max message size is 256 GiB
+	if total>256*1073741824{
+		_status = "Total size is larger than 256 GiB, XChaCha20's limit."
+		_status_color = color.RGBA{0xff,0x00,0x00,255}
+		return
+	}
 	
 	// Open input file in read-only mode
 	fin,_ := os.Open(inputFile)
@@ -904,6 +935,7 @@ func work(){
 		// Argon2 salt and XChaCha20 nonce
 		salt = make([]byte,16)
 		hkdfSalt = make([]byte,32)
+		serpentSalt = make([]byte,16)
 		nonce = make([]byte,24)
 		
 		// Write version to file
@@ -928,8 +960,11 @@ func work(){
 		if fast{
 			flags[0] = 1
 		}
-		if keyfile{
+		if paranoid{
 			flags[1] = 1
+		}
+		if keyfile{
+			flags[2] = 1
 		}
 		//fmt.Println("flags:",flags)
 		flags = rsEncode(rs5,flags)
@@ -938,6 +973,7 @@ func work(){
 		// Fill salts and nonce with Go's CSPRNG
 		rand.Read(salt)
 		rand.Read(hkdfSalt)
+		rand.Read(serpentSalt)
 		rand.Read(nonce)
 
 		// Encode salt with Reed-Solomon and write to file
@@ -948,9 +984,13 @@ func work(){
 		_hkdfSalt := rsEncode(rs32,hkdfSalt)
 		fout.Write(_hkdfSalt)
 
+		// Encode Serpent salt with Reed-Solomon and write to file
+		_serpentSalt := rsEncode(rs16,serpentSalt)
+		fout.Write(_serpentSalt)
+
 		// Encode nonce with Reed-Solomon and write to file
-		tmp := rsEncode(rs24,nonce)
-		fout.Write(tmp)
+		_nonce := rsEncode(rs24,nonce)
+		fout.Write(_nonce)
 		
 		// Write placeholder for hash of key
 		fout.Write(make([]byte,192))
@@ -970,6 +1010,7 @@ func work(){
 		var err7 error
 		var err8 error
 		var err9 error
+		var err10 error
 
 		status = "Reading values..."
 		giu.Update()
@@ -988,7 +1029,8 @@ func work(){
 		fin.Read(flags)
 		flags,err3 = rsDecode(rs5,flags)
 		fast = flags[0]==1
-		keyfile = flags[1]==1
+		paranoid = flags[1]==1
+		keyfile = flags[2]==1
 
 		salt = make([]byte,48)
 		fin.Read(salt)
@@ -997,25 +1039,29 @@ func work(){
 		hkdfSalt = make([]byte,96)
 		fin.Read(hkdfSalt)
 		hkdfSalt,err5 = rsDecode(rs32,hkdfSalt)
+
+		serpentSalt = make([]byte,48)
+		fin.Read(serpentSalt)
+		serpentSalt,err6 = rsDecode(rs16,serpentSalt)
 		
 		nonce = make([]byte,72)
 		fin.Read(nonce)
-		nonce,err6 = rsDecode(rs24,nonce)
+		nonce,err7 = rsDecode(rs24,nonce)
 		
 		_keyHash = make([]byte,192)
 		fin.Read(_keyHash)
-		_keyHash,err7 = rsDecode(rs64,_keyHash)
+		_keyHash,err8 = rsDecode(rs64,_keyHash)
 		
 		_khash_hash = make([]byte,96)
 		fin.Read(_khash_hash)
-		_khash_hash,err8 = rsDecode(rs32,_khash_hash)
+		_khash_hash,err9 = rsDecode(rs32,_khash_hash)
 
 		fileMac = make([]byte,192)
 		fin.Read(fileMac)
-		fileMac,err9 = rsDecode(rs64,fileMac)
+		fileMac,err10 = rsDecode(rs64,fileMac)
 
 		// Is there a better way?
-		if err1!=nil||err2!=nil||err3!=nil||err4!=nil||err5!=nil||err6!=nil||err7!=nil||err8!=nil||err9!=nil{
+		if err1!=nil||err2!=nil||err3!=nil||err4!=nil||err5!=nil||err6!=nil||err7!=nil||err8!=nil||err9!=nil||err10!=nil{
 			if keep{
 				kept = true
 			}else{
@@ -1145,7 +1191,7 @@ func work(){
 	done := 0
 	counter := 0
 	startTime := time.Now()
-	cipher,_ := chacha20.NewUnauthenticatedCipher(key,nonce)
+	chacha20,_ := chacha20.NewUnauthenticatedCipher(key,nonce)
 
 	// Use HKDF-SHA3 to generate a subkey
 	var mac hash.Hash
@@ -1159,6 +1205,13 @@ func work(){
 		// HMAC-SHA3
 		mac = hmac.New(sha3.New512,subkey)
 	}
+
+	// Generate another subkey and cipher (not used unless paranoid mode is checked
+	serpentKey := make([]byte,32)
+	hkdf.Read(serpentKey)
+	_serpent,_ := serpent.NewCipher(serpentKey)
+	serpentCTR := cipher.NewCTR(_serpent,serpentSalt)
+
 	for{
 		if !working{
 			_status = "Operation cancelled by user."
@@ -1187,13 +1240,26 @@ func work(){
 
 		_data := make([]byte,len(data))
 
+		fmt.Println(data[:10])
 		if mode=="encrypt"{
-			cipher.XORKeyStream(_data,data)
+			if paranoid{
+				serpentCTR.XORKeyStream(_data,data)
+				fmt.Println(_data[:10])
+				copy(data,_data)
+				fmt.Println(data[:10])
+			}
+			chacha20.XORKeyStream(_data,data)
+			fmt.Println(_data[:10])
 			mac.Write(_data)
 		}else{
 			mac.Write(data)
-			cipher.XORKeyStream(_data,data)
+			chacha20.XORKeyStream(_data,data)
+			if paranoid{
+				copy(data,_data)
+				serpentCTR.XORKeyStream(_data,data)
+			}
 		}
+		fmt.Println("=========")
 		fout.Write(_data)
 	
 		// Update statistics
@@ -1214,7 +1280,7 @@ func work(){
 	}
 
 	if mode=="encrypt"{
-		fout.Seek(int64(261+len(metadata)*3),0)
+		fout.Seek(int64(309+len(metadata)*3),0)
 		fout.Write(rsEncode(rs64,keyHash))
 		fout.Write(rsEncode(rs32,khash_hash))
 		fout.Write(rsEncode(rs64,mac.Sum(nil)))
@@ -1618,6 +1684,7 @@ func resetUI(){
 	split = false
 	splitSize = ""
 	fast = false
+	paranoid = false
 	progress = 0
 	progressInfo = ""
 	_status = "Ready."
