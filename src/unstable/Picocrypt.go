@@ -146,6 +146,7 @@ var rs16,_ = infectious.NewFEC(16,48)
 var rs24,_ = infectious.NewFEC(24,72)
 var rs32,_ = infectious.NewFEC(32,96)
 var rs64,_ = infectious.NewFEC(64,192)
+var rs128,_ = infectious.NewFEC(128,136)
 
 // File checksum generator variables
 var cs_md5 string // A string containing a hex-encoded MD5 hash
@@ -966,6 +967,9 @@ func work(){
 		if keyfile{
 			flags[2] = 1
 		}
+		if reedsolo{
+			flags[3] = 1
+		}
 		//fmt.Println("flags:",flags)
 		flags = rsEncode(rs5,flags)
 		fout.Write(flags)
@@ -1154,7 +1158,7 @@ func work(){
 		}else{
 			tmp = !keyCorrect
 		}
-		if tmp{
+		if tmp||keep{
 			if keep{
 				kept = true
 			}else{
@@ -1230,16 +1234,20 @@ func work(){
 
 		//var _data []byte
 		var data []byte
-		data = make([]byte,1048576)
+		if reedsolo{
+			data = make([]byte,1048576)
+		}else{
+			data = make([]byte,1114112)
+		}
 
 		size,err := fin.Read(data)
 		if err!=nil{
 			break
 		}
 		data = data[:size]
-
 		_data := make([]byte,len(data))
 
+		// "Actual" encryption is done in the next couple of lines
 		fmt.Println(data[:10])
 		if mode=="encrypt"{
 			if paranoid{
@@ -1249,10 +1257,50 @@ func work(){
 				fmt.Println(data[:10])
 			}
 			chacha20.XORKeyStream(_data,data)
-			fmt.Println(_data[:10])
+			if reedsolo{
+				if len(data)==1048576{
+					copy(data,_data)
+					_data = nil
+					for i:=0;i<1048576;i+=128{
+						tmp := data[i:i+128]
+						tmp := rsEncode(rs128,tmp)
+						for _,j := range tmp{
+							_data = append(_data,j)
+						}
+					}
+				}else{
+
+				}
+			}
 			mac.Write(_data)
 		}else{
 			mac.Write(data)
+			var _data []byte
+			if reedsolo{
+				if len(data)==1114112{
+					copy(_data,data)
+					data = nil
+					for i:=0;i<1114112;i+=136{
+						tmp := data[i:i+136]
+						tmp,err := rsDecode(rs128,tmp)
+						if err!=nil{
+							if keep{
+								kept = true
+							}else{
+								_status = "The input file is too corrupted to decrypt."
+								_status_color = color.RGBA{0xff,0x00,0x00,255}
+								fin.Close()
+								fout.Close()
+								broken()
+								return
+							}
+						}
+						for _,j := range tmp{
+							data = append(data,j)
+						}
+					}
+				}
+			}
 			chacha20.XORKeyStream(_data,data)
 			if paranoid{
 				copy(data,_data)
@@ -1263,7 +1311,11 @@ func work(){
 		fout.Write(_data)
 	
 		// Update statistics
-		done += 1048576
+		if mode=="decrypt"&&reedsolo{
+			done += 1114112
+		}else{
+			done += 1048576
+		}
 		counter++
 		progress = float32(done)/float32(total)
 		elapsed:= float64(int64(time.Now().Sub(startTime)))/float64(1000000000)
@@ -1715,6 +1767,20 @@ func rsDecode(rs *infectious.FEC,data []byte) ([]byte,error){
 		return data[:rs.Total()/3],err
 	}
 	return res,nil
+}
+
+// PKCS7 Pad (for use with Reed-Solomon, not for cryptographic purposes)
+func pad(data []byte) []byte{
+	padLen := 128-len(data)%128
+	padding := bytes.Repeat([]byte{byte(padLen)},padLen)
+	return append(data,padding...)
+}
+
+// PKCS7 Unpad
+func unpad(data []byte) []byte{
+	length := len(data)
+	padLen := int(data[length-1])
+	return data[:length-padLen]
 }
 
 func main(){
