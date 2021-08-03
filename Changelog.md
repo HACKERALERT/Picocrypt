@@ -3,6 +3,7 @@
 	<li>Add cancel button to file shredder</li>
 	<li>Password generator</li>
 	<li>Localization support</li>
+	<li>Make UI more consistent (minor DPI issues)</li>
 </ul>
 
 # v1.14 (ETA: ~ 15 days)
