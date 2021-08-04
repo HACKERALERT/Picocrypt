@@ -1035,6 +1035,7 @@ func work(){
 		fast = flags[0]==1
 		paranoid = flags[1]==1
 		keyfile = flags[2]==1
+		reedsolo = flags[3]==1
 
 		salt = make([]byte,48)
 		fin.Read(salt)
@@ -1234,10 +1235,10 @@ func work(){
 
 		//var _data []byte
 		var data []byte
-		if reedsolo{
-			data = make([]byte,1048576)
-		}else{
+		if mode=="decrypt"&&reedsolo{
 			data = make([]byte,1114112)
+		}else{
+			data = make([]byte,1048576)
 		}
 
 		size,err := fin.Read(data)
@@ -1258,30 +1259,43 @@ func work(){
 			}
 			chacha20.XORKeyStream(_data,data)
 			if reedsolo{
+				copy(data,_data)
+				_data = nil
 				if len(data)==1048576{
-					copy(data,_data)
-					_data = nil
 					for i:=0;i<1048576;i+=128{
 						tmp := data[i:i+128]
-						tmp := rsEncode(rs128,tmp)
-						for _,j := range tmp{
+						tmp = rsEncode(rs128,tmp)
+						/*for _,j := range tmp{
 							_data = append(_data,j)
-						}
+						}*/
+						_data = append(_data,tmp...)
 					}
 				}else{
-
+					chunks := math.Floor(float64(len(data))/128)
+					for i:=0;float64(i)<chunks;i++{
+						tmp := data[i*128:(i+1)*128]
+						tmp = rsEncode(rs128,tmp)
+						/*for _,j := range tmp{
+							_data = append(_data,j)
+						}*/
+						_data = append(_data,tmp...)
+					}
+					tmp := data[int(chunks*128):]
+					/*for _,j := range rsEncode(rs128,pad(tmp)){
+						_data = append(_data,j)
+					}*/
+					_data = append(_data,rsEncode(rs128,pad(tmp))...)
 				}
 			}
 			mac.Write(_data)
 		}else{
 			mac.Write(data)
-			var _data []byte
 			if reedsolo{
-				if len(data)==1114112{
-					copy(_data,data)
-					data = nil
+				copy(_data,data)
+				data = nil
+				if len(_data)==1114112{
 					for i:=0;i<1114112;i+=136{
-						tmp := data[i:i+136]
+						tmp := _data[i:i+136]
 						tmp,err := rsDecode(rs128,tmp)
 						if err!=nil{
 							if keep{
@@ -1295,10 +1309,30 @@ func work(){
 								return
 							}
 						}
-						for _,j := range tmp{
+						/*for _,j := range tmp{
 							data = append(data,j)
-						}
+						}*/
+						data = append(data,tmp...)
 					}
+				}else{
+					chunks := math.Floor(float64(len(_data))/136)
+					for i:=0;float64(i)<chunks-1;i++{
+						tmp := _data[i*136:(i+1)*136]
+						tmp,err = rsDecode(rs128,tmp)
+						fmt.Println(err)
+						/*for _,j := range tmp{
+							data = append(data,j)
+						}*/
+						data = append(data,tmp...)
+					}
+					tmp := _data[int(chunks)*136:]
+					var err error
+					tmp,err = rsDecode(rs128,unpad(tmp))
+					fmt.Println(err)
+					/*for _,j := range tmp{
+						data = append(data,j)
+					}*/
+					data = append(data,tmp...)
 				}
 			}
 			chacha20.XORKeyStream(_data,data)
