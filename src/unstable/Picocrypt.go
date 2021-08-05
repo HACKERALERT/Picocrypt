@@ -1265,25 +1265,17 @@ func work(){
 					for i:=0;i<1048576;i+=128{
 						tmp := data[i:i+128]
 						tmp = rsEncode(rs128,tmp)
-						/*for _,j := range tmp{
-							_data = append(_data,j)
-						}*/
 						_data = append(_data,tmp...)
 					}
 				}else{
 					chunks := math.Floor(float64(len(data))/128)
+					fmt.Println("chunks",chunks)
 					for i:=0;float64(i)<chunks;i++{
 						tmp := data[i*128:(i+1)*128]
 						tmp = rsEncode(rs128,tmp)
-						/*for _,j := range tmp{
-							_data = append(_data,j)
-						}*/
 						_data = append(_data,tmp...)
 					}
 					tmp := data[int(chunks*128):]
-					/*for _,j := range rsEncode(rs128,pad(tmp)){
-						_data = append(_data,j)
-					}*/
 					_data = append(_data,rsEncode(rs128,pad(tmp))...)
 				}
 			}
@@ -1293,10 +1285,11 @@ func work(){
 			if reedsolo{
 				copy(_data,data)
 				data = nil
+				//fmt.Println(len(_data))
 				if len(_data)==1114112{
 					for i:=0;i<1114112;i+=136{
 						tmp := _data[i:i+136]
-						tmp,err := rsDecode(rs128,tmp)
+						tmp,err = rsDecode(rs128,tmp)
 						if err!=nil{
 							if keep{
 								kept = true
@@ -1309,26 +1302,46 @@ func work(){
 								return
 							}
 						}
-						/*for _,j := range tmp{
-							data = append(data,j)
-						}*/
 						data = append(data,tmp...)
 					}
 				}else{
-					chunks := math.Floor(float64(len(_data))/136)
-					for i:=0;float64(i)<chunks-1;i++{
+					chunks := len(_data)/136-1
+					//fmt.Println("chunks",chunks)
+					for i:=0;i<chunks;i++{
 						tmp := _data[i*136:(i+1)*136]
 						tmp,err = rsDecode(rs128,tmp)
-						fmt.Println(err)
-						/*for _,j := range tmp{
-							data = append(data,j)
-						}*/
+						//fmt.Println(i,len(tmp))
+						if err!=nil{
+							if keep{
+								kept = true
+							}else{
+								_status = "The input file is too corrupted to decrypt."
+								_status_color = color.RGBA{0xff,0x00,0x00,255}
+								fin.Close()
+								fout.Close()
+								broken()
+								return
+							}
+						}
 						data = append(data,tmp...)
 					}
 					tmp := _data[int(chunks)*136:]
-					var err error
-					tmp,err = rsDecode(rs128,unpad(tmp))
-					fmt.Println(err)
+					//fmt.Println(len(tmp))
+					//var err error
+					tmp,err = rsDecode(rs128,tmp)
+					if err!=nil{
+						if keep{
+							kept = true
+						}else{
+							_status = "The input file is too corrupted to decrypt."
+							_status_color = color.RGBA{0xff,0x00,0x00,255}
+							fin.Close()
+							fout.Close()
+							broken()
+							return
+						}
+					}
+					tmp = unpad(tmp)
 					/*for _,j := range tmp{
 						data = append(data,j)
 					}*/
@@ -1336,12 +1349,14 @@ func work(){
 				}
 			}
 			chacha20.XORKeyStream(_data,data)
+			fmt.Println("datac",len(_data))
 			if paranoid{
 				copy(data,_data)
 				serpentCTR.XORKeyStream(_data,data)
 			}
 		}
 		fmt.Println("=========")
+		fmt.Println("data",len(_data))
 		fout.Write(_data)
 	
 		// Update statistics
