@@ -31,12 +31,12 @@ import (
 	"strconv"
 	"runtime"
 	"net/http"
-	"runtime/debug"
 	"image/png"
 	"image/color"
 	"archive/zip"
 	"encoding/hex"
 	"path/filepath"
+	"runtime/debug"
 
 	// Cryptography
 	"crypto/rand"
@@ -1253,9 +1253,9 @@ func work(){
 		if mode=="encrypt"{
 			if paranoid{
 				serpentCTR.XORKeyStream(_data,data)
-				fmt.Println(_data[:10])
+				//fmt.Println(_data[:10])
 				copy(data,_data)
-				fmt.Println(data[:10])
+				//fmt.Println(data[:10])
 			}
 			chacha20.XORKeyStream(_data,data)
 			if reedsolo{
@@ -1269,7 +1269,7 @@ func work(){
 					}
 				}else{
 					chunks := math.Floor(float64(len(data))/128)
-					fmt.Println("chunks",chunks)
+					//fmt.Println("chunks",chunks)
 					for i:=0;float64(i)<chunks;i++{
 						tmp := data[i*128:(i+1)*128]
 						tmp = rsEncode(rs128,tmp)
@@ -1284,8 +1284,9 @@ func work(){
 			mac.Write(data)
 			if reedsolo{
 				copy(_data,data)
+				//_data = append(_data,data...)
 				data = nil
-				//fmt.Println(len(_data))
+				fmt.Println(len(_data),len(data))
 				if len(_data)==1114112{
 					for i:=0;i<1114112;i+=136{
 						tmp := _data[i:i+136]
@@ -1303,7 +1304,9 @@ func work(){
 							}
 						}
 						data = append(data,tmp...)
+						//fmt.Println(len(data))
 					}
+					//fmt.Println("data inside loop",len(data))
 				}else{
 					chunks := len(_data)/136-1
 					//fmt.Println("chunks",chunks)
@@ -1347,16 +1350,19 @@ func work(){
 					}*/
 					data = append(data,tmp...)
 				}
+				fmt.Println("data outside loop",len(data))
+				_data = make([]byte,len(data))
 			}
+			fmt.Println("datac",len(data))
 			chacha20.XORKeyStream(_data,data)
-			fmt.Println("datac",len(_data))
 			if paranoid{
 				copy(data,_data)
 				serpentCTR.XORKeyStream(_data,data)
 			}
 		}
-		fmt.Println("=========")
 		fmt.Println("data",len(_data))
+		fmt.Println("=========")
+		
 		fout.Write(_data)
 	
 		// Update statistics
