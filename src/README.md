@@ -13,7 +13,7 @@ xcode-select --install
 Windows: A C compiler, ideally [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
 
 # 2. Install the Go Programming Language
-Download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager. Go 1.16 or higher is recommended.
+Download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager. Go 1.16 or later is recommended.
 
 # 3. Get the Source Files
 Download the source file `Picocrypt.go` from above or `git clone` this repository.
