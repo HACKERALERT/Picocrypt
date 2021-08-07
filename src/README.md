@@ -24,7 +24,7 @@ Download the source file `Picocrypt.go` from above or `git clone` this repositor
 Place all the files in the `resources/` directory in the same directory as `Picocrypt.go`.
 
 # 5. Create a go.mod:
-Go to where `Picocrypt.go` is located and initialize Go:
+Go to where `Picocrypt.go` is located and create a go.mod:
 ```bash
 go mod init Picocrypt
 ```
