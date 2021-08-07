@@ -86,7 +86,7 @@ var languageSelected int32
 // Global variables
 var dpi float32 // Used to scale properly in high-resolution displays
 var mode string = "" // "encrypt", "decrypt", or ""
-var working = false // True if encryption/decryption is in progress
+var working = false
 var onlyFiles []string // Only contains files not in a folder
 var onlyFolders []string // Only contains names of folders
 var allFiles []string // Contains all files including files in folders
@@ -98,26 +98,26 @@ var sdelete64path string // The temporary file path where sdelete64.exe will be 
 // UI-related global variables
 var tab = 0 // The index of the currently selected tab
 var inputLabel = "Drag and drop file(s) and folder(s) into this window."
-var outputEntry string // A modifiable text entry string variable containing path of output
+var outputEntry string
 var outputWidth float32 = 370
 var orLabel = "or"
 var passwordStrength int
 var keyfile = false // True if user chooses/chose to use a keyfile
 var keyfilePrompt = "Keyfile (optional):" // Changes if decrypting and keyfile was enabled
-var showConfirmation = false
+var showConfirmation = false // True if a confirmation to overwrite is needed
 var showProgress = false
 var progress float32 = 0 // 0 is 0%, 1 is 100%
-var progressInfo = "" // Text inside the progress bar on the encrypting/decrypting window
-var status = "Ready." // Status text in encrypting/decrypting window
-var _status = "Ready." // Status text in main window
+var progressInfo = ""
+var status = "Ready."
+var _status = "Ready."
 var _status_color = color.RGBA{0xff,0xff,0xff,255} // Changes according to status (success, fail, etc.)
 var splitUnits = []string{
 	"KiB",
 	"MiB",
 	"GiB",
-} // Three choosable units for splitting output file when encrypting, in powers of 2
+}
 var splitSelected int32 // Index of which splitting unit was chosen from above
-var shredProgress float32 // Progress of shredding files
+var shredProgress float32
 var shredDone float32
 var shredTotal float32 // Total files to shred (recursive)
 var shredOverlay string // Text in shredding progress bar
@@ -146,7 +146,7 @@ var rs16,_ = infectious.NewFEC(16,48)
 var rs24,_ = infectious.NewFEC(24,72)
 var rs32,_ = infectious.NewFEC(32,96)
 var rs64,_ = infectious.NewFEC(64,192)
-var rs128,_ = infectious.NewFEC(128,136)
+var rs128,_ = infectious.NewFEC(128,136) // Used for Reed-Solomon checkbox
 
 // File checksum generator variables
 var cs_md5 string // A string containing a hex-encoded MD5 hash
@@ -175,6 +175,7 @@ func startUI(){
 	giu.SingleWindow().Layout(
 		giu.Style().SetColor(giu.StyleColorBorder,color.RGBA{0x10,0x10,0x10,255}).To(
 			giu.Custom(func(){
+				// Language dropdown menu
 				pos := giu.GetCursorPos()
 				giu.Row(
 					giu.Dummy(-108,0),
@@ -296,6 +297,8 @@ func startUI(){
 							giu.InputText(&password).Size(240/dpi).Flags(giu.InputTextFlagsPassword).OnChange(func(){
 								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 							}),
+
+							// Draw a circle with arc length depending on password strength
 							giu.Custom(func(){
 								canvas := giu.GetCanvas()
 								pos := giu.GetCursorScreenPos()
@@ -325,6 +328,7 @@ func startUI(){
 								canvas.PathStroke(col,false,3)
 							}),
 							giu.Dummy(-200,0),
+
 							giu.Checkbox(keyfileLabel,&keyfile).OnChange(func(){
 								if !keyfile{
 									keyfileLabel = "Use a keyfile"
@@ -612,6 +616,7 @@ func onDrop(names []string){
 
 			// Check if dropped item is a file or a folder
 			if stat.IsDir(){
+				mode = "encrypt"
 				folders++
 				inputLabel = "1 folder selected."
 
@@ -620,8 +625,7 @@ func onDrop(names []string){
 
 				// Set 'outputEntry' to 'Encrypted'
 				outputEntry = filepath.Join(filepath.Dir(names[0]),"Encrypted")
-				
-				mode = "encrypt"
+
 				// Show the ".zip.pcv" file extension
 				orLabel = ".zip.pcv  or"
 				outputWidth = 317
@@ -689,7 +693,6 @@ func onDrop(names []string){
 						metadata = ""
 
 						for i:=0;i<metadataLength*3;i+=3{
-							//fmt.Println(tmp[i:i+3])
 							t,err := rsDecode(rs1,tmp[i:i+3])
 							if err!=nil{
 								metadata = "Metadata is corrupted."
@@ -798,13 +801,10 @@ func onDrop(names []string){
 
 // Start encryption/decryption
 func work(){
-	status = "Starting..."
 	// Set some variables
+	status = "Starting..."
 	working = true
 	padded := false
-	//headerBroken := false
-	//reedsoloFixed := 0
-	//reedsoloErrors := 0
 	var salt []byte
 	var hkdfSalt []byte
 	var serpentSalt []byte
@@ -831,7 +831,6 @@ func work(){
 
 			inputFile = outputEntry+".zip"
 			outputFile = inputFile+".pcv"
-			//fmt.Println(inputFile)
 			file,_ := os.Create(inputFile)
 			
 			w := zip.NewWriter(file)
@@ -948,10 +947,7 @@ func work(){
 
 		// Encode the length of the metadata with Reed-Solomon
 		metadataLength := []byte(fmt.Sprintf("%05d",len(metadata)))
-		//fmt.Println("metadataLength:",metadataLength)
 		metadataLength = rsEncode(rs5,metadataLength)
-
-		fmt.Println(metadataLength)
 		
 		// Write the length of the metadata to file
 		fout.Write(metadataLength)
@@ -974,11 +970,9 @@ func work(){
 		if reedsolo{
 			flags[3] = 1
 		}
-		fmt.Println(total,total%1048576>=1048448)
 		if total%1048576>=1048448{
 			flags[4] = 1
 		}
-		//fmt.Println("flags:",flags)
 		flags = rsEncode(rs5,flags)
 		fout.Write(flags)
 
@@ -1087,7 +1081,6 @@ func work(){
 		}
 	}
 
-	
 	status = "Deriving key..."
 	progress = 0
 	progressInfo = ""
@@ -1114,8 +1107,7 @@ func work(){
 			32,
 		)[:]
 	}
-	
-	//fmt.Println("key",key)
+
 	if !working{
 		_status = "Operation cancelled by user."
 		_status_color = color.RGBA{0xff,0xff,0xff,255}
@@ -1149,10 +1141,8 @@ func work(){
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
 	keyHash = sha3_512.Sum(nil)
-
-	//fmt.Println(keyHash,_keyHash)
 	
-	// Check is password is correct
+	// Validate password and/or keyfile
 	if mode=="decrypt"{
 		keyCorrect := true
 		keyfileCorrect := true
@@ -1198,9 +1188,7 @@ func work(){
 		for i,_ := range key{
 			key[i] = tmp[i]^khash[i]
 		}
-		//fmt.Println("key",key)
 	}
-
 	
 	done := 0
 	counter := 0
@@ -1220,7 +1208,7 @@ func work(){
 		mac = hmac.New(sha3.New512,subkey)
 	}
 
-	// Generate another subkey and cipher (not used unless paranoid mode is checked
+	// Generate another subkey and cipher (not used unless paranoid mode is checked)
 	serpentKey := make([]byte,32)
 	hkdf.Read(serpentKey)
 	_serpent,_ := serpent.NewCipher(serpentKey)
@@ -1242,7 +1230,6 @@ func work(){
 			return
 		}
 
-		//var _data []byte
 		var data []byte
 		if mode=="decrypt"&&reedsolo{
 			data = make([]byte,1114112)
@@ -1258,16 +1245,15 @@ func work(){
 		_data := make([]byte,len(data))
 
 		// "Actual" encryption is done in the next couple of lines
-		fmt.Println(data[:10])
 		if mode=="encrypt"{
 			if paranoid{
 				serpentCTR.XORKeyStream(_data,data)
-				//fmt.Println(_data[:10])
 				copy(data,_data)
-				//fmt.Println(data[:10])
 			}
+
 			chacha20.XORKeyStream(_data,data)
 			mac.Write(_data)
+
 			if reedsolo{
 				copy(data,_data)
 				_data = nil
@@ -1279,7 +1265,6 @@ func work(){
 					}
 				}else{
 					chunks := math.Floor(float64(len(data))/128)
-					//fmt.Println("chunks",chunks)
 					for i:=0;float64(i)<chunks;i++{
 						tmp := data[i*128:(i+1)*128]
 						tmp = rsEncode(rs128,tmp)
@@ -1292,11 +1277,8 @@ func work(){
 		}else{
 			if reedsolo{
 				copy(_data,data)
-				//_data = append(_data,data...)
 				data = nil
-				fmt.Println(len(_data),len(data))
 				if len(_data)==1114112{
-					fmt.Println(done,total,padded)
 					for i:=0;i<1114112;i+=136{
 						tmp := _data[i:i+136]
 						tmp,err = rsDecode(rs128,tmp)
@@ -1316,16 +1298,12 @@ func work(){
 							tmp = unpad(tmp)
 						}
 						data = append(data,tmp...)
-						//fmt.Println(len(data))
 					}
-					//fmt.Println("data inside loop",len(data))
 				}else{
 					chunks := len(_data)/136-1
-					//fmt.Println("chunks",chunks)
 					for i:=0;i<chunks;i++{
 						tmp := _data[i*136:(i+1)*136]
 						tmp,err = rsDecode(rs128,tmp)
-						//fmt.Println(i,len(tmp))
 						if err!=nil{
 							if keep{
 								kept = true
@@ -1341,8 +1319,6 @@ func work(){
 						data = append(data,tmp...)
 					}
 					tmp := _data[int(chunks)*136:]
-					//fmt.Println(len(tmp))
-					//var err error
 					tmp,err = rsDecode(rs128,tmp)
 					if err!=nil{
 						if keep{
@@ -1357,26 +1333,22 @@ func work(){
 						}
 					}
 					tmp = unpad(tmp)
-					fmt.Println(len(tmp))
 					data = append(data,tmp...)
 				}
-				fmt.Println("data outside loop",len(data))
 				_data = make([]byte,len(data))
 			}
+
 			mac.Write(data)
-			fmt.Println("datac",len(data))
 			chacha20.XORKeyStream(_data,data)
+
 			if paranoid{
 				copy(data,_data)
 				serpentCTR.XORKeyStream(_data,data)
 			}
 		}
-		fmt.Println("data",len(_data))
-		fmt.Println("=========")
-		
 		fout.Write(_data)
 	
-		// Update statistics
+		// Update stats
 		if mode=="decrypt"&&reedsolo{
 			done += 1114112
 		}else{
@@ -1384,25 +1356,27 @@ func work(){
 		}
 		counter++
 		progress = float32(done)/float32(total)
-		elapsed:= float64(int64(time.Now().Sub(startTime)))/float64(1000000000)
-		speed := (float64(done)/elapsed)/1000000
-		eta := math.Abs(float64(total-int64(done))/(speed*1000000))
-		
+		elapsed := float64(time.Now().Sub(startTime))/math.Pow(10,9)
+		speed := float64(done)/elapsed/math.Pow(10,6)
+		eta := int(math.Floor(float64(total-int64(done))/(speed*math.Pow(10,6))))
+
 		if progress>1{
 			progress = 1
 		}
 
 		progressInfo = fmt.Sprintf("%.2f%%",progress*100)
-		status = fmt.Sprintf("Working at %.2f MB/s (ETA: %.1fs)",speed,eta)
+		status = fmt.Sprintf("Working at %.2f MB/s (ETA: %s)",speed,humanize(eta))
 		giu.Update()
 	}
 
 	if mode=="encrypt"{
+		// Seek back to header and write important data
 		fout.Seek(int64(309+len(metadata)*3),0)
 		fout.Write(rsEncode(rs64,keyHash))
 		fout.Write(rsEncode(rs32,khash_hash))
 		fout.Write(rsEncode(rs64,mac.Sum(nil)))
 	}else{
+		// Validate the authenticity of decrypted data
 		if subtle.ConstantTimeCompare(mac.Sum(nil),fileMac)==0{
 			if keep{
 				kept = true
@@ -1414,18 +1388,17 @@ func work(){
 			}
 		}
 	}
-	fmt.Println(mac.Sum(nil),fileMac)
-	
+
 	fin.Close()
 	fout.Close()
 
 	// Split files into chunks
 	if split{
+		var splitted []string
 		status = "Splitting file..."
 		stat,_ := os.Stat(outputFile)
 		size := stat.Size()
 		finished := 0
-		var splitted []string
 		chunkSize,_ := strconv.Atoi(splitSize)
 
 		// User can choose KiB, MiB, and GiB
@@ -1483,7 +1456,6 @@ func work(){
 		if shredTemp{
 			progressInfo = ""
 			status = "Shredding temporary files..."
-			fmt.Println(outputFile)
 			shred([]string{outputFile}[:],false)
 		}else{
 			os.Remove(outputFile)
@@ -1745,7 +1717,6 @@ func shred(names []string,separate bool){
 					if err!=nil{
 						return nil
 					}
-					fmt.Println(path)
 					stat,_ := os.Stat(path)
 					if stat.IsDir(){
 						t := 0
@@ -1774,6 +1745,7 @@ func shred(names []string,separate bool){
 		}
 		giu.Update()
 	}
+
 	// Clear UI state
 	shredding = "Ready."
 	shredProgress = 0
@@ -1859,6 +1831,15 @@ func unpad(data []byte) []byte{
 	length := len(data)
 	padLen := int(data[length-1])
 	return data[:length-padLen]
+}
+
+// Convert seconds to HH:MM:SS
+func humanize(seconds int) string{
+	hours := int(math.Floor(float64(seconds)/3600))
+	seconds %= 3600
+	minutes := int(math.Floor(float64(seconds)/60))
+	seconds %= 60
+	return fmt.Sprintf("%02d:%02d:%02d",hours,minutes,seconds)
 }
 
 func main(){
