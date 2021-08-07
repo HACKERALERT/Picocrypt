@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.14
+Picocrypt v1.15
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -69,7 +69,7 @@ import (
 
 )
 
-var version = "v1.14"
+var version = "v1.15"
 
 //go:embed NotoSans-Regular.ttf
 var font []byte
@@ -170,6 +170,9 @@ var sha256_selected = false
 var sha3_256_selected = false
 var blake2b_selected = false
 var blake2s_selected = false
+
+// Link to a Wikipedia article on Reed-Solomon
+var rsWikipedia = "https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction"
 
 // Create the UI
 func startUI(){
@@ -388,7 +391,7 @@ func startUI(){
 								giu.Row(
 									giu.Checkbox("Encode with Reed-Solomon to prevent corruption (slow)",&reedsolo),
 									giu.Button("?").Size(24,25).OnClick(func(){
-										browser.OpenURL("https://bit.ly/3A2V7LR")
+										browser.OpenURL(rsWikipedia)
 									}),
 								).Build()
 								giu.Row(
