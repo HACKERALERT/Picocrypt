@@ -127,7 +127,7 @@ var shredding = "Ready."
 var password string
 var cPassword string // Confirm password text entry string variable
 var keyfilePath string
-var keyfileLabel = "Use a keyfile (experimental)"
+var keyfileLabel = "Use a keyfile (Beta)"
 var metadata string
 var shredTemp bool
 var paranoid bool
@@ -381,7 +381,7 @@ func startUI(){
 								giu.Checkbox("Fast mode (slightly less secure, not as durable)",&fast).Build()
 								giu.Checkbox("Paranoid mode (extremely secure, but slower)",&paranoid).Build()
 								giu.Row(
-									giu.Checkbox("Encode with Reed-Solomon to prevent corruption",&reedsolo),
+									giu.Checkbox("Encode with Reed-Solomon to prevent corruption (slow)",&reedsolo),
 									giu.Button("?").Size(24,25).OnClick(func(){
 										browser.OpenURL("https://bit.ly/3A2V7LR")
 									}),
@@ -705,7 +705,7 @@ func onDrop(names []string){
 					fin.Read(flags)
 					flags,err = rsDecode(rs5,flags)
 					if err!=nil{
-						_status = "File is corrupt and cannot be decrypted."
+						_status = "Input file is corrupt and cannot be decrypted."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
 						return
 					}
@@ -801,6 +801,7 @@ func work(){
 	status = "Starting..."
 	// Set some variables
 	working = true
+	padded := false
 	//headerBroken := false
 	//reedsoloFixed := 0
 	//reedsoloErrors := 0
@@ -911,6 +912,9 @@ func work(){
 	
 	stat,_ := os.Stat(inputFile)
 	total := stat.Size()
+	if mode=="decrypt"{
+		total -= 789
+	}
 
 	// XChaCha20's max message size is 256 GiB
 	if total>256*1073741824{
@@ -969,6 +973,10 @@ func work(){
 		}
 		if reedsolo{
 			flags[3] = 1
+		}
+		fmt.Println(total,total%1048576>=1048448)
+		if total%1048576>=1048448{
+			flags[4] = 1
 		}
 		//fmt.Println("flags:",flags)
 		flags = rsEncode(rs5,flags)
@@ -1036,6 +1044,7 @@ func work(){
 		paranoid = flags[1]==1
 		keyfile = flags[2]==1
 		reedsolo = flags[3]==1
+		padded = flags[4]==1
 
 		salt = make([]byte,48)
 		fin.Read(salt)
@@ -1070,7 +1079,7 @@ func work(){
 			if keep{
 				kept = true
 			}else{
-				_status = "The header is corrupt and the file cannot be decrypted."
+				_status = "The header is corrupt and the input file cannot be decrypted."
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
 				fin.Close()
 				return
@@ -1258,6 +1267,7 @@ func work(){
 				//fmt.Println(data[:10])
 			}
 			chacha20.XORKeyStream(_data,data)
+			mac.Write(_data)
 			if reedsolo{
 				copy(data,_data)
 				_data = nil
@@ -1279,15 +1289,14 @@ func work(){
 					_data = append(_data,rsEncode(rs128,pad(tmp))...)
 				}
 			}
-			mac.Write(_data)
 		}else{
-			mac.Write(data)
 			if reedsolo{
 				copy(_data,data)
 				//_data = append(_data,data...)
 				data = nil
 				fmt.Println(len(_data),len(data))
 				if len(_data)==1114112{
+					fmt.Println(done,total,padded)
 					for i:=0;i<1114112;i+=136{
 						tmp := _data[i:i+136]
 						tmp,err = rsDecode(rs128,tmp)
@@ -1302,6 +1311,9 @@ func work(){
 								broken()
 								return
 							}
+						}
+						if i==1113976&&done+1114112>=int(total)&&padded{
+							tmp = unpad(tmp)
 						}
 						data = append(data,tmp...)
 						//fmt.Println(len(data))
@@ -1345,14 +1357,13 @@ func work(){
 						}
 					}
 					tmp = unpad(tmp)
-					/*for _,j := range tmp{
-						data = append(data,j)
-					}*/
+					fmt.Println(len(tmp))
 					data = append(data,tmp...)
 				}
 				fmt.Println("data outside loop",len(data))
 				_data = make([]byte,len(data))
 			}
+			mac.Write(data)
 			fmt.Println("datac",len(data))
 			chacha20.XORKeyStream(_data,data)
 			if paranoid{
@@ -1500,7 +1511,7 @@ func work(){
 
 	// If user chose to keep a corrupted/modified file, let them know
 	if kept{
-		_status = "The input is corrupted and/or modified. Please be careful."
+		_status = "The input file is corrupted and/or modified. Please be careful."
 		_status_color = color.RGBA{0xff,0xff,0x00,255}
 	}else{
 		_status = "Completed."
@@ -1516,7 +1527,7 @@ func work(){
 
 // This function is run if an issue occurs during decryption
 func broken(){
-	_status = "The file is either corrupted or intentionally modified."
+	_status = "The input file is either corrupted or intentionally modified."
 	_status_color = color.RGBA{0xff,0x00,0x00,255}
 	if recombine{
 		os.Remove(inputFile)
@@ -1536,6 +1547,13 @@ func generateChecksums(file string){
 	cs_sha3_256 = ""
 	cs_blake2b = ""
 	cs_blake2s = ""
+	md5_color = color.RGBA{0x10,0x10,0x10,255}
+	sha1_color = color.RGBA{0x10,0x10,0x10,255}
+	sha256_color = color.RGBA{0x10,0x10,0x10,255}
+	sha3_256_color = color.RGBA{0x10,0x10,0x10,255}
+	blake2b_color = color.RGBA{0x10,0x10,0x10,255}
+	blake2s_color = color.RGBA{0x10,0x10,0x10,255}
+	cs_validate = ""
 
 	if md5_selected{
 		cs_md5 = "Calculating..."
@@ -1618,6 +1636,8 @@ func generateChecksums(file string){
 	if blake2s_selected{
 		cs_blake2s = hex.EncodeToString(crc_blake2s.Sum(nil))
 	}
+
+	fin.Close()
 	giu.Update()
 }
 
@@ -1819,6 +1839,9 @@ func rsDecode(rs *infectious.FEC,data []byte) ([]byte,error){
 	}
 	res,err := rs.Decode(nil,tmp)
 	if err!=nil{
+		if rs.Total()==136{
+			return data[:128],err
+		}
 		return data[:rs.Total()/3],err
 	}
 	return res,nil
