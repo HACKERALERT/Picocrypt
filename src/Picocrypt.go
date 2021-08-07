@@ -27,6 +27,7 @@ import (
 	"image"
 	"bytes"
 	"regexp"
+	"syscall"
 	"strings"
 	"strconv"
 	"runtime"
@@ -584,7 +585,24 @@ func startUI(){
 								tab = 3
 							}
 						}),
-						giu.Label("Picocrypt "+version+", created by Evan Su (https://evansu.cc)"),
+						giu.Label("Picocrypt "+version+", created by Evan Su (https://evansu.cc)."),
+						giu.Label("Released under a GNU GPL v3 License."),
+						giu.Label("A warm thank you to all the people listed below."),
+						giu.Label("Patrons:"),
+						giu.Label("    - Frederick Doe"),
+						giu.Label("Donators:"),
+						giu.Label("    - W.Graham"),
+						giu.Label("    - N. Chin"),
+						giu.Label("    - Manjot"),
+						giu.Label("    - Phil P."),
+						giu.Label("    - E. Zahard"),
+						giu.Label("Translators"),
+						giu.Label("    - umitseyhan75 (Turkish)"),
+						giu.Label("    - digitalblossom (German)"),
+						giu.Label("Other"),
+						giu.Label("    - Fuderal for setting up Picocrypt's Discord server"),
+						giu.Label("    - u/greenreddits for constant feedback and support"),
+						giu.Label("    - u/Tall_Escape for helping me test Picocrypt"),
 					),
 				).Build()
 			}),
@@ -1666,6 +1684,7 @@ func shred(names []string,separate bool){
 									}else{
 										cmd = exec.Command("rm","-rfP",j)
 									}
+									cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 									cmd.Run()
 									shredding = j
 									shredDone++
@@ -1689,6 +1708,7 @@ func shred(names []string,separate bool){
 						}else{
 							cmd = exec.Command("rm","-rfP",i)
 						}
+						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 						cmd.Run()
 						shredding = i
 						shredDone++
@@ -1704,6 +1724,7 @@ func shred(names []string,separate bool){
 				}else{
 					cmd = exec.Command("rm","-rfP",name)
 				}
+				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 				cmd.Run()
 				shredding = name+"/*"
 				shredDone++
@@ -1730,6 +1751,7 @@ func shred(names []string,separate bool){
 						shredUpdate(separate)
 						cmd := exec.Command(sdelete64path,"*","-p","4")
 						cmd.Dir = path
+						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 						cmd.Run()
 						shredding = strings.ReplaceAll(path,"\\","/")+"/*"
 					}
@@ -1738,7 +1760,9 @@ func shred(names []string,separate bool){
 				// sdelete64 doesn't delete the empty folder, so I'll do it manually
 				os.RemoveAll(name)
 			}else{
-				exec.Command(sdelete64path,name,"-p","4").Run()
+				cmd := exec.Command(sdelete64path,name,"-p","4")
+				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
+				cmd.Run()
 				shredDone++
 				shredUpdate(separate)
 			}
@@ -1848,7 +1872,9 @@ func main(){
 	sdelete64path = sdelete64.Name()
 	sdelete64.Write(sdelete64bytes)
 	sdelete64.Close()
-	exec.Command(sdelete64path,"/accepteula").Run()
+	cmd := exec.Command(sdelete64path,"/accepteula")
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
+	cmd.Run()
 
 	// Start a goroutine to check if a newer version is available
 	go func(){
