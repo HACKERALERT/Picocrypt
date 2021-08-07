@@ -1,4 +1,4 @@
-# v1.15 (work in progress, not ETA at the moment)
+# v1.15 (work in progress, no ETA at the moment)
 <ul>
 	<li>Add cancel button to file shredder</li>
 	<li>Password generator</li>
