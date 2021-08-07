@@ -30,7 +30,7 @@ go mod init Picocrypt
 ```
 
 # 5. Install Picocrypt's Go Dependencies
-Install each of the following modules via `go get -u -v `:
+Install each of the following modules via `go get -u -v`:
 ```bash
 golang.org/x/crypto
 github.com/HACKERALERT/serpent@v0.0.0-20210716182301-293b29869c66
