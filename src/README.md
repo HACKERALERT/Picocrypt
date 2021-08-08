@@ -39,15 +39,19 @@ github.com/HACKERALERT/browser@v0.0.0-20210730230128-85901a8dd82f
 github.com/HACKERALERT/zxcvbn-go@v0.0.0-20210730224720-b29e9dba62c2
 ```
 
-# 6. Build From Source
+# 7. If You're Not on Windows
+Windows requires a couple of extra lines to hide the command prompt window that shows when shredding a file. If you're not on Windows, however, you'll need to delete all occurrences of this line: `cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}`. You'll also need to remove the import of `syscall`.
+
+# 8. Build From Source
 Tidy the modules:
 ```bash
 go mod tidy
 ```
+
 Build Picocrypt from source:
 - Windows: <code>go build -ldflags "-s -w -H=windowsgui -extldflags=-static" Picocrypt.go</code>
 - macOS: <code>go build -ldflags "-s -w" Picocrypt.go</code>
 - Linux: <code>go build -ldflags "-s -w" Picocrypt.go</code>
 
-# 7. Done!
+# 9. Done!
 You should now see a compiled executable (`Picocrypt.exe`/`Picocrypt`) in your directory. You can run it by double-clicking or executing it in your terminal. That wasn't too hard, right? Enjoy!
