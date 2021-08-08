@@ -27,7 +27,7 @@ Go to where `Picocrypt.go` is located and create a go.mod:
 go mod init Picocrypt
 ```
 
-# 5. Install Dependencies
+# 6. Install Dependencies
 Install each of the following modules via `go get -u -v`:
 ```bash
 golang.org/x/crypto
