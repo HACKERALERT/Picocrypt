@@ -6,7 +6,7 @@
 	<li>Make password strength circle start at top</li>
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
-	<li>Make keyfile support more reliable</li>
+	<li>Make keyfile support more reliable (maybe DND too?)</li>
 	<li>Improve Reed-Solomon performance</li>
 </ul>
 
