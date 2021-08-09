@@ -1,6 +1,6 @@
 # v1.15 (work in progress, no ETA at the moment)
 <ul>
-	<li>Add cancel button to file shredder</li>
+	<li>Add cancel button to file shredder and custom # of passes</li>
 	<li>File name encryption</li>
 	<li>Password generator</li>
 	<li>Make password strength circle start at top</li>
