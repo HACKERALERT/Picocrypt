@@ -1,4 +1,4 @@
-# v1.15 (work in progress, no ETA at the moment)
+# v1.16 (work in progress, no ETA at the moment)
 <ul>
 	<li>Add cancel button to file shredder and custom # of passes</li>
 	<li>File name encryption</li>
@@ -10,7 +10,14 @@
 	<li>Improve Reed-Solomon performance</li>
 </ul>
 
-# v1.14 (ETA: Released 08/07/2021)
+# v1.15 (ETA: 3 days)
+<ul>
+	<li>Add cancel button to file shredder and custom # of passes</li>
+	<li>Password generator</li>
+	<li>Make password strength circle start at top</li>
+</ul>
+
+# v1.14 (Released 08/07/2021)
 <strong>v1.14 will unfortunately be incompatible with v1.13, as I have dropped Poly1305 in favour of an HMAC. Because I have appended the encryptor version to the encrypted data in v1.13, however, v1.14 and on will be able to tell you which version your data was encrypted with so that you can fetch the correct verion of Picocrypt. There are no security issues in any previous versions of Picocrypt as long as you use a strong password.</strong>
 <ul>
 	<li>Low-severity security fix for the recently discovered <a href="https://eprint.iacr.org/2020/1491.pdf">partitioning oracle attacks</a></li>
