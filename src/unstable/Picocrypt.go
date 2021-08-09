@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"math"
+	"math/big"
 	"time"
 	"sync"
 	"hash"
@@ -118,6 +119,8 @@ var splitUnits = []string{
 	"GiB",
 }
 var splitSelected int32 // Index of which splitting unit was chosen from above
+var shredPasses = "4"
+var stopShredding = false
 var shredProgress float32
 var shredDone float32
 var shredTotal float32 // Total files to shred (recursive)
@@ -294,11 +297,21 @@ func startUI(){
 						// Prompt for password
 						giu.Row(
 							giu.Label("Password:"),
+							giu.SmallButton("Generate").OnClick(func(){
+								tmp := genPassword()
+								password = tmp
+								cPassword = tmp
+								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
+								giu.Update()
+							}),
+							giu.SmallButton("Copy").OnClick(func(){
+								clipboard.WriteAll(password)
+							}),
 							giu.Dummy(-200,0),
 							giu.Label(keyfilePrompt),
 						),
 						giu.Row(
-							giu.InputText(&password).Size(240/dpi).Flags(giu.InputTextFlagsPassword).OnChange(func(){
+							giu.InputText(&password).Size(241/dpi).Flags(giu.InputTextFlagsPassword).OnChange(func(){
 								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 							}),
 
@@ -328,7 +341,10 @@ func startUI(){
 									int(math.Round(float64(6*dpi))),
 									int(math.Round(float64(12*dpi))),
 								))
-								canvas.PathArcTo(path,8*dpi,0,float32(passwordStrength+1)/5*(2*math.Pi),-1)
+								canvas.PathArcTo(path,
+									8*dpi,-math.Pi/2,
+									float32(passwordStrength+1)/5*(2*math.Pi)-math.Pi/2,
+								-1)
 								canvas.PathStroke(col,false,3)
 							}),
 							giu.Dummy(-200,0),
@@ -351,7 +367,7 @@ func startUI(){
 						// Prompt to confirm password
 						giu.Label("Confirm password:"),
 						giu.Row(
-							giu.InputText(&cPassword).Size(240/dpi).Flags(giu.InputTextFlagsPassword),
+							giu.InputText(&cPassword).Size(241/dpi).Flags(giu.InputTextFlagsPassword),
 							giu.Custom(func(){
 								canvas := giu.GetCanvas()
 								pos := giu.GetCursorScreenPos()
@@ -396,7 +412,9 @@ func startUI(){
 								).Build()
 								giu.Row(
 									giu.Checkbox("Split output into chunks of",&split),
-									giu.InputText(&splitSize).Size(50).Flags(giu.InputTextFlagsCharsDecimal),
+									giu.InputText(&splitSize).Size(50).Flags(giu.InputTextFlagsCharsDecimal).OnChange(func(){
+										split = true
+									}),
 									giu.Combo("##splitter",splitUnits[splitSelected],splitUnits,&splitSelected).Size(52),
 								).Build()
 								giu.Dummy(0,1).Build()
@@ -570,9 +588,28 @@ func startUI(){
 								tab = 2
 							}
 						}),
-
+	
 						giu.Label("Drop file(s) and folder(s) here to shred them."),
-						giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-0.0000001,0),
+						giu.Custom(func(){
+							if runtime.GOOS=="darwin"{
+								giu.Label("Number of passes: Not supported on macOS").Build()
+							}else{
+								giu.Row(
+									giu.Label("Number of passes:"),
+									giu.InputText(&shredPasses).Size(16).Flags(giu.InputTextFlagsCharsDecimal),
+								).Build()
+							}
+						}),
+						giu.Dummy(0,-50),
+						giu.Row(
+							giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-65,0),
+							giu.Button("Cancel").Size(58,0).OnClick(func(){
+								stopShredding = true
+								shredding = "Ready."
+								shredProgress = 0
+								shredOverlay = ""
+							}),
+						),
 						giu.Custom(func(){
 							if len(shredding)>50{
 								shredding = "....."+shredding[len(shredding)-50:]
@@ -691,7 +728,7 @@ func onDrop(names []string){
 						fin.Close()
 						return
 					}
-					if valid,_:=regexp.Match(`^v\d\.\d{2}.{10}0?\d+`,tmp);!valid{
+					if valid,_:=regexp.Match(`^v\d\.\d{2}.{10}0?\d+`,tmp);!valid&&!isSplit{
 						resetUI()
 						_status = "This doesn't seem to be a Picocrypt volume."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
@@ -1636,6 +1673,7 @@ func generateChecksums(file string){
 
 // Recursively shred all file(s) and folder(s) passed in as 'names'
 func shred(names []string,separate bool){
+	stopShredding = false
 	shredTotal = 0
 	shredDone = 0
 
@@ -1672,6 +1710,9 @@ func shred(names []string,separate bool){
 					if err!=nil{
 						return nil
 					}
+					if stopShredding{
+						return nil
+					}
 					stat,_ := os.Stat(path)
 					if !stat.IsDir(){
 						if len(coming)==128{
@@ -1681,15 +1722,15 @@ func shred(names []string,separate bool){
 								wg.Add(1)
 								go func(wg *sync.WaitGroup,id int,j string){
 									defer wg.Done()
+									shredding = j
 									cmd := exec.Command("")
 									if runtime.GOOS=="linux"{
-										cmd = exec.Command("shred","-ufvz","-n","3",j)
+										cmd = exec.Command("shred","-ufvz","-n",shredPasses,j)
 									}else{
 										cmd = exec.Command("rm","-rfP",j)
 									}
 									cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 									cmd.Run()
-									shredding = j
 									shredDone++
 									shredUpdate(separate)
 									giu.Update()
@@ -1704,32 +1745,37 @@ func shred(names []string,separate bool){
 					return nil
 				})
 				for _,i := range coming{
+					if stopShredding{
+						break
+					}
 					go func(){
+						shredding = i
 						cmd := exec.Command("")
 						if runtime.GOOS=="linux"{
-							cmd = exec.Command("shred","-ufvz","-n","3",i)
+							cmd = exec.Command("shred","-ufvz","-n",shredPasses,i)
 						}else{
 							cmd = exec.Command("rm","-rfP",i)
 						}
 						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 						cmd.Run()
-						shredding = i
 						shredDone++
 						shredUpdate(separate)
 						giu.Update()
 					}()
 				}
-				os.RemoveAll(name)
+				if !stopShredding{
+					os.RemoveAll(name)
+				}
 			}else{ // The path is a file, not a directory, so just shred it
+				shredding = name
 				cmd := exec.Command("")
 				if runtime.GOOS=="linux"{
-					cmd = exec.Command("shred","-ufvz","-n","3",name)
+					cmd = exec.Command("shred","-ufvz","-n",shredPasses,name)
 				}else{
 					cmd = exec.Command("rm","-rfP",name)
 				}
 				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 				cmd.Run()
-				shredding = name+"/*"
 				shredDone++
 				shredUpdate(separate)
 			}
@@ -1743,6 +1789,10 @@ func shred(names []string,separate bool){
 					}
 					stat,_ := os.Stat(path)
 					if stat.IsDir(){
+						if stopShredding{
+							return nil
+						}
+
 						t := 0
 						files,_ := ioutil.ReadDir(path)
 						for _,f := range files{
@@ -1752,18 +1802,23 @@ func shred(names []string,separate bool){
 						}
 						shredDone += float32(t)
 						shredUpdate(separate)
-						cmd := exec.Command(sdelete64path,"*","-p","4")
+						shredding = strings.ReplaceAll(path,"\\","/")+"/*"
+						cmd := exec.Command(sdelete64path,"*","-p",shredPasses)
 						cmd.Dir = path
 						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 						cmd.Run()
-						shredding = strings.ReplaceAll(path,"\\","/")+"/*"
+						giu.Update()
 					}
 					return nil
 				})
-				// sdelete64 doesn't delete the empty folder, so I'll do it manually
-				os.RemoveAll(name)
+
+				if !stopShredding{
+					// sdelete64 doesn't delete the empty folder, so I'll do it manually
+					os.RemoveAll(name)
+				}
 			}else{
-				cmd := exec.Command(sdelete64path,name,"-p","4")
+				shredding = name
+				cmd := exec.Command(sdelete64path,name,"-p",shredPasses)
 				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 				cmd.Run()
 				shredDone++
@@ -1771,6 +1826,9 @@ func shred(names []string,separate bool){
 			}
 		}
 		giu.Update()
+		if stopShredding{
+			return
+		}
 	}
 
 	// Clear UI state
@@ -1867,6 +1925,17 @@ func humanize(seconds int) string{
 	minutes := int(math.Floor(float64(seconds)/60))
 	seconds %= 60
 	return fmt.Sprintf("%02d:%02d:%02d",hours,minutes,seconds)
+}
+
+// Generate cryptographically secure high-entropy passwords
+func genPassword() string{
+	chars := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=!@#$^&()_+?"
+	tmp := make([]byte,32)
+	for i:=0;i<32;i++{
+		j,_ := rand.Int(rand.Reader,new(big.Int).SetUint64(uint64(len(chars))))
+		tmp[i] = chars[j.Int64()]
+	}
+	return string(tmp)
 }
 
 func main(){
