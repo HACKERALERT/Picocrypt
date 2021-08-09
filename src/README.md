@@ -31,6 +31,7 @@ go mod init Picocrypt
 Install each of the following modules via `go get -u -v`:
 ```bash
 golang.org/x/crypto
+github.com/AllenDang/giu
 github.com/HACKERALERT/serpent@v0.0.0-20210716182301-293b29869c66
 github.com/HACKERALERT/infectious@v0.0.0-20210730231340-8af02cb9ed0a
 github.com/HACKERALERT/clipboard@v0.1.5-0.20210716140604-61d96bf4fc94
