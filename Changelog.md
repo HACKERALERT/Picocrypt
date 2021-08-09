@@ -15,6 +15,7 @@
 	<li>Add cancel button to file shredder and custom # of passes</li>
 	<li>Password generator</li>
 	<li>Make password strength circle start at top</li>
+	<li>Fix shredder UI bugs</li>
 </ul>
 
 # v1.14 (Released 08/07/2021)
