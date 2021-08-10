@@ -1,18 +1,15 @@
 # v1.16 (work in progress, no ETA at the moment)
 <ul>
-	<li>Add cancel button to file shredder and custom # of passes</li>
 	<li>File name encryption</li>
-	<li>Password generator</li>
-	<li>Make password strength circle start at top</li>
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Make keyfile support more reliable (maybe DND too?)</li>
 	<li>Improve Reed-Solomon performance</li>
 </ul>
 
-# v1.15 (ETA: 3 days)
+# v1.15 (Released 08/09/2021)
 <ul>
-	<li>Add cancel button to file shredder and custom # of passes</li>
+	<li>Add cancel button to file shredder and custom number of passes</li>
 	<li>Password generator</li>
 	<li>Make password strength circle start at top</li>
 	<li>Fix shredder UI bugs</li>
