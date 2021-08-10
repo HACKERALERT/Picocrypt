@@ -1,10 +1,16 @@
-# v1.16 (work in progress, no ETA at the moment)
+# v1.17 (work in progress, no ETA at the moment)
 <ul>
 	<li>File name encryption</li>
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Make keyfile support more reliable (maybe DND too?)</li>
 	<li>Improve Reed-Solomon performance</li>
+</ul>
+
+# v1.16 (ETA: 3 days)
+<ul>
+	<li>Bug fixes</li>
+	<li>UI fixes improvements</li>
 </ul>
 
 # v1.15 (Released 08/09/2021)
