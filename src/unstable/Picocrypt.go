@@ -297,15 +297,19 @@ func startUI(){
 						// Prompt for password
 						giu.Row(
 							giu.Label("Password:"),
-							giu.SmallButton("Generate").OnClick(func(){
-								tmp := genPassword()
-								password = tmp
-								cPassword = tmp
-								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
-								giu.Update()
-							}),
-							giu.SmallButton("Copy").OnClick(func(){
-								clipboard.WriteAll(password)
+							giu.Custom(func(){
+								if mode!="decrypt"{
+									giu.SmallButton("Generate").OnClick(func(){
+										tmp := genPassword()
+										password = tmp
+										cPassword = tmp
+										passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
+										giu.Update()
+									}).Build()
+									giu.SmallButton("Copy").OnClick(func(){
+										clipboard.WriteAll(password)
+									}).Build()
+								}
 							}),
 							giu.Dummy(-200,0),
 							giu.Label(keyfilePrompt),
