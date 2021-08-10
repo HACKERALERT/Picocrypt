@@ -16,4 +16,4 @@ Die mit Setup.exe benannten Dateien sind Installer, die Picocrypt.exe Releases s
 
 Sollte eine Antivirus-Warnung ausgelöst werden handelt es sich um einen False Positive. Du kannst die Datei als sicher deklarieren, um solche Warnungen bei anderen Nutzern zu verhindern.
 
-Alternativ kann Picocrypt mit wget https://github.com/HACKERALERT/Picocrypt/releases/download/1.12.1/Picocrypt.exe -OutFile Picocrypt.exe in Windows Powershell heruntergeladen werden. Sie befindet sich dann in C:\Users\[nutzername].
+Alternativ kann Picocrypt mit wget https://github.com/HACKERALERT/Picocrypt/releases/download/1.15/Picocrypt.exe -OutFile Picocrypt.exe in Windows Powershell heruntergeladen werden. Sie befindet sich dann in C:\Users\[nutzername].
