@@ -127,8 +127,9 @@ var shredOverlay string // Text in shredding progress bar
 var shredding = "Ready."
 
 // User input variables
-var passwordState = giu.InputTextFlagsPassword
 var password string
+var passwordState = giu.InputTextFlagsPassword
+var passwordStateLabel = "Show"
 var cPassword string // Confirm password text entry string variable
 var keyfilePath string
 var keyfileLabel = "Use a keyfile"
@@ -144,10 +145,12 @@ var fast bool
 var kept = false // If a file was corrupted/modified, but the output was kept
 
 var showGenpass = false
-var genpassUpper bool
-var genpassLower bool
-var genpassNums bool
-var genpassSymbols bool
+var genpassCopy = true
+var genpassLength int32 = 32
+var genpassUpper = true
+var genpassLower = true
+var genpassNums = true
+var genpassSymbols = true
 
 // Reed-Solomon encoders
 var rs1,_ = infectious.NewFEC(1,3) // 1 data shards, 3 total -> 2 parity shards
@@ -212,30 +215,30 @@ func startUI(){
 						giu.Custom(func(){
 							if showGenpass{
 								giu.PopupModal("Generate password:").Layout(
-									giu.Checkbox("Uppercase letters",&genpassUpper),
-									giu.Checkbox("Lowercase letters",&genpassLower),
+									giu.Row(
+										giu.Label("Length: "),
+										giu.SliderInt("",&genpassLength,4,64).Size(-0.0000001),
+									),
+									giu.Checkbox("Uppercase",&genpassUpper),
+									giu.Checkbox("Lowercase",&genpassLower),
 									giu.Checkbox("Numbers",&genpassNums),
 									giu.Checkbox("Symbols",&genpassSymbols),
-									giu.Button("Cancel").Size(100,0).OnClick(func(){
-										giu.CloseCurrentPopup()
-										showGenpass = false
-									}),
-									giu.Button("Generate").Size(100,0).OnClick(func(){
-										tmp := genPassword()
-										password = tmp
-										cPassword = tmp
-										passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
-										giu.CloseCurrentPopup()
-										showGenpass = false
-										passwordState = giu.InputTextFlagsNone
-										go func(){
-											time.Sleep(3*time.Second)
-											passwordState = giu.InputTextFlagsPassword
+									giu.Checkbox("Copy to clipboard",&genpassCopy),
+									giu.Row(
+										giu.Button("Cancel").Size(100,0).OnClick(func(){
+											giu.CloseCurrentPopup()
+											showGenpass = false
+										}),
+										giu.Button("Generate").Size(100,0).OnClick(func(){
+											tmp := genPassword()
+											password = tmp
+											cPassword = tmp
+											passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
+											giu.CloseCurrentPopup()
+											showGenpass = false
 											giu.Update()
-										}()
-
-										giu.Update()
-									}),
+										}),
+									),
 								).Build()
 								giu.OpenPopup("Generate password:")
 								giu.Update()
@@ -358,6 +361,15 @@ func startUI(){
 										passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 										giu.Update()
 									}),
+									giu.SmallButton(passwordStateLabel).OnClick(func(){
+										if passwordState==giu.InputTextFlagsPassword{
+											passwordState = giu.InputTextFlagsNone
+											passwordStateLabel = "Hide"
+										}else{
+											passwordState = giu.InputTextFlagsPassword
+											passwordStateLabel = "Show"
+										}
+									}),
 								).Build()
 							}),
 						),
@@ -399,20 +411,6 @@ func startUI(){
 								canvas.PathStroke(col,false,3)
 							}),
 							giu.Dummy(-160,0),
-
-							/*giu.Checkbox(keyfileLabel,&keyfile).OnChange(func(){
-								if !keyfile{
-									keyfileLabel = "Use a keyfile"
-									return
-								}
-								filename,err := dialog.File().Load()
-								if err!=nil{
-									keyfile = false
-									return
-								}
-								keyfileLabel = filename
-								keyfilePath = filename
-							}),*/
 							giu.Custom(func(){
 								if !(mode=="decrypt"&&!keyfile){
 									giu.Button(keyfileLabel).OnClick(func(){
@@ -464,7 +462,7 @@ func startUI(){
 									giu.Dummy(-0.0000001,0),
 								).Build()
 							}else{
-								giu.Dummy(0,42).Build()
+								giu.Dummy(0,45).Build()
 							}
 						}),
 
@@ -519,7 +517,6 @@ func startUI(){
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								return
 							}
-							fmt.Println(keyfile,keyfilePath)
 							if keyfile&&keyfilePath==""{
 								_status = "Please select a keyfile."
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
@@ -1286,7 +1283,6 @@ func work(){
 		khash_sha3.Write(khash)
 		khash_hash = khash_sha3.Sum(nil)
 	}
-	fmt.Println(keyfile)
 	
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
@@ -2038,10 +2034,13 @@ func genPassword() string{
 	if chars==""{
 		return chars
 	}
-	tmp := make([]byte,32)
-	for i:=0;i<32;i++{
+	tmp := make([]byte,genpassLength)
+	for i:=0;i<int(genpassLength);i++{
 		j,_ := rand.Int(rand.Reader,new(big.Int).SetUint64(uint64(len(chars))))
 		tmp[i] = chars[j.Int64()]
+	}
+	if genpassCopy{
+		clipboard.WriteAll(string(tmp))
 	}
 	return string(tmp)
 }
