@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.16
+Picocrypt v1.17
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -70,7 +70,7 @@ import (
 
 )
 
-var version = "v1.16"
+var version = "v1.17"
 
 //go:embed NotoSans-Regular.ttf
 var font []byte
@@ -804,7 +804,12 @@ func onDrop(names []string){
 					}
 
 					// Open input file in read-only mode
-					fin,_ := os.Open(names[0]+".pcv.0")
+					var fin *os.File
+					if isSplit{
+						fin,_ = os.Open(names[0]+".pcv.0")
+					}else{
+						fin,_ = os.Open(names[0])
+					}
 
 					// Use regex to test if input is a valid Picocrypt volume
 					tmp := make([]byte,30)
