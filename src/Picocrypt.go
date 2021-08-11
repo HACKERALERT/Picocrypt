@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.15
+Picocrypt v1.16
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -70,7 +70,7 @@ import (
 
 )
 
-var version = "v1.15"
+var version = "v1.16"
 
 //go:embed NotoSans-Regular.ttf
 var font []byte
@@ -105,7 +105,6 @@ var outputWidth float32 = 370
 var orLabel = "or"
 var passwordStrength int
 var keyfile = false // True if user chooses/chose to use a keyfile
-var keyfilePrompt = "Keyfile (optional):" // Changes if decrypting and keyfile was enabled
 var showConfirmation = false // True if a confirmation to overwrite is needed
 var showProgress = false
 var progress float32 = 0 // 0 is 0%, 1 is 100%
@@ -129,10 +128,13 @@ var shredding = "Ready."
 
 // User input variables
 var password string
+var passwordState = giu.InputTextFlagsPassword
+var passwordStateLabel = "Show"
 var cPassword string // Confirm password text entry string variable
 var keyfilePath string
-var keyfileLabel = "Use a keyfile (Beta)"
+var keyfileLabel = "Use a keyfile"
 var metadata string
+var metadataPrompt = "Metadata (optional):"
 var shredTemp bool
 var paranoid bool
 var keep bool
@@ -141,6 +143,14 @@ var split bool
 var splitSize string
 var fast bool
 var kept = false // If a file was corrupted/modified, but the output was kept
+
+var showGenpass = false
+var genpassCopy = true
+var genpassLength int32 = 32
+var genpassUpper = true
+var genpassLower = true
+var genpassNums = true
+var genpassSymbols = true
 
 // Reed-Solomon encoders
 var rs1,_ = infectious.NewFEC(1,3) // 1 data shards, 3 total -> 2 parity shards
@@ -200,6 +210,40 @@ func startUI(){
 								tab = 0
 							}
 						}),
+
+						// Password generator modal
+						giu.Custom(func(){
+							if showGenpass{
+								giu.PopupModal("Generate password:").Layout(
+									giu.Row(
+										giu.Label("Length: "),
+										giu.SliderInt("",&genpassLength,4,64).Size(-0.0000001),
+									),
+									giu.Checkbox("Uppercase",&genpassUpper),
+									giu.Checkbox("Lowercase",&genpassLower),
+									giu.Checkbox("Numbers",&genpassNums),
+									giu.Checkbox("Symbols",&genpassSymbols),
+									giu.Checkbox("Copy to clipboard",&genpassCopy),
+									giu.Row(
+										giu.Button("Cancel").Size(100,0).OnClick(func(){
+											giu.CloseCurrentPopup()
+											showGenpass = false
+										}),
+										giu.Button("Generate").Size(100,0).OnClick(func(){
+											tmp := genPassword()
+											password = tmp
+											cPassword = tmp
+											passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
+											giu.CloseCurrentPopup()
+											showGenpass = false
+											giu.Update()
+										}),
+									),
+								).Build()
+								giu.OpenPopup("Generate password:")
+								giu.Update()
+							}
+						}),
 					
 						// Confirm overwrite with a modal
 						giu.Custom(func(){
@@ -214,7 +258,6 @@ func startUI(){
 										giu.Button("Yes").Size(100,0).OnClick(func(){
 											giu.CloseCurrentPopup()
 											showConfirmation = false
-											giu.Update()
 											showProgress = true
 											giu.Update()
 											go func (){
@@ -297,21 +340,41 @@ func startUI(){
 						// Prompt for password
 						giu.Row(
 							giu.Label("Password:"),
-							giu.SmallButton("Generate").OnClick(func(){
-								tmp := genPassword()
-								password = tmp
-								cPassword = tmp
-								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
-								giu.Update()
+							giu.Custom(func(){
+								giu.Row(
+									giu.Custom(func(){
+										if mode!="decrypt"{
+											giu.Row(
+												giu.SmallButton("Generate").OnClick(func(){
+													showGenpass = true
+												}),
+												giu.SmallButton("Copy").OnClick(func(){
+													clipboard.WriteAll(password)
+												}),
+											).Build()
+										}
+									}),
+									giu.SmallButton("Paste").OnClick(func(){
+										tmp,_ := clipboard.ReadAll()
+										password = tmp
+										cPassword = tmp
+										passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
+										giu.Update()
+									}),
+									giu.SmallButton(passwordStateLabel).OnClick(func(){
+										if passwordState==giu.InputTextFlagsPassword{
+											passwordState = giu.InputTextFlagsNone
+											passwordStateLabel = "Hide"
+										}else{
+											passwordState = giu.InputTextFlagsPassword
+											passwordStateLabel = "Show"
+										}
+									}),
+								).Build()
 							}),
-							giu.SmallButton("Copy").OnClick(func(){
-								clipboard.WriteAll(password)
-							}),
-							giu.Dummy(-200,0),
-							giu.Label(keyfilePrompt),
 						),
 						giu.Row(
-							giu.InputText(&password).Size(241/dpi).Flags(giu.InputTextFlagsPassword).OnChange(func(){
+							giu.InputText(&password).Size(241/dpi).Flags(passwordState).OnChange(func(){
 								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 							}),
 
@@ -347,49 +410,64 @@ func startUI(){
 								-1)
 								canvas.PathStroke(col,false,3)
 							}),
-							giu.Dummy(-200,0),
-
-							giu.Checkbox(keyfileLabel,&keyfile).OnChange(func(){
-								if !keyfile{
-									keyfileLabel = "Use a keyfile"
-									return
-								}
-								filename,err := dialog.File().Load()
-								if err!=nil{
-									keyfile = false
-									return
-								}
-								keyfileLabel = filename
-								keyfilePath = filename
-							}),
-						),
-
-						// Prompt to confirm password
-						giu.Label("Confirm password:"),
-						giu.Row(
-							giu.InputText(&cPassword).Size(241/dpi).Flags(giu.InputTextFlagsPassword),
+							giu.Dummy(-160,0),
 							giu.Custom(func(){
-								canvas := giu.GetCanvas()
-								pos := giu.GetCursorScreenPos()
-								col := color.RGBA{76,200,75,255}
-								if cPassword!=password{
-									col = color.RGBA{200,76,75,255}
+								if !(mode=="decrypt"&&!keyfile){
+									giu.Button(keyfileLabel).OnClick(func(){
+										filename,err := dialog.File().Load()
+										if err!=nil{
+											return
+										}
+										keyfile = true
+										keyfileLabel = filepath.Base(filename)
+										keyfilePath = filename
+									}).Build()
 								}
-								if password==""||cPassword==""||mode=="decrypt"{
-									col = color.RGBA{0,0,0,0}
+							}),
+							giu.Custom(func(){
+								if keyfile&&mode=="encrypt"{
+									giu.Button("Clear").OnClick(func(){
+										keyfile = false
+										keyfileLabel = "Use a keyfile"
+										keyfilePath = ""
+									}).Build()
 								}
-								path := pos.Add(image.Pt(
-									int(math.Round(float64(6*dpi))),
-									int(math.Round(float64(12*dpi))),
-								))
-								canvas.PathArcTo(path,8*dpi,0,2*math.Pi,-1)
-								canvas.PathStroke(col,false,3)
 							}),
 							giu.Dummy(-0.0000001,0),
 						),
 
+						// Prompt to confirm password
+						giu.Custom(func(){
+							if mode!="decrypt"{
+								giu.Label("Confirm password:").Build()
+								giu.Row(
+									giu.InputText(&cPassword).Size(241/dpi).Flags(passwordState),
+									giu.Custom(func(){
+										canvas := giu.GetCanvas()
+										pos := giu.GetCursorScreenPos()
+										col := color.RGBA{76,200,75,255}
+										if cPassword!=password{
+											col = color.RGBA{200,76,75,255}
+										}
+										if password==""||cPassword==""||mode=="decrypt"{
+											col = color.RGBA{0,0,0,0}
+										}
+										path := pos.Add(image.Pt(
+											int(math.Round(float64(6*dpi))),
+											int(math.Round(float64(12*dpi))),
+										))
+										canvas.PathArcTo(path,8*dpi,0,2*math.Pi,-1)
+										canvas.PathStroke(col,false,3)
+									}),
+									giu.Dummy(-0.0000001,0),
+								).Build()
+							}else{
+								giu.Dummy(0,45).Build()
+							}
+						}),
+
 						// Optional metadata
-						giu.Label("Metadata (optional):"),
+						giu.Label(metadataPrompt),
 						giu.InputText(&metadata).Size(-0.0000001),
 
 						giu.Custom(func(){
@@ -413,7 +491,11 @@ func startUI(){
 								giu.Row(
 									giu.Checkbox("Split output into chunks of",&split),
 									giu.InputText(&splitSize).Size(50).Flags(giu.InputTextFlagsCharsDecimal).OnChange(func(){
-										split = true
+										if splitSize==""{
+											split = false
+										}else{
+											split = true
+										}
 									}),
 									giu.Combo("##splitter",splitUnits[splitSelected],splitUnits,&splitSelected).Size(52),
 								).Build()
@@ -432,6 +514,11 @@ func startUI(){
 						giu.Button("Start").Size(-0.0000001,35).OnClick(func(){
 							if mode=="encrypt"&&password!=cPassword{
 								_status = "Passwords don't match."
+								_status_color = color.RGBA{0xff,0x00,0x00,255}
+								return
+							}
+							if keyfile&&keyfilePath==""{
+								_status = "Please select a keyfile."
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								return
 							}
@@ -704,6 +791,7 @@ func onDrop(names []string){
 				if strings.HasSuffix(names[0],".pcv")||isSplit{
 					mode = "decrypt"
 					inputLabel = name+" (will decrypt)"
+					metadataPrompt = "Metadata (read-only):"
 				
 					if isSplit{
 						inputLabel = name+" (will recombine and decrypt)"
@@ -716,7 +804,7 @@ func onDrop(names []string){
 					}
 
 					// Open input file in read-only mode
-					fin,_ := os.Open(names[0])
+					fin,_ := os.Open(names[0]+".pcv.0")
 
 					// Use regex to test if input is a valid Picocrypt volume
 					tmp := make([]byte,30)
@@ -771,9 +859,9 @@ func onDrop(names []string){
 						return
 					}
 
-					if flags[1]==1{
-						keyfilePrompt = "Keyfile (required):"
-						keyfileLabel = "Click here to select keyfile."
+					if flags[2]==1{
+						keyfile = true
+						keyfileLabel = "Select keyfile"
 					}
 
 					fin.Close()
@@ -1832,7 +1920,7 @@ func shred(names []string,separate bool){
 	}
 
 	// Clear UI state
-	shredding = "Ready."
+	shredding = "Completed."
 	shredProgress = 0
 	shredOverlay = ""
 }
@@ -1858,10 +1946,11 @@ func resetUI(){
 	outputWidth = 370
 	password = ""
 	cPassword = ""
-	keyfilePrompt = "Keyfile (optional):"
 	keyfileLabel = "Use a keyfile"
+	keyfilePath = ""
 	keyfile = false
 	metadata = ""
+	metadataPrompt = "Metadata (optional):"
 	shredTemp = false
 	keep = false
 	reedsolo = false
@@ -1929,11 +2018,29 @@ func humanize(seconds int) string{
 
 // Generate cryptographically secure high-entropy passwords
 func genPassword() string{
-	chars := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-=!@#$^&()_+?"
-	tmp := make([]byte,32)
-	for i:=0;i<32;i++{
+	chars := ""
+	if genpassUpper{
+		chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	}
+	if genpassLower{
+		chars += "abcdefghijklmnopqrstuvwxyz"
+	}
+	if genpassNums{
+		chars += "1234567890"
+	}
+	if genpassSymbols{
+		chars += "-=!@#$^&()_+?"
+	}
+	if chars==""{
+		return chars
+	}
+	tmp := make([]byte,genpassLength)
+	for i:=0;i<int(genpassLength);i++{
 		j,_ := rand.Int(rand.Reader,new(big.Int).SetUint64(uint64(len(chars))))
 		tmp[i] = chars[j.Int64()]
+	}
+	if genpassCopy{
+		clipboard.WriteAll(string(tmp))
 	}
 	return string(tmp)
 }
@@ -1977,7 +2084,7 @@ func main(){
 	window.SetDropCallback(onDrop)
 	window.SetCloseCallback(func() bool{
 		// Disable closing window if a Picocrypt is working to prevent temporary files
-		if working||shredding!="Ready."{
+		if working||(shredding!="Ready."&&shredding!="Completed."){
 			return false
 		}
 		return true
