@@ -3,12 +3,16 @@
 	<li>File name encryption</li>
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
-	<li>Make keyfile support more reliable (maybe DND too?)</li>
 	<li>Improve Reed-Solomon performance</li>
 </ul>
 
-# v1.16 (ETA: 3 days)
+# v1.16 (ETA: 1 days)
 <ul>
+	<li>Fixed bug when entering a wrong password when decrypting a splitted file</li>
+	<li>Fixed bug where an existing file is delete when a wrong password is used</li>
+	<li>The password generator is now customizable</li>
+	<li>Make keyfile support more reliable (keyfile now out of Beta)</li>
+	<li>Fix keyfile user flow issue</li>
 	<li>Bug fixes</li>
 	<li>UI fixes improvements</li>
 </ul>
