@@ -804,7 +804,7 @@ func onDrop(names []string){
 					}
 
 					// Open input file in read-only mode
-					fin,_ := os.Open(names[0])
+					fin,_ := os.Open(names[0]+".pcv.0")
 
 					// Use regex to test if input is a valid Picocrypt volume
 					tmp := make([]byte,30)
