@@ -70,7 +70,7 @@ import (
 
 )
 
-var version = "v1.15"
+var version = "v1.16"
 
 //go:embed NotoSans-Regular.ttf
 var font []byte
