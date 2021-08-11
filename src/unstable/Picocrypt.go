@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.17
+Picocrypt v1.16
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -70,7 +70,7 @@ import (
 
 )
 
-var version = "v1.17"
+var version = "v1.16"
 
 //go:embed NotoSans-Regular.ttf
 var font []byte
@@ -1026,6 +1026,9 @@ func work(){
 		status = "Recombining file..."
 		total := 0
 
+		if strings.HasSuffix(inputFile,".pcv"){
+			inputFile = inputFile[:len(inputFile)-4]
+		}
 		for{
 			_,err := os.Stat(fmt.Sprintf("%s.%d",inputFile+".pcv",total))
 			if err!=nil{
@@ -1324,7 +1327,6 @@ func work(){
 				if recombine{
 					os.Remove(inputFile)
 				}
-				os.Remove(outputFile)
 				return
 			}
 		}
