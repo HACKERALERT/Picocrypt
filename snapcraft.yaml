@@ -12,7 +12,7 @@ apps:
     command: bin/Picocrypt
     extensions: [gnome-3-34]
     plugs:
-      - opengl
+      - [home,x11,wayland,opengl]
 
 parts:
   picocrypt:
