@@ -15,7 +15,7 @@ Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Ope
 Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.16/Picocrypt.exe">here</a>. Older releases are available under the Releases tab.
 
 ## macOS
-Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.15/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside.
+Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.16/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside.
 
 ## Linux
 A Snap is available for Linux. Make sure you have Snapcraft installed (`sudo apt install snapd`) and install Picocrypt: `sudo snap install picocrypt`.
