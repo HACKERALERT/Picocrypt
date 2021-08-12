@@ -8,6 +8,7 @@
 	<li>Add clear button to password field</li>
 	<li>Multiple keyfiles support and DND</li>
 	<li>Fix bug where metadata says "read-only", but the textbox is modifiable</li>
+	<li>Add option to delete encrypted files after decryption</li>
 </ul>
 
 # v1.16 (Released 08/11/2021)
