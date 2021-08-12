@@ -7,7 +7,7 @@
 	<li>Replace show password button with an eye icon</li>
 </ul>
 
-# v1.16 (ETA: 1 days)
+# v1.16 (Released 08/11/2021)
 <ul>
 	<li>Fixed bug when entering a wrong password when decrypting a splitted file</li>
 	<li>Fixed bug where an existing file is delete when a wrong password is used</li>
