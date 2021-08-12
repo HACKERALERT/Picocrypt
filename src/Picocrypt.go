@@ -1026,6 +1026,9 @@ func work(){
 		status = "Recombining file..."
 		total := 0
 
+		if strings.HasSuffix(inputFile,".pcv"){
+			inputFile = inputFile[:len(inputFile)-4]
+		}
 		for{
 			_,err := os.Stat(fmt.Sprintf("%s.%d",inputFile+".pcv",total))
 			if err!=nil{
@@ -1324,7 +1327,6 @@ func work(){
 				if recombine{
 					os.Remove(inputFile)
 				}
-				os.Remove(outputFile)
 				return
 			}
 		}
