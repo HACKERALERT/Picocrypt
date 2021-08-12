@@ -12,7 +12,7 @@ Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Ope
 <strong>Important:</strong> There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from the official website or this repository to ensure that you get the authentic and backdoor-free Picocrypt.
 
 ## Windows
-Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.15/Picocrypt.exe">here</a>. Older releases are available under the Releases tab.
+Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.16/Picocrypt.exe">here</a>. Older releases are available under the Releases tab.
 
 ## macOS
 Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.15/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside.
