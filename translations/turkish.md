@@ -13,7 +13,7 @@ Cure53 tarafından olası bir denetleme yaptırabilmem için gereken parayı top
 <strong>Önemli:</strong> İnternette en son 2005'te güncellenmiş PicoCrypt adlı eski, işe yaramaz ve terk edilmiş bir yazılım müsvettesi var. PicoCrypt'in, Picocrypt(bu proje) ile zerre alakası yoktur. Gerçek ve arka kapı içermeyen Picocrypt'i edindiğinizden emin olmak için özellikle bu depodan indirdiğinizden emin olun.
 
 ## Windows
-Windows için Picocrypt olabildiğince basittir. Windows için en güncel ve taşınabilir uygulamayı indirmek için <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.15/Picocrypt.exe">buraya</a> tıklayın. Bir ihtimal Picocrypt anti-virüs yazılımınızı tetikleyebilir. Picocrypt bir virüs değildir, bu yüzden lütfen gelecekte bu tür sorunların tekrar yaşanmaması için anti-virüs sağlayıcınıza bu durumun bir yanlış pozitif olduğunu belirtin. Daha eski sürümler, Sürümler sekmesinden erişilebilir.
+Windows için Picocrypt olabildiğince basittir. Windows için en güncel ve taşınabilir uygulamayı indirmek için <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.16/Picocrypt.exe">buraya</a> tıklayın. Bir ihtimal Picocrypt anti-virüs yazılımınızı tetikleyebilir. Picocrypt bir virüs değildir, bu yüzden lütfen gelecekte bu tür sorunların tekrar yaşanmaması için anti-virüs sağlayıcınıza bu durumun bir yanlış pozitif olduğunu belirtin. Daha eski sürümler, Sürümler sekmesinden erişilebilir.
 
 ## macOS
 <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.15/Picocrypt.app.zip">buraya</a> tıklayın.
