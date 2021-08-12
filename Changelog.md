@@ -4,6 +4,7 @@
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
+	<li>Replace show password button with an eye icon</li>
 </ul>
 
 # v1.16 (ETA: 1 days)
