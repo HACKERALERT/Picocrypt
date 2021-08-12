@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.16
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Name=Picocrypt
+Exec=picocrypt
+Icon=${SNAP}/meta/gui/picocrypt.svg
