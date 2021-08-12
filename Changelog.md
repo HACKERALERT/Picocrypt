@@ -5,6 +5,8 @@
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Replace show password button with an eye icon</li>
+	<li>Add clear button to password field</li>
+	<li>Multiple keyfiles support and DND</li>
 </ul>
 
 # v1.16 (Released 08/11/2021)
