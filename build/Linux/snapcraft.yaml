@@ -21,7 +21,6 @@ apps:
 parts:
   picocrypt:
     plugin: go
-    go-importpath: .
     source: .
     build-packages:
       - gcc
