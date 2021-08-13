@@ -65,6 +65,15 @@ Eğer bir hata bulduysanız ya da özellik talebiniz varsa, lütfen bir Sorun gi
 Eğer Picocrypt'i sevdiyseniz, <a href="https://patreon.com/evansu">Patreon</a> üzerinden beni desteklemeyi düşünebilirsiniz. Bu yazılımı tamamen ücretsiz olarak sağladığım için, Picocrypt üzerinde çalışmaya devam etmem için beni motive edecek bazı destekçilere sahip olmayı çok isterim.
 
 # Teşekkürler
+Ve Open Collective üzerinden yaptıkları kayda değer bağışlardan ötürü bu kişilere çok teşekkür ederim.
+<ul>
+	<li>jp26</li>
+</ul>
+Ve ayrıca Patreon'daki destekçilerime:
+<ul>
+	<li>Frederick Doe</li>
+</ul>
+
 Aşağıda listelenmiş olan beş kişiye, Picocrypt'e bağışta ve destekte bulunan ilk kişiler olmalarından ötürü çok teşekkür ederim:
 <ul>
 	<li>W.Graham</li>
