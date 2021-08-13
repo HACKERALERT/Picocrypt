@@ -12,13 +12,13 @@ Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Ope
 <strong>Important:</strong> There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from the official website or this repository to ensure that you get the authentic and backdoor-free Picocrypt.
 
 ## Windows
-Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.16/Picocrypt.exe">here</a>. Older releases are available under the Releases tab.
+Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.16/Picocrypt.exe">here</a>. If Windows Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive.
 
 ## macOS
-Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.16/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside.
+Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.16/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, right click on Picocrypt and hit "Open". If you still get the warning, right click on Picocrypt and hit "Open" again and you should be able to start Picocrypt.
 
 ## Linux
-A Snap is available for Linux. Make sure you have Snapcraft installed (`sudo apt install snapd`) and install Picocrypt: `sudo snap install picocrypt`.
+A Snap is available for Linux. Make sure you have [Snapcraft](https://snapcraft.io/) installed (`sudo apt install snapd`) and install Picocrypt: `sudo snap install picocrypt`. Due to the complexity of dependencies and static linking, I don't distribute standalone .deb or .rpm binaries because they would be unreliable and not worth the hassle. Snapcraft manages all dependencies automatically and is the recommended way to run Picocrypt on any major Linux distribution.
 
 # Why Picocrypt?
 Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should choose Picocrypt:
