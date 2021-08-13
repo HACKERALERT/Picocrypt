@@ -4,8 +4,8 @@ If you're wondering about how Picocrypt handles cryptography, you've come to the
 # Core Cryptography
 Picocrypt uses the following cryptographic primitives:
 - XChaCha20 (cascaded with Serpent for paranoid mode)
-- HMAC-SHA3 for normal mode, keyed-BLAKE2b for fast mode (512 bits)
-- HKDF-SHA3 for deriving a subkey used with the MAC above
+- HMAC-SHA3 for normal mode, keyed-BLAKE2b for fast mode (256-bit key, 512-bit digest)
+- HKDF-SHA3-256 for deriving a subkey used with the MAC above
 - Argon2id (8 passes, 1 GiB memory, 8 threads) for normal mode, (4 passes, 128 MiB memory, 4 threads) for fast mode
 
-All algorithms used are from the well-known golang.org/x/crypto module.
+All primitives used are from the well-known golang.org/x/crypto module.
