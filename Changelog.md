@@ -20,6 +20,7 @@
 
 # v1.17 (work in progress, no ETA at the moment)
 <ul>
+	<li>Add start button to shredder (improve user flow)</li>
 	<li>Tooltips for RS option and shred temporary files option</li>
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
