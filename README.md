@@ -103,4 +103,5 @@ Finally, thanks to these people for helping me out when needed:
 	<li>Fuderal on Discord for helping me setup a Discord server</li>
 	<li>u/greenreddits for constant feedback and support</li>
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
+	<li>u/NSABackdoors for doing plenty of testing</li>
 </ul>
