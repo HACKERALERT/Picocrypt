@@ -28,7 +28,7 @@ Neden BitLocker, NordLocker, VeraCrypt, AxCrypt, ya da 7-Zip yerine Picocrypt ku
 	<li>Picocrypt <i>ufaktır</i>. NordLocker 100MB'ın üzerinde ve VeraCrypt 30MB'tan fazlayken, Picocrypt sadece 3MB, -ki bu da yaklaşık olarak yüksek çözünürlüklü bir görsel kadardır. Ve hepsi bu kadar da değil, Picocrypt taşınabilirdir, yükleme gerektirmez, ve yönetici hakları ya da kök erişim iznine ihtiyaç duymaz.</li>
 	<li>Picocrypt, VeraCrypt'a oranla kullanımı daha basit ve daha verimlidir. VeraCrypt ile dosyalarınızı şifreleyebilmek için, bölüm oluştururken hiç olmazsa en azından beş dakika harcamanız gerekir. Picocrypt'in basit kullanıcı arayüzü sayesinde, tüm yapmanız gereken dosyaları sürükleyip bırakmak, bir parola belirlemek ve Başla tuşuna basmak. Picocrypt tüm karmaşık ayarları kendisi halleder.</li>
 	<li>Picocrypt güvenlik amacı güdülerek tasarlanmıştır. 7-Zip bir arşiv yazılımı olup asıl odağı şifreleme ya da güvenlik değildir. Lâkin Picocrypt, güvenliği her şeyin üstünde tutacak şekilde oluşturulmuştur. Picocrypt'e ait her bir parça bir sebepten ötürü var ve Picocrypt'in güvenliğine etki edebilecek her şey silinmiştir. Picocrypt güvenebileceğiniz bir kriptografidir.</li>
-	<li>Picocrypt dosyaları korumasının yanı sıra onları tasdik de eder, bilgisayar korsanlarının ilgili hassas veriyi zarara sebep olacak şekilde etklemesinin önüne geçer. Bu Bu, güvenli olmayan bir kanal üzerinden şifrelenmiş dosyalar gönderirken ve el değmeden ulaştığından emin olmak istediğinizde kullanışlı bir özellik halini alır. Picocrypt tasdik için güvenli saygınlığı yüksek bir mesaj doğrulama kodu olan Poly1305 kullanır.</li>
+	<li>Picocrypt dosyaları korumasının yanı sıra onları tasdik de eder, bilgisayar korsanlarının ilgili hassas veriyi zarara sebep olacak şekilde etklemesinin önüne geçer. Bu, güvenli olmayan bir kanal üzerinden şifrelenmiş dosyalar gönderirken ve el değmeden ulaştığından emin olmak istediğinizde kullanışlı bir özellik halini alır. Picocrypt tasdik için güvenli saygınlığı yüksek bir mesaj doğrulama kodu olan Poly1305 kullanır.</li>
 	<li>Picocrypt dosyalarınızın bozulmalara karşı aktif olarak korunması için fazladan Reed-Solomon bitleri ekler, bu sayede eğer şifrelenmiş veriniz bozulursa (örneğin, sabit disk arızası gibi), Picocrypt verilerinizi yüksek başarı oranıyla kurtarabilir.</li>
 </ul>
 
@@ -55,7 +55,7 @@ Picocrypt ile ilgili en son haberleri görebileceğiniz ve dahil olabileceğiniz
 </ul>
 Yalnızca bu topluluklara güvenin ve benim kimliğime bürünüp size kötü amaçlı yazılım indirtmeyi deneyebilecek dolandırıcılara ve bilgisayar korsanlarına karşı dikkatli olun.
 
-# Yıldız Çizelgesi
+# Yıldız Grafiği
 [![Stargazers over time](https://starchart.cc/HACKERALERT/Picocrypt.svg)](https://starchart.cc/HACKERALERT/Picocrypt)
 
 # Katkı
@@ -65,7 +65,7 @@ Eğer bir hata bulduysanız ya da özellik talebiniz varsa, lütfen bir Sorun gi
 Eğer Picocrypt'i sevdiyseniz, <a href="https://patreon.com/evansu">Patreon</a> üzerinden beni desteklemeyi düşünebilirsiniz. Bu yazılımı tamamen ücretsiz olarak sağladığım için, Picocrypt üzerinde çalışmaya devam etmem için beni motive edecek bazı destekçilere sahip olmayı çok isterim.
 
 # Teşekkürler
-Ve Open Collective üzerinden yaptıkları kayda değer bağışlardan ötürü bu kişilere çok teşekkür ederim.
+Open Collective üzerinden yaptıkları kayda değer bağışlardan ötürü bu kişilere özellikle çok teşekkür ederim.
 <ul>
 	<li>jp26 ($50)</li>
 </ul>
