@@ -1,12 +1,35 @@
-# v1.17 (work in progress, no ETA at the moment)
+# Features Under Consideration
+<ul>
+	<li><strong>Patron request (higher priority)</strong>: Add to Fedora repos</li>
+	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
+	<li>Add to AUR (Arch User Repo) (thanks u/blackrosae)</li>
+	<li>Android/iOS support (thanks u/fzylqd), potentially via a web interface (thanks @Tutturuuu)</li>
+	<li>Full disk encryption (thanks u/playffy)</li>
+	<li>Tweakable Argon2 parameters (with lower bounds)</li>
+	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
+	<li>Hardware keys (thanks u/Tech99bananas)</li>
+	<li>CLI (thanks u/your_username)</li>
+</ul>
+
+# v1.XX (a future release)
 <ul>
 	<li>File name encryption</li>
+	<li>Customizable Argon2 parameters</li>
+	<li>Associate .pcv file extension with Picocrypt</li>
+</ul>
+
+# v1.17 (work in progress, no ETA at the moment)
+<ul>
+	
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Replace show password button with an eye icon</li>
 	<li>Add clear button to password field</li>
 	<li>Multiple keyfiles support and DND</li>
+	<li>Keyfile generator</li>
+	<li>Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
+	<li>Filter invalid charaters and emojis out of "Save as" text entry</li>
 	<li>Fix bug where metadata says "read-only", but the textbox is modifiable</li>
 	<li>Add option to delete encrypted files after decryption</li>
 </ul>
