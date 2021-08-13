@@ -6,7 +6,6 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 	<li><strong>Patron request (higher priority)</strong>: Add to Fedora repos</li>
 	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
 	<li>Add to AUR (Arch User Repo) (thanks u/blackrosae)</li>
-	<li>Secure password/mnemonic generator</li>
 	<li>Android/iOS support (thanks u/fzylqd), potentially via a web interface (thanks @Tutturuuu)</li>
 	<li>Full disk encryption (thanks u/playffy)</li>
 	<li>Tweakable Argon2 parameters (with lower bounds)</li>
@@ -21,6 +20,7 @@ Here's the road ahead for Picocrypt. Not all items listed will be added; they ar
 
 # Completed (most recent first)
 <ul>
+	<li>Secure password/mnemonic generator</li>
 	<li>Picocrypt has been ported from Python to Go, thus completely rewritten</li>
 	<li>Keyfile support (thanks u/PiratesOfTheArctic)</li>
 	<li>Allow file splitting into chunks (thanks u/greenreddits)</li>
