@@ -67,7 +67,7 @@ Eğer Picocrypt'i sevdiyseniz, <a href="https://patreon.com/evansu">Patreon</a> 
 # Teşekkürler
 Ve Open Collective üzerinden yaptıkları kayda değer bağışlardan ötürü bu kişilere çok teşekkür ederim.
 <ul>
-	<li>jp26</li>
+	<li>jp26 ($50)</li>
 </ul>
 Ve ayrıca Patreon'daki destekçilerime:
 <ul>
