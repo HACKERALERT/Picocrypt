@@ -70,9 +70,14 @@ A thank you from the bottom of my heart to my fellow supporters on Patreon:
 <ul>
 	<li>Frederick Doe</li>
 </ul>
+
+And to people on Open Collective who made a significant contribution:
+<ul>
+	<li>jp26 ($50)</li>
+</ul>
 You are the people that inspire me to work on Picocrypt and provide it free of charge to everyone!
 
-A huge thanks to the following list of five people, who were the first people to donate and support Picocrypt:
+Also a huge thanks to the following list of five people, who were the first people to donate and support Picocrypt:
 <ul>
 	<li>W.Graham</li>
 	<li>N. Chin</li>
@@ -81,16 +86,15 @@ A huge thanks to the following list of five people, who were the first people to
 	<li>E. Zahard</li>
 </ul>
 
-A great thanks to these people, who have helped translate Picocrypt and make it more accessible to the world:
+As well, a great thanks to these people, who have helped translate Picocrypt and make it more accessible to the world:
 <ul>
 	<li>@umitseyhan75 for Turkish</li>
 	<li>@digitalblossom for German</li>
 </ul>
 
-Also thanks to these people for helping me out when needed:
+Finally, thanks to these people for helping me out when needed:
 <ul>
 	<li>Fuderal on Discord for helping me setup a Discord server</li>
 	<li>u/greenreddits for constant feedback and support</li>
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
-	<li>samuel-lucas6 (on GitHub) for valuable feedback and support</li>
 </ul>
