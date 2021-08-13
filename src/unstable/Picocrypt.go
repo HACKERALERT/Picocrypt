@@ -117,7 +117,7 @@ var splitUnits = []string{
 	"MiB",
 	"GiB",
 }
-var splitSelected int32 // Index of which splitting unit was chosen from above
+var splitSelected int32 = 1 // Index of which splitting unit was chosen from above
 var shredPasses = "4"
 var stopShredding = false
 var shredProgress float32
