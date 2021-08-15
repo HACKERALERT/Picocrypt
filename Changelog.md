@@ -20,8 +20,10 @@
 
 # v1.17 (work in progress, no ETA at the moment)
 <ul>
+	<li>Extended ASCII set in password generator</li>
 	<li>Add start button to shredder (improve user flow)</li>
-	<li>Tooltips for RS option and shred temporary files option</li>
+	<li>Tooltips for all advanced options</li>
+	<li>Generate checksums for text?</li>
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
