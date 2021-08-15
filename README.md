@@ -96,6 +96,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 <ul>
 	<li>@umitseyhan75 for Turkish</li>
 	<li>@digitalblossom for German</li>
+	<li>u/maguszeal for Brazilian Portuguese</li>
 </ul>
 
 Finally, thanks to these people for helping me out when needed:
