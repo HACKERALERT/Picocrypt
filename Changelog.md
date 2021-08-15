@@ -31,7 +31,7 @@
 	<li>Add clear button to password field</li>
 	<li>Multiple keyfiles support and DND</li>
 	<li>Keyfile generator</li>
-	<li>Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
+	<li>✓ Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
 	<li>Filter invalid charaters and emojis out of "Save as" text entry</li>
 	<li>Fix bug where metadata says "read-only", but the textbox is modifiable</li>
 	<li>Add option to delete encrypted files after decryption</li>
