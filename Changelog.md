@@ -16,18 +16,18 @@
 	<li>File name encryption</li>
 	<li>Customizable Argon2 parameters</li>
 	<li>Associate .pcv file extension with Picocrypt</li>
+	<li>Generate checksums for text</li>
+	<li>Replace show password button with an eye icon</li>
 </ul>
 
 # v1.17 (work in progress, no ETA at the moment)
 <ul>
-	<li>Extended ASCII set in password generator</li>
+	<li>✓ (abandoned due to UI issues with ASCII codes >128) Extended ASCII set in password generator</li>
 	<li>Add start button to shredder (improve user flow)</li>
 	<li>Tooltips for all advanced options</li>
-	<li>Generate checksums for text?</li>
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
-	<li>Replace show password button with an eye icon</li>
 	<li>✓ Add clear button to password field</li>
 	<li>Multiple keyfiles support and DND</li>
 	<li>Keyfile generator</li>
