@@ -34,7 +34,7 @@
 	<li>✓ Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
 	<li>Filter invalid charaters and emojis out of "Save as" text entry</li>
 	<li>✓ Fix bug where metadata says "read-only", but the textbox is modifiable</li>
-	<li>Add option to delete encrypted files after decryption</li>
+	<li>✓ Add option to delete encrypted files after decryption</li>
 </ul>
 
 # v1.16 (Released 08/11/2021)
