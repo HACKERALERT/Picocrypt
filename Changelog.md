@@ -20,7 +20,8 @@
 	<li>Replace show password button with an eye icon</li>
 </ul>
 
-# v1.17 (work in progress, no ETA at the moment)
+# v1.17 (ETA: 2 weeks)
+<strong>Note: v1.17 will be incompatible with 1.16 (and therefore 1.15 and 1.14).</strong>
 <ul>
 	<li>✓ (abandoned due to UI issues with ASCII codes >128) Extended ASCII set in password generator</li>
 	<li>Add start button to shredder (improve user flow)</li>
@@ -28,11 +29,12 @@
 	<li>Localization support (use system default where possible)</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
+	<li>✓ Fix ETA negative number bug</li>
 	<li>✓ Add clear button to password field</li>
 	<li>Multiple keyfiles support and DND</li>
 	<li>Keyfile generator</li>
 	<li>✓ Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
-	<li>Filter invalid charaters and emojis out of "Save as" text entry</li>
+	<li>✓ (abandoned because this could cause issues with different language characters) Filter invalid charaters and emojis out of "Save as" text entry</li>
 	<li>✓ Fix bug where metadata says "read-only", but the textbox is modifiable</li>
 	<li>✓ Add option to delete encrypted files after decryption</li>
 </ul>
