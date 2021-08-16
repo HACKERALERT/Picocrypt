@@ -72,7 +72,7 @@ Se você é multilíngue e conhece um idioma para o qual o Picocrypt ainda não 
 
 Se você achar útil o Picocrypt, por favor, considere me apoiar no <a href="https://patreon.com/evansu">Patreon</a>. Estou fornecendo este software completamente de graça, e adoraria ter alguns apoiadores que me motivarão a continuar meu trabalho no Picocrypt.
 
-# Thank You's
+# Agradecimentos
 Um obrigado do fundo do meu coração aos meus apoiadores no Patreon:
 <ul>
 	<li>Frederick Doe</li>
