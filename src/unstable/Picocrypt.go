@@ -135,6 +135,7 @@ var keyfilePath string
 var keyfileLabel = "Use a keyfile"
 var metadata string
 var metadataPrompt = "Metadata (optional):"
+var metadataState = giu.InputTextFlagsNone
 var shredTemp bool
 var paranoid bool
 var keep bool
@@ -142,6 +143,7 @@ var reedsolo bool
 var split bool
 var splitSize string
 var fast bool
+var deleteEncrypted bool
 var kept = false // If a file was corrupted/modified, but the output was kept
 
 var showGenpass = false
@@ -305,6 +307,7 @@ func startUI(){
 							giu.Row(
 								giu.Dummy(-58,0),
 								giu.Button("Clear").Size(50,0).OnClick(resetUI),
+								giu.Tooltip("Clear all input files and reset UI state."),
 							),
 						),
 
@@ -335,46 +338,55 @@ func startUI(){
 
 								outputEntry = file
 							}).Size(64,0),
+							giu.Tooltip("Select a custom name and path to save the output as."),
 						),
 
 						// Prompt for password
 						giu.Row(
 							giu.Label("Password:"),
 							giu.Custom(func(){
-								giu.Row(
-									giu.Custom(func(){
-										if mode!="decrypt"{
-											giu.Row(
-												giu.SmallButton("Generate").OnClick(func(){
-													showGenpass = true
-												}),
-												giu.SmallButton("Copy").OnClick(func(){
-													clipboard.WriteAll(password)
-												}),
-											).Build()
-										}
-									}),
-									giu.SmallButton("Paste").OnClick(func(){
-										tmp,_ := clipboard.ReadAll()
-										password = tmp
-										cPassword = tmp
-										passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
-										giu.Update()
-									}),
-									giu.SmallButton(passwordStateLabel).OnClick(func(){
-										if passwordState==giu.InputTextFlagsPassword{
-											passwordState = giu.InputTextFlagsNone
-											passwordStateLabel = "Hide"
-										}else{
-											passwordState = giu.InputTextFlagsPassword
-											passwordStateLabel = "Show"
-										}
-									}),
-								).Build()
+								if mode!="decrypt"{
+									giu.Row(
+										giu.Button("Generate").OnClick(func(){
+											showGenpass = true
+										}),
+										giu.Tooltip("Use this to generate a cryptographically secure password."),
+
+										giu.Button("Copy").OnClick(func(){
+											clipboard.WriteAll(password)
+										}),
+										giu.Tooltip("Copies the contents of the password field into your clipboard."),
+									).Build()
+								}
 							}),
+							giu.Button("Paste").OnClick(func(){
+								tmp,_ := clipboard.ReadAll()
+								password = tmp
+								cPassword = tmp
+								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
+								giu.Update()
+							}),
+							giu.Tooltip("Paste your clipboard content into the password fields."),
+
+							giu.Button("Clear").OnClick(func(){
+								password = ""
+								cPassword = ""
+							}),
+							giu.Tooltip("Clear both password fields."),
+
+							giu.Button(passwordStateLabel).OnClick(func(){
+								if passwordState==giu.InputTextFlagsPassword{
+									passwordState = giu.InputTextFlagsNone
+									passwordStateLabel = "Hide"
+								}else{
+									passwordState = giu.InputTextFlagsPassword
+									passwordStateLabel = "Show"
+								}
+							}),
+							giu.Tooltip("Click to toggle the password state."),
 						),
 						giu.Row(
-							giu.InputText(&password).Size(241/dpi).Flags(passwordState).OnChange(func(){
+							giu.InputText(&password).Size(300/dpi).Flags(passwordState).OnChange(func(){
 								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 							}),
 
@@ -410,7 +422,7 @@ func startUI(){
 								-1)
 								canvas.PathStroke(col,false,3)
 							}),
-							giu.Dummy(-160,0),
+							giu.Dummy(12,0),
 							giu.Custom(func(){
 								if !(mode=="decrypt"&&!keyfile){
 									giu.Button(keyfileLabel).OnClick(func(){
@@ -428,7 +440,7 @@ func startUI(){
 								if keyfile&&mode=="encrypt"{
 									giu.Button("Clear").OnClick(func(){
 										keyfile = false
-										keyfileLabel = "Use a keyfile"
+										keyfileLabel = "Use keyfile(s)"
 										keyfilePath = ""
 									}).Build()
 								}
@@ -441,7 +453,7 @@ func startUI(){
 							if mode!="decrypt"{
 								giu.Label("Confirm password:").Build()
 								giu.Row(
-									giu.InputText(&cPassword).Size(241/dpi).Flags(passwordState),
+									giu.InputText(&cPassword).Size(300/dpi).Flags(passwordState),
 									giu.Custom(func(){
 										canvas := giu.GetCanvas()
 										pos := giu.GetCursorScreenPos()
@@ -468,7 +480,7 @@ func startUI(){
 
 						// Optional metadata
 						giu.Label(metadataPrompt),
-						giu.InputText(&metadata).Size(-0.0000001),
+						giu.InputText(&metadata).Size(-0.0000001).Flags(metadataState),
 
 						giu.Custom(func(){
 							if mode!=""{
@@ -479,17 +491,30 @@ func startUI(){
 						// Advanced options can be enabled with checkboxes
 						giu.Custom(func(){
 							if mode=="encrypt"{
-								giu.Checkbox("Shred temporary files (can be slow for large files)",&shredTemp).Build()
-								giu.Checkbox("Fast mode (slightly less secure, not as durable)",&fast).Build()
-								giu.Checkbox("Paranoid mode (extremely secure, but slower)",&paranoid).Build()
+								giu.Checkbox("Shred temporary files",&shredTemp).Build()
+								giu.Tooltip("Use this to shred temporary zip archives and volumes used by Picocrypt.").Build()
+
+								giu.Checkbox("Use fast mode",&fast).OnChange(func(){
+									paranoid = false
+								}).Build()
+								giu.Tooltip("Uses BLAKE2b instead of SHA3 with less Argon2; faster, but less secure.").Build()
+
+								giu.Checkbox("Use paranoid mode",&paranoid).OnChange(func(){
+									fast = false
+								}).Build()
+								giu.Tooltip("Cascades Serpent with XChaCha20 plus high Argon2; highly secure, but slower.").Build()
+
 								giu.Row(
-									giu.Checkbox("Encode with Reed-Solomon to prevent corruption (slow)",&reedsolo),
+									giu.Checkbox("Encode with Reed-Solomon",&reedsolo),
+									giu.Tooltip("Reed-Solomon can detect and fix corrupted data."),
 									giu.Button("?").Size(24,25).OnClick(func(){
 										browser.OpenURL(rsWikipedia)
 									}),
 								).Build()
+
 								giu.Row(
 									giu.Checkbox("Split output into chunks of",&split),
+									giu.Tooltip("Use this to split the output file into chunks."),
 									giu.InputText(&splitSize).Size(50).Flags(giu.InputTextFlagsCharsDecimal).OnChange(func(){
 										if splitSize==""{
 											split = false
@@ -499,9 +524,14 @@ func startUI(){
 									}),
 									giu.Combo("##splitter",splitUnits[splitSelected],splitUnits,&splitSelected).Size(52),
 								).Build()
+
 								giu.Dummy(0,1).Build()
 							}else if mode=="decrypt"{
 								giu.Checkbox("Keep decrypted output even if it's corrupted or modified",&keep).Build()
+								giu.Tooltip("Tells Picocrypt to always keep decrypted outputs.").Build()
+
+								giu.Checkbox("Delete the input file(s) after decryption",&deleteEncrypted).Build()
+								giu.Tooltip("Removes the encrypted Picocrypt volume (and chunks).").Build()
 								giu.Dummy(0,112).Build()
 							}else{
 								giu.Dummy(0,67).Build()
@@ -718,6 +748,7 @@ func startUI(){
 						giu.Label("Patrons:"),
 						giu.Label("    - Frederick Doe"),
 						giu.Label("Donators:"),
+						giu.Label("    - jp26"),
 						giu.Label("    - W.Graham"),
 						giu.Label("    - N. Chin"),
 						giu.Label("    - Manjot"),
@@ -726,6 +757,7 @@ func startUI(){
 						giu.Label("Translators"),
 						giu.Label("    - umitseyhan75 (Turkish)"),
 						giu.Label("    - digitalblossom (German)"),
+						giu.Label("    - maguszeal (Brazilian Portuguese)"),
 						giu.Label("Other"),
 						giu.Label("    - Fuderal for setting up Picocrypt's Discord server"),
 						giu.Label("    - u/greenreddits for constant feedback and support"),
@@ -789,9 +821,11 @@ func onDrop(names []string){
 
 				// Decide if encrypting or decrypting
 				if strings.HasSuffix(names[0],".pcv")||isSplit{
+					var err error
 					mode = "decrypt"
 					inputLabel = name+" (will decrypt)"
 					metadataPrompt = "Metadata (read-only):"
+					metadataState = giu.InputTextFlagsReadOnly
 				
 					if isSplit{
 						inputLabel = name+" (will recombine and decrypt)"
@@ -831,8 +865,17 @@ func onDrop(names []string){
 					fin.Seek(0,0)
 
 					// Read metadata and insert into box
-					var err error
-					fin.Read(make([]byte,15))
+					//var err error
+					tmp = make([]byte,15)
+					fin.Read(tmp)
+					tmp,_ = rsDecode(rs5,tmp)
+					if string(tmp)=="v1.14"||string(tmp)=="v1.15"||string(tmp)=="v1.16"{
+						resetUI()
+						_status = "Please use Picocrypt v1.16 to decrypt this file."
+						_status_color = color.RGBA{0xff,0x00,0x00,255}
+						fin.Close()
+						return
+					}
 					tmp = make([]byte,15)
 					fin.Read(tmp)
 					tmp,err = rsDecode(rs5,tmp)
@@ -1251,13 +1294,22 @@ func work(){
 			4,
 			32,
 		)[:]
-	}else{
+	}else if paranoid{
 		key = argon2.IDKey(
 			[]byte(password),
 			salt,
 			8,
 			1048576,
 			8,
+			32,
+		)[:]
+	}else{
+		key = argon2.IDKey(
+			[]byte(password),
+			salt,
+			4,
+			1048576,
+			4,
 			32,
 		)[:]
 	}
@@ -1632,6 +1684,22 @@ func work(){
 		}
 	}
 
+	if deleteEncrypted{
+		if recombine{
+			total := 0
+			for{
+				_,err := os.Stat(fmt.Sprintf("%s.%d",inputFile,total))
+				if err!=nil{
+					break
+				}
+				os.Remove(fmt.Sprintf("%s.%d",inputFile,total))
+				total++
+			}
+		}else{
+			os.Remove(inputFile)
+		}
+	}
+
 	resetUI()
 
 	// If user chose to keep a corrupted/modified file, let them know
@@ -1958,12 +2026,14 @@ func resetUI(){
 	keyfile = false
 	metadata = ""
 	metadataPrompt = "Metadata (optional):"
+	metadataState = giu.InputTextFlagsNone
 	shredTemp = false
 	keep = false
 	reedsolo = false
 	split = false
 	splitSize = ""
 	fast = false
+	deleteEncrypted = false
 	paranoid = false
 	progress = 0
 	progressInfo = ""
@@ -2020,6 +2090,9 @@ func humanize(seconds int) string{
 	seconds %= 3600
 	minutes := int(math.Floor(float64(seconds)/60))
 	seconds %= 60
+	hours = int(math.Max(float64(hours),0))
+	minutes = int(math.Max(float64(minutes),0))
+	seconds = int(math.Max(float64(seconds),0))
 	return fmt.Sprintf("%02d:%02d:%02d",hours,minutes,seconds)
 }
 
