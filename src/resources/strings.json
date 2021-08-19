@@ -95,15 +95,15 @@
 	],
 	"en":[
 		"English",
-		"Drag and drop file(s) or folder(s) into this window.",
+		"Drag and drop file(s) and folder(s) into this window.",
 		"or",
 		"Ready.",
 		"Show",
-		"Use a keyfile",
+		"Keyfile",
 		"Metadata (optional):",
 		"Encryption",
 		"Generate password:",
-		"Length: ",
+		"Length:",
 		"Uppercase",
 		"Lowercase",
 		"Numbers",
@@ -123,10 +123,10 @@
 		"Hide",
 		"Confirm password:",
 		"Advanced options:",
-		"Shred temporary files (can be slow for large files)",
-		"Fast mode (slightly less secure)",
-		"Paranoid mode (extremely secure, but slower)",
-		"Encode with Reed-Solomon to prevent corruption (slow)",
+		"Shred temporary files",
+		"Use fast mode",
+		"Use paranoid mode",
+		"Encode with Reed-Solomon",
 		"Split output into chunks of",
 		"Keep decrypted output even if it's corrupted or modified",
 		"                                                 No files selected yet.",
@@ -137,7 +137,7 @@
 		"Validate a checksum:",
 		"Progress:",
 		"Shredder",
-		"Drop file(s) or folder(s) here to shred them.",
+		"Drop file(s) and folder(s) here to shred them.",
 		"Number of passes: Not supported on macOS",
 		"Number of passes:",
 		"About",
@@ -185,7 +185,12 @@
 		"Completed.",
 		"The input file is either corrupted or intentionally modified.",
 		"Calculating...",
-		"Shredding..."
+		"Shredding...",
+
+		"Delete the input file(s) after decryption",
+		"Copy",
+		"Please use Picocrypt v1.16 to decrypt this file.",
+		"A newer version is available."
 	],
 	"es":[
 		"EspaÃ±ol",
@@ -563,7 +568,7 @@
 		"Calculating...",
 		"Shredding..."
 	],
-	"pt-br":[
+	"pt-BR":[
 		"Português brasileiro",
 		"Arraste e solte arquivos ou pastas nesta janela.",
 		"ou",
@@ -749,6 +754,10 @@
 		"Tamamlandı.",
 		"Girdi dosaysı ya bozulmuş ya da bilerek değişiklik yapılmış.",
 		"Hesaplanıyor...",
-		"Öğütülüyor..."
+		"Öğütülüyor...",
+		"Şifre çözme işleminden sonra giriş dosyalarını silin",
+		"Kopyala",
+		"Bu dosyayı deşifre edebilmek için lütfen Picocrypt v1.16 kullanın.",
+		"Daha yeni bir sürümü mevcut."
 	]
 }
