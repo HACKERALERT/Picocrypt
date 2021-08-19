@@ -1,13 +1,8 @@
 # Features Under Consideration
 <ul>
-	<li><strong>Patron request (higher priority)</strong>: Add to Fedora repos</li>
 	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
-	<li>Add to AUR (Arch User Repo) (thanks u/blackrosae)</li>
-	<li>Android/iOS support (thanks u/fzylqd), potentially via a web interface (thanks @Tutturuuu)</li>
-	<li>Full disk encryption (thanks u/playffy)</li>
 	<li>Tweakable Argon2 parameters (with lower bounds)</li>
 	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
-	<li>Hardware keys (thanks u/Tech99bananas)</li>
 	<li>CLI (thanks u/your_username)</li>
 </ul>
 
@@ -27,6 +22,7 @@
 	<li>Add start button to shredder (improve user flow)</li>
 	<li>Tooltips for all advanced options</li>
 	<li>Localization support (use system default where possible)</li>
+	<li>✓ Auto detect system locale, fallback to English</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>✓ Fix ETA negative number bug</li>
