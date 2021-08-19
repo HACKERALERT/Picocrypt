@@ -98,6 +98,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>@digitalblossom for German</li>
 	<li>@zeeaall for Brazilian Portuguese</li>
 	<li>u/francirc for Spanish</li>
+	<li>@kurpau for Lithuanian</li>
 </ul>
 
 Finally, thanks to these people for helping me out when needed:
