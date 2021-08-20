@@ -91,7 +91,12 @@
 		"Completed.",
 		"The input file is either corrupted or intentionally modified.",
 		"Calculating...",
-		"Shredding..."
+		"Shredding...",
+		"Delete the input file(s) after decryption",
+		"Copy",
+		"Please use Picocrypt v1.16 to decrypt this file.",
+		"A newer version is available.",
+		"Start"
 	],
 	"en":[
 		"English",
@@ -190,7 +195,8 @@
 		"Delete the input file(s) after decryption",
 		"Copy",
 		"Please use Picocrypt v1.16 to decrypt this file.",
-		"A newer version is available."
+		"A newer version is available.",
+		"Start"
 	],
 	"es":[
 		"EspaÃ±ol",
@@ -284,7 +290,12 @@
 		"Finalizado.",
 		"El archivo de origen estÃ¡ corrompido o fue modificado intencionalmente.",
 		"Calculando...",
-		"Triturando..."
+		"Triturando...",
+		"Eliminar los archivos de entrada después del descifrado",
+		"Dupdo",
+		"Por favor utilice Picocrypt v1.16 para desencriptar este archivo.",
+		"Una nueva versión está disponible.",
+		"Comienzo"
 	],
 	"fr":[
 		"French",
@@ -378,7 +389,12 @@
 		"Completed.",
 		"The input file is either corrupted or intentionally modified.",
 		"Calculating...",
-		"Shredding..."
+		"Shredding...",
+		"Delete the input file(s) after decryption",
+		"Copy",
+		"Please use Picocrypt v1.16 to decrypt this file.",
+		"A newer version is available.",
+		"Start"
 	],
 	"nl":[
 		"Dutch",
@@ -472,7 +488,12 @@
 		"Completed.",
 		"The input file is either corrupted or intentionally modified.",
 		"Calculating...",
-		"Shredding..."
+		"Shredding...",
+		"Delete the input file(s) after decryption",
+		"Copy",
+		"Please use Picocrypt v1.16 to decrypt this file.",
+		"A newer version is available.",
+		"Start"
 	],
 	"np":[
 		"Nepalese",
@@ -566,7 +587,12 @@
 		"Completed.",
 		"The input file is either corrupted or intentionally modified.",
 		"Calculating...",
-		"Shredding..."
+		"Shredding...",
+		"Delete the input file(s) after decryption",
+		"Copy",
+		"Please use Picocrypt v1.16 to decrypt this file.",
+		"A newer version is available.",
+		"Start"
 	],
 	"pt-BR":[
 		"Português brasileiro",
@@ -660,7 +686,12 @@
 		"Completo.",
 		"O arquivo de entrada está corrompido ou intencionalmente modificado.",
 		"Calculando...",
-		"Triturando..."
+		"Triturando...",
+		"Exclua o (s) arquivo (s) de entrada após a descriptografia",
+		"Cópia",
+		"Por favor, use o Picocrypt v1.16 para desencriptar este arquivo.",
+		"Uma versão mais nova está disponível.",
+		"Começar"
 	],
 	"tr":[
 		"Türkçe",
@@ -758,7 +789,8 @@
 		"Şifre çözme işleminden sonra girdi dosyalarını sil.",
 		"Kopyala",
 		"Bu dosyayı deşifre edebilmek için lütfen Picocrypt v1.16 kullanın.",
-		"Daha yeni bir sürüm mevcut."
+		"Daha yeni bir sürüm mevcut.",
+		"Başlat"
 	],
 	"lt":[
 		"Lietuvių",
@@ -856,6 +888,7 @@
 		"Ištrinti įvesties failą(-us) po iššifravimo",
 		"Kopijuoti",
 		"Prašome naudoti Picocrypt v1.16 šio failo iššifravimui.",
-		"Yra išleista naujesnė šios programos versija."
+		"Galima naujesnė versija.",
+		"Pradėti"
 	]
 }
