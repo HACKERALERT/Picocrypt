@@ -64,7 +64,7 @@ import (
 	"github.com/HACKERALERT/infectious" // v0.0.0-20210818221523-92bdec168696
 
 	// Helpers
-	"github.com/cloudfoundry-attic/jibber_jabber"
+	"github.com/HACKERALERT/jibber_jabber" // v0.0.0-20210819210536-54a4d27b5376
 	"github.com/HACKERALERT/clipboard" // v0.1.5-0.20210716140604-61d96bf4fc94
 	"github.com/HACKERALERT/dialog" // v0.0.0-20210716143851-223edea1d840
 	"github.com/HACKERALERT/browser" // v0.0.0-20210818221535-991cc324ab76
@@ -94,10 +94,21 @@ type locale struct{
 var locales []locale
 var selectedLocale = "en"
 
+var allLocales = []string{
+	"en",
+	"es",
+	"lt",
+	"pt-BR",
+	"tr",
+}
 
 // Languages
 var languages = []string{
 	"English",
+	"Español",
+	"Lietuvių",
+	"Português-BR",
+	"Türkçe",
 }
 var languageSelected int32
 
@@ -214,7 +225,10 @@ func startUI(){
 				pos := giu.GetCursorPos()
 				giu.Row(
 					giu.Dummy(-108,0),
-					giu.Combo("##language",languages[languageSelected],languages,&languageSelected).Size(100),
+					giu.Combo("##language",languages[languageSelected],languages,&languageSelected).OnChange(func(){
+						selectedLocale = allLocales[languageSelected]
+						shredding = s(shredding)
+					}).Size(100),
 				).Build()
 				giu.SetCursorPos(pos)
 
@@ -390,13 +404,13 @@ func startUI(){
 							}),
 							giu.Tooltip(s("Clear both password fields.")),
 
-							giu.Button(passwordStateLabel).OnClick(func(){
+							giu.Button(s(passwordStateLabel)).OnClick(func(){
 								if passwordState==giu.InputTextFlagsPassword{
 									passwordState = giu.InputTextFlagsNone
-									passwordStateLabel = s("Hide")
+									passwordStateLabel = "Hide"
 								}else{
 									passwordState = giu.InputTextFlagsPassword
-									passwordStateLabel = s("Show")
+									passwordStateLabel = "Show"
 								}
 							}),
 							giu.Tooltip(s("Click to toggle the password state.")),
@@ -441,7 +455,7 @@ func startUI(){
 							giu.Dummy(12,0),
 							giu.Custom(func(){
 								if !(mode=="decrypt"&&!keyfile){
-									giu.Button(keyfileLabel).OnClick(func(){
+									giu.Button(s(keyfileLabel)).OnClick(func(){
 										filename,err := dialog.File().Load()
 										if err!=nil{
 											return
@@ -456,7 +470,7 @@ func startUI(){
 								if keyfile&&mode=="encrypt"{
 									giu.Button(s("Clear")).OnClick(func(){
 										keyfile = false
-										keyfileLabel = s("Keyfile")
+										keyfileLabel = "Keyfile"
 										keyfilePath = ""
 									}).Build()
 								}
@@ -557,14 +571,14 @@ func startUI(){
 						}),
 
 						// Start button
-						giu.Button("Start").Size(-0.0000001,35).OnClick(func(){
+						giu.Button(s("Start")).Size(-0.0000001,35).OnClick(func(){
 							if mode=="encrypt"&&password!=cPassword{
-								_status = s("Passwords don't match.")
+								_status = "Passwords don't match."
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								return
 							}
 							if keyfile&&keyfilePath==""{
-								_status = s("Please select a keyfile.")
+								_status = "Please select a keyfile."
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								return
 							}
@@ -595,7 +609,7 @@ func startUI(){
 						}),
 
 						giu.Style().SetColor(giu.StyleColorText,_status_color).To(
-							giu.Label(_status),
+							giu.Label(s(_status)),
 						),
 					),
 
@@ -771,13 +785,15 @@ func startUI(){
 						giu.Label("    - Phil P."),
 						giu.Label("    - E. Zahard"),
 						giu.Label(s("Translators:")),
-						giu.Label("    - umitseyhan75 (Turkish)"),
-						giu.Label("    - digitalblossom (German)"),
-						giu.Label("    - maguszeal (Brazilian Portuguese)"),
+						giu.Label("    - umitseyhan75"),
+						giu.Label("    - digitalblossom"),
+						giu.Label("    - zeeaall"),
+						giu.Label("    - francirc"),
+						giu.Label("    - kurpau"),
 						giu.Label(s("Other:")),
-						giu.Label("    - Fuderal for setting up Picocrypt's Discord server"),
-						giu.Label("    - u/greenreddits for constant feedback and support"),
-						giu.Label("    - u/Tall_Escape for helping me test Picocrypt"),
+						giu.Label("    - Fuderal"),
+						giu.Label("    - u/greenreddits"),
+						giu.Label("    - u/Tall_Escape"),
 					),
 				).Build()
 			}),
@@ -787,7 +803,7 @@ func startUI(){
 
 // Handle files dropped into Picocrypt by user
 func onDrop(names []string){
-	_status = s("Ready.")
+	_status = "Ready."
 	recombine = false
 	if tab==0{
 		// Clear variables
@@ -866,14 +882,14 @@ func onDrop(names []string){
 					fin.Read(tmp)
 					if string(tmp[:5])=="v1.13"{
 						resetUI()
-						_status = s("Please use Picocrypt v1.13 to decrypt this file.")
+						_status = "Please use Picocrypt v1.13 to decrypt this file."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
 						fin.Close()
 						return
 					}
 					if valid,_:=regexp.Match(`^v\d\.\d{2}.{10}0?\d+`,tmp);!valid&&!isSplit{
 						resetUI()
-						_status = s("This doesn't seem to be a Picocrypt volume.")
+						_status = "This doesn't seem to be a Picocrypt volume."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
 						fin.Close()
 						return
@@ -887,7 +903,7 @@ func onDrop(names []string){
 					tmp,_ = rsDecode(rs5,tmp)
 					if string(tmp)=="v1.14"||string(tmp)=="v1.15"||string(tmp)=="v1.16"{
 						resetUI()
-						_status = s("Please use Picocrypt v1.16 to decrypt this file.")
+						_status = "Please use Picocrypt v1.16 to decrypt this file."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
 						fin.Close()
 						return
@@ -918,14 +934,14 @@ func onDrop(names []string){
 					fin.Read(flags)
 					flags,err = rsDecode(rs5,flags)
 					if err!=nil{
-						_status = s("Input file is corrupt and cannot be decrypted.")
+						_status = "Input file is corrupt and cannot be decrypted."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
 						return
 					}
 
 					if flags[2]==1{
 						keyfile = true
-						keyfileLabel = s("Select keyfile")
+						keyfileLabel = "Select keyfile"
 					}
 
 					fin.Close()
@@ -1049,7 +1065,7 @@ func work(){
 					w.Close()
 					file.Close()
 					os.Remove(inputFile)
-					_status = s("Operation cancelled by user.")
+					_status = "Operation cancelled by user."
 					_status_color = color.RGBA{0xff,0xff,0xff,255}
 					return
 				}
@@ -1130,7 +1146,7 @@ func work(){
 
 	// XChaCha20's max message size is 256 GiB
 	if total>256*1073741824{
-		_status = s("Total size is larger than 256 GiB, XChaCha20's limit.")
+		_status = "Total size is larger than 256 GiB, XChaCha20's limit."
 		_status_color = color.RGBA{0xff,0x00,0x00,255}
 		return
 	}
@@ -1286,7 +1302,7 @@ func work(){
 			if keep{
 				kept = true
 			}else{
-				_status = s("The header is corrupt and the input file cannot be decrypted.")
+				_status = "The header is corrupt and the input file cannot be decrypted."
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
 				fin.Close()
 				return
@@ -1331,7 +1347,7 @@ func work(){
 	}
 
 	if !working{
-		_status = s("Operation cancelled by user.")
+		_status = "Operation cancelled by user."
 		_status_color = color.RGBA{0xff,0xff,0xff,255}
 		fin.Close()
 		fout.Close()
@@ -1386,9 +1402,9 @@ func work(){
 			}else{
 				fin.Close()
 				if !keyCorrect{
-					_status = s("The provided password is incorrect.")
+					_status = "The provided password is incorrect."
 				}else{
-					_status = s("The provided keyfile is incorrect.")
+					_status = "The provided keyfile is incorrect."
 				}
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
 				key = nil
@@ -1437,7 +1453,7 @@ func work(){
 
 	for{
 		if !working{
-			_status = s("Operation cancelled by user.")
+			_status = "Operation cancelled by user."
 			_status_color = color.RGBA{0xff,0xff,0xff,255}
 			fin.Close()
 			fout.Close()
@@ -1507,7 +1523,7 @@ func work(){
 							if keep{
 								kept = true
 							}else{
-								_status = s("The input file is too corrupted to decrypt.")
+								_status = "The input file is too corrupted to decrypt."
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								fin.Close()
 								fout.Close()
@@ -1529,7 +1545,7 @@ func work(){
 							if keep{
 								kept = true
 							}else{
-								_status = s("The input file is too corrupted to decrypt.")
+								_status = "The input file is too corrupted to decrypt."
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								fin.Close()
 								fout.Close()
@@ -1545,7 +1561,7 @@ func work(){
 						if keep{
 							kept = true
 						}else{
-							_status = s("The input file is too corrupted to decrypt.")
+							_status = "The input file is too corrupted to decrypt."
 							_status_color = color.RGBA{0xff,0x00,0x00,255}
 							fin.Close()
 							fout.Close()
@@ -1645,7 +1661,7 @@ func work(){
 				if !working{
 					fin.Close()
 					fout.Close()
-					_status = s("Operation cancelled by user.")
+					_status = "Operation cancelled by user."
 					_status_color = color.RGBA{0xff,0xff,0xff,255}
 
 					// If user cancels, remove the unfinished files
@@ -1720,10 +1736,10 @@ func work(){
 
 	// If user chose to keep a corrupted/modified file, let them know
 	if kept{
-		_status = s("The input file is corrupted and/or modified. Please be careful.")
+		_status = "The input file is corrupted and/or modified. Please be careful."
 		_status_color = color.RGBA{0xff,0xff,0x00,255}
 	}else{
-		_status = s("Completed.")
+		_status = "Completed."
 		_status_color = color.RGBA{0x00,0xff,0x00,255}
 	}
 
@@ -1736,7 +1752,7 @@ func work(){
 
 // This function is run if an issue occurs during decryption
 func broken(){
-	_status = s("The input file is either corrupted or intentionally modified.")
+	_status = "The input file is either corrupted or intentionally modified."
 	_status_color = color.RGBA{0xff,0x00,0x00,255}
 	if recombine{
 		os.Remove(inputFile)
@@ -2037,7 +2053,7 @@ func resetUI(){
 	outputWidth = 370
 	password = ""
 	cPassword = ""
-	keyfileLabel = s("Use a keyfile")
+	keyfileLabel = "Keyfile"
 	keyfilePath = ""
 	keyfile = false
 	metadata = ""
@@ -2053,7 +2069,7 @@ func resetUI(){
 	paranoid = false
 	progress = 0
 	progressInfo = ""
-	_status = s("Ready.")
+	_status = "Ready."
 	_status_color = color.RGBA{0xff,0xff,0xff,255}
 	giu.Update()
 }
@@ -2178,6 +2194,11 @@ func main(){
 		if err==nil{
 			if strings.HasPrefix(tmp,i.iso){
 				selectedLocale = i.iso
+				for j,k := range allLocales{
+					if k==i.iso{
+						languageSelected = int32(j)
+					}
+				}
 			}
 		}
 	}
@@ -2185,10 +2206,10 @@ func main(){
 	inputLabel = s("Drag and drop file(s) and folder(s) into this window.")
 	orLabel = s("or")
 	status = s("Ready.")
-	_status = s("Ready.")
+	_status = "Ready."
 	shredding = s("Ready.")
 	passwordStateLabel = s("Show")
-	keyfileLabel = s("Keyfile")
+	keyfileLabel = "Keyfile"
 	metadataPrompt = s("Metadata (optional):")
 
 	// Create a temporary file to store sdelete64.exe
@@ -2208,7 +2229,7 @@ func main(){
 			v.Body.Close()
 			if err==nil{
 				if string(body[:5])!=version{
-					_status = s("A newer version is available.")
+					_status = "A newer version is available."
 					_status_color = color.RGBA{0,255,0,255}
 				}
 			}
@@ -2229,7 +2250,7 @@ func main(){
 	window.SetDropCallback(onDrop)
 	window.SetCloseCallback(func() bool{
 		// Disable closing window if a Picocrypt is working to prevent temporary files
-		if working||(shredding!=s("Ready.")&&shredding!=s("Completed.")){
+		if working{
 			return false
 		}
 		return true
@@ -2240,3 +2261,4 @@ func main(){
 	// Window closed, clean up
 	os.Remove(sdelete64path)
 }
+
