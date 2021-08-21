@@ -59,6 +59,7 @@ import (
 
 	// GUI
 	"github.com/AllenDang/giu"
+	"github.com/AllenDang/imgui-go"
 
 	// Reed-Solomon
 	"github.com/HACKERALERT/infectious" // v0.0.0-20210818221523-92bdec168696
@@ -113,7 +114,7 @@ var languages = []string{
 var languageSelected int32
 
 // Global variables
-var dpi float32 // Used to scale properly in high-resolution displays
+var dpi float32// Used to scale properly in high-resolution displays
 var mode string = "" // "encrypt", "decrypt", or ""
 var working = false
 var onlyFiles []string // Only contains files not in a folder
@@ -145,7 +146,7 @@ var splitUnits = []string{
 	"GiB",
 }
 var splitSelected int32 = 1 // Index of which splitting unit was chosen from above
-var shredPasses = "4"
+var shredPasses int32 = 4
 var stopShredding = false
 var shredProgress float32
 var shredDone float32
@@ -158,8 +159,7 @@ var password string
 var passwordState = giu.InputTextFlagsPassword
 var passwordStateLabel = "Show"
 var cPassword string // Confirm password text entry string variable
-var keyfilePath string
-var keyfileLabel = "Keyfile"
+var keyfiles []string
 var metadata string
 var metadataPrompt = "Metadata (optional):"
 var metadataState = giu.InputTextFlagsNone
@@ -215,6 +215,9 @@ var blake2s_selected = false
 
 // Link to a Wikipedia article on Reed-Solomon
 var rsWikipedia = "https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction"
+
+var shredPsize float32
+var showKeyfile bool
 
 // Create the UI
 func startUI(){
@@ -276,6 +279,31 @@ func startUI(){
 								giu.Update()
 							}
 						}),
+
+						// Keyfile modal
+						giu.Custom(func(){
+							if showKeyfile{
+								giu.PopupModal(s("Manage keyfile(s):")).Layout(
+									giu.Custom(func(){
+										for _,i := range keyfiles{
+											giu.Label(i).Build()
+										}
+									}),
+									giu.Row(
+										giu.Dummy(0,300),
+										giu.Button(s("Clear")).Size(150,0).OnClick(func(){
+											keyfiles = nil
+										}),
+										giu.Button(s("Close")).Size(150,0).OnClick(func(){
+											giu.CloseCurrentPopup()
+											showKeyfile = false
+										}),
+									),
+								).Build()
+								giu.OpenPopup(s("Manage keyfiles:"))
+								giu.Update()
+							}
+						}),
 					
 						// Confirm overwrite with a modal
 						giu.Custom(func(){
@@ -334,18 +362,25 @@ func startUI(){
 						// Label listing the input files and a button to clear them
 						giu.Row(
 							giu.Label(s(inputLabel)),
-							giu.Row(
-								giu.Dummy(-58,0),
-								giu.Button(s("Clear")).Size(50,0).OnClick(resetUI),
-								giu.Tooltip(s("Clear all input files and reset UI state.")),
-							),
+							giu.Custom(func(){
+								imgui.SameLine()
+								w,_ := giu.GetAvailableRegion()
+								bw,_ := giu.CalcTextSize(s("Clear"))
+								padding,_ := giu.GetWindowPadding()
+								bw += 2*padding
+								size := w-bw-padding
+								giu.Dummy(size/dpi,0).Build()
+								imgui.SameLine()
+								giu.Button(s("Clear")).Size(bw/dpi,0).OnClick(resetUI).Build()
+								giu.Tooltip(s("Clear all input files and reset UI state.")).Build()
+							}),
 						),
 
 						// Allow user to choose a custom output path and/or name
 						giu.Label(s("Save output as:")),
 						giu.Row(
 							giu.InputText(&outputEntry).Size(outputWidth/dpi),
-							giu.Label(orLabel),
+							giu.Label(s(orLabel)),
 							giu.Button(s("Choose")).OnClick(func(){
 								file,_ := dialog.File().Title(s("Save output as...")).Save()
 
@@ -372,19 +407,19 @@ func startUI(){
 						),
 
 						// Prompt for password
+						giu.Label(s("Password:")),
 						giu.Row(
-							giu.Label(s("Password:")),
 							giu.Custom(func(){
 								if mode!="decrypt"{
 									giu.Row(
 										giu.Button(s("Generate")).OnClick(func(){
 											showGenpass = true
-										}),
+										}).Size(71,0),
 										giu.Tooltip(s("Use this to generate a cryptographically secure password.")),
 
 										giu.Button(s("Copy")).OnClick(func(){
 											clipboard.WriteAll(password)
-										}),
+										}).Size(71,0),
 										giu.Tooltip(s("Copies the contents of the password field into your clipboard.")),
 									).Build()
 								}
@@ -395,13 +430,13 @@ func startUI(){
 								cPassword = tmp
 								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 								giu.Update()
-							}),
+							}).Size(71,0),
 							giu.Tooltip(s("Paste your clipboard content into the password fields.")),
 
 							giu.Button(s("Clear")).OnClick(func(){
 								password = ""
 								cPassword = ""
-							}),
+							}).Size(71,0),
 							giu.Tooltip(s("Clear both password fields.")),
 
 							giu.Button(s(passwordStateLabel)).OnClick(func(){
@@ -412,11 +447,20 @@ func startUI(){
 									passwordState = giu.InputTextFlagsPassword
 									passwordStateLabel = "Show"
 								}
-							}),
+							}).Size(71,0),
 							giu.Tooltip(s("Click to toggle the password state.")),
+							giu.Custom(func(){
+								if !(mode=="decrypt"&&!keyfile){
+									giu.Button(s("Keyfile")).OnClick(func(){
+										showKeyfile = true
+									}).Size(71,0).Build()
+								}
+							}),
+							giu.Tooltip(s("Manage keyfile(s).")),
+							giu.Dummy(-0.0000001,0),
 						),
 						giu.Row(
-							giu.InputText(&password).Size(300/dpi).Flags(passwordState).OnChange(func(){
+							giu.InputText(&password).Size(-16).Flags(passwordState).OnChange(func(){
 								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 							}),
 
@@ -452,29 +496,6 @@ func startUI(){
 								-1)
 								canvas.PathStroke(col,false,3)
 							}),
-							giu.Dummy(12,0),
-							giu.Custom(func(){
-								if !(mode=="decrypt"&&!keyfile){
-									giu.Button(s(keyfileLabel)).OnClick(func(){
-										filename,err := dialog.File().Load()
-										if err!=nil{
-											return
-										}
-										keyfile = true
-										keyfileLabel = filepath.Base(filename)
-										keyfilePath = filename
-									}).Build()
-								}
-							}),
-							giu.Custom(func(){
-								if keyfile&&mode=="encrypt"{
-									giu.Button(s("Clear")).OnClick(func(){
-										keyfile = false
-										keyfileLabel = "Keyfile"
-										keyfilePath = ""
-									}).Build()
-								}
-							}),
 							giu.Dummy(-0.0000001,0),
 						),
 
@@ -483,7 +504,7 @@ func startUI(){
 							if mode!="decrypt"{
 								giu.Label(s("Confirm password:")).Build()
 								giu.Row(
-									giu.InputText(&cPassword).Size(300/dpi).Flags(passwordState),
+									giu.InputText(&cPassword).Size(-16).Flags(passwordState),
 									giu.Custom(func(){
 										canvas := giu.GetCanvas()
 										pos := giu.GetCursorScreenPos()
@@ -564,8 +585,17 @@ func startUI(){
 								giu.Tooltip(s("Removes the encrypted Picocrypt volume (and chunks).")).Build()
 								giu.Dummy(0,112).Build()
 							}else{
+								fmt.Println(dpi)
 								giu.Dummy(0,67).Build()
-								giu.Label(s("                                                 No files selected yet.")).Build()
+								w,_ := giu.GetAvailableRegion()
+								tw,_ := giu.CalcTextSize(s("No files selected yet."))
+								padding,_ := giu.GetWindowPadding()
+								fmt.Println(w,tw,padding)
+								giu.Row(
+									giu.Label(""),
+									giu.Dummy((w-tw)/2/dpi,0),
+									giu.Label(s("No files selected yet.")),
+								).Build()
 								giu.Dummy(0,68).Build()
 							}
 						}),
@@ -577,7 +607,7 @@ func startUI(){
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								return
 							}
-							if keyfile&&keyfilePath==""{
+							if keyfile&&keyfiles==nil{
 								_status = "Please select a keyfile."
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								return
@@ -624,73 +654,115 @@ func startUI(){
 						giu.Label(s("Toggle the hashes you would like to generate and drop a file here.")),
 
 						// MD5
-						giu.Row(
-							giu.Checkbox("MD5:",&md5_selected),
-							giu.Dummy(-58,0),
-							giu.Button(s("Copy")+"##md5").Size(50,0).OnClick(func(){
+						giu.Custom(func(){
+							giu.Checkbox("MD5:",&md5_selected).Build()
+							imgui.SameLine()
+							w,_ := giu.GetAvailableRegion()
+							bw,_ := giu.CalcTextSize(s("Copy"))
+							padding,_ := giu.GetWindowPadding()
+							bw += 2*padding
+							size := w-bw-padding
+							giu.Dummy(size/dpi,0).Build()
+							imgui.SameLine()
+							giu.Button(s("Copy")+"##md5").Size(bw/dpi,0).OnClick(func(){
 								clipboard.WriteAll(cs_md5)
-							}),
-						),
+							}).Build()
+						}),
 						giu.Style().SetColor(giu.StyleColorBorder,md5_color).To(
 							giu.InputText(&cs_md5).Size(-0.0000001).Flags(giu.InputTextFlagsReadOnly),
 						),
 
 						// SHA1
-						giu.Row(
-							giu.Checkbox("SHA1:",&sha1_selected),
-							giu.Dummy(-58,0),
-							giu.Button(s("Copy")+"##sha1").Size(50,0).OnClick(func(){
+						giu.Custom(func(){
+							giu.Checkbox("SHA1:",&sha1_selected).Build()
+							imgui.SameLine()
+							w,_ := giu.GetAvailableRegion()
+							bw,_ := giu.CalcTextSize(s("Copy"))
+							padding,_ := giu.GetWindowPadding()
+							bw += 2*padding
+							size := w-bw-padding
+							giu.Dummy(size/dpi,0).Build()
+							imgui.SameLine()
+							giu.Button(s("Copy")+"##sha1").Size(bw/dpi,0).OnClick(func(){
 								clipboard.WriteAll(cs_sha1)
-							}),
-						),
+							}).Build()
+						}),
 						giu.Style().SetColor(giu.StyleColorBorder,sha1_color).To(
 							giu.InputText(&cs_sha1).Size(-0.0000001).Flags(giu.InputTextFlagsReadOnly),
 						),
 
 						// SHA256
-						giu.Row(
-							giu.Checkbox("SHA256:",&sha256_selected),
-							giu.Dummy(-58,0),
-							giu.Button(s("Copy")+"##sha256").Size(50,0).OnClick(func(){
+						giu.Custom(func(){
+							giu.Checkbox("SHA256:",&sha256_selected).Build()
+							imgui.SameLine()
+							w,_ := giu.GetAvailableRegion()
+							bw,_ := giu.CalcTextSize(s("Copy"))
+							padding,_ := giu.GetWindowPadding()
+							bw += 2*padding
+							size := w-bw-padding
+							giu.Dummy(size/dpi,0).Build()
+							imgui.SameLine()
+							giu.Button(s("Copy")+"##sha256").Size(bw/dpi,0).OnClick(func(){
 								clipboard.WriteAll(cs_sha256)
-							}),
-						),
+							}).Build()
+						}),
 						giu.Style().SetColor(giu.StyleColorBorder,sha256_color).To(
 							giu.InputText(&cs_sha256).Size(-0.0000001).Flags(giu.InputTextFlagsReadOnly),
 						),
 
 						// SHA3-256
-						giu.Row(
-							giu.Checkbox("SHA3-256:",&sha3_256_selected),
-							giu.Dummy(-58,0),
-							giu.Button(s("Copy")+"##sha3_256").Size(50,0).OnClick(func(){
+						giu.Custom(func(){
+							giu.Checkbox("SHA3-256:",&sha3_256_selected).Build()
+							imgui.SameLine()
+							w,_ := giu.GetAvailableRegion()
+							bw,_ := giu.CalcTextSize(s("Copy"))
+							padding,_ := giu.GetWindowPadding()
+							bw += 2*padding
+							size := w-bw-padding
+							giu.Dummy(size/dpi,0).Build()
+							imgui.SameLine()
+							giu.Button(s("Copy")+"##sha3_256").Size(bw/dpi,0).OnClick(func(){
 								clipboard.WriteAll(cs_sha3_256)
-							}),
-						),
+							}).Build()
+						}),
 						giu.Style().SetColor(giu.StyleColorBorder,sha3_256_color).To(
 							giu.InputText(&cs_sha3_256).Size(-0.0000001).Flags(giu.InputTextFlagsReadOnly),
 						),
 
 						// BLAKE2b
-						giu.Row(
-							giu.Checkbox("BLAKE2b:",&blake2b_selected),
-							giu.Dummy(-58,0),
-							giu.Button(s("Copy")+"##blake2b").Size(50,0).OnClick(func(){
+						giu.Custom(func(){
+							giu.Checkbox("BLAKE2b:",&blake2b_selected).Build()
+							imgui.SameLine()
+							w,_ := giu.GetAvailableRegion()
+							bw,_ := giu.CalcTextSize(s("Copy"))
+							padding,_ := giu.GetWindowPadding()
+							bw += 2*padding
+							size := w-bw-padding
+							giu.Dummy(size/dpi,0).Build()
+							imgui.SameLine()
+							giu.Button(s("Copy")+"##blake2b").Size(bw/dpi,0).OnClick(func(){
 								clipboard.WriteAll(cs_blake2b)
-							}),
-						),
+							}).Build()
+						}),
 						giu.Style().SetColor(giu.StyleColorBorder,blake2b_color).To(
 							giu.InputText(&cs_blake2b).Size(-0.0000001).Flags(giu.InputTextFlagsReadOnly),
 						),
 
 						// BLAKE2s
-						giu.Row(
-							giu.Checkbox("BLAKE2s:",&blake2s_selected),
-							giu.Dummy(-58,0),
-							giu.Button(s("Copy")+"##blake2s").Size(50,0).OnClick(func(){
+						giu.Custom(func(){
+							giu.Checkbox("BLAKE2s:",&blake2s_selected).Build()
+							imgui.SameLine()
+							w,_ := giu.GetAvailableRegion()
+							bw,_ := giu.CalcTextSize(s("Copy"))
+							padding,_ := giu.GetWindowPadding()
+							bw += 2*padding
+							size := w-bw-padding
+							giu.Dummy(size/dpi,0).Build()
+							imgui.SameLine()
+							giu.Button(s("Copy")+"##blake2s").Size(bw/dpi,0).OnClick(func(){
 								clipboard.WriteAll(cs_blake2s)
-							}),
-						),
+							}).Build()
+						}),
 						giu.Style().SetColor(giu.StyleColorBorder,blake2s_color).To(
 							giu.InputText(&cs_blake2s).Size(-0.0000001).Flags(giu.InputTextFlagsReadOnly),
 						),
@@ -707,6 +779,7 @@ func startUI(){
 							if cs_validate==""{
 								return
 							}
+							cs_validate = strings.ToLower(cs_validate)
 							if cs_validate==cs_md5{
 								md5_color = color.RGBA{0x00,0xff,0x00,255}
 							}else if cs_validate==cs_sha1{
@@ -743,20 +816,38 @@ func startUI(){
 							}else{
 								giu.Row(
 									giu.Label(s("Number of passes:")),
-									giu.InputText(&shredPasses).Size(16).Flags(giu.InputTextFlagsCharsDecimal),
+									//giu.InputText(&shredPasses).Size(16).Flags(giu.InputTextFlagsCharsDecimal),
+									giu.SliderInt("",&shredPasses,1,32).Size(-0.0000001),
 								).Build()
 							}
 						}),
 						giu.Dummy(0,-50),
-						giu.Row(
-							giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-65,0),
-							giu.Button(s("Cancel")).Size(58,0).OnClick(func(){
-								stopShredding = true
-								shredding = s("Ready.")
-								shredProgress = 0
-								shredOverlay = ""
-							}),
-						),
+						giu.Custom(func(){
+							
+							//imgui.SameLine()
+							w,_ := giu.GetAvailableRegion()
+							bw,_ := giu.CalcTextSize(s("Cancel"))
+							padding,_ := giu.GetWindowPadding()
+							bw += 2*padding
+							size := w-bw-padding
+							//imgui.SameLine()
+							giu.Row(
+								giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(size/dpi,0),
+								giu.Button(s("Cancel")).Size(bw/dpi,0).OnClick(func(){
+									stopShredding = true
+									shredding = s("Ready.")
+									shredProgress = 0
+									shredOverlay = ""
+								}),
+							).Build()
+						}),
+						/*giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-65,0),
+						giu.Button(s("Cancel")).Size(58,0).OnClick(func(){
+							stopShredding = true
+							shredding = s("Ready.")
+							shredProgress = 0
+							shredOverlay = ""
+						}),*/
 						giu.Custom(func(){
 							if len(shredding)>50{
 								shredding = "....."+shredding[len(shredding)-50:]
@@ -806,6 +897,12 @@ func onDrop(names []string){
 	_status = "Ready."
 	recombine = false
 	if tab==0{
+		if showKeyfile{
+			keyfiles = names
+			giu.Update()
+			return
+		}
+
 		// Clear variables
 		onlyFiles = nil
 		onlyFolders = nil
@@ -816,7 +913,7 @@ func onDrop(names []string){
 		resetUI()
 
 		// Hide the ".pcv" label
-		orLabel = s("or")
+		orLabel = "or"
 		outputWidth = 370
 
 		// There's only one dropped item
@@ -941,7 +1038,6 @@ func onDrop(names []string){
 
 					if flags[2]==1{
 						keyfile = true
-						keyfileLabel = "Select keyfile"
 					}
 
 					fin.Close()
@@ -1361,7 +1457,7 @@ func work(){
 		return
 	}
 
-	if keyfile{
+	/*if keyfile{
 		kin,_ := os.Open(keyfilePath)
 		kstat,_ := os.Stat(keyfilePath)
 		kbytes := make([]byte,kstat.Size())
@@ -1374,7 +1470,7 @@ func work(){
 		khash_sha3 := sha3.New256()
 		khash_sha3.Write(khash)
 		khash_hash = khash_sha3.Sum(nil)
-	}
+	}*/
 	
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
@@ -1920,7 +2016,7 @@ func shred(names []string,separate bool){
 									shredding = j
 									cmd := exec.Command("")
 									if runtime.GOOS=="linux"{
-										cmd = exec.Command("shred","-ufvz","-n",shredPasses,j)
+										cmd = exec.Command("shred","-ufvz","-n",strconv.Itoa(int(shredPasses)),j)
 									}else{
 										cmd = exec.Command("rm","-rfP",j)
 									}
@@ -1947,7 +2043,7 @@ func shred(names []string,separate bool){
 						shredding = i
 						cmd := exec.Command("")
 						if runtime.GOOS=="linux"{
-							cmd = exec.Command("shred","-ufvz","-n",shredPasses,i)
+							cmd = exec.Command("shred","-ufvz","-n",strconv.Itoa(int(shredPasses)),i)
 						}else{
 							cmd = exec.Command("rm","-rfP",i)
 						}
@@ -1965,7 +2061,7 @@ func shred(names []string,separate bool){
 				shredding = name
 				cmd := exec.Command("")
 				if runtime.GOOS=="linux"{
-					cmd = exec.Command("shred","-ufvz","-n",shredPasses,name)
+					cmd = exec.Command("shred","-ufvz","-n",strconv.Itoa(int(shredPasses)),name)
 				}else{
 					cmd = exec.Command("rm","-rfP",name)
 				}
@@ -1998,7 +2094,7 @@ func shred(names []string,separate bool){
 						shredDone += float32(t)
 						shredUpdate(separate)
 						shredding = strings.ReplaceAll(path,"\\","/")+"/*"
-						cmd := exec.Command(sdelete64path,"*","-p",shredPasses)
+						cmd := exec.Command(sdelete64path,"*","-p",strconv.Itoa(int(shredPasses)))
 						cmd.Dir = path
 						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 						cmd.Run()
@@ -2013,7 +2109,7 @@ func shred(names []string,separate bool){
 				}
 			}else{
 				shredding = name
-				cmd := exec.Command(sdelete64path,name,"-p",shredPasses)
+				cmd := exec.Command(sdelete64path,name,"-p",strconv.Itoa(int(shredPasses)))
 				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}
 				cmd.Run()
 				shredDone++
@@ -2049,12 +2145,11 @@ func resetUI(){
 	mode = ""
 	inputLabel = s("Drag and drop file(s) and folder(s) into this window.")
 	outputEntry = ""
-	orLabel = s("or")
+	orLabel = "or"
 	outputWidth = 370
 	password = ""
 	cPassword = ""
-	keyfileLabel = "Keyfile"
-	keyfilePath = ""
+	keyfiles = nil
 	keyfile = false
 	metadata = ""
 	metadataPrompt = s("Metadata (optional):")
@@ -2204,12 +2299,10 @@ func main(){
 	}
 
 	inputLabel = s("Drag and drop file(s) and folder(s) into this window.")
-	orLabel = s("or")
 	status = s("Ready.")
 	_status = "Ready."
 	shredding = s("Ready.")
 	passwordStateLabel = s("Show")
-	keyfileLabel = "Keyfile"
 	metadataPrompt = s("Metadata (optional):")
 
 	// Create a temporary file to store sdelete64.exe
@@ -2241,7 +2334,7 @@ func main(){
 	giu.SetDefaultFontFromBytes(font,18)
 
 	// Create giu window, set window icon
-	window := giu.NewMasterWindow("Picocrypt",480,502,giu.MasterWindowFlagsNotResizable)
+	window := giu.NewMasterWindow("Picocrypt",482,522,giu.MasterWindowFlagsNotResizable)
 	r := bytes.NewReader(iconBytes)
 	icon,_ := png.Decode(r)
 	window.SetIcon([]image.Image{icon})
