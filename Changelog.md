@@ -28,7 +28,7 @@
 	<li>✓ Fix ETA negative number bug</li>
 	<li>✓ Add clear button to password field</li>
 	<li>✓ Multiple keyfiles support and DND</li>
-	<li>Option to require specific keyfile order</li>
+	<li>✓ Option to require specific keyfile order</li>
 	<li>✓ Keyfile generator</li>
 	<li>✓ Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
 	<li>✓ (abandoned because this could cause issues with different language characters) Filter invalid charaters and emojis out of "Save as" text entry</li>
