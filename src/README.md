@@ -13,7 +13,7 @@ xcode-select --install
 Windows: A C compiler, ideally [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
 
 # 2. Install the Go Programming Language
-If you don't have Go installed, download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager. Go 1.16 or later is required.
+If you don't have Go installed, download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager. The latest version of Go is required.
 
 # 3. Get the Source Files
 Download the source files as a zip from the homepage or `git clone` this repository.
