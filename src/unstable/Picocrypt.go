@@ -286,7 +286,19 @@ func startUI(){
 								giu.PopupModal(s("Manage keyfile(s):")).Layout(
 									giu.Custom(func(){
 										for _,i := range keyfiles{
-											giu.Label(i).Build()
+											giu.Row(
+												giu.Label(filepath.Base(i)),
+												giu.Button("Remove").OnClick(func(){
+													var tmp []string
+													for _,j := range keyfiles{
+														if j!=i{
+															tmp = append(tmp,j)
+														}
+													}
+													keyfiles = tmp
+												}),
+											).Build()
+
 										}
 									}),
 									giu.Row(
@@ -294,13 +306,13 @@ func startUI(){
 										giu.Button(s("Clear")).Size(150,0).OnClick(func(){
 											keyfiles = nil
 										}),
-										giu.Button(s("Close")).Size(150,0).OnClick(func(){
+										giu.Button(s("Done")).Size(150,0).OnClick(func(){
 											giu.CloseCurrentPopup()
 											showKeyfile = false
 										}),
 									),
 								).Build()
-								giu.OpenPopup(s("Manage keyfiles:"))
+								giu.OpenPopup(s("Manage keyfile(s):"))
 								giu.Update()
 							}
 						}),
@@ -460,7 +472,7 @@ func startUI(){
 							giu.Dummy(-0.0000001,0),
 						),
 						giu.Row(
-							giu.InputText(&password).Size(-16).Flags(passwordState).OnChange(func(){
+							giu.InputText(&password).Size(440/dpi).Flags(passwordState).OnChange(func(){
 								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 							}),
 
@@ -504,7 +516,7 @@ func startUI(){
 							if mode!="decrypt"{
 								giu.Label(s("Confirm password:")).Build()
 								giu.Row(
-									giu.InputText(&cPassword).Size(-16).Flags(passwordState),
+									giu.InputText(&cPassword).Size(440/dpi).Flags(passwordState),
 									giu.Custom(func(){
 										canvas := giu.GetCanvas()
 										pos := giu.GetCursorScreenPos()
@@ -585,12 +597,11 @@ func startUI(){
 								giu.Tooltip(s("Removes the encrypted Picocrypt volume (and chunks).")).Build()
 								giu.Dummy(0,112).Build()
 							}else{
-								fmt.Println(dpi)
+								//fmt.Println(dpi)
 								giu.Dummy(0,67).Build()
 								w,_ := giu.GetAvailableRegion()
 								tw,_ := giu.CalcTextSize(s("No files selected yet."))
-								padding,_ := giu.GetWindowPadding()
-								fmt.Println(w,tw,padding)
+								//fmt.Println(w,tw,padding)
 								giu.Row(
 									giu.Label(""),
 									giu.Dummy((w-tw)/2/dpi,0),
@@ -898,7 +909,7 @@ func onDrop(names []string){
 	recombine = false
 	if tab==0{
 		if showKeyfile{
-			keyfiles = names
+			keyfiles = append(keyfiles,names...)
 			giu.Update()
 			return
 		}
@@ -1471,6 +1482,31 @@ func work(){
 		khash_sha3.Write(khash)
 		khash_hash = khash_sha3.Sum(nil)
 	}*/
+	if len(keyfiles)>0{
+		var keysum []byte
+		for _,path := range keyfiles{
+			kin,_ := os.Open(path)
+			kstat,_ := os.Stat(path)
+			kbytes := make([]byte,kstat.Size())
+			kin.Read(kbytes)
+			kin.Close()
+			ksha3 := sha3.New256()
+			ksha3.Write(kbytes)
+			khash := ksha3.Sum(nil)
+			if keysum==nil{
+				keysum = khash
+			}else{
+				for i,j := range khash{
+					keysum[i] ^= j
+				}
+			}
+			fmt.Println(path,keysum)
+		}
+		khash = keysum
+		khash_sha3 := sha3.New256()
+		khash_sha3.Write(keysum)
+		khash_hash = khash_sha3.Sum(nil)
+	}
 	
 	sha3_512 := sha3.New512()
 	sha3_512.Write(key)
