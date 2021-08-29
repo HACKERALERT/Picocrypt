@@ -226,15 +226,15 @@ func startUI(){
 			giu.Custom(func(){
 				// Language dropdown menu
 				pos := giu.GetCursorPos()
+				w,_ := giu.CalcTextSize(languages[languageSelected])
 				giu.Row(
-					giu.Dummy(-108,0),
+					giu.Dummy(-w-32,0),
 					giu.Combo("##language",languages[languageSelected],languages,&languageSelected).OnChange(func(){
 						selectedLocale = allLocales[languageSelected]
 						shredding = s(shredding)
-					}).Size(100),
+					}).Size(w+24),
 				).Build()
 				giu.SetCursorPos(pos)
-
 				// The tab bar, which contains different tabs for different functions
 				giu.TabBar().TabItems(
 					// Main file encryption/decryption tab
@@ -284,6 +284,26 @@ func startUI(){
 						giu.Custom(func(){
 							if showKeyfile{
 								giu.PopupModal(s("Manage keyfile(s):")).Layout(
+									giu.Label(s("Drop and drop your keyfile(s) here.")),
+									giu.Row(
+										giu.Label(s("You can also generate a keyfile:")),
+										giu.Button(s("Generate")).OnClick(func(){
+											file,_ := dialog.File().Title(s("Save keyfile as")).Save()
+
+											// Return if user canceled the file dialog
+											if file==""{
+												return
+											}
+
+											fout,_ := os.Create(file)
+											data := make([]byte,1048576)
+											rand.Read(data)
+											fout.Write(data)
+											fout.Close()
+
+											keyfiles = append(keyfiles,file)
+										}),
+									),
 									giu.Custom(func(){
 										for _,i := range keyfiles{
 											giu.Row(
@@ -301,11 +321,12 @@ func startUI(){
 
 										}
 									}),
+									giu.Dummy(0,200),
 									giu.Row(
-										giu.Dummy(0,300),
 										giu.Button(s("Clear")).Size(150,0).OnClick(func(){
 											keyfiles = nil
 										}),
+										giu.Tooltip(s("Remove all keyfiles.")),
 										giu.Button(s("Done")).Size(150,0).OnClick(func(){
 											giu.CloseCurrentPopup()
 											showKeyfile = false
@@ -463,16 +484,16 @@ func startUI(){
 							giu.Tooltip(s("Click to toggle the password state.")),
 							giu.Custom(func(){
 								if !(mode=="decrypt"&&!keyfile){
-									giu.Button(s("Keyfile")).OnClick(func(){
+									giu.Button(s("Keyfile(s)")).OnClick(func(){
 										showKeyfile = true
 									}).Size(71,0).Build()
 								}
 							}),
-							giu.Tooltip(s("Manage keyfile(s).")),
+							giu.Tooltip(s("Manage your keyfile(s).")),
 							giu.Dummy(-0.0000001,0),
 						),
 						giu.Row(
-							giu.InputText(&password).Size(440/dpi).Flags(passwordState).OnChange(func(){
+							giu.InputText(&password).Size(442/dpi).Flags(passwordState).OnChange(func(){
 								passwordStrength = zxcvbn.PasswordStrength(password,nil).Score
 							}),
 
@@ -516,7 +537,7 @@ func startUI(){
 							if mode!="decrypt"{
 								giu.Label(s("Confirm password:")).Build()
 								giu.Row(
-									giu.InputText(&cPassword).Size(440/dpi).Flags(passwordState),
+									giu.InputText(&cPassword).Size(442/dpi).Flags(passwordState),
 									giu.Custom(func(){
 										canvas := giu.GetCanvas()
 										pos := giu.GetCursorScreenPos()
@@ -619,7 +640,7 @@ func startUI(){
 								return
 							}
 							if keyfile&&keyfiles==nil{
-								_status = "Please select a keyfile."
+								_status = "Please select your keyfile(s)."
 								_status_color = color.RGBA{0xff,0x00,0x00,255}
 								return
 							}
@@ -1300,7 +1321,7 @@ func work(){
 		if paranoid{
 			flags[1] = 1
 		}
-		if keyfile{
+		if len(keyfiles)>0{
 			flags[2] = 1
 		}
 		if reedsolo{
@@ -1482,7 +1503,7 @@ func work(){
 		khash_sha3.Write(khash)
 		khash_hash = khash_sha3.Sum(nil)
 	}*/
-	if len(keyfiles)>0{
+	if len(keyfiles)>0||keyfile{
 		var keysum []byte
 		for _,path := range keyfiles{
 			kin,_ := os.Open(path)
@@ -1500,7 +1521,6 @@ func work(){
 					keysum[i] ^= j
 				}
 			}
-			fmt.Println(path,keysum)
 		}
 		khash = keysum
 		khash_sha3 := sha3.New256()
@@ -1536,7 +1556,7 @@ func work(){
 				if !keyCorrect{
 					_status = "The provided password is incorrect."
 				}else{
-					_status = "The provided keyfile is incorrect."
+					_status = "Incorrect keyfile(s)."
 				}
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
 				key = nil
@@ -1550,7 +1570,7 @@ func work(){
 		fout,_ = os.Create(outputFile)
 	}
 
-	if keyfile{
+	if len(keyfiles)>0||keyfile{
 		// XOR key and keyfile
 		tmp := key
 		key = make([]byte,32)
@@ -2370,7 +2390,7 @@ func main(){
 	giu.SetDefaultFontFromBytes(font,18)
 
 	// Create giu window, set window icon
-	window := giu.NewMasterWindow("Picocrypt",482,522,giu.MasterWindowFlagsNotResizable)
+	window := giu.NewMasterWindow("Picocrypt",482,528,giu.MasterWindowFlagsNotResizable)
 	r := bytes.NewReader(iconBytes)
 	icon,_ := png.Decode(r)
 	window.SetIcon([]image.Image{icon})
