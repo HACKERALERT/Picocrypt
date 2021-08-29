@@ -18,7 +18,7 @@
 	<li>Improve Reed-Solomon performance</li>
 </ul>
 
-# v1.17 (ETA: 1 weeks)
+# v1.17 (ETA: 1 week)
 <strong>Note: v1.17 will be incompatible with 1.16 (and therefore 1.15 and 1.14).</strong>
 <ul>
 	<li>✓ (abandoned due to UI issues with ASCII codes >128) Extended ASCII set in password generator</li>
