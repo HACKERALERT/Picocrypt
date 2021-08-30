@@ -62,13 +62,13 @@ import (
 	"github.com/AllenDang/imgui-go"
 
 	// Reed-Solomon
-	"github.com/HACKERALERT/infectious" // v0.0.0-20210818221523-92bdec168696
+	"github.com/HACKERALERT/infectious" // v0.0.0-20210829223857-06884e85204c
 
 	// Helpers
 	"github.com/HACKERALERT/jibber_jabber" // v0.0.0-20210819210536-54a4d27b5376
 	"github.com/HACKERALERT/clipboard" // v0.1.5-0.20210716140604-61d96bf4fc94
 	"github.com/HACKERALERT/dialog" // v0.0.0-20210716143851-223edea1d840
-	"github.com/HACKERALERT/browser" // v0.0.0-20210818221535-991cc324ab76
+	"github.com/HACKERALERT/browser" // v0.0.0-20210829223838-6f2b13590b20
 	"github.com/HACKERALERT/zxcvbn-go" // v0.0.0-20210730224720-b29e9dba62c2
 
 )
@@ -133,6 +133,7 @@ var outputWidth float32 = 370
 var orLabel = "or"
 var passwordStrength int
 var keyfile = false // True if user chooses/chose to use a keyfile
+var keyfileOrderMatters bool
 var showConfirmation = false // True if a confirmation to overwrite is needed
 var showProgress = false
 var progress float32 = 0 // 0 is 0%, 1 is 100%
@@ -184,6 +185,7 @@ var genpassSymbols = true
 // Reed-Solomon encoders
 var rs1,_ = infectious.NewFEC(1,3) // 1 data shards, 3 total -> 2 parity shards
 var rs5,_ = infectious.NewFEC(5,15)
+var rs6,_ = infectious.NewFEC(6,18)
 var rs10,_ = infectious.NewFEC(10,30)
 var rs16,_ = infectious.NewFEC(16,48)
 var rs24,_ = infectious.NewFEC(24,72)
@@ -228,11 +230,11 @@ func startUI(){
 				pos := giu.GetCursorPos()
 				w,_ := giu.CalcTextSize(languages[languageSelected])
 				giu.Row(
-					giu.Dummy(-w-32,0),
+					giu.Dummy(-w/dpi-32,0),
 					giu.Combo("##language",languages[languageSelected],languages,&languageSelected).OnChange(func(){
 						selectedLocale = allLocales[languageSelected]
 						shredding = s(shredding)
-					}).Size(w+24),
+					}).Size(w/dpi+24),
 				).Build()
 				giu.SetCursorPos(pos)
 				// The tab bar, which contains different tabs for different functions
@@ -285,25 +287,33 @@ func startUI(){
 							if showKeyfile{
 								giu.PopupModal(s("Manage keyfile(s):")).Layout(
 									giu.Label(s("Drop and drop your keyfile(s) here.")),
-									giu.Row(
-										giu.Label(s("You can also generate a keyfile:")),
-										giu.Button(s("Generate")).OnClick(func(){
-											file,_ := dialog.File().Title(s("Save keyfile as")).Save()
+									giu.Custom(func(){
+										if mode!="decrypt"{
+											giu.Row(
+												giu.Label(s("You can also generate a keyfile:")),
+												giu.Button(s("Generate")).OnClick(func(){
+													file,_ := dialog.File().Title(s("Save keyfile as")).Save()
 
-											// Return if user canceled the file dialog
-											if file==""{
-												return
-											}
+													// Return if user canceled the file dialog
+													if file==""{
+														return
+													}
 
-											fout,_ := os.Create(file)
-											data := make([]byte,1048576)
-											rand.Read(data)
-											fout.Write(data)
-											fout.Close()
+													fout,_ := os.Create(file)
+													data := make([]byte,1048576)
+													rand.Read(data)
+													fout.Write(data)
+													fout.Close()
 
-											keyfiles = append(keyfiles,file)
-										}),
-									),
+													keyfiles = append(keyfiles,file)
+												}),
+											).Build()
+											giu.Checkbox(s("Require correct keyfile order"),&keyfileOrderMatters).Build()
+										}else if keyfileOrderMatters{
+											giu.Label(s("The correct order of keyfiles is required.")).Build()
+										}
+									}),
+									giu.Tooltip(s("If checked, you will need to drop keyfiles in the correct order.")),
 									giu.Custom(func(){
 										for _,i := range keyfiles{
 											giu.Row(
@@ -926,14 +936,15 @@ func startUI(){
 
 // Handle files dropped into Picocrypt by user
 func onDrop(names []string){
-	_status = "Ready."
-	recombine = false
 	if tab==0{
 		if showKeyfile{
 			keyfiles = append(keyfiles,names...)
 			giu.Update()
 			return
 		}
+
+		_status = "Ready."
+		recombine = false
 
 		// Clear variables
 		onlyFiles = nil
@@ -1059,9 +1070,9 @@ func onDrop(names []string){
 						metadata = s("Metadata is corrupted.")
 					}
 
-					flags := make([]byte,15)
+					flags := make([]byte,18)
 					fin.Read(flags)
-					flags,err = rsDecode(rs5,flags)
+					flags,err = rsDecode(rs6,flags)
 					if err!=nil{
 						_status = "Input file is corrupt and cannot be decrypted."
 						_status_color = color.RGBA{0xff,0x00,0x00,255}
@@ -1070,6 +1081,9 @@ func onDrop(names []string){
 
 					if flags[2]==1{
 						keyfile = true
+					}
+					if flags[5]==1{
+						keyfileOrderMatters = true
 					}
 
 					fin.Close()
@@ -1314,7 +1328,7 @@ func work(){
 			fout.Write(rsEncode(rs1,[]byte{i}))
 		}
 
-		flags := make([]byte,5)
+		flags := make([]byte,6)
 		if fast{
 			flags[0] = 1
 		}
@@ -1330,7 +1344,10 @@ func work(){
 		if total%1048576>=1048448{
 			flags[4] = 1
 		}
-		flags = rsEncode(rs5,flags)
+		if keyfileOrderMatters{
+			flags[5] = 1
+		}
+		flags = rsEncode(rs6,flags)
 		fout.Write(flags)
 
 		// Fill salts and nonce with Go's CSPRNG
@@ -1388,12 +1405,12 @@ func work(){
 
 		fin.Read(make([]byte,metadataLength*3))
 
-		flags := make([]byte,15)
+		flags := make([]byte,18)
 		fin.Read(flags)
-		flags,err3 = rsDecode(rs5,flags)
+		flags,err3 = rsDecode(rs6,flags)
 		fast = flags[0]==1
 		paranoid = flags[1]==1
-		keyfile = flags[2]==1
+		//keyfile = flags[2]==1
 		reedsolo = flags[3]==1
 		padded = flags[4]==1
 
@@ -1504,28 +1521,44 @@ func work(){
 		khash_hash = khash_sha3.Sum(nil)
 	}*/
 	if len(keyfiles)>0||keyfile{
-		var keysum []byte
-		for _,path := range keyfiles{
-			kin,_ := os.Open(path)
-			kstat,_ := os.Stat(path)
-			kbytes := make([]byte,kstat.Size())
-			kin.Read(kbytes)
-			kin.Close()
-			ksha3 := sha3.New256()
-			ksha3.Write(kbytes)
-			khash := ksha3.Sum(nil)
-			if keysum==nil{
-				keysum = khash
-			}else{
-				for i,j := range khash{
-					keysum[i] ^= j
+		if keyfileOrderMatters{
+			var keysum = sha3.New256()
+			for _,path := range keyfiles{
+				kin,_ := os.Open(path)
+				kstat,_ := os.Stat(path)
+				kbytes := make([]byte,kstat.Size())
+				kin.Read(kbytes)
+				kin.Close()
+				keysum.Write(kbytes)
+			}
+			khash = keysum.Sum(nil)
+			khash_sha3 := sha3.New256()
+			khash_sha3.Write(khash)
+			khash_hash = khash_sha3.Sum(nil)
+		}else{
+			var keysum []byte
+			for _,path := range keyfiles{
+				kin,_ := os.Open(path)
+				kstat,_ := os.Stat(path)
+				kbytes := make([]byte,kstat.Size())
+				kin.Read(kbytes)
+				kin.Close()
+				ksha3 := sha3.New256()
+				ksha3.Write(kbytes)
+				khash := ksha3.Sum(nil)
+				if keysum==nil{
+					keysum = khash
+				}else{
+					for i,j := range khash{
+						keysum[i] ^= j
+					}
 				}
 			}
+			khash = keysum
+			khash_sha3 := sha3.New256()
+			khash_sha3.Write(keysum)
+			khash_hash = khash_sha3.Sum(nil)
 		}
-		khash = keysum
-		khash_sha3 := sha3.New256()
-		khash_sha3.Write(keysum)
-		khash_hash = khash_sha3.Sum(nil)
 	}
 	
 	sha3_512 := sha3.New512()
@@ -1556,7 +1589,11 @@ func work(){
 				if !keyCorrect{
 					_status = "The provided password is incorrect."
 				}else{
-					_status = "Incorrect keyfile(s)."
+					if keyfileOrderMatters{
+						_status = "Incorrect keyfile(s) and/or order."
+					}else{
+						_status = "Incorrect keyfile(s)."
+					}
 				}
 				_status_color = color.RGBA{0xff,0x00,0x00,255}
 				key = nil
@@ -1760,7 +1797,7 @@ func work(){
 
 	if mode=="encrypt"{
 		// Seek back to header and write important data
-		fout.Seek(int64(309+len(metadata)*3),0)
+		fout.Seek(int64(312+len(metadata)*3),0)
 		fout.Write(rsEncode(rs64,keyHash))
 		fout.Write(rsEncode(rs32,khash_hash))
 		fout.Write(rsEncode(rs64,mac.Sum(nil)))
@@ -2207,6 +2244,7 @@ func resetUI(){
 	cPassword = ""
 	keyfiles = nil
 	keyfile = false
+	keyfileOrderMatters = false
 	metadata = ""
 	metadataPrompt = s("Metadata (optional):")
 	metadataState = giu.InputTextFlagsNone
