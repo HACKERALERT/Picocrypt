@@ -34,6 +34,7 @@
 	<li>Remove EXIF data from keyfiles</li>
 	<li>Encryption/decryption file naming and extension bugs</li>
 	<li>Prevent duplicate keyfile</li>
+	<li>Add a select keyfile button</li>
 	<li>✓ Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
 	<li>✓ (abandoned because this could cause issues with different language characters) Filter invalid charaters and emojis out of "Save as" text entry</li>
 	<li>✓ Fix bug where metadata says "read-only", but the textbox is modifiable</li>
