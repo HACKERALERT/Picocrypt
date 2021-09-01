@@ -286,7 +286,27 @@ func startUI(){
 						giu.Custom(func(){
 							if showKeyfile{
 								giu.PopupModal(s("Manage keyfile(s):")).Layout(
-									giu.Label(s("Drop and drop your keyfile(s) here.")),
+									giu.Row(
+										giu.Label(s("Drop and drop your keyfile(s) here or")),
+										giu.Button(s("select")).OnClick(func(){
+													file,_ := dialog.File().Title(s("Select a keyfile")).Load()
+
+													// Return if user canceled the file dialog
+													if file==""{
+														return
+													}
+
+													keyfiles = append(keyfiles,file)
+													tmp := []string{}
+													for _,i := range keyfiles{
+														if i!=file{
+															tmp = append(tmp,i)
+														}
+													}
+													tmp = append(tmp,file)
+													keyfiles = tmp
+												}),
+									),
 									giu.Custom(func(){
 										if mode!="decrypt"{
 											giu.Row(
@@ -494,7 +514,7 @@ func startUI(){
 							giu.Tooltip(s("Click to toggle the password state.")),
 							giu.Custom(func(){
 								if !(mode=="decrypt"&&!keyfile){
-									giu.Button(s("Keyfile(s)")).OnClick(func(){
+									giu.Button(s("Keyfiles")).OnClick(func(){
 										showKeyfile = true
 									}).Size(71,0).Build()
 								}
@@ -939,7 +959,19 @@ func onDrop(names []string){
 	if tab==0{
 		if showKeyfile{
 			keyfiles = append(keyfiles,names...)
-			giu.Update()
+			tmp := []string{}
+			for _,i := range keyfiles{
+				duplicate := false
+				for _,j := range tmp{
+					if i==j{
+						duplicate = true
+					}
+				}
+				if !duplicate{
+					tmp = append(tmp,i)
+				}
+			}
+			keyfiles = tmp
 			return
 		}
 
@@ -1171,6 +1203,8 @@ func onDrop(names []string){
 func work(){
 	// Set some variables
 	status = s("Starting...")
+	_status = "Working..."
+	_status_color = color.RGBA{0xff,0xff,0xff,0xff}
 	working = true
 	padded := false
 	var salt []byte
