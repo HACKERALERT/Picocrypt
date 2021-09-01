@@ -1,21 +1,24 @@
 # Features Under Consideration
 <ul>
 	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
-	<li>Tweakable Argon2 parameters (with lower bounds)</li>
 	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
 	<li>CLI (thanks u/your_username)</li>
+	<li>File name encryption</li>
 </ul>
 
 # v1.XX (a future release)
 <ul>
-	<li>File name encryption</li>
-	<li>Customizable Argon2 parameters</li>
 	<li>Associate .pcv file extension with Picocrypt</li>
-	<li>Generate checksums for text</li>
-	<li>Replace show password button with an eye icon</li>
 	<li>Add start button to shredder (improve user flow)</li>
+</ul>
+
+# v1.18 (not started yet)
+<ul>
+	<li>Customizable Argon2 parameters</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
+	<li>Remove EXIF data from keyfiles</li>
+	<li>Encryption/decryption file naming and extension bugs</li>
 </ul>
 
 # v1.17 (ETA: 1 week)
@@ -31,8 +34,7 @@
 	<li>✓ Option to require specific keyfile order</li>
 	<li>✓ Keyfile generator</li>
 	<li>Bug: Red error label shown in main window during successful decryption after selecting incorrect keyfiles</li>
-	<li>Remove EXIF data from keyfiles</li>
-	<li>Encryption/decryption file naming and extension bugs</li>
+	
 	<li>Prevent duplicate keyfile</li>
 	<li>Add a select keyfile button</li>
 	<li>✓ Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
