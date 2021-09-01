@@ -34,7 +34,6 @@
 	<li>✓ Option to require specific keyfile order</li>
 	<li>✓ Keyfile generator</li>
 	<li>Bug: Red error label shown in main window during successful decryption after selecting incorrect keyfiles</li>
-	
 	<li>Prevent duplicate keyfile</li>
 	<li>Add a select keyfile button</li>
 	<li>✓ Make sure only one of "Fast mode" and "Paranoid mode" can be enabled</li>
