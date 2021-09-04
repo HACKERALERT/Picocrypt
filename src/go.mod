@@ -3,9 +3,9 @@ module Picocrypt
 go 1.17
 
 require (
-	github.com/AllenDang/giu v0.5.7-0.20210827055911-5a1a15f91455 // indirect
+	github.com/AllenDang/giu v0.5.7-0.20210904143054-08afc1517839 // indirect
 	github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8 // indirect
-	github.com/AllenDang/imgui-go v1.12.1-0.20210821053943-f205413ba961 // indirect
+	github.com/AllenDang/imgui-go v1.12.1-0.20210831132008-ff26a21b4e5b // indirect
 	github.com/HACKERALERT/browser v0.0.0-20210829223838-6f2b13590b20 // indirect
 	github.com/HACKERALERT/clipboard v0.1.5-0.20210716140604-61d96bf4fc94 // indirect
 	github.com/HACKERALERT/dialog v0.0.0-20210716143851-223edea1d840 // indirect

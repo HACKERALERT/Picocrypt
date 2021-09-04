@@ -1,9 +1,9 @@
-github.com/AllenDang/giu v0.5.7-0.20210827055911-5a1a15f91455 h1:AHtSsSOS+Kx2RyDkRiNXw6W43cKSmnVLvqyvDt3zXHs=
-github.com/AllenDang/giu v0.5.7-0.20210827055911-5a1a15f91455/go.mod h1:tHr7Vp8Gd8IwKJv9OE+njniLlco/Kolx29FxO7SbZNE=
+github.com/AllenDang/giu v0.5.7-0.20210904143054-08afc1517839 h1:3tTCT7+9S+Q/Esl5DOIDcXMOyyUW62pYs60xXXsaVUA=
+github.com/AllenDang/giu v0.5.7-0.20210904143054-08afc1517839/go.mod h1:ttkQexsIpTMZ9ijPYCaONF66wawCB7UdE2SBJRyR5Ac=
 github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8 h1:dKZMqib/yUDoCFigmz2agG8geZ/e3iRq304/KJXqKyw=
 github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8/go.mod h1:b4uuDd0s6KRIPa84cEEchdQ9ICh7K0OryZHbSzMca9k=
-github.com/AllenDang/imgui-go v1.12.1-0.20210821053943-f205413ba961 h1:lXafEwHfxzn3Q9F4j3TEgYyrekwNCqp4EmvLuebFCX4=
-github.com/AllenDang/imgui-go v1.12.1-0.20210821053943-f205413ba961/go.mod h1:2jS7bvvG+PejKdNu4eg2UYqx7Ky8IXGAhxOfjq9qTNk=
+github.com/AllenDang/imgui-go v1.12.1-0.20210831132008-ff26a21b4e5b h1:aAEt1yvpQTPSO+j8ZUyZFcituppBw5XAzyohqDKhyjw=
+github.com/AllenDang/imgui-go v1.12.1-0.20210831132008-ff26a21b4e5b/go.mod h1:2jS7bvvG+PejKdNu4eg2UYqx7Ky8IXGAhxOfjq9qTNk=
 github.com/HACKERALERT/browser v0.0.0-20210829223838-6f2b13590b20 h1:SBU4w+Ox1w7B3tkDIW9MM+82H1mPnnBsigk4+K7d/os=
 github.com/HACKERALERT/browser v0.0.0-20210829223838-6f2b13590b20/go.mod h1:a6mhuuWgHoHBtFZMlvCumNQZE8Y9K0HawuxREW/RA9Q=
 github.com/HACKERALERT/clipboard v0.1.5-0.20210716140604-61d96bf4fc94 h1:FNwFtZlPggOVFxx1IvUtBfCGZBR7OMhsmXygJAVHkzg=
