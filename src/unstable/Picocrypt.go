@@ -648,11 +648,9 @@ func startUI(){
 								giu.Tooltip(s("Removes the encrypted Picocrypt volume (and chunks).")).Build()
 								giu.Dummy(0,112).Build()
 							}else{
-								//fmt.Println(dpi)
 								giu.Dummy(0,67).Build()
 								w,_ := giu.GetAvailableRegion()
 								tw,_ := giu.CalcTextSize(s("No files selected yet."))
-								//fmt.Println(w,tw,padding)
 								giu.Row(
 									giu.Label(""),
 									giu.Dummy((w-tw)/2/dpi,0),
@@ -878,21 +876,17 @@ func startUI(){
 							}else{
 								giu.Row(
 									giu.Label(s("Number of passes:")),
-									//giu.InputText(&shredPasses).Size(16).Flags(giu.InputTextFlagsCharsDecimal),
 									giu.SliderInt("",&shredPasses,1,32).Size(-0.0000001),
 								).Build()
 							}
 						}),
 						giu.Dummy(0,-50),
 						giu.Custom(func(){
-							
-							//imgui.SameLine()
 							w,_ := giu.GetAvailableRegion()
 							bw,_ := giu.CalcTextSize(s("Cancel"))
 							padding,_ := giu.GetWindowPadding()
 							bw += 2*padding
 							size := w-bw-padding
-							//imgui.SameLine()
 							giu.Row(
 								giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(size/dpi,0),
 								giu.Button(s("Cancel")).Size(bw/dpi,0).OnClick(func(){
@@ -903,13 +897,6 @@ func startUI(){
 								}),
 							).Build()
 						}),
-						/*giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(-65,0),
-						giu.Button(s("Cancel")).Size(58,0).OnClick(func(){
-							stopShredding = true
-							shredding = s("Ready.")
-							shredProgress = 0
-							shredOverlay = ""
-						}),*/
 						giu.Custom(func(){
 							if len(shredding)>50{
 								shredding = "....."+shredding[len(shredding)-50:]
@@ -1069,7 +1056,6 @@ func onDrop(names []string){
 					fin.Seek(0,0)
 
 					// Read metadata and insert into box
-					//var err error
 					tmp = make([]byte,15)
 					fin.Read(tmp)
 					tmp,_ = rsDecode(rs5,tmp)
@@ -1444,7 +1430,6 @@ func work(){
 		flags,err3 = rsDecode(rs6,flags)
 		fast = flags[0]==1
 		paranoid = flags[1]==1
-		//keyfile = flags[2]==1
 		reedsolo = flags[3]==1
 		padded = flags[4]==1
 
@@ -1540,20 +1525,6 @@ func work(){
 		return
 	}
 
-	/*if keyfile{
-		kin,_ := os.Open(keyfilePath)
-		kstat,_ := os.Stat(keyfilePath)
-		kbytes := make([]byte,kstat.Size())
-		kin.Read(kbytes)
-		kin.Close()
-		ksha3 := sha3.New256()
-		ksha3.Write(kbytes)
-		khash = ksha3.Sum(nil)
-
-		khash_sha3 := sha3.New256()
-		khash_sha3.Write(khash)
-		khash_hash = khash_sha3.Sum(nil)
-	}*/
 	if len(keyfiles)>0||keyfile{
 		if keyfileOrderMatters{
 			var keysum = sha3.New256()
