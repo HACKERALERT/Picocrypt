@@ -1,6 +1,10 @@
 <p><a href="https://github.com/HACKERALERT/Picocrypt">English</a> | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | <a href="/translations/german.md">Deutsch</a> | Türkçe | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">русский</a></p>
 <p align="center"><img align="center" src="/images/Picocrypt.svg" width="512" alt="Picocrypt"></p>
 
+>Geliştirme süreci devam etmektedir, dolayısıyla mevcut readme.me çevirisi bir miktar güncelliğini yitirmiştir.
+Bağlantılar eskimiş olabileceğinden lütfen bu sayfayı referans almayın.
+Dökümantasyon süreci tamamlanınca çeviri aslını yansıtacak şekilde güncellenecektir.
+
 <!-- Translate below -->
 Picocrypt; dosyalarınızı şifreleyebilmenizi, sağlama toplamları (checksums) oluşturabilmenizi, dosyalarınızı kalıcı olarak silebilmenizi ve daha fazlasını yapabilmenizi sağlayan oldukça küçük (bu yüzden <i>Pico</i>), oldukça basit ancak oldukça güvenli bir kriptografi aracıdır. Güvenlik, basitlik ve güvenilirliğe odaklanarak şifreleme için <i>ilk-tercih</i> bir araç olması için tasarlanmıştır. Picocrypt, NSA gibi üç harfli teşkilatlara karşı bile üst düzey güvenlik sağlamak için XChaCha20 şifrelemesi ve HMAC-SHA3 mesaj doğrulama kodunu kullanır. Olabilecek en üst düzey güvenlik için tasarlanmıştır, güvenlik açısından mutlak suretle taviz vermez ve denetlenmiş bir kriptografi kütüphanesi ile oluşturulmuştur. <strong>Gizliliğiniz ve güvenliğiniz saldırı altında. Dosyalarınızı Picocrypt ile koruyor olmanın verdiği güvenle buna bir son verin.</strong>
 
