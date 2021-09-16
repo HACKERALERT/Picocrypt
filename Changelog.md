@@ -14,6 +14,7 @@
 
 # v1.18 (not started yet)
 <ul>
+	<li>Add output size to input label</li>
 	<li>Customizable Argon2 parameters</li>
 	<li>Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
