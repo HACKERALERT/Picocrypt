@@ -12,14 +12,14 @@
 	<li>Add start button to shredder (improve user flow)</li>
 </ul>
 
-# v1.18 (not started yet)
+# v1.18 (ETA: 1 month)
 <ul>
 	<li>Add output size to input label</li>
 	<li>Customizable Argon2 parameters</li>
-	<li>Make UI more consistent (minor DPI issues)</li>
+	<li>✓ Make UI more consistent (minor DPI issues)</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Remove EXIF data from keyfiles</li>
-	<li>Encryption/decryption file naming and extension bugs</li>
+	<li>✓ Encryption/decryption file naming and extension bugs</li>
 </ul>
 
 # v1.17 (ETA: 5 days)
