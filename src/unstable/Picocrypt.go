@@ -119,11 +119,12 @@ var genpassSymbols = true
 var keyfile bool
 var keyfiles []string
 var keyfileOrderMatters bool
+var keyfilePrompt = "None selected."
 var showKeyfile bool
 
 // Metadata variables
 var metadata string
-var metadataPrompt = "Metadata (optional):"
+var metadataPrompt = "Metadata:"
 var metadataDisabled bool
 
 // Advanced options
@@ -200,7 +201,7 @@ func draw() {
 								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize).Layout(
 								giu.Row(
 									giu.Label(s("Length:")),
-									giu.SliderInt("", &genpassLength, 4, 64).Size(-0.0000001),
+									giu.SliderInt(&genpassLength, 4, 64).Size(fill),
 								),
 								giu.Checkbox(s("Uppercase"), &genpassUpper),
 								giu.Checkbox(s("Lowercase"), &genpassLower),
@@ -233,53 +234,17 @@ func draw() {
 							giu.PopupModal(s("Manage keyfiles:")).
 								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize).Layout(
 								giu.Row(
-									giu.Label(s("Drop and drop your keyfile(s) here or")),
-									giu.Button(s("select")).OnClick(func() {
-										file, _ := dialog.File().Title(s("Select a keyfile")).Load()
-
-										// Return if user canceled the file dialog
-										if file == "" {
-											return
-										}
-
-										keyfiles = append(keyfiles, file)
-										tmp := []string{}
-										for _, i := range keyfiles {
-											if i != file {
-												tmp = append(tmp, i)
-											}
-										}
-										tmp = append(tmp, file)
-										keyfiles = tmp
-									}),
+									giu.Label(s("Drop and drop your keyfiles.")),
 								),
 								giu.Custom(func() {
 									if mode != "decrypt" {
-										giu.Row(
-											giu.Label(s("You can also generate a keyfile:")),
-											giu.Button(s("Generate")).OnClick(func() {
-												file, _ := dialog.File().Title(s("Save keyfile as")).Save()
-
-												// Return if user canceled the file dialog
-												if file == "" {
-													return
-												}
-
-												fout, _ := os.Create(file)
-												data := make([]byte, 1048576)
-												rand.Read(data)
-												fout.Write(data)
-												fout.Close()
-
-												keyfiles = append(keyfiles, file)
-											}),
-										).Build()
 										giu.Checkbox(s("Require correct keyfile order"), &keyfileOrderMatters).Build()
+										giu.Tooltip(s("If checked, you will need to drop keyfiles in the correct order.")).Build()
 									} else if keyfileOrderMatters {
 										giu.Label(s("The correct order of keyfiles is required.")).Build()
 									}
 								}),
-								giu.Tooltip(s("If checked, you will need to drop keyfiles in the correct order.")),
+
 								giu.Custom(func() {
 									for _, i := range keyfiles {
 										giu.Row(
@@ -389,7 +354,9 @@ func draw() {
 						giu.Row(
 							giu.Label(s("Password:")),
 							giu.Dummy(-124/dpi, 0),
-							giu.Label(s("Keyfiles:")),
+							giu.Style().SetDisabled(mode == "decrypt" && !keyfile).To(
+								giu.Label(s("Keyfiles:")),
+							),
 						),
 						giu.Row(
 							giu.Button(s(passwordStateLabel)).Size(54, 0).OnClick(func() {
@@ -427,8 +394,26 @@ func draw() {
 								}),
 							),
 
-							giu.Button(s("Edit")).Size(54, 0),
-							giu.Button(s("Create")).Size(54, 0),
+							giu.Style().SetDisabled(mode == "decrypt" && !keyfile).To(
+								giu.Row(
+									giu.Button(s("Edit")).Size(54, 0).OnClick(func() {
+										showKeyfile = true
+									}),
+									giu.Style().SetDisabled(mode == "decrypt").To(
+										giu.Button(s("Create")).Size(54, 0).OnClick(func() {
+											file, _ := dialog.File().Title(s("Save keyfile as:")).Save()
+											if file == "" {
+												return
+											}
+											fout, _ := os.Create(file)
+											data := make([]byte, 1048576)
+											rand.Read(data)
+											fout.Write(data)
+											fout.Close()
+										}),
+									),
+								),
+							),
 						),
 						giu.Row(
 							giu.InputText(&password).Flags(passwordState).Size(302/dpi).OnChange(func() {
@@ -462,7 +447,9 @@ func draw() {
 								c.PathArcTo(path, 6*dpi, -math.Pi/2, float32(passwordStrength+1)/5*2*math.Pi-math.Pi/2, -1)
 								c.PathStroke(col, false, 2)
 							}),
-							giu.Label(s("No keyfiles.")),
+							giu.Style().SetDisabled(true).To(
+								giu.InputText(&keyfilePrompt).Size(fill),
+							),
 						),
 					),
 
@@ -472,7 +459,9 @@ func draw() {
 								giu.Label(s("Confirm password:")),
 							),
 							giu.Dummy(-124/dpi, 0),
-							giu.Label(s("Custom Argon2:")),
+							giu.Style().SetDisabled(true).To(
+								giu.Label(s("Custom Argon2:")),
+							),
 						),
 					),
 					giu.Style().SetDisabled(password == "").To(
@@ -501,7 +490,9 @@ func draw() {
 									}),
 								),
 							),
-							giu.Button(s("Manage")).Size(fill, 0),
+							giu.Style().SetDisabled(true).To(
+								giu.Button(s("Manage")).Size(fill, 0),
+							),
 						),
 					),
 
@@ -526,14 +517,16 @@ func draw() {
 								giu.Row(
 									giu.Checkbox(s("Use fast mode"), &fast),
 									giu.Dummy(-221/dpi, 0),
-									giu.Checkbox(s("Delete files when done"), &deleteWhenDone),
+									giu.Checkbox(s("Delete files when complete"), &deleteWhenDone),
 								).Build()
 								giu.Row(
 									giu.Checkbox(s("Use paranoid mode"), &paranoid),
 									giu.Dummy(-221/dpi, 0),
-									giu.Checkbox(s("Split into"), &split),
-									giu.InputText(&splitSize).Size(20).Flags(giu.InputTextFlagsCharsHexadecimal),
-									giu.Label("MiB chunks"),
+									giu.Checkbox(s("Split every"), &split),
+									giu.InputText(&splitSize).Size(55).Flags(giu.InputTextFlagsCharsHexadecimal).OnChange(func() {
+										split = splitSize != ""
+									}),
+									giu.Combo("##splitter", splitUnits[splitSelected], splitUnits, &splitSelected).Size(52),
 								).Build()
 							} else {
 								giu.Checkbox(s("Keep decrypted output even if it's corrupted or modified"), &keep).Build()
@@ -554,23 +547,41 @@ func draw() {
 							).Build()
 							giu.SameLine()
 							giu.Button(s("Change")).Size(bw/dpi, 0).OnClick(func() {
-								file, _ := dialog.File().Title(s("Save output as...")).Save()
+								file, _ := dialog.File().Title(s("Save as:")).Save()
 								if file == "" {
 									return
 								}
 
 								if mode == "encrypt" {
 									if len(allFiles) > 1 || len(onlyFolders) > 0 {
+										file = strings.TrimSuffix(file, ".zip.pcv")
 										file = strings.TrimSuffix(file, ".pcv")
 										if !strings.HasSuffix(file, ".zip.pcv") {
 											file += ".zip.pcv"
 										}
 									} else {
+										file = strings.TrimSuffix(file, ".pcv")
+										ind := strings.Index(inputFile, ".")
+										file += inputFile[ind:]
 										if !strings.HasSuffix(file, ".pcv") {
 											file += ".pcv"
 										}
 									}
+								} else {
+									ind := strings.Index(file, ".")
+									if ind != -1 {
+										file = file[:ind]
+									}
+									if strings.HasSuffix(inputFile, ".zip.pcv") {
+										file += ".zip"
+									} else {
+										tmp := strings.TrimSuffix(filepath.Base(inputFile), ".pcv")
+										tmp = tmp[strings.Index(tmp, "."):]
+										file += tmp
+									}
 								}
+
+								outputFile = file
 							}).Build()
 							giu.Tooltip(s("Save the output with a custom path and name.")).Build()
 						}),
@@ -583,6 +594,7 @@ func draw() {
 							if keyfile && keyfiles == nil {
 								mainStatus = "Please select your keyfiles."
 								mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
+								return
 							}
 							_, err := os.Stat(outputFile)
 							if err == nil {
@@ -632,6 +644,35 @@ func draw() {
 }
 
 func onDrop(names []string) {
+	if tab == 1 {
+		return
+	}
+	if tab == 2 {
+		return
+	}
+
+	if showKeyfile {
+		keyfiles = append(keyfiles, names...)
+		tmp := []string{}
+		for _, i := range keyfiles {
+			duplicate := false
+			for _, j := range tmp {
+				if i == j {
+					duplicate = true
+				}
+			}
+			stat, _ := os.Stat(i)
+			if !duplicate && !stat.IsDir() {
+				tmp = append(tmp, i)
+			}
+		}
+		keyfiles = tmp
+		if len(keyfiles) == 1 {
+			keyfilePrompt = s("Using 1 keyfile.")
+		}
+		keyfilePrompt = fmt.Sprintf(s("Using %d keyfiles."), len(keyfiles))
+		return
+	}
 	mainStatus = "Ready."
 	mainStatusColor = color.RGBA{0xff, 0xff, 0xff, 0xff}
 	metadataDisabled = false
@@ -751,6 +792,7 @@ func onDrop(names []string) {
 
 				flags := make([]byte, 18)
 				fin.Read(flags)
+				fin.Close()
 				flags, err = rsDecode(rs6, flags)
 				if err != nil {
 					mainStatus = "Input file is corrupt and cannot be decrypted."
@@ -760,6 +802,9 @@ func onDrop(names []string) {
 
 				if flags[2] == 1 {
 					keyfile = true
+					keyfilePrompt = s("Keyfiles required.")
+				} else {
+					keyfilePrompt = s("Not applicable.")
 				}
 				if flags[5] == 1 {
 					keyfileOrderMatters = true
@@ -1220,9 +1265,9 @@ func work() {
 					mainStatus = "The provided password is incorrect."
 				} else {
 					if keyfileOrderMatters {
-						mainStatus = "Incorrect keyfile(s) and/or order."
+						mainStatus = "Incorrect keyfiles and/or order."
 					} else {
-						mainStatus = "Incorrect keyfile(s)."
+						mainStatus = "Incorrect keyfiles."
 					}
 				}
 				mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
@@ -1605,13 +1650,15 @@ func resetUI() {
 	keyfiles = nil
 	keyfile = false
 	keyfileOrderMatters = false
+	keyfilePrompt = s("None selected.")
 	metadata = ""
-	metadataPrompt = "Metadata (optional):"
+	metadataPrompt = "Metadata:"
 	shredTemp = false
 	keep = false
 	reedsolo = false
 	split = false
 	splitSize = ""
+	splitSelected = 1
 	fast = false
 	deleteWhenDone = false
 	paranoid = false
