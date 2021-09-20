@@ -1136,7 +1136,8 @@ func work() {
 		dataMac, err10 = rsDecode(rs64, dataMac)
 
 		// Is there a better way?
-		if err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil || err6 != nil || err7 != nil || err8 != nil || err9 != nil || err10 != nil {
+		if err1 != nil || err2 != nil || err3 != nil || err4 != nil || err5 != nil ||
+			err6 != nil || err7 != nil || err8 != nil || err9 != nil || err10 != nil {
 			if keep {
 				kept = true
 			} else {
