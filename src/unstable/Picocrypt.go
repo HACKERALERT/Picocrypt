@@ -17,32 +17,43 @@ import (
 	// Generic
 	"archive/zip"
 	"bytes"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"hash"
 	"image"
 	"image/color"
 	"image/png"
 	"io"
+	"io/ioutil"
 	"math"
 	"math/big"
+	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strconv"
 	"strings"
+	"sync"
+	"syscall"
 	"time"
 
 	// Cryptography
 	"crypto/cipher"
 	"crypto/hmac"
+	"crypto/md5"
 	"crypto/rand"
+	"crypto/sha1"
+	"crypto/sha256"
 	"crypto/subtle"
 
-	"github.com/HACKERALERT/serpent" // v0.0.0-20210716182301-293b29869c66
+	"github.com/HACKERALERT/serpent"
 	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/blake2b"
+	"golang.org/x/crypto/blake2s"
 	"golang.org/x/crypto/chacha20"
 	"golang.org/x/crypto/hkdf"
 	"golang.org/x/crypto/sha3"
@@ -51,11 +62,12 @@ import (
 	"github.com/AllenDang/giu"
 
 	// Reed-Solomon
-	"github.com/HACKERALERT/infectious" // v0.0.0-20210829223857-06884e85204c
+	"github.com/HACKERALERT/infectious"
 
 	// Helpers
 	"github.com/HACKERALERT/clipboard"
 	"github.com/HACKERALERT/dialog"
+	"github.com/HACKERALERT/jibber_jabber"
 	"github.com/HACKERALERT/zxcvbn-go"
 )
 
@@ -64,6 +76,12 @@ var icon []byte
 
 //go:embed font.ttf
 var font []byte
+
+//go:embed sdelete64.exe
+var sdelete64bytes []byte
+
+//go:embed strings.json
+var localeBytes []byte
 
 // Localization
 type locale struct {
@@ -75,9 +93,11 @@ var locales []locale
 var selectedLocale = "en"
 var allLocales = []string{
 	"en",
+	"tr",
 }
 var languages = []string{
 	"English",
+	"Türkçe",
 }
 var languageSelected int32
 
@@ -89,6 +109,7 @@ var mode string
 var working bool
 var recombine bool
 var fill float32 = -0.0000001
+var sdelete64path string
 
 // Three variables store the input files
 var onlyFiles []string
@@ -170,8 +191,36 @@ var rs32, _ = infectious.NewFEC(32, 96)
 var rs64, _ = infectious.NewFEC(64, 192)
 var rs128, _ = infectious.NewFEC(128, 136)
 
+// File checksum generator variables
+var cs_md5 string
+var cs_sha1 string
+var cs_sha256 string
+var cs_sha3_256 string
+var cs_blake2b string
+var cs_blake2s string
+var cs_validate string
+var md5_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+var sha1_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+var sha256_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+var sha3_256_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+var blake2b_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+var blake2s_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+var cs_progress float32 = 0
+var md5_selected = false
+var sha1_selected = false
+var sha256_selected = false
+var sha3_256_selected = false
+var blake2b_selected = false
+var blake2s_selected = false
+
 // Shredder variables
-var shredding string
+var shredding string = "Ready."
+var shredPasses int32 = 4
+var stopShredding bool
+var shredProgress float32
+var shredDone float32
+var shredTotal float32
+var shredOverlay string
 
 func draw() {
 	giu.SingleWindow().Layout(
@@ -623,12 +672,195 @@ func draw() {
 							tab = 1
 						}
 					}),
+
+					giu.Label(s("Toggle the hashes you would like to generate and drop a file here.")),
+					// MD5
+					giu.Custom(func() {
+						giu.Checkbox("MD5:", &md5_selected).Build()
+						giu.SameLine()
+						w, _ := giu.GetAvailableRegion()
+						bw, _ := giu.CalcTextSize(s("Copy"))
+						padding, _ := giu.GetWindowPadding()
+						bw += 2 * padding
+						size := w - bw - padding
+						giu.Dummy(size/dpi, 0).Build()
+						giu.SameLine()
+						giu.Button(s("Copy")+"##md5").Size(bw/dpi, 0).OnClick(func() {
+							clipboard.WriteAll(cs_md5)
+						}).Build()
+					}),
+					giu.Style().SetColor(giu.StyleColorBorder, md5_color).To(
+						giu.InputText(&cs_md5).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+					),
+
+					// SHA1
+					giu.Custom(func() {
+						giu.Checkbox("SHA1:", &sha1_selected).Build()
+						giu.SameLine()
+						w, _ := giu.GetAvailableRegion()
+						bw, _ := giu.CalcTextSize(s("Copy"))
+						padding, _ := giu.GetWindowPadding()
+						bw += 2 * padding
+						size := w - bw - padding
+						giu.Dummy(size/dpi, 0).Build()
+						giu.SameLine()
+						giu.Button(s("Copy")+"##sha1").Size(bw/dpi, 0).OnClick(func() {
+							clipboard.WriteAll(cs_sha1)
+						}).Build()
+					}),
+					giu.Style().SetColor(giu.StyleColorBorder, sha1_color).To(
+						giu.InputText(&cs_sha1).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+					),
+
+					// SHA256
+					giu.Custom(func() {
+						giu.Checkbox("SHA256:", &sha256_selected).Build()
+						giu.SameLine()
+						w, _ := giu.GetAvailableRegion()
+						bw, _ := giu.CalcTextSize(s("Copy"))
+						padding, _ := giu.GetWindowPadding()
+						bw += 2 * padding
+						size := w - bw - padding
+						giu.Dummy(size/dpi, 0).Build()
+						giu.SameLine()
+						giu.Button(s("Copy")+"##sha256").Size(bw/dpi, 0).OnClick(func() {
+							clipboard.WriteAll(cs_sha256)
+						}).Build()
+					}),
+					giu.Style().SetColor(giu.StyleColorBorder, sha256_color).To(
+						giu.InputText(&cs_sha256).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+					),
+
+					// SHA3-256
+					giu.Custom(func() {
+						giu.Checkbox("SHA3-256:", &sha3_256_selected).Build()
+						giu.SameLine()
+						w, _ := giu.GetAvailableRegion()
+						bw, _ := giu.CalcTextSize(s("Copy"))
+						padding, _ := giu.GetWindowPadding()
+						bw += 2 * padding
+						size := w - bw - padding
+						giu.Dummy(size/dpi, 0).Build()
+						giu.SameLine()
+						giu.Button(s("Copy")+"##sha3_256").Size(bw/dpi, 0).OnClick(func() {
+							clipboard.WriteAll(cs_sha3_256)
+						}).Build()
+					}),
+					giu.Style().SetColor(giu.StyleColorBorder, sha3_256_color).To(
+						giu.InputText(&cs_sha3_256).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+					),
+
+					// BLAKE2b
+					giu.Custom(func() {
+						giu.Checkbox("BLAKE2b:", &blake2b_selected).Build()
+						giu.SameLine()
+						w, _ := giu.GetAvailableRegion()
+						bw, _ := giu.CalcTextSize(s("Copy"))
+						padding, _ := giu.GetWindowPadding()
+						bw += 2 * padding
+						size := w - bw - padding
+						giu.Dummy(size/dpi, 0).Build()
+						giu.SameLine()
+						giu.Button(s("Copy")+"##blake2b").Size(bw/dpi, 0).OnClick(func() {
+							clipboard.WriteAll(cs_blake2b)
+						}).Build()
+					}),
+					giu.Style().SetColor(giu.StyleColorBorder, blake2b_color).To(
+						giu.InputText(&cs_blake2b).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+					),
+
+					// BLAKE2s
+					giu.Custom(func() {
+						giu.Checkbox("BLAKE2s:", &blake2s_selected).Build()
+						giu.SameLine()
+						w, _ := giu.GetAvailableRegion()
+						bw, _ := giu.CalcTextSize(s("Copy"))
+						padding, _ := giu.GetWindowPadding()
+						bw += 2 * padding
+						size := w - bw - padding
+						giu.Dummy(size/dpi, 0).Build()
+						giu.SameLine()
+						giu.Button(s("Copy")+"##blake2s").Size(bw/dpi, 0).OnClick(func() {
+							clipboard.WriteAll(cs_blake2s)
+						}).Build()
+					}),
+					giu.Style().SetColor(giu.StyleColorBorder, blake2s_color).To(
+						giu.InputText(&cs_blake2s).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+					),
+
+					// Input entry for validating a checksum
+					giu.Label(s("Validate a checksum:")),
+					giu.InputText(&cs_validate).Size(fill).OnChange(func() {
+						md5_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+						sha1_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+						sha256_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+						sha3_256_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+						blake2b_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+						blake2s_color = color.RGBA{0x10, 0x10, 0x10, 0xff}
+						if cs_validate == "" {
+							return
+						}
+						cs_validate = strings.ToLower(cs_validate)
+						if cs_validate == cs_md5 {
+							md5_color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+						} else if cs_validate == cs_sha1 {
+							sha1_color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+						} else if cs_validate == cs_sha256 {
+							sha256_color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+						} else if cs_validate == cs_sha3_256 {
+							sha3_256_color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+						} else if cs_validate == cs_blake2b {
+							blake2b_color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+						} else if cs_validate == cs_blake2s {
+							blake2s_color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+						}
+						giu.Update()
+					}),
+
+					// Progress bar
+					giu.Label(s("Progress:")),
+					giu.ProgressBar(cs_progress).Size(fill, 0),
 				),
 				giu.TabItem(s("Shredder")).Layout(
 					giu.Custom(func() {
 						if giu.IsItemActive() {
 							tab = 2
 						}
+					}),
+
+					giu.Label(s("Drop files and folders here to shred them.")),
+					giu.Custom(func() {
+						if runtime.GOOS == "darwin" {
+							giu.Label(s("Number of passes: Not supported on macOS")).Build()
+						} else {
+							giu.Row(
+								giu.Label(s("Number of passes:")),
+								giu.SliderInt(&shredPasses, 1, 32).Size(fill),
+							).Build()
+						}
+					}),
+					giu.Dummy(0, -50),
+					giu.Custom(func() {
+						w, _ := giu.GetAvailableRegion()
+						bw, _ := giu.CalcTextSize(s("Cancel"))
+						padding, _ := giu.GetWindowPadding()
+						bw += 2 * padding
+						size := w - bw - padding
+						giu.Row(
+							giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(size/dpi, 0),
+							giu.Button(s("Cancel")).Size(bw/dpi, 0).OnClick(func() {
+								stopShredding = true
+								shredding = s("Ready.")
+								shredProgress = 0
+								shredOverlay = ""
+							}),
+						).Build()
+					}),
+					giu.Custom(func() {
+						if len(shredding) > 50 {
+							shredding = "....." + shredding[len(shredding)-50:]
+						}
+						giu.Label(shredding).Wrapped(true).Build()
 					}),
 				),
 				giu.TabItem(s("About")).Layout(
@@ -645,9 +877,11 @@ func draw() {
 
 func onDrop(names []string) {
 	if tab == 1 {
+		go generateChecksums(names[0])
 		return
 	}
 	if tab == 2 {
+		go shred(names, true)
 		return
 	}
 
@@ -673,9 +907,6 @@ func onDrop(names []string) {
 		keyfilePrompt = fmt.Sprintf(s("Using %d keyfiles."), len(keyfiles))
 		return
 	}
-	mainStatus = "Ready."
-	mainStatusColor = color.RGBA{0xff, 0xff, 0xff, 0xff}
-	metadataDisabled = false
 
 	// Clear variables
 	recombine = false
@@ -683,6 +914,7 @@ func onDrop(names []string) {
 	onlyFolders = nil
 	allFiles = nil
 	files, folders := 0, 0
+	resetUI()
 
 	if len(names) == 1 {
 		stat, _ := os.Stat(names[0])
@@ -1635,8 +1867,287 @@ func broken() {
 	giu.Update()
 }
 
-func shred(names []string, separate bool) {
+// Generate file checksums (pretty straightforward)
+func generateChecksums(file string) {
+	fin, _ := os.Open(file)
 
+	// Clear UI state
+	cs_md5 = ""
+	cs_sha1 = ""
+	cs_sha256 = ""
+	cs_sha3_256 = ""
+	cs_blake2b = ""
+	cs_blake2s = ""
+	md5_color = color.RGBA{0x10, 0x10, 0x10, 255}
+	sha1_color = color.RGBA{0x10, 0x10, 0x10, 255}
+	sha256_color = color.RGBA{0x10, 0x10, 0x10, 255}
+	sha3_256_color = color.RGBA{0x10, 0x10, 0x10, 255}
+	blake2b_color = color.RGBA{0x10, 0x10, 0x10, 255}
+	blake2s_color = color.RGBA{0x10, 0x10, 0x10, 255}
+	cs_validate = ""
+
+	if md5_selected {
+		cs_md5 = s("Calculating...")
+	}
+	if sha1_selected {
+		cs_sha1 = s("Calculating...")
+	}
+	if sha256_selected {
+		cs_sha256 = s("Calculating...")
+	}
+	if sha3_256_selected {
+		cs_sha3_256 = s("Calculating...")
+	}
+	if blake2b_selected {
+		cs_blake2b = s("Calculating...")
+	}
+	if blake2s_selected {
+		cs_blake2s = s("Calculating...")
+	}
+
+	// Create the checksum objects
+	crc_md5 := md5.New()
+	crc_sha1 := sha1.New()
+	crc_sha256 := sha256.New()
+	crc_sha3_256 := sha3.New256()
+	crc_blake2b, _ := blake2b.New256(nil)
+	crc_blake2s, _ := blake2s.New256(nil)
+
+	stat, _ := os.Stat(file)
+	total := stat.Size()
+	var done int64 = 0
+	for {
+		var data []byte
+		_data := make([]byte, 1048576)
+		size, err := fin.Read(_data)
+		if err != nil {
+			break
+		}
+		data = _data[:size]
+
+		if md5_selected {
+			crc_md5.Write(data)
+		}
+		if sha1_selected {
+			crc_sha1.Write(data)
+		}
+		if sha256_selected {
+			crc_sha256.Write(data)
+		}
+		if sha3_256_selected {
+			crc_sha3_256.Write(data)
+		}
+		if blake2b_selected {
+			crc_blake2b.Write(data)
+		}
+		if blake2s_selected {
+			crc_blake2s.Write(data)
+		}
+
+		done += int64(size)
+		cs_progress = float32(done) / float32(total)
+		giu.Update()
+	}
+	cs_progress = 0
+	if md5_selected {
+		cs_md5 = hex.EncodeToString(crc_md5.Sum(nil))
+	}
+	if sha1_selected {
+		cs_sha1 = hex.EncodeToString(crc_sha1.Sum(nil))
+	}
+	if sha256_selected {
+		cs_sha256 = hex.EncodeToString(crc_sha256.Sum(nil))
+	}
+	if sha3_256_selected {
+		cs_sha3_256 = hex.EncodeToString(crc_sha3_256.Sum(nil))
+	}
+	if blake2b_selected {
+		cs_blake2b = hex.EncodeToString(crc_blake2b.Sum(nil))
+	}
+	if blake2s_selected {
+		cs_blake2s = hex.EncodeToString(crc_blake2s.Sum(nil))
+	}
+
+	fin.Close()
+	giu.Update()
+}
+
+// Recursively shred all file(s) and folder(s) passed in as 'names'
+func shred(names []string, separate bool) {
+	stopShredding = false
+	shredTotal = 0
+	shredDone = 0
+
+	// 'separate' is true if this function is being called from the encryption/decryption tab
+	if separate {
+		shredOverlay = s("Shredding...")
+	}
+
+	// Walk through directories to get the total number of files for statistics
+	for _, name := range names {
+		filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
+			if err != nil {
+				return nil
+			}
+			stat, _ := os.Stat(path)
+			if !stat.IsDir() {
+				shredTotal++
+			}
+			return nil
+		})
+	}
+
+	for _, name := range names {
+		shredding = name
+
+		// Linux and macOS need a command with similar syntax and usage, so they're combined
+		if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
+			stat, _ := os.Stat(name)
+			if stat.IsDir() {
+				var coming []string
+
+				// Walk the folder recursively
+				filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
+					if err != nil {
+						return nil
+					}
+					if stopShredding {
+						return nil
+					}
+					stat, _ := os.Stat(path)
+					if !stat.IsDir() {
+						if len(coming) == 128 {
+							// Use a WaitGroup to parallelize shredding
+							var wg sync.WaitGroup
+							for i, j := range coming {
+								wg.Add(1)
+								go func(wg *sync.WaitGroup, id int, j string) {
+									defer wg.Done()
+									shredding = j
+									var cmd *exec.Cmd
+									if runtime.GOOS == "linux" {
+										cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), j)
+									} else {
+										cmd = exec.Command("rm", "-rfP", j)
+									}
+									cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+									cmd.Run()
+									shredDone++
+									shredUpdate(separate)
+									giu.Update()
+								}(&wg, i, j)
+							}
+							wg.Wait()
+							coming = nil
+						} else {
+							coming = append(coming, path)
+						}
+					}
+					return nil
+				})
+				for _, i := range coming {
+					if stopShredding {
+						break
+					}
+					go func() {
+						shredding = i
+						var cmd *exec.Cmd
+						if runtime.GOOS == "linux" {
+							cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), i)
+						} else {
+							cmd = exec.Command("rm", "-rfP", i)
+						}
+						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+						cmd.Run()
+						shredDone++
+						shredUpdate(separate)
+						giu.Update()
+					}()
+				}
+				if !stopShredding {
+					os.RemoveAll(name)
+				}
+			} else { // The path is a file, not a directory, so just shred it
+				shredding = name
+				var cmd *exec.Cmd
+				if runtime.GOOS == "linux" {
+					cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), name)
+				} else {
+					cmd = exec.Command("rm", "-rfP", name)
+				}
+				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+				cmd.Run()
+				shredDone++
+				shredUpdate(separate)
+			}
+		} else if runtime.GOOS == "windows" {
+			stat, _ := os.Stat(name)
+			if stat.IsDir() {
+				// Walk the folder recursively
+				filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
+					if err != nil {
+						return nil
+					}
+					stat, _ := os.Stat(path)
+					if stat.IsDir() {
+						if stopShredding {
+							return nil
+						}
+
+						t := 0
+						files, _ := ioutil.ReadDir(path)
+						for _, f := range files {
+							if !f.IsDir() {
+								t++
+							}
+						}
+						shredDone += float32(t)
+						shredUpdate(separate)
+						shredding = strings.ReplaceAll(path, "\\", "/") + "/*"
+						cmd := exec.Command(sdelete64path, "*", "-p", strconv.Itoa(int(shredPasses)))
+						cmd.Dir = path
+						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+						cmd.Run()
+						giu.Update()
+					}
+					return nil
+				})
+
+				if !stopShredding {
+					// sdelete64 doesn't delete the empty folder, so I'll do it manually
+					os.RemoveAll(name)
+				}
+			} else {
+				shredding = name
+				cmd := exec.Command(sdelete64path, name, "-p", strconv.Itoa(int(shredPasses)))
+				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+				cmd.Run()
+				shredDone++
+				shredUpdate(separate)
+			}
+		}
+		giu.Update()
+		if stopShredding {
+			return
+		}
+	}
+
+	// Clear UI state
+	shredding = s("Completed.")
+	shredProgress = 0
+	shredOverlay = ""
+}
+
+// Update shredding statistics
+func shredUpdate(separate bool) {
+	if separate {
+		shredOverlay = fmt.Sprintf("%d/%d", int(shredDone), int(shredTotal))
+		shredProgress = shredDone / shredTotal
+	} else {
+		popupStatus = fmt.Sprintf("%d/%d", int(shredDone), int(shredTotal))
+		progress = shredDone / shredTotal
+	}
+	giu.Update()
 }
 
 // Reset the UI to a clean state with nothing selected or checked
@@ -1645,7 +2156,7 @@ func resetUI() {
 	onlyFiles = nil
 	onlyFolders = nil
 	allFiles = nil
-	inputLabel = s("Drag and drop file(s) and folder(s) into this window.")
+	inputLabel = s("Drop files and folders into this window.")
 	password = ""
 	cPassword = ""
 	keyfiles = nil
@@ -1654,6 +2165,7 @@ func resetUI() {
 	keyfilePrompt = s("None selected.")
 	metadata = ""
 	metadataPrompt = "Metadata:"
+	metadataDisabled = false
 	shredTemp = false
 	keep = false
 	reedsolo = false
@@ -1755,15 +2267,66 @@ func humanize(seconds int) string {
 }
 
 func s(term string) string {
+	for _, i := range locales {
+		if i.iso == selectedLocale {
+			for _, j := range locales {
+				if j.iso == "en" {
+					for k, l := range j.data {
+						if l == term {
+							return i.data[k]
+						}
+					}
+				}
+			}
+
+		}
+	}
 	return term
 }
 
 func main() {
+	// Parse locales
+	var obj map[string]json.RawMessage
+	json.Unmarshal(localeBytes, &obj)
+	for i := range obj {
+		var tmp []string
+		json.Unmarshal(obj[i], &tmp)
+		locales = append(locales, locale{
+			iso:  i,
+			data: tmp,
+		})
+	}
+
+	// Check system locale
+	for _, i := range locales {
+		tmp, err := jibber_jabber.DetectIETF()
+		if err == nil {
+			if strings.HasPrefix(tmp, i.iso) {
+				selectedLocale = i.iso
+				for j, k := range allLocales {
+					if k == i.iso {
+						languageSelected = int32(j)
+					}
+				}
+			}
+		}
+	}
+
+	// Create a temporary file to store sdelete64.exe
+	sdelete64, _ := os.CreateTemp("", "sdelete64.*.exe")
+	sdelete64path = sdelete64.Name()
+	sdelete64.Write(sdelete64bytes)
+	sdelete64.Close()
+	cmd := exec.Command(sdelete64path, "/accepteula")
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	cmd.Run()
+
 	// Set a universal font
 	giu.SetDefaultFontFromBytes(font, 18)
 
 	// Create the master window
 	window := giu.NewMasterWindow("Picocrypt", 442, 504, giu.MasterWindowFlagsNotResizable)
+	dialog.Init()
 
 	// Set window icon
 	reader := bytes.NewReader(icon)
@@ -1772,10 +2335,31 @@ func main() {
 
 	// Set callbacks
 	window.SetDropCallback(onDrop)
+	window.SetCloseCallback(func() bool {
+		return !working
+	})
 
 	// Set universal DPI
 	dpi = giu.Context.GetPlatform().GetContentScale()
 
+	// Start a goroutine to check if a newer version is available
+	go func() {
+		v, err := http.Get("https://raw.githubusercontent.com/HACKERALERT/Picocrypt/main/internals/version.txt")
+		if err == nil {
+			body, err := io.ReadAll(v.Body)
+			v.Body.Close()
+			if err == nil {
+				if string(body[:5]) != version {
+					mainStatus = "A newer version is available."
+					mainStatusColor = color.RGBA{0, 255, 0, 255}
+				}
+			}
+		}
+	}()
+
 	// Start the UI
 	window.Run(draw)
+
+	// Window closed, clean up
+	os.Remove(sdelete64path)
 }
