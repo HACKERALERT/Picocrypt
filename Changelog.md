@@ -10,6 +10,7 @@
 <ul>
 	<li>Associate .pcv file extension with Picocrypt</li>
 	<li>Add start button to shredder (improve user flow)</li>
+	<li>Improve Reed-Solomon performance</li>
 </ul>
 
 # v1.18 (ETA: 1 month)
@@ -17,8 +18,8 @@
 	<li>Add output size to input label</li>
 	<li>Customizable Argon2 parameters</li>
 	<li>✓ Make UI more consistent (minor DPI issues)</li>
-	<li>Improve Reed-Solomon performance</li>
 	<li>Remove EXIF data from keyfiles</li>
+	<li>✓ Fixed bug where file object was not closed properly</li>
 	<li>✓ Encryption/decryption file naming and extension bugs</li>
 </ul>
 
