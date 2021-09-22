@@ -199,16 +199,16 @@ var csSha3 string
 var csBlake2b string
 var csBlake2s string
 var csValidate string
-var md5Color = color.RGBA{0x10, 0x10, 0x10, 0xff}
-var sha1Color = color.RGBA{0x10, 0x10, 0x10, 0xff}
-var sha256Color = color.RGBA{0x10, 0x10, 0x10, 0xff}
-var sha3Color = color.RGBA{0x10, 0x10, 0x10, 0xff}
-var blake2bColor = color.RGBA{0x10, 0x10, 0x10, 0xff}
-var blake2sColor = color.RGBA{0x10, 0x10, 0x10, 0xff}
+var md5Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+var sha1Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+var sha256Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+var sha3Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+var blake2bColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
+var blake2sColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
 var csProgress float32 = 0
-var md5Selected = false
-var sha1Selected = false
-var sha256Selected = false
+var md5Selected = true
+var sha1Selected = true
+var sha256Selected = true
 var sha3Selected = false
 var blake2bSelected = false
 var blake2sSelected = false
@@ -672,11 +672,13 @@ func draw() {
 							tab = 1
 						}
 					}),
-
 					giu.Label(s("Toggle the hashes you would like to generate and drop a file here.")),
+
 					// MD5
 					giu.Custom(func() {
-						giu.Checkbox("MD5:", &md5Selected).Build()
+						giu.Checkbox("MD5:", &md5Selected).OnChange(func() {
+							csMd5 = ""
+						}).Build()
 						giu.SameLine()
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Copy"))
@@ -690,12 +692,16 @@ func draw() {
 						}).Build()
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, md5Color).To(
-						giu.InputText(&csMd5).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						giu.Style().SetDisabled(true).To(
+							giu.InputText(&csMd5).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						),
 					),
 
 					// SHA1
 					giu.Custom(func() {
-						giu.Checkbox("SHA1:", &sha1Selected).Build()
+						giu.Checkbox("SHA1:", &sha1Selected).OnChange(func() {
+							csSha1 = ""
+						}).Build()
 						giu.SameLine()
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Copy"))
@@ -709,12 +715,16 @@ func draw() {
 						}).Build()
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha1Color).To(
-						giu.InputText(&csSha1).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						giu.Style().SetDisabled(true).To(
+							giu.InputText(&csSha1).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						),
 					),
 
 					// SHA256
 					giu.Custom(func() {
-						giu.Checkbox("SHA256:", &sha256Selected).Build()
+						giu.Checkbox("SHA256:", &sha256Selected).OnChange(func() {
+							csSha256 = ""
+						}).Build()
 						giu.SameLine()
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Copy"))
@@ -728,12 +738,16 @@ func draw() {
 						}).Build()
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha256Color).To(
-						giu.InputText(&csSha256).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						giu.Style().SetDisabled(true).To(
+							giu.InputText(&csSha256).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						),
 					),
 
 					// SHA3-256
 					giu.Custom(func() {
-						giu.Checkbox("SHA3-256:", &sha3Selected).Build()
+						giu.Checkbox("SHA3:", &sha3Selected).OnChange(func() {
+							csSha3 = ""
+						}).Build()
 						giu.SameLine()
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Copy"))
@@ -742,17 +756,21 @@ func draw() {
 						size := w - bw - padding
 						giu.Dummy(size/dpi, 0).Build()
 						giu.SameLine()
-						giu.Button(s("Copy")+"##sha3_256").Size(bw/dpi, 0).OnClick(func() {
+						giu.Button(s("Copy")+"##sha3").Size(bw/dpi, 0).OnClick(func() {
 							clipboard.WriteAll(csSha3)
 						}).Build()
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha3Color).To(
-						giu.InputText(&csSha3).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						giu.Style().SetDisabled(true).To(
+							giu.InputText(&csSha3).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						),
 					),
 
 					// BLAKE2b
 					giu.Custom(func() {
-						giu.Checkbox("BLAKE2b:", &blake2bSelected).Build()
+						giu.Checkbox("BLAKE2b:", &blake2bSelected).OnChange(func() {
+							csBlake2b = ""
+						}).Build()
 						giu.SameLine()
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Copy"))
@@ -766,12 +784,16 @@ func draw() {
 						}).Build()
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, blake2bColor).To(
-						giu.InputText(&csBlake2b).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						giu.Style().SetDisabled(true).To(
+							giu.InputText(&csBlake2b).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						),
 					),
 
 					// BLAKE2s
 					giu.Custom(func() {
-						giu.Checkbox("BLAKE2s:", &blake2sSelected).Build()
+						giu.Checkbox("BLAKE2s:", &blake2sSelected).OnChange(func() {
+							csBlake2s = ""
+						}).Build()
 						giu.SameLine()
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Copy"))
@@ -785,37 +807,65 @@ func draw() {
 						}).Build()
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, blake2sColor).To(
-						giu.InputText(&csBlake2s).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						giu.Style().SetDisabled(true).To(
+							giu.InputText(&csBlake2s).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+						),
 					),
 
 					// Input entry for validating a checksum
-					giu.Label(s("Validate a checksum:")),
-					giu.InputText(&csValidate).Size(fill).OnChange(func() {
-						md5Color = color.RGBA{0x10, 0x10, 0x10, 0xff}
-						sha1Color = color.RGBA{0x10, 0x10, 0x10, 0xff}
-						sha256Color = color.RGBA{0x10, 0x10, 0x10, 0xff}
-						sha3Color = color.RGBA{0x10, 0x10, 0x10, 0xff}
-						blake2bColor = color.RGBA{0x10, 0x10, 0x10, 0xff}
-						blake2sColor = color.RGBA{0x10, 0x10, 0x10, 0xff}
-						if csValidate == "" {
-							return
-						}
-						csValidate = strings.ToLower(csValidate)
-						if csValidate == csMd5 {
-							md5Color = color.RGBA{0x00, 0xff, 0x00, 0xff}
-						} else if csValidate == csSha1 {
-							sha1Color = color.RGBA{0x00, 0xff, 0x00, 0xff}
-						} else if csValidate == csSha256 {
-							sha256Color = color.RGBA{0x00, 0xff, 0x00, 0xff}
-						} else if csValidate == csSha3 {
-							sha3Color = color.RGBA{0x00, 0xff, 0x00, 0xff}
-						} else if csValidate == csBlake2b {
-							blake2bColor = color.RGBA{0x00, 0xff, 0x00, 0xff}
-						} else if csValidate == csBlake2s {
-							blake2sColor = color.RGBA{0x00, 0xff, 0x00, 0xff}
-						}
-						giu.Update()
-					}),
+					giu.Row(
+						giu.Label(s("Validate a checksum:")),
+						giu.Custom(func() {
+							bw, _ := giu.CalcTextSize(s("Paste"))
+							padding, _ := giu.GetWindowPadding()
+							bw += 2 * padding
+							giu.Button(s("Paste")).Size(bw/dpi, 0).OnClick(func() {
+								tmp, _ := clipboard.ReadAll()
+								csValidate = tmp
+								md5Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								sha1Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								sha256Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								sha3Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								blake2bColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								blake2sColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								if csValidate == "" {
+									return
+								}
+								csValidate = strings.ToLower(csValidate)
+								if csValidate == csMd5 {
+									md5Color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+								} else if csValidate == csSha1 {
+									sha1Color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+								} else if csValidate == csSha256 {
+									sha256Color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+								} else if csValidate == csSha3 {
+									sha3Color = color.RGBA{0x00, 0xff, 0x00, 0xff}
+								} else if csValidate == csBlake2b {
+									blake2bColor = color.RGBA{0x00, 0xff, 0x00, 0xff}
+								} else if csValidate == csBlake2s {
+									blake2sColor = color.RGBA{0x00, 0xff, 0x00, 0xff}
+								}
+								giu.Update()
+							}).Build()
+						}),
+						giu.Custom(func() {
+							bw, _ := giu.CalcTextSize(s("Paste"))
+							padding, _ := giu.GetWindowPadding()
+							bw += 2 * padding
+							giu.Button(s("Clear")).Size(bw/dpi, 0).OnClick(func() {
+								csValidate = ""
+								md5Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								sha1Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								sha256Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								sha3Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								blake2bColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
+								blake2sColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
+							}).Build()
+						}),
+					),
+					giu.Style().SetDisabled(true).To(
+						giu.InputText(&csValidate).Size(fill),
+					),
 
 					// Progress bar
 					giu.Label(s("Progress:")),
@@ -1867,7 +1917,7 @@ func broken() {
 	giu.Update()
 }
 
-// Generate file checksums (pretty straightforward)
+// Generate file checksums
 func generateChecksums(file string) {
 	fin, _ := os.Open(file)
 
@@ -1878,12 +1928,12 @@ func generateChecksums(file string) {
 	csSha3 = ""
 	csBlake2b = ""
 	csBlake2s = ""
-	md5Color = color.RGBA{0x10, 0x10, 0x10, 255}
-	sha1Color = color.RGBA{0x10, 0x10, 0x10, 255}
-	sha256Color = color.RGBA{0x10, 0x10, 0x10, 255}
-	sha3Color = color.RGBA{0x10, 0x10, 0x10, 255}
-	blake2bColor = color.RGBA{0x10, 0x10, 0x10, 255}
-	blake2sColor = color.RGBA{0x10, 0x10, 0x10, 255}
+	md5Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+	sha1Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+	sha256Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+	sha3Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
+	blake2bColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
+	blake2sColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
 	csValidate = ""
 
 	if md5Selected {
