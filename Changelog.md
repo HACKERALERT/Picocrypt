@@ -14,11 +14,11 @@
 	<li>Customizable Argon2 parameters</li>
 	<li>File name encryption</li>
 	<li>Remove EXIF data from keyfiles</li>
+	<li>Add output size to input label</li>
 </ul>
 
-# v1.18 (ETA: 2 weeks)
+# v1.18 (ETA: 1 day)
 <ul>
-	<li>Add output size to input label</li>
 	<li>✓ Make UI more consistent (minor DPI issues)</li>
 	<li>✓ Fix crashing when OS denies permission to access file</li>
 	<li>✓ Fixed bug where file object was not closed properly</li>
