@@ -162,6 +162,8 @@ var splitUnits = []string{
 	"GiB",
 }
 var splitSelected int32 = 1
+var compress bool
+var encryptFilename bool
 var keep bool
 var kept bool
 
@@ -571,6 +573,13 @@ func draw() {
 								giu.Row(
 									giu.Checkbox(s("Use paranoid mode"), &paranoid),
 									giu.Dummy(-221/dpi, 0),
+									giu.Checkbox(s("Encrypt filename"), &encryptFilename),
+								).Build()
+								giu.Row(
+									giu.Style().SetDisabled(!(len(allFiles) > 1 || len(onlyFolders) > 0)).To(
+										giu.Checkbox(s("Compress files"), &compress),
+									),
+									giu.Dummy(-221/dpi, 0),
 									giu.Checkbox(s("Split every"), &split),
 									giu.InputText(&splitSize).Size(55).Flags(giu.InputTextFlagsCharsHexadecimal).OnChange(func() {
 										split = splitSize != ""
@@ -580,7 +589,7 @@ func draw() {
 							} else {
 								giu.Checkbox(s("Keep decrypted output even if it's corrupted or modified"), &keep).Build()
 								giu.Checkbox(s("Delete the encrypted files after a successful decryption"), &deleteWhenDone).Build()
-								giu.Dummy(0, 24).Build()
+								giu.Dummy(0, 52).Build()
 							}
 						}),
 
@@ -812,6 +821,7 @@ func draw() {
 						),
 					),
 
+					giu.Dummy(0, 24),
 					// Input entry for validating a checksum
 					giu.Row(
 						giu.Label(s("Validate a checksum:")),
@@ -1173,7 +1183,11 @@ func work() {
 	var dataMac []byte
 
 	if mode == "encrypt" {
-		popupStatus = s("Combining files...")
+		if compress {
+			popupStatus = s("Compressing files...")
+		} else {
+			popupStatus = s("Combining files...")
+		}
 
 		// "Tar" files together (a .zip file with no compression)
 		if len(allFiles) > 1 || len(onlyFolders) > 0 {
@@ -1184,7 +1198,12 @@ func work() {
 				rootDir = filepath.Dir(onlyFiles[0])
 			}
 
-			file, _ := os.Create(inputFile)
+			file, err := os.Create(inputFile)
+			if err != nil {
+				mainStatus = "Access denied by operating system."
+				mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
+				return
+			}
 
 			w := zip.NewWriter(file)
 			for i, path := range allFiles {
@@ -1213,7 +1232,11 @@ func work() {
 					header.Name = strings.TrimPrefix(header.Name, "/")
 				}
 
-				header.Method = zip.Store
+				if compress {
+					header.Method = zip.Deflate
+				} else {
+					header.Method = zip.Store
+				}
 				writer, _ := w.CreateHeader(header)
 				file, _ := os.Open(path)
 				io.Copy(writer, file)
@@ -1272,7 +1295,13 @@ func work() {
 	}
 
 	// Open input file in read-only mode
-	fin, _ := os.Open(inputFile)
+	fin, err := os.Open(inputFile)
+	if err != nil {
+		mainStatus = "Access denied by operating system."
+		mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
+		return
+	}
+
 	var fout *os.File
 
 	// If encrypting, generate values; if decrypting, read values from file
@@ -1280,7 +1309,13 @@ func work() {
 		popupStatus = s("Generating values...")
 		giu.Update()
 
-		fout, _ = os.Create(outputFile)
+		var err error
+		fout, err = os.Create(outputFile)
+		if err != nil {
+			mainStatus = "Access denied by operating system."
+			mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
+			return
+		}
 
 		// Generate random cryptography values
 		salt = make([]byte, 16)
@@ -1562,7 +1597,13 @@ func work() {
 			}
 		}
 
-		fout, _ = os.Create(outputFile)
+		var err error
+		fout, err = os.Create(outputFile)
+		if err != nil {
+			mainStatus = "Access denied by operating system."
+			mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
+			return
+		}
 	}
 
 	if len(keyfiles) > 0 || keyfile {
@@ -2225,6 +2266,8 @@ func resetUI() {
 	fast = false
 	deleteWhenDone = false
 	paranoid = false
+	compress = false
+	encryptFilename = false
 	inputFile = ""
 	outputFile = ""
 	progress = 0
@@ -2375,7 +2418,7 @@ func main() {
 	giu.SetDefaultFontFromBytes(font, 18)
 
 	// Create the master window
-	window := giu.NewMasterWindow("Picocrypt", 442, 504, giu.MasterWindowFlagsNotResizable)
+	window := giu.NewMasterWindow("Picocrypt", 442, 532, giu.MasterWindowFlagsNotResizable)
 	dialog.Init()
 
 	// Set window icon
