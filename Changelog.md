@@ -3,7 +3,7 @@
 	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
 	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
 	<li>CLI (thanks u/your_username)</li>
-	<li>File name encryption</li>
+	
 </ul>
 
 # v1.XX (a future release)
@@ -11,14 +11,16 @@
 	<li>Associate .pcv file extension with Picocrypt</li>
 	<li>Add start button to shredder (improve user flow)</li>
 	<li>Improve Reed-Solomon performance</li>
+	<li>Customizable Argon2 parameters</li>
+	<li>File name encryption</li>
+	<li>Remove EXIF data from keyfiles</li>
 </ul>
 
-# v1.18 (ETA: 1 month)
+# v1.18 (ETA: 2 weeks)
 <ul>
 	<li>Add output size to input label</li>
-	<li>Customizable Argon2 parameters</li>
 	<li>✓ Make UI more consistent (minor DPI issues)</li>
-	<li>Remove EXIF data from keyfiles</li>
+	<li>✓ Fix crashing when OS denies permission to access file</li>
 	<li>✓ Fixed bug where file object was not closed properly</li>
 	<li>✓ Encryption/decryption file naming and extension bugs</li>
 </ul>
