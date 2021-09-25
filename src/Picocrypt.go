@@ -540,7 +540,7 @@ func draw() {
 								),
 							),
 							giu.Style().SetDisabled(true).To(
-								giu.Button(s("Manage")).Size(fill, 0),
+								giu.Button(s("W.I.P")).Size(fill, 0),
 							),
 						),
 					),
@@ -576,7 +576,9 @@ func draw() {
 									),
 								).Build()
 								giu.Row(
-									giu.Checkbox(s("Encrypt filename"), &encryptFilename),
+									giu.Style().SetDisabled(true).To(
+										giu.Checkbox(s("Encrypt filename (W.I.P)"), &encryptFilename),
+									),
 									giu.Dummy(-221/dpi, 0),
 									giu.Checkbox(s("Split every"), &split),
 									giu.InputText(&splitSize).Size(55).Flags(giu.InputTextFlagsCharsHexadecimal).OnChange(func() {
