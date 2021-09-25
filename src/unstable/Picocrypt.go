@@ -93,11 +93,9 @@ var locales []locale
 var selectedLocale = "en"
 var allLocales = []string{
 	"en",
-	"tr",
 }
 var languages = []string{
 	"English",
-	"Türkçe",
 }
 var languageSelected int32
 
@@ -542,7 +540,7 @@ func draw() {
 								),
 							),
 							giu.Style().SetDisabled(true).To(
-								giu.Button(s("Manage")).Size(fill, 0),
+								giu.Button(s("W.I.P")).Size(fill, 0),
 							),
 						),
 					),
@@ -573,11 +571,13 @@ func draw() {
 								giu.Row(
 									giu.Checkbox(s("Use paranoid mode"), &paranoid),
 									giu.Dummy(-221/dpi, 0),
-									giu.Checkbox(s("Encrypt filename"), &encryptFilename),
-								).Build()
-								giu.Row(
 									giu.Style().SetDisabled(!(len(allFiles) > 1 || len(onlyFolders) > 0)).To(
 										giu.Checkbox(s("Compress files"), &compress),
+									),
+								).Build()
+								giu.Row(
+									giu.Style().SetDisabled(true).To(
+										giu.Checkbox(s("Encrypt filename (W.I.P)"), &encryptFilename),
 									),
 									giu.Dummy(-221/dpi, 0),
 									giu.Checkbox(s("Split every"), &split),
@@ -821,7 +821,7 @@ func draw() {
 						),
 					),
 
-					giu.Dummy(0, 24),
+					giu.Dummy(0, 23),
 					// Input entry for validating a checksum
 					giu.Row(
 						giu.Label(s("Validate a checksum:")),
@@ -917,7 +917,7 @@ func draw() {
 						).Build()
 					}),
 					giu.Custom(func() {
-						if len(shredding) > 50 {
+						if len(shredding) > 60 {
 							shredding = "....." + shredding[len(shredding)-50:]
 						}
 						giu.Label(shredding).Wrapped(true).Build()
@@ -929,6 +929,22 @@ func draw() {
 							tab = 3
 						}
 					}),
+					giu.Label(fmt.Sprintf(s("Picocrypt %s, created by Evan Su (https://evansu.cc/)."), version)),
+					giu.Label(s("Released under a GNU GPL v3 License.")),
+					giu.Label(s("A warm thank you to all the people listed below.")),
+					giu.Label(s("Patrons:")),
+					giu.Label("    - Frederick Doe"),
+					giu.Label(s("Donators:")),
+					giu.Label("    - jp26"),
+					giu.Label("    - W.Graham"),
+					giu.Label("    - N. Chin"),
+					giu.Label("    - Manjot"),
+					giu.Label("    - Phil P."),
+					giu.Label("    - E. Zahard"),
+					giu.Label(s("Translators:")),
+					giu.Label("umitseyhan75, digitalblossom, zeeaall, francirc, kurpau"),
+					giu.Label(s("Other:")),
+					giu.Label("Fuderal, u/greenreddits, u/Tall_Escape, u/NSABackdoors"),
 				),
 			).Build()
 		}),
@@ -2140,7 +2156,7 @@ func shred(names []string, separate bool) {
 					if stopShredding {
 						break
 					}
-					go func() {
+					go func(i string) {
 						shredding = i
 						var cmd *exec.Cmd
 						if runtime.GOOS == "linux" {
@@ -2153,7 +2169,7 @@ func shred(names []string, separate bool) {
 						shredDone++
 						shredUpdate(separate)
 						giu.Update()
-					}()
+					}(i)
 				}
 				if !stopShredding {
 					os.RemoveAll(name)
