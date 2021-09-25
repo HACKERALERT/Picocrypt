@@ -9,17 +9,16 @@
 # v1.XX (a future release)
 <ul>
 	<li>Associate .pcv file extension with Picocrypt</li>
-	<li>Add start button to shredder (improve user flow)</li>
 	<li>Improve Reed-Solomon performance</li>
-	<li>Customizable Argon2 parameters</li>
-	<li>File name encryption</li>
 	<li>Remove EXIF data from keyfiles</li>
 	<li>Add output size to input label</li>
 </ul>
 
-# v1.19
+# v1.19 (no ETA at the moment)
 <ul>
-	
+	<li>Customizable Argon2 parameters</li>
+	<li>Fix keyfile modal UI layout</li>
+	<li>File name encryption</li>
 </ul>
 
 # v1.18 (Released 09/24/2021)
