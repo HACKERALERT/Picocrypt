@@ -18,14 +18,11 @@ If you don't have Go installed, download the corresponding installer for Go from
 # 3. Get the Source Files
 Download the source files as a zip from the homepage or `git clone` this repository.
 
-# 4. If You're Not on Windows...
-Windows requires a couple of extra lines to hide the command prompt window that shows when shredding a file. If you're not on Windows, however, you'll need to delete all occurrences of this line: `cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow:true}`. You'll also need to remove the import of `syscall`.
-
-# 5. Build From Source
+# 4. Build From Source
 Finally, build Picocrypt from source:
-- Windows: <code>go build -ldflags "-s -w -H=windowsgui -extldflags=-static" Picocrypt.go</code>
-- macOS: <code>go build -ldflags "-s -w" Picocrypt.go</code>
-- Linux: <code>go build -ldflags "-s -w" Picocrypt.go</code>
+- Windows: <code>go build -ldflags "-s -w -H=windowsgui -extldflags=-static"</code>
+- macOS: <code>go build -ldflags "-s -w"</code>
+- Linux: <code>go build -ldflags "-s -w"</code>
 
-# 6. Done!
+# 5. Done!
 You should now see a compiled executable (`Picocrypt.exe`/`Picocrypt`) in your directory. You can run it by double-clicking or executing it in your terminal. That wasn't too hard, right? Enjoy!
