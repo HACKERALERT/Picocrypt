@@ -17,15 +17,21 @@
 	<li>Add output size to input label</li>
 </ul>
 
-# v1.18 (ETA: 1 day)
+# v1.19
+<ul>
+	
+</ul>
+
+# v1.18 (Released 09/24/2021)
 <ul>
 	<li>✓ Make UI more consistent (minor DPI issues)</li>
 	<li>✓ Fix crashing when OS denies permission to access file</li>
 	<li>✓ Fixed bug where file object was not closed properly</li>
 	<li>✓ Encryption/decryption file naming and extension bugs</li>
+	<li>✓ Many fixes, optimizations, and linting</li>
 </ul>
 
-# v1.17 (ETA: 5 days)
+# v1.17 (Released 09/04/2021)
 <strong>Note: v1.17 will be incompatible with 1.16 (and therefore 1.15 and 1.14).</strong>
 <ul>
 	<li>✓ (abandoned due to UI issues with ASCII codes >128) Extended ASCII set in password generator</li>
