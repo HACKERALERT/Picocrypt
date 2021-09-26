@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.18
+Picocrypt v1.19
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -402,7 +402,7 @@ func draw() {
 					giu.Style().SetDisabled(len(allFiles) == 0 && len(onlyFiles) == 0).To(
 						giu.Row(
 							giu.Label(s("Password:")),
-							giu.Dummy(-124/dpi, 0),
+							giu.Dummy(-124, 0),
 							giu.Style().SetDisabled(mode == "decrypt" && !keyfile).To(
 								giu.Label(s("Keyfiles:")),
 							),
@@ -507,7 +507,7 @@ func draw() {
 							giu.Style().SetDisabled(mode == "decrypt").To(
 								giu.Label(s("Confirm password:")),
 							),
-							giu.Dummy(-124/dpi, 0),
+							giu.Dummy(-124, 0),
 							giu.Style().SetDisabled(true).To(
 								giu.Label(s("Custom Argon2:")),
 							),
@@ -560,17 +560,17 @@ func draw() {
 							if mode != "decrypt" {
 								giu.Row(
 									giu.Checkbox(s("Shred temporary files"), &shredTemp),
-									giu.Dummy(-221/dpi, 0),
+									giu.Dummy(-221, 0),
 									giu.Checkbox(s("Encode with Reed-Solomon"), &reedsolo),
 								).Build()
 								giu.Row(
 									giu.Checkbox(s("Use fast mode"), &fast),
-									giu.Dummy(-221/dpi, 0),
+									giu.Dummy(-221, 0),
 									giu.Checkbox(s("Delete files when complete"), &deleteWhenDone),
 								).Build()
 								giu.Row(
 									giu.Checkbox(s("Use paranoid mode"), &paranoid),
-									giu.Dummy(-221/dpi, 0),
+									giu.Dummy(-221, 0),
 									giu.Style().SetDisabled(!(len(allFiles) > 1 || len(onlyFolders) > 0)).To(
 										giu.Checkbox(s("Compress files"), &compress),
 									),
@@ -579,9 +579,9 @@ func draw() {
 									giu.Style().SetDisabled(true).To(
 										giu.Checkbox(s("Encrypt filename (W.I.P)"), &encryptFilename),
 									),
-									giu.Dummy(-221/dpi, 0),
+									giu.Dummy(-221, 0),
 									giu.Checkbox(s("Split every"), &split),
-									giu.InputText(&splitSize).Size(55).Flags(giu.InputTextFlagsCharsHexadecimal).OnChange(func() {
+									giu.InputText(&splitSize).Size(55/dpi).Flags(giu.InputTextFlagsCharsHexadecimal).OnChange(func() {
 										split = splitSize != ""
 									}),
 									giu.Combo("##splitter", splitUnits[splitSelected], splitUnits, &splitSelected).Size(52),
@@ -601,7 +601,7 @@ func draw() {
 							bw += p * 2
 							dw := w - bw - p
 							giu.Style().SetDisabled(true).To(
-								giu.InputText(&outputFile).Size(dw / dpi).Flags(giu.InputTextFlagsReadOnly),
+								giu.InputText(&outputFile).Size(dw / dpi / dpi).Flags(giu.InputTextFlagsReadOnly),
 							).Build()
 							giu.SameLine()
 							giu.Button(s("Change")).Size(bw/dpi, 0).OnClick(func() {
