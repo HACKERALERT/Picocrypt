@@ -100,7 +100,7 @@ var languages = []string{
 var languageSelected int32
 
 // Generic variables
-var version = "v1.18"
+var version = "v1.19"
 var dpi float32
 var tab = 0
 var mode string
