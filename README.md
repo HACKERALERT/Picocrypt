@@ -12,7 +12,7 @@ Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Ope
 <strong>Important:</strong> There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from the official website or this repository to ensure that you get the authentic and backdoor-free Picocrypt.
 
 ## Windows
-Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.18/Picocrypt.exe">here</a>. If Windows Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
+Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.19/Picocrypt.exe">here</a>. If Windows Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
 
 ## macOS
 Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.17/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, right click on Picocrypt and hit "Open". If you still get the warning, right click on Picocrypt and hit "Open" again and you should be able to start Picocrypt.
