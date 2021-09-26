@@ -18,7 +18,7 @@
 	<li>Finish adding tooltips</li>
 </ul>
 
-# v1.19 (ETA: 1 day)
+# v1.19 (Released 09/26/2021)
 <ul>
 	<li>✓ UI scaling hotfix</li>
 </ul>
