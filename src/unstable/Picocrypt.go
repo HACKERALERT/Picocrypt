@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.19
+Picocrypt v1.20
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -100,7 +100,7 @@ var languages = []string{
 var languageSelected int32
 
 // Generic variables
-var version = "v1.18"
+var version = "v1.20"
 var dpi float32
 var tab = 0
 var mode string
