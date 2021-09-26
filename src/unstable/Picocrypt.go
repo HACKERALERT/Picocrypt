@@ -388,7 +388,7 @@ func draw() {
 							p, _ := giu.GetWindowPadding()
 							bw += p * 2
 							dw := w - bw - p
-							giu.Dummy(dw/dpi, 0).Build()
+							giu.Dummy(float32(math.Max(float64(dw/dpi), float64(-bw/dpi-p))), 0).Build()
 							giu.SameLine()
 							giu.Style().SetDisabled(len(allFiles) == 0 && len(onlyFiles) == 0).To(
 								giu.Button(s("Clear")).Size(bw/dpi, 0).OnClick(resetUI),
