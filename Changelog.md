@@ -12,13 +12,15 @@
 	<li>Improve Reed-Solomon performance</li>
 	<li>Remove EXIF data from keyfiles</li>
 	<li>Add output size to input label</li>
-</ul>
-
-# v1.19 (no ETA at the moment)
-<ul>
 	<li>Customizable Argon2 parameters</li>
 	<li>Fix keyfile modal UI layout</li>
 	<li>File name encryption</li>
+	<li>Finish adding tooltips</li>
+</ul>
+
+# v1.19 (ETA: 1 day)
+<ul>
+	<li>✓ UI scaling hotfix</li>
 </ul>
 
 # v1.18 (Released 09/24/2021)
