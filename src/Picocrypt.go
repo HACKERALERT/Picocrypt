@@ -25,20 +25,16 @@ import (
 	"image/color"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"math"
 	"math/big"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
 	"runtime/debug"
 	"strconv"
 	"strings"
-	"sync"
-	"syscall"
 	"time"
 
 	// Cryptography
@@ -77,9 +73,6 @@ var icon []byte
 //go:embed font.ttf
 var font []byte
 
-//go:embed sdelete64.exe
-var sdelete64bytes []byte
-
 //go:embed strings.json
 var localeBytes []byte
 
@@ -107,7 +100,6 @@ var mode string
 var working bool
 var recombine bool
 var fill float32 = -0.0000001
-var sdelete64path string
 
 // Three variables store the input files
 var onlyFiles []string
@@ -957,7 +949,9 @@ func onDrop(names []string) {
 		return
 	}
 	if tab == 2 {
-		go shred(names, true)
+		namesCopy := make([]string, len(names))
+		copy(namesCopy, names)
+		go doShred(namesCopy, true)
 		return
 	}
 
@@ -1894,7 +1888,7 @@ func work() {
 		if shredTemp {
 			progressInfo = ""
 			popupStatus = s("Shredding temporary files...")
-			shred([]string{inputFile + ".pcv"}, false)
+			doShred([]string{inputFile + ".pcv"}, false)
 		} else {
 			os.Remove(inputFile + ".pcv")
 		}
@@ -1911,7 +1905,7 @@ func work() {
 			progressInfo = ""
 			popupStatus = s("Shredding temporary files...")
 			giu.Update()
-			shred([]string{inputFile}, false)
+			doShred([]string{inputFile}, false)
 		} else {
 			os.Remove(inputFile)
 		}
@@ -2080,7 +2074,7 @@ func generateChecksums(file string) {
 }
 
 // Recursively shred all file(s) and folder(s) passed in as 'names'
-func shred(names []string, separate bool) {
+func doShred(names []string, separate bool) {
 	stopShredding = false
 	shredTotal = 0
 	shredDone = 0
@@ -2106,133 +2100,7 @@ func shred(names []string, separate bool) {
 
 	for _, name := range names {
 		shredding = name
-
-		// Linux and macOS need a command with similar syntax and usage, so they're combined
-		if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-			stat, _ := os.Stat(name)
-			if stat.IsDir() {
-				var coming []string
-
-				// Walk the folder recursively
-				filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
-					if err != nil {
-						return nil
-					}
-					if stopShredding {
-						return nil
-					}
-					stat, _ := os.Stat(path)
-					if !stat.IsDir() {
-						if len(coming) == 128 {
-							// Use a WaitGroup to parallelize shredding
-							var wg sync.WaitGroup
-							for i, j := range coming {
-								wg.Add(1)
-								go func(wg *sync.WaitGroup, id int, j string) {
-									defer wg.Done()
-									shredding = j
-									var cmd *exec.Cmd
-									if runtime.GOOS == "linux" {
-										cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), j)
-									} else {
-										cmd = exec.Command("rm", "-rfP", j)
-									}
-									cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-									cmd.Run()
-									shredDone++
-									shredUpdate(separate)
-									giu.Update()
-								}(&wg, i, j)
-							}
-							wg.Wait()
-							coming = nil
-						} else {
-							coming = append(coming, path)
-						}
-					}
-					return nil
-				})
-				for _, i := range coming {
-					if stopShredding {
-						break
-					}
-					go func(i string) {
-						shredding = i
-						var cmd *exec.Cmd
-						if runtime.GOOS == "linux" {
-							cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), i)
-						} else {
-							cmd = exec.Command("rm", "-rfP", i)
-						}
-						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-						cmd.Run()
-						shredDone++
-						shredUpdate(separate)
-						giu.Update()
-					}(i)
-				}
-				if !stopShredding {
-					os.RemoveAll(name)
-				}
-			} else { // The path is a file, not a directory, so just shred it
-				shredding = name
-				var cmd *exec.Cmd
-				if runtime.GOOS == "linux" {
-					cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), name)
-				} else {
-					cmd = exec.Command("rm", "-rfP", name)
-				}
-				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-				cmd.Run()
-				shredDone++
-				shredUpdate(separate)
-			}
-		} else if runtime.GOOS == "windows" {
-			stat, _ := os.Stat(name)
-			if stat.IsDir() {
-				// Walk the folder recursively
-				filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
-					if err != nil {
-						return nil
-					}
-					stat, _ := os.Stat(path)
-					if stat.IsDir() {
-						if stopShredding {
-							return nil
-						}
-
-						t := 0
-						files, _ := ioutil.ReadDir(path)
-						for _, f := range files {
-							if !f.IsDir() {
-								t++
-							}
-						}
-						shredDone += float32(t)
-						shredUpdate(separate)
-						shredding = strings.ReplaceAll(path, "\\", "/") + "/*"
-						cmd := exec.Command(sdelete64path, "*", "-p", strconv.Itoa(int(shredPasses)))
-						cmd.Dir = path
-						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-						cmd.Run()
-						giu.Update()
-					}
-					return nil
-				})
-
-				if !stopShredding {
-					// sdelete64 doesn't delete the empty folder, so I'll do it manually
-					os.RemoveAll(name)
-				}
-			} else {
-				shredding = name
-				cmd := exec.Command(sdelete64path, name, "-p", strconv.Itoa(int(shredPasses)))
-				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-				cmd.Run()
-				shredDone++
-				shredUpdate(separate)
-			}
-		}
+		shred(1, false, name, &shredding)
 		giu.Update()
 		if stopShredding {
 			return
@@ -2421,14 +2289,8 @@ func main() {
 		}
 	}
 
-	// Create a temporary file to store sdelete64.exe
-	sdelete64, _ := os.CreateTemp("", "sdelete64.*.exe")
-	sdelete64path = sdelete64.Name()
-	sdelete64.Write(sdelete64bytes)
-	sdelete64.Close()
-	cmd := exec.Command(sdelete64path, "/accepteula")
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-	cmd.Run()
+	cleanup := initializeShred()
+	defer cleanup()
 
 	// Set a universal font
 	giu.SetDefaultFontFromBytes(font, 18)
@@ -2468,7 +2330,4 @@ func main() {
 
 	// Start the UI
 	window.Run(draw)
-
-	// Window closed, clean up
-	os.Remove(sdelete64path)
 }
