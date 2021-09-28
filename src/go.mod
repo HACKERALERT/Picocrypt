@@ -8,7 +8,7 @@ require (
 	github.com/HACKERALERT/dialog v0.0.0-20210716143851-223edea1d840
 	github.com/HACKERALERT/infectious v0.0.0-20210829223857-06884e85204c
 	github.com/HACKERALERT/serpent v0.0.0-20210716182301-293b29869c66
-	github.com/HACKERALERT/zxcvbn-go v0.0.0-20210730224720-b29e9dba62c2
+	github.com/HACKERALERT/zxcvbn-go v0.0.0-20210927200100-f131a4666ad5
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 )
 
