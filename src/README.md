@@ -19,6 +19,7 @@ If you don't have Go installed, download the corresponding installer for Go from
 Download the source files as a zip from the homepage or `git clone` this repository.
 
 # 4. Build From Source
+Finally, build Picocrypt from source:
 - Windows: <code>go build -ldflags "-s -w -H=windowsgui -extldflags=-static"</code>
 - macOS: <code>go build -ldflags "-s -w"</code>
 - Linux: <code>go build -ldflags "-s -w"</code>
