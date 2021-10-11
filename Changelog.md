@@ -20,6 +20,7 @@
 <ul>
 	<li>Add output size to input label</li>
 	<li>Fix keyfile modal UI layout</li>
+	<li>✓ Optimize zip compressor</li>
 </ul>
 
 # v1.19 (Released 09/26/2021)
