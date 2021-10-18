@@ -16,7 +16,7 @@
 	<li>Finish adding tooltips</li>
 </ul>
 
-# v1.20 (no ETA at the moment)
+# v1.20 (ETA: 2 months)
 <ul>
 	<li>Add output size to input label</li>
 	<li>Fix keyfile modal UI layout</li>
