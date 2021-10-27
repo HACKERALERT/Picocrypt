@@ -14,12 +14,14 @@
 	<li>Customizable Argon2 parameters</li>
 	<li>File name encryption</li>
 	<li>Finish adding tooltips</li>
-</ul>
-
-# v1.20 (ETA: 2 months)
-<ul>
 	<li>Add output size to input label</li>
 	<li>Fix keyfile modal UI layout</li>
+</ul>
+
+# v1.20 (ETA: 1 months)
+<ul>
+	<li>✓ Fix UI scaling issues</li>
+	<li>✓ Fix high DPI layout issues</li>
 	<li>✓ Optimize zip compressor</li>
 </ul>
 
