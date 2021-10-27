@@ -59,7 +59,7 @@ import (
 	"golang.org/x/crypto/sha3"
 
 	// UI
-	"github.com/AllenDang/giu"
+	"github.com/AllenDang/giu" // eff40f64dad5eed8e2b6faca5059705876ca7e12
 
 	// Reed-Solomon
 	"github.com/HACKERALERT/infectious"
@@ -101,6 +101,8 @@ var languageSelected int32
 
 // Generic variables
 var version = "v1.20"
+var window *giu.MasterWindow
+var windowOptimized bool
 var dpi float32
 var tab = 0
 var mode string
@@ -223,7 +225,8 @@ var shredTotal float32
 var shredOverlay string
 
 func draw() {
-	giu.SingleWindow().Layout(
+	giu.SingleWindow().Flags(giu.WindowFlagsNoDecoration|giu.WindowFlagsNoNav|
+		giu.WindowFlagsNoMove|giu.WindowFlagsNoScrollWithMouse).Layout(
 		giu.Custom(func() {
 			pos := giu.GetCursorPos()
 			w, _ := giu.CalcTextSize(languages[languageSelected])
@@ -361,7 +364,7 @@ func draw() {
 					giu.Custom(func() {
 						if showProgress {
 							giu.PopupModal(" ").
-								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize|giu.WindowFlagsNoTitleBar).Layout(
+								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize).Layout(
 								giu.Custom(func() {
 									if !working {
 										giu.CloseCurrentPopup()
@@ -383,12 +386,10 @@ func draw() {
 					giu.Row(
 						giu.Label(inputLabel),
 						giu.Custom(func() {
-							w, _ := giu.GetAvailableRegion()
 							bw, _ := giu.CalcTextSize(s("Clear"))
 							p, _ := giu.GetWindowPadding()
 							bw += p * 2
-							dw := w - bw - p
-							giu.Dummy(float32(math.Max(float64(dw/dpi), float64(-bw/dpi-p))), 0).Build()
+							giu.Dummy(float32(float64(-(bw+p)/dpi)), 0).Build()
 							giu.SameLine()
 							giu.Style().SetDisabled(len(allFiles) == 0 && len(onlyFiles) == 0).To(
 								giu.Button(s("Clear")).Size(bw/dpi, 0).OnClick(resetUI),
@@ -821,7 +822,6 @@ func draw() {
 						),
 					),
 
-					giu.Dummy(0, 23),
 					// Input entry for validating a checksum
 					giu.Row(
 						giu.Label(s("Validate a checksum:")),
@@ -899,7 +899,7 @@ func draw() {
 							).Build()
 						}
 					}),
-					giu.Dummy(0, -50),
+					giu.Dummy(0, -46),
 					giu.Custom(func() {
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Cancel"))
@@ -947,6 +947,12 @@ func draw() {
 					giu.Label("Fuderal, u/greenreddits, u/Tall_Escape, u/NSABackdoors"),
 				),
 			).Build()
+		}),
+		giu.Custom(func() {
+			if !windowOptimized {
+				windowOptimized = true
+				window.SetSize(int(442*dpi), giu.GetCursorPos().Y+1)
+			}
 		}),
 	)
 }
@@ -1241,12 +1247,8 @@ func work() {
 				stat, _ := os.Stat(path)
 				header, _ := zip.FileInfoHeader(stat)
 				header.Name = strings.TrimPrefix(path, rootDir)
-
-				// Windows requires forward slashes in a .zip file
-				if runtime.GOOS == "windows" {
-					header.Name = strings.ReplaceAll(header.Name, "\\", "/")
-					header.Name = strings.TrimPrefix(header.Name, "/")
-				}
+				header.Name = filepath.ToSlash(header.Name)
+				header.Name = strings.TrimPrefix(header.Name, "/")
 
 				if compress {
 					header.Method = zip.Deflate
@@ -2434,7 +2436,7 @@ func main() {
 	giu.SetDefaultFontFromBytes(font, 18)
 
 	// Create the master window
-	window := giu.NewMasterWindow("Picocrypt", 442, 532, giu.MasterWindowFlagsNotResizable)
+	window = giu.NewMasterWindow("Picocrypt", 442, 532, giu.MasterWindowFlagsNotResizable)
 	dialog.Init()
 
 	// Set window icon
