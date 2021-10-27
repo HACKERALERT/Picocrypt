@@ -108,7 +108,6 @@ var tab = 0
 var mode string
 var working bool
 var recombine bool
-var fill float32 = -0.0000001
 var sdelete64path string
 
 // Three variables store the input files
@@ -253,7 +252,7 @@ func draw() {
 								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize).Layout(
 								giu.Row(
 									giu.Label(s("Length:")),
-									giu.SliderInt(&genpassLength, 4, 64).Size(fill),
+									giu.SliderInt(&genpassLength, 4, 64).Size(giu.Auto),
 								),
 								giu.Checkbox(s("Uppercase"), &genpassUpper),
 								giu.Checkbox(s("Lowercase"), &genpassLower),
@@ -498,7 +497,7 @@ func draw() {
 								c.PathStroke(col, false, 2)
 							}),
 							giu.Style().SetDisabled(true).To(
-								giu.InputText(&keyfilePrompt).Size(fill),
+								giu.InputText(&keyfilePrompt).Size(giu.Auto),
 							),
 						),
 					),
@@ -541,7 +540,7 @@ func draw() {
 								),
 							),
 							giu.Style().SetDisabled(true).To(
-								giu.Button(s("W.I.P")).Size(fill, 0),
+								giu.Button(s("W.I.P")).Size(giu.Auto, 0),
 							),
 						),
 					),
@@ -553,7 +552,7 @@ func draw() {
 					giu.Style().SetDisabled(password == "" || (password != cPassword && mode == "encrypt")).To(
 						giu.Label(s(metadataPrompt)),
 						giu.Style().SetDisabled(metadataDisabled).To(
-							giu.InputText(&metadata).Size(fill),
+							giu.InputText(&metadata).Size(giu.Auto),
 						),
 
 						giu.Label(s("Advanced:")),
@@ -649,7 +648,7 @@ func draw() {
 						giu.Separator(),
 						giu.Dummy(0, 3),
 
-						giu.Button(s("Start")).Size(fill, 34).OnClick(func() {
+						giu.Button(s("Start")).Size(giu.Auto, 34).OnClick(func() {
 							if keyfile && keyfiles == nil {
 								mainStatus = "Please select your keyfiles."
 								mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
@@ -703,7 +702,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, md5Color).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csMd5).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csMd5).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -726,7 +725,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha1Color).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csSha1).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csSha1).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -749,7 +748,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha256Color).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csSha256).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csSha256).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -772,7 +771,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha3Color).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csSha3).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csSha3).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -795,7 +794,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, blake2bColor).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csBlake2b).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csBlake2b).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -818,7 +817,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, blake2sColor).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csBlake2s).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csBlake2s).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -874,12 +873,12 @@ func draw() {
 						}),
 					),
 					giu.Style().SetDisabled(true).To(
-						giu.InputText(&csValidate).Size(fill),
+						giu.InputText(&csValidate).Size(giu.Auto),
 					),
 
 					// Progress bar
 					giu.Label(s("Progress:")),
-					giu.ProgressBar(csProgress).Size(fill, 0),
+					giu.ProgressBar(csProgress).Size(giu.Auto, 0),
 				),
 				giu.TabItem(s("Shredder")).Layout(
 					giu.Custom(func() {
@@ -895,7 +894,7 @@ func draw() {
 						} else {
 							giu.Row(
 								giu.Label(s("Number of passes:")),
-								giu.SliderInt(&shredPasses, 1, 32).Size(fill),
+								giu.SliderInt(&shredPasses, 1, 32).Size(giu.Auto),
 							).Build()
 						}
 					}),
@@ -949,7 +948,7 @@ func draw() {
 			).Build()
 		}),
 		giu.Custom(func() {
-			if !windowOptimized {
+			if !windowOptimized || windowOptimized {
 				windowOptimized = true
 				window.SetSize(int(442*dpi), giu.GetCursorPos().Y+1)
 			}
