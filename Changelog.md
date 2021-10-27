@@ -18,8 +18,9 @@
 	<li>Fix keyfile modal UI layout</li>
 </ul>
 
-# v1.20 (ETA: 1 months)
+# v1.20 (ETA: 1 month)
 <ul>
+	<li>✓ Fork all dependencies and recursive dependencies (excluding golang.org/x/*) into "offline" repos for hardening and better stability</li>
 	<li>✓ Fix UI scaling issues</li>
 	<li>✓ Fix high DPI layout issues</li>
 	<li>✓ Optimize zip compressor</li>
