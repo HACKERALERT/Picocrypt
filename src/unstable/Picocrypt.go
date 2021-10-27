@@ -59,7 +59,7 @@ import (
 	"golang.org/x/crypto/sha3"
 
 	// UI
-	"github.com/AllenDang/giu" // eff40f64dad5eed8e2b6faca5059705876ca7e12
+	"github.com/HACKERALERT/giu"
 
 	// Reed-Solomon
 	"github.com/HACKERALERT/infectious"
