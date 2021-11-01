@@ -6,7 +6,7 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 <p align="center"><img align="center" src="/images/Picocrypt.png" width="384" alt="Picocrypt"></p>
 
 # Funding
-Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> to raise money for a potential audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
+Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a potential audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
 
 # Downloads
 <strong>Important:</strong> There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from the official website or this repository to ensure that you get the authentic and backdoor-free Picocrypt.
@@ -50,7 +50,7 @@ While being simple, Picocrypt also strives to be powerful in the hands of knowle
 In addition to these options for encryption and decryption, Picocrypt also provides a secure file shredder and a checksum generator.
 
 # Security
-For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my "offline" forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. You can feel confident about using Picocrypt.
+For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my "offline" forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
 
 # Community
 Here are some places where you can stay up to date with Picocrypt and get involved:
