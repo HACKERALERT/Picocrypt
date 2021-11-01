@@ -215,12 +215,13 @@ var blake2bSelected = false
 var blake2sSelected = false
 
 // Shredder variables
-var shredding string = "Ready."
+var shredding = "Ready."
 var shredPasses int32 = 4
 var stopShredding bool
 var shredProgress float32
 var shredDone float32
 var shredTotal float32
+var shredText string
 var shredOverlay string
 
 func draw() {
@@ -233,7 +234,6 @@ func draw() {
 				giu.Dummy(-w/dpi-34, 0),
 				giu.Combo("##language", languages[languageSelected], languages, &languageSelected).OnChange(func() {
 					selectedLocale = allLocales[languageSelected]
-					shredding = s(shredding)
 				}).Size(w/dpi+26),
 			).Build()
 			giu.SetCursorPos(pos)
@@ -898,7 +898,9 @@ func draw() {
 							).Build()
 						}
 					}),
-					giu.Dummy(0, -46),
+					giu.Style().SetDisabled(true).To(
+						giu.InputTextMultiline(&shredText).Size(giu.Auto, 300),
+					),
 					giu.Custom(func() {
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Cancel"))
@@ -909,17 +911,34 @@ func draw() {
 							giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(size/dpi, 0),
 							giu.Button(s("Cancel")).Size(bw/dpi, 0).OnClick(func() {
 								stopShredding = true
-								shredding = s("Ready.")
 								shredProgress = 0
 								shredOverlay = ""
 							}),
 						).Build()
 					}),
 					giu.Custom(func() {
-						if len(shredding) > 60 {
-							shredding = "....." + shredding[len(shredding)-50:]
+						if len(shredding) > 55 {
+							shredding = shredding[0:25] + "....." + shredding[len(shredding)-25:]
 						}
-						giu.Label(shredding).Wrapped(true).Build()
+
+						if shredProgress != 0 {
+							if shredText == "" {
+								shredText = "\n"
+							}
+							tmp := strings.Split(shredText, "\n")
+							if shredding != tmp[len(tmp)-2] {
+								shredText += shredding + "\n"
+								shredText = strings.TrimPrefix(shredText, "\n")
+							}
+						}
+
+						giu.Label((func() string {
+							if shredProgress == 0 {
+								shredText = strings.TrimSuffix(shredText, "\n")
+								return s("Ready.")
+							}
+							return s("Shredding...")
+						})()).Wrapped(true).Build()
 					}),
 				),
 				giu.TabItem(s("About")).Layout(
@@ -950,7 +969,17 @@ func draw() {
 		giu.Custom(func() {
 			if !windowOptimized || windowOptimized {
 				windowOptimized = true
-				window.SetSize(int(442*dpi), giu.GetCursorPos().Y+1)
+				var pad int
+				if tab == 1 {
+					pad = 6
+				}
+				if tab == 2 {
+					pad = 1
+				}
+				if tab == 3 {
+					pad = 2
+				}
+				window.SetSize(int(442*dpi), giu.GetCursorPos().Y+1+pad)
 			}
 		}),
 	)
@@ -962,13 +991,14 @@ func onDrop(names []string) {
 		return
 	}
 	if tab == 2 {
+		shredText = ""
 		go shred(names, true)
 		return
 	}
 
 	if showKeyfile {
 		keyfiles = append(keyfiles, names...)
-		tmp := []string{}
+		var tmp []string
 		for _, i := range keyfiles {
 			duplicate := false
 			for _, j := range tmp {
@@ -2241,7 +2271,6 @@ func shred(names []string, separate bool) {
 	}
 
 	// Clear UI state
-	shredding = s("Completed.")
 	shredProgress = 0
 	shredOverlay = ""
 }
