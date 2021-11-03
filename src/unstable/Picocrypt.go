@@ -225,8 +225,8 @@ var shredText string
 var shredOverlay string
 
 func draw() {
-	giu.SingleWindow().Flags(giu.WindowFlagsNoDecoration|giu.WindowFlagsNoNav|
-		giu.WindowFlagsNoMove|giu.WindowFlagsNoScrollWithMouse).Layout(
+	giu.SingleWindow().Flags(giu.WindowFlagsNoDecoration|giu.WindowFlagsNoNavFocus|giu.WindowFlagsNoMove|
+		giu.WindowFlagsNoScrollWithMouse).Layout(
 		giu.Custom(func() {
 			pos := giu.GetCursorPos()
 			w, _ := giu.CalcTextSize(languages[languageSelected])
@@ -283,10 +283,8 @@ func draw() {
 					giu.Custom(func() {
 						if showKeyfile {
 							giu.PopupModal(s("Manage keyfiles:")).
-								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize).Layout(
-								giu.Row(
-									giu.Label(s("Drop and drop your keyfiles.")),
-								),
+								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize|giu.WindowFlagsAlwaysAutoResize).Layout(
+								giu.Label(s("Drag and drop your keyfiles here.")),
 								giu.Custom(func() {
 									if mode != "decrypt" {
 										giu.Checkbox(s("Require correct keyfile order"), &keyfileOrderMatters).Build()
@@ -299,8 +297,7 @@ func draw() {
 								giu.Custom(func() {
 									for _, i := range keyfiles {
 										giu.Row(
-											giu.Label(filepath.Base(i)),
-											giu.Button("Remove").OnClick(func() {
+											giu.SmallButton("×").OnClick(func() {
 												var tmp []string
 												for _, j := range keyfiles {
 													if j != i {
@@ -308,15 +305,23 @@ func draw() {
 													}
 												}
 												keyfiles = tmp
+												if len(keyfiles) == 0 {
+													keyfilePrompt = s("None selected.")
+												} else if len(keyfiles) == 1 {
+													keyfilePrompt = s("Using 1 keyfile.")
+												} else {
+													keyfilePrompt = fmt.Sprintf(s("Using %d keyfiles."), len(keyfiles))
+												}
 											}),
+											giu.Label(filepath.Base(i)),
 										).Build()
 
 									}
 								}),
-								giu.Dummy(0, 200),
 								giu.Row(
 									giu.Button(s("Clear")).Size(150, 0).OnClick(func() {
 										keyfiles = nil
+										keyfilePrompt = s("None selected.")
 									}),
 									giu.Tooltip(s("Remove all keyfiles.")),
 									giu.Button(s("Done")).Size(150, 0).OnClick(func() {
@@ -1014,8 +1019,9 @@ func onDrop(names []string) {
 		keyfiles = tmp
 		if len(keyfiles) == 1 {
 			keyfilePrompt = s("Using 1 keyfile.")
+		} else {
+			keyfilePrompt = fmt.Sprintf(s("Using %d keyfiles."), len(keyfiles))
 		}
-		keyfilePrompt = fmt.Sprintf(s("Using %d keyfiles."), len(keyfiles))
 		return
 	}
 
