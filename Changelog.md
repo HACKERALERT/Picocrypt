@@ -15,11 +15,11 @@
 	<li>File name encryption</li>
 	<li>Finish adding tooltips</li>
 	<li>Add output size to input label</li>
-	<li>Fix keyfile modal UI layout</li>
 </ul>
 
 # v1.20 (ETA: 1 month)
 <ul>
+	<li>✓ Fix keyfile modal UI layout</li>
 	<li>✓ Fix keyfile modal typo</li>
 	<li>✓ Fix minor keyfile bug</li>
 	<li>✓ Improve shredding window layout</li>
