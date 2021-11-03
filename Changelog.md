@@ -20,6 +20,7 @@
 
 # v1.20 (ETA: 1 month)
 <ul>
+	<li>✓ Fix minor keyfile bug</li>
 	<li>✓ Improve shredding window layout</li>
 	<li>✓ Fork all dependencies and recursive dependencies (excluding golang.org/x/*) into "offline" repos for hardening and better stability</li>
 	<li>✓ Fix UI scaling issues</li>
