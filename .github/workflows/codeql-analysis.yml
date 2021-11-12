@@ -18,7 +18,7 @@ jobs:
       matrix:
         language: ['go']
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v2
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
