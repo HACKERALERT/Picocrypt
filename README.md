@@ -70,7 +70,7 @@ If you find a bug or have a feature request, please contact me or create an Issu
 If you are multilingual and you know a language in which Picocrypt hasn't been translated into yet, I would love to have your help translating this page as well as Picocrypt's interface. The more languages, the more welcoming!
 
 # Donations
-If you find Picocrypt useful, please consider supporting me on <a href="https://patreon.com/evansu">Patreon</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt.
+If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt.
 
 # Thank You's
 A thank you from the bottom of my heart to my fellow supporters on Patreon:
