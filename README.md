@@ -1,5 +1,5 @@
 <p>English | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | <a href="/translations/german.md">Deutsch</a> | <a href="/translations/portuguese.md">Português</a> | <a href="/translations/turkish.md">Türkçe</a> | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">русский</a></p>
-<p align="center"><img align="center" src="/images/Picocrypt.svg" width="512" alt="Picocrypt"></p> 
+<p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p> 
 
 Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encryption tool that you can use to protect your files, generate checksums, shred files, and much more. It's designed to be the <i>go-to</i> tool for encryption, with a focus on security, simplicity, and reliability. Picocrypt uses the secure XChaCha20 cipher and the SHA3 hash function to provide a high level of security, even from three-letter agencies like the NSA. It's designed for maximal security, making absolutely no compromises security-wise, and is built with Go's standard x/crypto modules. <strong>Your privacy and security is under attack. Take it back with confidence by protecting your files with Picocrypt.</strong>
 
