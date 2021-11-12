@@ -1,4 +1,4 @@
-<p align="center"><img align="center" src="/images/Picocrypt.svg" width="512" alt="Picocrypt"></p>
+<p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p>
 
 Picocrypt ist ein sehr kleines (daher Pico), sehr einfaches und dennoch sehr sicheres Kryptographieprogramm, mit dem du Dateien verschlüsseln, Prüfsummen generieren, Dateien schreddern und vieles mehr kannst. Der Schwerpunkt liegt auf Sicherheit, Einfachheit und Zuverlässigkeit. Picocrypt verwendet den sicheren XChaCha20-Chiffre und den Authentifizierungscode Poly1305, um ein hohes Maß an Sicherheit zu bieten. Picocrypt ist mit einer auditierten Kryptographie-Bibliothek entwickelt. Ihre Privatsphäre und Sicherheit werden angegriffen. Holen Sie sie sich mit Zuversicht zurück, indem Sie Ihre Dateien mit Picocrypt schützen.
 
