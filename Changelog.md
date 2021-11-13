@@ -3,21 +3,18 @@
 	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
 	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
 	<li>CLI (thanks u/your_username)</li>
-	
 </ul>
 
-# v1.XX (a future release)
+# v1.21 (no ETA yet)
 <ul>
 	<li>Associate .pcv file extension with Picocrypt</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Remove EXIF data from keyfiles</li>
 	<li>Customizable Argon2 parameters</li>
-	<li>File name encryption</li>
 	<li>Finish adding tooltips</li>
-	<li>Add output size to input label</li>
 </ul>
 
-# v1.20 (ETA: 1 month)
+# v1.20 (Released 11/12/2021)
 <ul>
 	<li>✓ Fix keyfile modal UI layout</li>
 	<li>✓ Fix keyfile modal typo</li>
