@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.19
+Picocrypt v1.20
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -100,13 +100,14 @@ var languages = []string{
 var languageSelected int32
 
 // Generic variables
-var version = "v1.19"
+var version = "v1.20"
+var window *giu.MasterWindow
+var windowOptimized bool
 var dpi float32
 var tab = 0
 var mode string
 var working bool
 var recombine bool
-var fill float32 = -0.0000001
 var sdelete64path string
 
 // Three variables store the input files
@@ -214,16 +215,18 @@ var blake2bSelected = false
 var blake2sSelected = false
 
 // Shredder variables
-var shredding string = "Ready."
+var shredding = "Ready."
 var shredPasses int32 = 4
 var stopShredding bool
 var shredProgress float32
 var shredDone float32
 var shredTotal float32
+var shredText string
 var shredOverlay string
 
 func draw() {
-	giu.SingleWindow().Layout(
+	giu.SingleWindow().Flags(giu.WindowFlagsNoDecoration|giu.WindowFlagsNoNavFocus|giu.WindowFlagsNoMove|
+		giu.WindowFlagsNoScrollWithMouse).Layout(
 		giu.Custom(func() {
 			pos := giu.GetCursorPos()
 			w, _ := giu.CalcTextSize(languages[languageSelected])
@@ -231,7 +234,6 @@ func draw() {
 				giu.Dummy(-w/dpi-34, 0),
 				giu.Combo("##language", languages[languageSelected], languages, &languageSelected).OnChange(func() {
 					selectedLocale = allLocales[languageSelected]
-					shredding = s(shredding)
 				}).Size(w/dpi+26),
 			).Build()
 			giu.SetCursorPos(pos)
@@ -250,7 +252,7 @@ func draw() {
 								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize).Layout(
 								giu.Row(
 									giu.Label(s("Length:")),
-									giu.SliderInt(&genpassLength, 4, 64).Size(fill),
+									giu.SliderInt(&genpassLength, 4, 64).Size(giu.Auto),
 								),
 								giu.Checkbox(s("Uppercase"), &genpassUpper),
 								giu.Checkbox(s("Lowercase"), &genpassLower),
@@ -281,10 +283,8 @@ func draw() {
 					giu.Custom(func() {
 						if showKeyfile {
 							giu.PopupModal(s("Manage keyfiles:")).
-								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize).Layout(
-								giu.Row(
-									giu.Label(s("Drop and drop your keyfiles.")),
-								),
+								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize|giu.WindowFlagsAlwaysAutoResize).Layout(
+								giu.Label(s("Drag and drop your keyfiles here.")),
 								giu.Custom(func() {
 									if mode != "decrypt" {
 										giu.Checkbox(s("Require correct keyfile order"), &keyfileOrderMatters).Build()
@@ -297,8 +297,7 @@ func draw() {
 								giu.Custom(func() {
 									for _, i := range keyfiles {
 										giu.Row(
-											giu.Label(filepath.Base(i)),
-											giu.Button("Remove").OnClick(func() {
+											giu.SmallButton("×").OnClick(func() {
 												var tmp []string
 												for _, j := range keyfiles {
 													if j != i {
@@ -306,15 +305,23 @@ func draw() {
 													}
 												}
 												keyfiles = tmp
+												if len(keyfiles) == 0 {
+													keyfilePrompt = s("None selected.")
+												} else if len(keyfiles) == 1 {
+													keyfilePrompt = s("Using 1 keyfile.")
+												} else {
+													keyfilePrompt = fmt.Sprintf(s("Using %d keyfiles."), len(keyfiles))
+												}
 											}),
+											giu.Label(filepath.Base(i)),
 										).Build()
 
 									}
 								}),
-								giu.Dummy(0, 200),
 								giu.Row(
 									giu.Button(s("Clear")).Size(150, 0).OnClick(func() {
 										keyfiles = nil
+										keyfilePrompt = s("None selected.")
 									}),
 									giu.Tooltip(s("Remove all keyfiles.")),
 									giu.Button(s("Done")).Size(150, 0).OnClick(func() {
@@ -361,7 +368,7 @@ func draw() {
 					giu.Custom(func() {
 						if showProgress {
 							giu.PopupModal(" ").
-								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize|giu.WindowFlagsNoTitleBar).Layout(
+								Flags(giu.WindowFlagsNoMove|giu.WindowFlagsNoResize).Layout(
 								giu.Custom(func() {
 									if !working {
 										giu.CloseCurrentPopup()
@@ -383,12 +390,10 @@ func draw() {
 					giu.Row(
 						giu.Label(inputLabel),
 						giu.Custom(func() {
-							w, _ := giu.GetAvailableRegion()
 							bw, _ := giu.CalcTextSize(s("Clear"))
 							p, _ := giu.GetWindowPadding()
 							bw += p * 2
-							dw := w - bw - p
-							giu.Dummy(float32(math.Max(float64(dw/dpi), float64(-bw/dpi-p))), 0).Build()
+							giu.Dummy(float32(float64(-(bw+p)/dpi)), 0).Build()
 							giu.SameLine()
 							giu.Style().SetDisabled(len(allFiles) == 0 && len(onlyFiles) == 0).To(
 								giu.Button(s("Clear")).Size(bw/dpi, 0).OnClick(resetUI),
@@ -497,7 +502,7 @@ func draw() {
 								c.PathStroke(col, false, 2)
 							}),
 							giu.Style().SetDisabled(true).To(
-								giu.InputText(&keyfilePrompt).Size(fill),
+								giu.InputText(&keyfilePrompt).Size(giu.Auto),
 							),
 						),
 					),
@@ -540,7 +545,7 @@ func draw() {
 								),
 							),
 							giu.Style().SetDisabled(true).To(
-								giu.Button(s("W.I.P")).Size(fill, 0),
+								giu.Button(s("W.I.P")).Size(giu.Auto, 0),
 							),
 						),
 					),
@@ -552,7 +557,7 @@ func draw() {
 					giu.Style().SetDisabled(password == "" || (password != cPassword && mode == "encrypt")).To(
 						giu.Label(s(metadataPrompt)),
 						giu.Style().SetDisabled(metadataDisabled).To(
-							giu.InputText(&metadata).Size(fill),
+							giu.InputText(&metadata).Size(giu.Auto),
 						),
 
 						giu.Label(s("Advanced:")),
@@ -648,7 +653,7 @@ func draw() {
 						giu.Separator(),
 						giu.Dummy(0, 3),
 
-						giu.Button(s("Start")).Size(fill, 34).OnClick(func() {
+						giu.Button(s("Start")).Size(giu.Auto, 34).OnClick(func() {
 							if keyfile && keyfiles == nil {
 								mainStatus = "Please select your keyfiles."
 								mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
@@ -702,7 +707,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, md5Color).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csMd5).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csMd5).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -725,7 +730,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha1Color).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csSha1).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csSha1).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -748,7 +753,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha256Color).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csSha256).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csSha256).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -771,7 +776,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, sha3Color).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csSha3).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csSha3).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -794,7 +799,7 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, blake2bColor).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csBlake2b).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csBlake2b).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
@@ -817,11 +822,10 @@ func draw() {
 					}),
 					giu.Style().SetColor(giu.StyleColorBorder, blake2sColor).To(
 						giu.Style().SetDisabled(true).To(
-							giu.InputText(&csBlake2s).Size(fill).Flags(giu.InputTextFlagsReadOnly),
+							giu.InputText(&csBlake2s).Size(giu.Auto).Flags(giu.InputTextFlagsReadOnly),
 						),
 					),
 
-					giu.Dummy(0, 23),
 					// Input entry for validating a checksum
 					giu.Row(
 						giu.Label(s("Validate a checksum:")),
@@ -874,12 +878,12 @@ func draw() {
 						}),
 					),
 					giu.Style().SetDisabled(true).To(
-						giu.InputText(&csValidate).Size(fill),
+						giu.InputText(&csValidate).Size(giu.Auto),
 					),
 
 					// Progress bar
 					giu.Label(s("Progress:")),
-					giu.ProgressBar(csProgress).Size(fill, 0),
+					giu.ProgressBar(csProgress).Size(giu.Auto, 0),
 				),
 				giu.TabItem(s("Shredder")).Layout(
 					giu.Custom(func() {
@@ -895,11 +899,13 @@ func draw() {
 						} else {
 							giu.Row(
 								giu.Label(s("Number of passes:")),
-								giu.SliderInt(&shredPasses, 1, 32).Size(fill),
+								giu.SliderInt(&shredPasses, 1, 32).Size(giu.Auto),
 							).Build()
 						}
 					}),
-					giu.Dummy(0, -50),
+					giu.Style().SetDisabled(true).To(
+						giu.InputTextMultiline(&shredText).Size(giu.Auto, 300),
+					),
 					giu.Custom(func() {
 						w, _ := giu.GetAvailableRegion()
 						bw, _ := giu.CalcTextSize(s("Cancel"))
@@ -910,17 +916,34 @@ func draw() {
 							giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(size/dpi, 0),
 							giu.Button(s("Cancel")).Size(bw/dpi, 0).OnClick(func() {
 								stopShredding = true
-								shredding = s("Ready.")
 								shredProgress = 0
 								shredOverlay = ""
 							}),
 						).Build()
 					}),
 					giu.Custom(func() {
-						if len(shredding) > 60 {
-							shredding = "....." + shredding[len(shredding)-50:]
+						if len(shredding) > 55 {
+							shredding = shredding[0:25] + "....." + shredding[len(shredding)-25:]
 						}
-						giu.Label(shredding).Wrapped(true).Build()
+
+						if shredProgress != 0 {
+							if shredText == "" {
+								shredText = "\n"
+							}
+							tmp := strings.Split(shredText, "\n")
+							if shredding != tmp[len(tmp)-2] {
+								shredText += shredding + "\n"
+								shredText = strings.TrimPrefix(shredText, "\n")
+							}
+						}
+
+						giu.Label((func() string {
+							if shredProgress == 0 {
+								shredText = strings.TrimSuffix(shredText, "\n")
+								return s("Ready.")
+							}
+							return s("Shredding...")
+						})()).Wrapped(true).Build()
 					}),
 				),
 				giu.TabItem(s("About")).Layout(
@@ -948,6 +971,22 @@ func draw() {
 				),
 			).Build()
 		}),
+		giu.Custom(func() {
+			if !windowOptimized || windowOptimized {
+				windowOptimized = true
+				var pad int
+				if tab == 1 {
+					pad = 6
+				}
+				if tab == 2 {
+					pad = 1
+				}
+				if tab == 3 {
+					pad = 2
+				}
+				window.SetSize(int(442*dpi), giu.GetCursorPos().Y+1+pad)
+			}
+		}),
 	)
 }
 
@@ -957,13 +996,14 @@ func onDrop(names []string) {
 		return
 	}
 	if tab == 2 {
+		shredText = ""
 		go shred(names, true)
 		return
 	}
 
 	if showKeyfile {
 		keyfiles = append(keyfiles, names...)
-		tmp := []string{}
+		var tmp []string
 		for _, i := range keyfiles {
 			duplicate := false
 			for _, j := range tmp {
@@ -979,8 +1019,9 @@ func onDrop(names []string) {
 		keyfiles = tmp
 		if len(keyfiles) == 1 {
 			keyfilePrompt = s("Using 1 keyfile.")
+		} else {
+			keyfilePrompt = fmt.Sprintf(s("Using %d keyfiles."), len(keyfiles))
 		}
-		keyfilePrompt = fmt.Sprintf(s("Using %d keyfiles."), len(keyfiles))
 		return
 	}
 
@@ -1241,12 +1282,8 @@ func work() {
 				stat, _ := os.Stat(path)
 				header, _ := zip.FileInfoHeader(stat)
 				header.Name = strings.TrimPrefix(path, rootDir)
-
-				// Windows requires forward slashes in a .zip file
-				if runtime.GOOS == "windows" {
-					header.Name = strings.ReplaceAll(header.Name, "\\", "/")
-					header.Name = strings.TrimPrefix(header.Name, "/")
-				}
+				header.Name = filepath.ToSlash(header.Name)
+				header.Name = strings.TrimPrefix(header.Name, "/")
 
 				if compress {
 					header.Method = zip.Deflate
@@ -2240,7 +2277,6 @@ func shred(names []string, separate bool) {
 	}
 
 	// Clear UI state
-	shredding = s("Completed.")
 	shredProgress = 0
 	shredOverlay = ""
 }
@@ -2434,7 +2470,7 @@ func main() {
 	giu.SetDefaultFontFromBytes(font, 18)
 
 	// Create the master window
-	window := giu.NewMasterWindow("Picocrypt", 442, 532, giu.MasterWindowFlagsNotResizable)
+	window = giu.NewMasterWindow("Picocrypt", 442, 532, giu.MasterWindowFlagsNotResizable)
 	dialog.Init()
 
 	// Set window icon
