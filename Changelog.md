@@ -5,13 +5,18 @@
 	<li>CLI (thanks u/your_username)</li>
 </ul>
 
-# v1.21 (no ETA yet)
+# v1.22 (A future release)
 <ul>
 	<li>Associate .pcv file extension with Picocrypt</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Remove EXIF data from keyfiles</li>
 	<li>Customizable Argon2 parameters</li>
 	<li>Finish adding tooltips</li>
+</ul>
+
+# v1.21 (no ETA yet)
+<ul>
+	<li>Remove file shredder because it won't be very effective in the future</li>
 </ul>
 
 # v1.20 (Released 11/12/2021)
