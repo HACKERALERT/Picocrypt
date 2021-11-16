@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.20
+Picocrypt v1.21
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -25,20 +25,15 @@ import (
 	"image/color"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"math"
 	"math/big"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"runtime/debug"
 	"strconv"
 	"strings"
-	"sync"
-	"syscall"
 	"time"
 
 	// Cryptography
@@ -77,9 +72,6 @@ var icon []byte
 //go:embed font.ttf
 var font []byte
 
-//go:embed sdelete64.exe
-var sdelete64bytes []byte
-
 //go:embed strings.json
 var localeBytes []byte
 
@@ -100,7 +92,7 @@ var languages = []string{
 var languageSelected int32
 
 // Generic variables
-var version = "v1.20"
+var version = "v1.21"
 var window *giu.MasterWindow
 var windowOptimized bool
 var dpi float32
@@ -108,7 +100,6 @@ var tab = 0
 var mode string
 var working bool
 var recombine bool
-var sdelete64path string
 
 // Three variables store the input files
 var onlyFiles []string
@@ -148,7 +139,6 @@ var metadataPrompt = "Metadata:"
 var metadataDisabled bool
 
 // Advanced options
-var shredTemp bool
 var fast bool
 var paranoid bool
 var reedsolo bool
@@ -162,7 +152,6 @@ var splitUnits = []string{
 }
 var splitSelected int32 = 1
 var compress bool
-var encryptFilename bool
 var keep bool
 var kept bool
 
@@ -213,16 +202,6 @@ var sha256Selected = true
 var sha3Selected = false
 var blake2bSelected = false
 var blake2sSelected = false
-
-// Shredder variables
-var shredding = "Ready."
-var shredPasses int32 = 4
-var stopShredding bool
-var shredProgress float32
-var shredDone float32
-var shredTotal float32
-var shredText string
-var shredOverlay string
 
 func draw() {
 	giu.SingleWindow().Flags(giu.WindowFlagsNoDecoration|giu.WindowFlagsNoNavFocus|giu.WindowFlagsNoMove|
@@ -564,25 +543,18 @@ func draw() {
 						giu.Custom(func() {
 							if mode != "decrypt" {
 								giu.Row(
-									giu.Checkbox(s("Shred temporary files"), &shredTemp),
+									giu.Checkbox(s("Use fast mode"), &fast),
 									giu.Dummy(-221, 0),
 									giu.Checkbox(s("Encode with Reed-Solomon"), &reedsolo),
 								).Build()
 								giu.Row(
-									giu.Checkbox(s("Use fast mode"), &fast),
+									giu.Checkbox(s("Use paranoid mode"), &paranoid),
 									giu.Dummy(-221, 0),
 									giu.Checkbox(s("Delete files when complete"), &deleteWhenDone),
 								).Build()
 								giu.Row(
-									giu.Checkbox(s("Use paranoid mode"), &paranoid),
-									giu.Dummy(-221, 0),
 									giu.Style().SetDisabled(!(len(allFiles) > 1 || len(onlyFolders) > 0)).To(
 										giu.Checkbox(s("Compress files"), &compress),
-									),
-								).Build()
-								giu.Row(
-									giu.Style().SetDisabled(true).To(
-										giu.Checkbox(s("Encrypt filename (W.I.P)"), &encryptFilename),
 									),
 									giu.Dummy(-221, 0),
 									giu.Checkbox(s("Split every"), &split),
@@ -594,7 +566,6 @@ func draw() {
 							} else {
 								giu.Checkbox(s("Keep decrypted output even if it's corrupted or modified"), &keep).Build()
 								giu.Checkbox(s("Delete the encrypted files after a successful decryption"), &deleteWhenDone).Build()
-								giu.Dummy(0, 52).Build()
 							}
 						}),
 
@@ -885,71 +856,10 @@ func draw() {
 					giu.Label(s("Progress:")),
 					giu.ProgressBar(csProgress).Size(giu.Auto, 0),
 				),
-				giu.TabItem(s("Shredder")).Layout(
-					giu.Custom(func() {
-						if giu.IsItemActive() {
-							tab = 2
-						}
-					}),
-
-					giu.Label(s("Drop files and folders here to shred them.")),
-					giu.Custom(func() {
-						if runtime.GOOS == "darwin" {
-							giu.Label(s("Number of passes: Not supported on macOS")).Build()
-						} else {
-							giu.Row(
-								giu.Label(s("Number of passes:")),
-								giu.SliderInt(&shredPasses, 1, 32).Size(giu.Auto),
-							).Build()
-						}
-					}),
-					giu.Style().SetDisabled(true).To(
-						giu.InputTextMultiline(&shredText).Size(giu.Auto, 300),
-					),
-					giu.Custom(func() {
-						w, _ := giu.GetAvailableRegion()
-						bw, _ := giu.CalcTextSize(s("Cancel"))
-						padding, _ := giu.GetWindowPadding()
-						bw += 2 * padding
-						size := w - bw - padding
-						giu.Row(
-							giu.ProgressBar(shredProgress).Overlay(shredOverlay).Size(size/dpi, 0),
-							giu.Button(s("Cancel")).Size(bw/dpi, 0).OnClick(func() {
-								stopShredding = true
-								shredProgress = 0
-								shredOverlay = ""
-							}),
-						).Build()
-					}),
-					giu.Custom(func() {
-						if len(shredding) > 55 {
-							shredding = shredding[0:25] + "....." + shredding[len(shredding)-25:]
-						}
-
-						if shredProgress != 0 {
-							if shredText == "" {
-								shredText = "\n"
-							}
-							tmp := strings.Split(shredText, "\n")
-							if shredding != tmp[len(tmp)-2] {
-								shredText += shredding + "\n"
-								shredText = strings.TrimPrefix(shredText, "\n")
-							}
-						}
-
-						giu.Label((func() string {
-							if shredProgress == 0 {
-								shredText = strings.TrimSuffix(shredText, "\n")
-								return s("Ready.")
-							}
-							return s("Shredding...")
-						})()).Wrapped(true).Build()
-					}),
-				),
 				giu.TabItem(s("About")).Layout(
 					giu.Custom(func() {
 						if giu.IsItemActive() {
-							tab = 3
+							tab = 2
 						}
 					}),
 					giu.Label(fmt.Sprintf(s("Picocrypt %s, created by Evan Su (https://evansu.cc/)."), version)),
@@ -996,8 +906,6 @@ func onDrop(names []string) {
 		return
 	}
 	if tab == 2 {
-		shredText = ""
-		go shred(names, true)
 		return
 	}
 
@@ -1928,13 +1836,7 @@ func work() {
 			giu.Update()
 		}
 		fin.Close()
-		if shredTemp {
-			progressInfo = ""
-			popupStatus = s("Shredding temporary files...")
-			shred([]string{inputFile + ".pcv"}, false)
-		} else {
-			os.Remove(inputFile + ".pcv")
-		}
+		os.Remove(outputFile)
 	}
 
 	// Remove the temporary file used to combine a splitted Picocrypt volume
@@ -1944,14 +1846,7 @@ func work() {
 
 	// Delete the temporary zip file if user wishes
 	if len(allFiles) > 1 || len(onlyFolders) > 0 {
-		if shredTemp {
-			progressInfo = ""
-			popupStatus = s("Shredding temporary files...")
-			giu.Update()
-			shred([]string{inputFile}, false)
-		} else {
-			os.Remove(inputFile)
-		}
+		os.Remove(inputFile)
 	}
 
 	if deleteWhenDone {
@@ -2116,183 +2011,6 @@ func generateChecksums(file string) {
 	giu.Update()
 }
 
-// Recursively shred all file(s) and folder(s) passed in as 'names'
-func shred(names []string, separate bool) {
-	stopShredding = false
-	shredTotal = 0
-	shredDone = 0
-
-	// 'separate' is true if this function is being called from the encryption/decryption tab
-	if separate {
-		shredOverlay = s("Shredding...")
-	}
-
-	// Walk through directories to get the total number of files for statistics
-	for _, name := range names {
-		filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
-			if err != nil {
-				return nil
-			}
-			stat, _ := os.Stat(path)
-			if !stat.IsDir() {
-				shredTotal++
-			}
-			return nil
-		})
-	}
-
-	for _, name := range names {
-		shredding = name
-
-		// Linux and macOS need a command with similar syntax and usage, so they're combined
-		if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
-			stat, _ := os.Stat(name)
-			if stat.IsDir() {
-				var coming []string
-
-				// Walk the folder recursively
-				filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
-					if err != nil {
-						return nil
-					}
-					if stopShredding {
-						return nil
-					}
-					stat, _ := os.Stat(path)
-					if !stat.IsDir() {
-						if len(coming) == 128 {
-							// Use a WaitGroup to parallelize shredding
-							var wg sync.WaitGroup
-							for i, j := range coming {
-								wg.Add(1)
-								go func(wg *sync.WaitGroup, id int, j string) {
-									defer wg.Done()
-									shredding = j
-									var cmd *exec.Cmd
-									if runtime.GOOS == "linux" {
-										cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), j)
-									} else {
-										cmd = exec.Command("rm", "-rfP", j)
-									}
-									cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-									cmd.Run()
-									shredDone++
-									shredUpdate(separate)
-									giu.Update()
-								}(&wg, i, j)
-							}
-							wg.Wait()
-							coming = nil
-						} else {
-							coming = append(coming, path)
-						}
-					}
-					return nil
-				})
-				for _, i := range coming {
-					if stopShredding {
-						break
-					}
-					go func(i string) {
-						shredding = i
-						var cmd *exec.Cmd
-						if runtime.GOOS == "linux" {
-							cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), i)
-						} else {
-							cmd = exec.Command("rm", "-rfP", i)
-						}
-						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-						cmd.Run()
-						shredDone++
-						shredUpdate(separate)
-						giu.Update()
-					}(i)
-				}
-				if !stopShredding {
-					os.RemoveAll(name)
-				}
-			} else { // The path is a file, not a directory, so just shred it
-				shredding = name
-				var cmd *exec.Cmd
-				if runtime.GOOS == "linux" {
-					cmd = exec.Command("shred", "-ufvz", "-n", strconv.Itoa(int(shredPasses)), name)
-				} else {
-					cmd = exec.Command("rm", "-rfP", name)
-				}
-				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-				cmd.Run()
-				shredDone++
-				shredUpdate(separate)
-			}
-		} else if runtime.GOOS == "windows" {
-			stat, _ := os.Stat(name)
-			if stat.IsDir() {
-				// Walk the folder recursively
-				filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
-					if err != nil {
-						return nil
-					}
-					stat, _ := os.Stat(path)
-					if stat.IsDir() {
-						if stopShredding {
-							return nil
-						}
-
-						t := 0
-						files, _ := ioutil.ReadDir(path)
-						for _, f := range files {
-							if !f.IsDir() {
-								t++
-							}
-						}
-						shredDone += float32(t)
-						shredUpdate(separate)
-						shredding = strings.ReplaceAll(path, "\\", "/") + "/*"
-						cmd := exec.Command(sdelete64path, "*", "-p", strconv.Itoa(int(shredPasses)))
-						cmd.Dir = path
-						cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-						cmd.Run()
-						giu.Update()
-					}
-					return nil
-				})
-
-				if !stopShredding {
-					// sdelete64 doesn't delete the empty folder, so I'll do it manually
-					os.RemoveAll(name)
-				}
-			} else {
-				shredding = name
-				cmd := exec.Command(sdelete64path, name, "-p", strconv.Itoa(int(shredPasses)))
-				cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-				cmd.Run()
-				shredDone++
-				shredUpdate(separate)
-			}
-		}
-		giu.Update()
-		if stopShredding {
-			return
-		}
-	}
-
-	// Clear UI state
-	shredProgress = 0
-	shredOverlay = ""
-}
-
-// Update shredding statistics
-func shredUpdate(separate bool) {
-	if separate {
-		shredOverlay = fmt.Sprintf("%d/%d", int(shredDone), int(shredTotal))
-		shredProgress = shredDone / shredTotal
-	} else {
-		popupStatus = fmt.Sprintf("%d/%d", int(shredDone), int(shredTotal))
-		progress = shredDone / shredTotal
-	}
-	giu.Update()
-}
-
 // Reset the UI to a clean state with nothing selected or checked
 func resetUI() {
 	mode = ""
@@ -2309,7 +2027,6 @@ func resetUI() {
 	metadata = ""
 	metadataPrompt = "Metadata:"
 	metadataDisabled = false
-	shredTemp = false
 	keep = false
 	reedsolo = false
 	split = false
@@ -2319,7 +2036,6 @@ func resetUI() {
 	deleteWhenDone = false
 	paranoid = false
 	compress = false
-	encryptFilename = false
 	inputFile = ""
 	outputFile = ""
 	progress = 0
@@ -2457,15 +2173,6 @@ func main() {
 		}
 	}
 
-	// Create a temporary file to store sdelete64.exe
-	sdelete64, _ := os.CreateTemp("", "sdelete64.*.exe")
-	sdelete64path = sdelete64.Name()
-	sdelete64.Write(sdelete64bytes)
-	sdelete64.Close()
-	cmd := exec.Command(sdelete64path, "/accepteula")
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-	cmd.Run()
-
 	// Set a universal font
 	giu.SetDefaultFontFromBytes(font, 18)
 
@@ -2496,7 +2203,7 @@ func main() {
 			if err == nil {
 				if string(body[:5]) != version {
 					mainStatus = "A newer version is available."
-					mainStatusColor = color.RGBA{0, 255, 0, 255}
+					mainStatusColor = color.RGBA{0x00, 0xff, 0x00, 0xff}
 				}
 			}
 		}
@@ -2504,7 +2211,4 @@ func main() {
 
 	// Start the UI
 	window.Run(draw)
-
-	// Window closed, clean up
-	os.Remove(sdelete64path)
 }
