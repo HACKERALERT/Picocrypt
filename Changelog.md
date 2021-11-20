@@ -18,6 +18,7 @@
 <ul>
 	<li>✓ Remove file shredder because it won't be very effective in the future</li>
 	<li>✓ Fix minor temporary file bug</li>
+	<li>✓ Improve decryption UI</li>
 </ul>
 
 # v1.20 (Released 11/12/2021)
