@@ -45,9 +45,10 @@ While being simple, Picocrypt also strives to be powerful in the hands of knowle
 	<li><strong>Paranoid mode</strong>: Using this mode will encrypt your data with both XChaCha20 and Serpent in a cascade fashion. This is recommended for protecting top-secret files and provides the highest level of practical security attainable. In order for a hacker to crack your encrypted data, both the XChaCha20 cipher and the Serpent cipher must be broken, assuming you've chosen a good password.</li>
 	<li><strong>Prevent corruption using Reed-Solomon</strong>: This feature is very useful if you are planning to archive important data on a cloud provider or external medium for a long time. If checked, Picocrypt will use the Reed-Solomon error correction code to add 8 extra bytes for every 128 bytes to prevent file corruption. This means that up to ~3% of your file can corrupt and Picocrypt will still be able to correct the errors and decrypt your files with no corruption. Of course, if your file corrupts very badly (e.g., you dropped your hard drive), Picocrypt won't be able to fully recover your files, but it will try its best to recover what it can. Note that this option will slow down encryption and decryption considerably.</li>
 	<li><strong>Keep decrypted output even if it's corrupted or modified</strong>: Picocrypt automatically checks for integrity upon decryption. If the file has been modified or is corrupted, Picocrypt will automatically delete the output for the user's safety. If you want to keep the corrupted or modified data after decryption, check this option. Also, if this option is checked and the Reed-Solomon feature was used on the encrypted file, Picocrypt will attempt to recover as much of the file as possible during decryption.</li>
+	<li><strong>Split files into chunks</strong>: Don't feel like dealing with gargantuan files? No worries! With Picocrypt, you can choose to split your output file into custom-sized chunks, so large files can become more manageable and easier to upload to cloud providers. Simply choose a unit (KiB, MiB, or GiB) and enter your desired number for that unit.</li>
 </ul>
 
-In addition to these options for encryption and decryption, Picocrypt also provides a checksum generator for validating the integrity of sensitive files.
+In addition to these comprehensive options for encryption and decryption, Picocrypt also provides a checksum generator for validating the integrity of sensitive files, which supports numerous hash functions like MD5, BLAKE2, and SHA3.
 
 # Security
 For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my "offline" forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
@@ -73,18 +74,17 @@ If you are multilingual and you know a language in which Picocrypt hasn't been t
 If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt.
 
 # Thank You's
-A thank you from the bottom of my heart to my fellow supporters on Patreon:
-<ul>
-	<li>Frederick Doe</li>
-</ul>
-
-And to people on Open Collective who made a significant contribution:
+A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
 <ul>
 	<li>jp26 ($50)</li>
+	<li>Tybbs ($10)</li>
+	<li>N. Chin ($10)</li>
+	<li>Manjot ($10)</li>
+	<li>Phil P. ($10)</li>
 </ul>
-You are the people that inspire me to work on Picocrypt and provide it free of charge to everyone!
+You are the people who inspire me to work on Picocrypt and provide it free of charge to everyone!
 
-Also a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
+Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
 <ul>
 	<li>W.Graham</li>
 	<li>N. Chin</li>
@@ -98,8 +98,8 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>@umitseyhan75 for Turkish</li>
 	<li>@digitalblossom for German</li>
 	<li>@zeeaall for Brazilian Portuguese</li>
-	<li>u/francirc for Spanish</li>
 	<li>@kurpau for Lithuanian</li>
+	<li>u/francirc for Spanish</li>
 	<li>yn for Russian</li>
 </ul>
 
