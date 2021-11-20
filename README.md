@@ -34,7 +34,7 @@ Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCryp
 Still not convinced? See below for even more reasons why Picocrypt stands out from the rest.
 
 # Features
-Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a base level, simply dropping your files, entering a password, and hitting Start is all that's needed to encrypt your files. Pretty simple, right?
+Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a basic level, simply dropping your files, entering a password, and hitting Start is all that's needed to encrypt your files. Pretty simple, right?
 
 While being simple, Picocrypt also strives to be powerful in the hands of knowledgeable and advanced users. Thus, there are some additional options that you may use to suit your needs.
 <ul>
