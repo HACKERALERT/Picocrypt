@@ -14,9 +14,10 @@
 	<li>Finish adding tooltips</li>
 </ul>
 
-# v1.21 (no ETA yet)
+# v1.21 (Released 11/19/2021)
 <ul>
-	<li>Remove file shredder because it won't be very effective in the future</li>
+	<li>✓ Remove file shredder because it won't be very effective in the future</li>
+	<li>✓ Fix minor temporary file bug</li>
 </ul>
 
 # v1.20 (Released 11/12/2021)
