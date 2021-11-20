@@ -34,7 +34,6 @@ parts:
       - xdg-utils
       - libglu1-mesa
       - language-pack-en-base
-      - coreutils
     after:
       - desktop-glib-only
   desktop-glib-only:
