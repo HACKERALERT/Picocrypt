@@ -51,7 +51,7 @@ While being simple, Picocrypt also strives to be powerful in the hands of knowle
 In addition to these comprehensive options for encryption and decryption, Picocrypt also provides a checksum generator for validating the integrity of sensitive files, which supports numerous hash functions like MD5, BLAKE2, and SHA3.
 
 # Security
-For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my "offline" forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
+For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my isolated forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
 
 # Community
 Here are some places where you can stay up to date with Picocrypt and get involved:
@@ -64,11 +64,6 @@ I highly recommend you join Picocrypt's subreddit because all updates and polls 
 # Stargazers
 How's Picocrypt doing? Take a look below to find out.
 [![Stargazers over time](https://starchart.cc/HACKERALERT/Picocrypt.svg)](https://starchart.cc/HACKERALERT/Picocrypt)
-
-# Contribution
-If you find a bug or have a feature request, please contact me or create an Issue. I'm open to collaborators and all sorts of contributions are appreciated. If you find a security issue, please follow the instructions <a href="Security.md">here</a> to report it.
-
-If you are multilingual and you know a language in which Picocrypt hasn't been translated into yet, I would love to have your help translating this page as well as Picocrypt's interface. The more languages, the more welcoming!
 
 # Donations
 If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt.
