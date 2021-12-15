@@ -5,7 +5,7 @@
 	<li>CLI (thanks u/your_username)</li>
 </ul>
 
-# v1.22 (A future release)
+# v1.23 (A future release)
 <ul>
 	<li>Associate .pcv file extension with Picocrypt</li>
 	<li>Improve Reed-Solomon performance</li>
@@ -16,9 +16,10 @@
 
 # v1.22 (ETA unknown for now)
 <ul>
-	<li>Fix keyfile order bug</li>
+	<li>✓ Fix keyfile order bug</li>
 	<li>Remove fast mode, as a change for the normal mode will make fast mode obselete</li>
 	<li>For normal mode, change HMAC-SHA3 to a keyed Blake2b</li>
+	<li>Improve Internals documentation (header format, etc.)</li>
 </ul>
 
 # v1.21 (Released 11/19/2021)
