@@ -4,7 +4,7 @@ If you would like to run Picocrypt from source, or an executable isn't available
 # 1. Prerequisites
 Linux:
 ```bash
-apt install -y gcc make libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev libxxf86vm-dev libgtk-3-dev xdg-utils libglu1-mesa xclip
+apt install -y gcc libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev libxxf86vm-dev libgtk-3-dev libglu1-mesa xclip
 ```
 macOS:
 ```bash
