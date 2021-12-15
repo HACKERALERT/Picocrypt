@@ -53,8 +53,6 @@ In addition to these comprehensive options for encryption and decryption, Picocr
 # Security
 For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my isolated forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
 
-In the unlikely scenario that a security vulnerability is discovered, please draft a security advisory in the Security tab of this repository and I will fix it as soon as possible.
-
 # Community
 Here are some places where you can stay up to date with Picocrypt and get involved:
 <ul>
