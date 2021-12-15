@@ -1,3 +1,5 @@
+<p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p> 
+
 A Picocrypt egy nagyon apró (lásd <i>Pico</i>), nagyon egyszerű, de mégis nagyon biztonságos adattitkosító eszköz amit hasznáhatsz a fájljaid megvédésére, checksum generálásra, és sok minden másra is. Egy <i>go-to</i> adattitkosító eszköznek lett tervezve, amivel a fókusz a biztonnságon, egyszerűségen, és megbízhatóságon van. A Picocrypt a biztonságos XChaCha20 ciphert és az SHA3 hash funkciót használja, hogy magas szintű biztonságot nyújtson, még három-betűs ügynökségek ellen is, mint az NSA. A maximum biztonságra lett tervezve, így biztonásági téren nem köt semmilyen kompromisszumot, és a Go standard x/crypto moduljaival lett kiépítve. <strong>A magánéleted és az adatbiztonságod támadás alatt áll. Szerezd vissza ezeket magabiztosan úgy, hogy a Picocrypt-tel véded a fájljaidat.</strong>
 
 <p align="center"><img align="center" src="/images/screenshot.png" width="384" alt="Picocrypt"></p>
