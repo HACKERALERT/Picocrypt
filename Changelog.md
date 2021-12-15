@@ -14,6 +14,13 @@
 	<li>Finish adding tooltips</li>
 </ul>
 
+# v1.22 (ETA unknown for now)
+<ul>
+	<li>Fix keyfile order bug</li>
+	<li>Remove fast mode, as a change for the normal mode will make fast mode obselete</li>
+	<li>For normal mode, change HMAC-SHA3 to a keyed Blake2b</li>
+</ul>
+
 # v1.21 (Released 11/19/2021)
 <ul>
 	<li>✓ Remove file shredder because it won't be very effective in the future</li>
