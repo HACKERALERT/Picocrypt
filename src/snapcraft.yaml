@@ -1,7 +1,7 @@
 name: picocrypt
 summary: A very small, very simple, yet very secure encryption tool.
 description: Picocrypt is a very small, very simple, yet very secure encryption tool that you can use to protect your files, generate checksums, and much more. It's designed to be the go-to tool for encryption, with a focus on security, simplicity, and reliability. Picocrypt uses the secure XChaCha20 cipher and the SHA3 hash function to provide a high level of security, even from three-letter agencies like the NSA. It's designed for maximal security, making absolutely no compromises security-wise, and is built with Go's standard x/crypto modules. Your privacy and security is under attack. Take it back with confidence by protecting your files with Picocrypt.
-version: "1.21"
+version: "1.22"
 confinement: strict
 base: core20
 grade: stable
@@ -20,7 +20,6 @@ parts:
     source: .
     build-packages:
       - gcc
-      - make
       - libx11-dev
       - libxcursor-dev
       - libxrandr-dev
@@ -30,10 +29,8 @@ parts:
       - libxxf86vm-dev
       - libgtk-3-dev
     stage-packages:
-      - xclip
-      - xdg-utils
       - libglu1-mesa
-      - language-pack-en-base
+      - xclip
     after:
       - desktop-glib-only
   desktop-glib-only:
