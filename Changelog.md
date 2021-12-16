@@ -1,7 +1,5 @@
 # Features Under Consideration
 <ul>
-	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
-	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
 	<li>CLI (thanks u/your_username)</li>
 </ul>
 
