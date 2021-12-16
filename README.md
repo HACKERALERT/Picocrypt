@@ -96,6 +96,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>@kurpau for Lithuanian</li>
 	<li>u/francirc for Spanish</li>
 	<li>yn for Russian</li>
+	<li>@Etim-Orb for Hungarian</li>
 </ul>
 
 Finally, thanks to these people for helping me out when needed:
@@ -104,4 +105,5 @@ Finally, thanks to these people for helping me out when needed:
 	<li>u/greenreddits for constant feedback and support</li>
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
 	<li>u/NSABackdoors for doing plenty of testing</li>
+	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
 </ul>
