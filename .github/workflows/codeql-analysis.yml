@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - "src/Picocrypt.go"
+      - "src/go.mod"
+      - "src/go.sum"
   pull_request:
     branches: [ main ]
 jobs:
