@@ -4,10 +4,9 @@ If you're wondering about how Picocrypt handles cryptography, you've come to the
 # Core Cryptography
 Picocrypt uses the following cryptographic primitives:
 - XChaCha20 (cascaded with Serpent in CTR mode for paranoid mode)
-- HMAC-SHA3 for normal and paranoid mode, keyed-BLAKE2b for fast mode (256-bit key, 512-bit digest)
-- HKDF-SHA3-256 for deriving a subkey used with the MAC above, as well as a key for Serpent
+- Keyed-BLAKE2b for normal mode, HMAC-SHA3 for paranoid mode (256-bit key, 512-bit digest)
+- HKDF-SHA3 for deriving a subkey used with the MAC above, as well as a key for Serpent
 - Argon2id:
-    - Fast mode: 4 passes, 128 MiB memory, 4 threads
     - Normal mode: 4 passes, 1 GiB memory, 4 threads
     - Paranoid mode: 8 passes, 1 GiB memory, 8 threads
 
@@ -19,3 +18,6 @@ Picocrypt allows the use of keyfiles as an additional (or only) form of authenti
 If "Require correct order" is not checked, Picocrypt will take the SHA3 hash of each file individually, and XORs the hashes together. Finally, the result is XORed to the master key. Because the XOR operation is both commutative and associative, the order in which the keyfiles hashes are XORed to each other doesn't matter -- the end result is the same.
 
 If "Require correct order" is checked, Picocrypt will combine (concatenate) the files together in the order they were dropped into the window, and take the SHA3 hash of the combined keyfiles. If the order is not correct, the keyfiles, when appended to each other, will result in a different file, and therefore a different hash. Thus, the correct order of keyfiles is required to successfully decrypt the volume.
+
+# Header Format
+Work in progress...
