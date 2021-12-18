@@ -27,12 +27,12 @@ Miért használd a Picocryptet a BitLocker, NordLocker, VeraCrypt, AxCrypt, vagy
 	<li>A Picocryptet könnyeb használni és sokkal produktívabb mint a VeraCrypt. Ahhoz, hogy fájlokat titkosíts a VeraCrypt-tel, legalább öt percet kell eltöltened azzal, hogy létrehozz egy kötetet. A Picocrypt szimpla felhasználói felületével, csak annyit kell csinálnod, hogy behúzod a fájljaidat, beírsz egy jelszót és kiválasztod az Indítást. Az összes komplex folyamat a Picocrypt álltal és azon belül van kezelve. Ki mondta, hogy a biztonságos titkosítás nem lehet egyszerű?</li>
 	<li>A Picocrypt a biztonságra lett tervezve. A 7-Zip egy archíváló segédprogram és nem egy titkosító eszköz, ezért a fókusza nem a biztonságra helyeződik. Picocrypt is an archive utility and not an encryption tool, so its focus is not on security. A Picocrypt mindamellett biztonsággal - mint legfő prioritás - lett tervezve. A Picocrypt minden egyes része okkal van ott ahol van és bármi ami kihatna Picocrypt biztonságára el van távolítva. A Picocrypt olyan kriptográfiát tartalmaz amiben megbízhatsz.</li>
 	<li>A Picocrypt hitelesíti az adatokat azok védelmén kívül, így meggátolja, hogy hekkerek rosszindulatú módosításokat hajtsanak végre érzékeny információn. Ez hasznos amikor egy nem biztonságos csatornán keresztül küldesz titkosított fájlokat és meg akarsz róla győződni, hogy atok érintetlenül érkeznek meg. Picocrypt HMAC-SHA3-at használ hitelesítésre, ami egy magas biztonságú hash funkció egy jól ismert felépítéssel.</li>
-	<li>A Picocrypt aktívan védi a titkosított header adatokat az adatsérüléstől Reed-Solomon paritás byteok hozzáadásával, így ha a kötet header-jének egy része (ami fontos kriptográfiai komponenseket tartalmaz) sérül (pl. merevlemez byte-rot), attól a Picocrypt még mindig helyre tudja állítani a headert és vissza tudja fejteni az adatokat nagy sikerrel. Picocrypt ezen kívül encode-olni tudja a teljes kötetet Reed-Solomonnal, hogy megelőzzön bármilyen korruptálódást ami a fontos fájljaidat veszélyeztetné.</li>
+	<li>A Picocrypt aktívan védi a titkosított header adatokat az adatsérüléstől Reed-Solomon paritás byteok hozzáadásával, így ha a kötet header-jének egy része (ami fontos kriptográfiai komponenseket tartalmaz) sérül (pl. merevlemez byte-rot), attól a Picocrypt még mindig helyre tudja állítani a headert és vissza tudja fejteni az adatokat nagy sikerrel. Picocrypt ezen kívül encode-olni tudja a teljes kötetet Reed-Solomonnal, hogy megelőzzön bármilyen adatsérülést ami a fontos fájljaidat veszélyeztetné.</li>
 </ul>
 
-Még mindig nem vagy meggyőzve? Itt lent olvashatsz még több okot, hogy hogyan tűnik Picocrypt a többi közül.
+Még mindig nem sikerül meggyőzzelek? Itt lent olvashatsz még több okot, hogy hogyan tűnik Picocrypt a többi közül.
 
-# Tulajdonságok
+# Sajátosságok
 A Picocrypt egy nagyon egyszerű eszköz és a legtöbb felhasználó ösztönösen rá fog jönni, hogy hogyan kell használni pár másodpercen belül. Lap szinten a fájljaid behúzása, egy jelszó beírása és az Indítás kiválasztása minden amire szükség van a fájljaid titkosítására. Elég egyszerű, ugye?
 
 Bár egyszerű, Picocrypt ezen felül törekszik arra, hogy rendkívül hatékony legyen tapasztalt és haladó felhasználók kezében. Így van pár további opció amit használhatsz a szükségleteidnek megfelelően.
@@ -41,9 +41,9 @@ Bár egyszerű, Picocrypt ezen felül törekszik arra, hogy rendkívül hatékon
 	<li><strong>Fájl metaadat</strong>: Ezt használni tudod jegyzetek, információ és szöveg tárolására a fájl mellett (ez nem lesz titkosítva). Például, csatolhatsz egy leírást a fájlról még mielőtt elküldöd valakinek. Amikor a személy akinek küldted a fájlt az beilleszti a Picocryptbe, a leírásod meg fog jelenni neki.</li>
 	<li><strong>Kulcsfájlok</strong>: A Picocrypt támogatja kulcsfájlok használatát, mint a hitelesítés egy másik formáját. Nem csak több kulcsfájlt használhatsz, hanem kérheted, hogy a kulcsfájlok egy helyes sorrendben legyenek megadva, hogy egy sikeres visszafejtés történjen. Egy kifejezetten jó használati módja a több kulcsfájlnak egy közös kötet létrehozása, ahol mindegyik személynek van egy kulcsfájlja és mindannyiuknak (a kulcsfájljaikkal együtt) jelen kell lenniük, hogy a közös kötetet vissza lehessen fejteni.</li>
 	<li><strong>Gyors mód</strong>: Ennek a módnak a használata jelentősen felgyorsítja a titkosítást és annak feloldását. Ebben a módban, BLAKE2b lesz az adatok hitelesítéséhez használva SHA3 helyett és Argon2 paraméterek csökkentve lesznek. Ezt bekapcsolni nagyobb sebességet biztosít, viszont alacsonyabb biztonsági szintet is. Ha csak pár nem annyira érzékeny fájlt kell titkosítanod, ez az opció egy hasznos és effektív választás lehet.</li>
-	<li><strong>Paranoid mód</strong>: Ennek a módnak a használata mind XChaCha20-szal mind Serpent-tel titkosítani forgja az adataidat egy lépcsőzetes formában. This is recommended for protecting top-secret files and provides the highest level of practical security attainable. In order for a hacker to crack your encrypted data, both the XChaCha20 cipher and the Serpent cipher must be broken, assuming you've chosen a good password.</li>
-	<li><strong>Prevent corruption using Reed-Solomon</strong>: This feature is very useful if you are planning to archive important data on a cloud provider or external medium for a long time. If checked, Picocrypt will use the Reed-Solomon error correction code to add 8 extra bytes for every 128 bytes to prevent file corruption. This means that up to ~3% of your file can corrupt and Picocrypt will still be able to correct the errors and decrypt your files with no corruption. Of course, if your file corrupts very badly (e.g., you dropped your hard drive), Picocrypt won't be able to fully recover your files, but it will try its best to recover what it can. Note that this option will slow down encryption and decryption considerably.</li>
-	<li><strong>Keep decrypted output even if it's corrupted or modified</strong>: Picocrypt automatically checks for integrity upon decryption. If the file has been modified or is corrupted, Picocrypt will automatically delete the output for the user's safety. If you want to keep the corrupted or modified data after decryption, check this option. Also, if this option is checked and the Reed-Solomon feature was used on the encrypted file, Picocrypt will attempt to recover as much of the file as possible during decryption.</li>
+	<li><strong>Paranoiás mód</strong>: Ennek a módnak a használata mind XChaCha20-szal mind Serpent-tel titkosítani forgja az adataidat egy lépcsőzetes formában. Ez a legtitkosabb fájlok védelmére ajánlott és az elérhető legcélszerűbb biztonságot nyújtja. Ahhoz, hogy egy hekker feltörje a titkosított adataidat, mind az XChaCha20 ciphert és a Serpent ciphert fel kell törnie, feltéve, hogy egy jó jelszót választottál.</li>
+	<li><strong>Adatsérülés megelőzése Reed-Solomon használatával</strong>: Ez a sajátosság nagyon hasznos, ha fontos adatokat tervezel arhíválni egy felhő szoláltatóra vagy külső médiumra hosszú időre. Kiválasztva Picocrypt a Reed-Solomon hibakorrekciós kódot fogja használni, 8 byteot hozzáadva minden 128 bytehoz, hogy megelőzze a fájlsérülést. Ez azt jelenti, hogy akár ~3%-a a fájlodnak sérülhet és a Picocrypt még mindig helyre tudja hozni a hibákat és vissza tudja fejteni a fájljaidat sérülésmentesen. Természetesen, ha a fileod erősen sérül, (pl. leejtetted a merevlemezedet), Picocrypt nem fogja tudni teljesen helyrehozni a fájlt, de mindent megtesz, hogy visszaszerezzen mindent amit csak tud. Érdemes megjegyezni, hogy ez az opció jelentősen le fogja csökkenteni a titkosítás és a visszafejtés sebességét.</li>
+	<li><strong>Visszafejtett adatok megtartása, még akkor is, ha sérült, vagy módosították</strong>: A Picocrypt autómatikusan ellenőrzi a teljességet visszafejtéskor. Ha a fájl módosítva lett, vagy sérült, Picocrypt autómatikusan törölni fogja a visszafejtés végeredményét a felhasználó biztonságának érdekében. Ha meg akarod őrizni a séült, vagy módosított adatokat visszafejtés után, jelöld be ezt  az opciót. Továbbá, ha ez az opció ki volt választva és a Reed-Solomon használva volt a visszafejtett fájlon, Picocrypt megpróbál majd visszanyerni amennyit csak lehet a fájlból visszafejtés közben.</li>
 	<li><strong>Split files into chunks</strong>: Don't feel like dealing with gargantuan files? No worries! With Picocrypt, you can choose to split your output file into custom-sized chunks, so large files can become more manageable and easier to upload to cloud providers. Simply choose a unit (KiB, MiB, or GiB) and enter your desired number for that unit. To decrypt the chunks, simply drag one of them into Picocrypt, and the chunks will be automatically recombined during decryption.</li>
 </ul>
 
@@ -52,23 +52,23 @@ In addition to these comprehensive options for encryption and decryption, Picocr
 # Security
 For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my isolated forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
 
-# Community
-Here are some places where you can stay up to date with Picocrypt and get involved:
+# Közösség
+Itt van pár hely ahol naprakész maradhatsz a Picocrypttel és részt tudsz venni a közösségben:
 <ul>
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
 	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
 </ul>
-I highly recommend you join Picocrypt's subreddit because all updates and polls will be posted there. Remember to only trust these social networks and be aware of hackers that might try to impersonate me. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
+A Picocrypt subredditjéhez való csatlakozást nagyon ajánlani tudom, mert minden update és szavazás oda lesz kiposztolva. Tartsd észben, hogy csak ezeket a közösségi hálózatokban bízz, és vigyázz a hekkerekre akik lehet megpróbálnak majd megszemélyesíteni. Én sosem fogok a jelszavad iránt érdeklődni és bárki aki igen, az nem én vagyok. Én sosem mondom majd, hogy tölts le egy fájlt egy gyanús linkről és bárki aki igen, az nem én vagyok.
 
-# Stargazers
-How's Picocrypt doing? Take a look below to find out.
+# Ábrándozók
+Mi a helyzet a Picocrypttel? Nézz körül lejjebb, hogy megtudd.
 [![Stargazers over time](https://starchart.cc/HACKERALERT/Picocrypt.svg)](https://starchart.cc/HACKERALERT/Picocrypt)
 
-# Donations
-If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt.
+# Adományozás	
+Ha hasznosnak találod a Picocryptet, fontold meg, hogy támogatsz <a href="https://paypal.me/evanyiwensu">PayPal</a>-on. Ezt a szoftver teljesen díjmentesen nyújtom és szeretném, ha lenne pár támogatóm aki továbbra is motiválná a munkámat Picocrypten.
 
-# Thank You's
-A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
+# Köszönetek
+Egy köszönet a szívem mélyéről azoknak akik jelentős hozzájárulásukat tették Open Collective-en:
 <ul>
 	<li>jp26 ($50)</li>
 	<li>Tybbs ($10)</li>
@@ -76,9 +76,9 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>Manjot ($10)</li>
 	<li>Phil P. ($10)</li>
 </ul>
-You are the people who inspire me to work on Picocrypt and provide it free of charge to everyone!
+Ti vagytok azok, akik továbbra is inspirálnak arra, hogy dolgozzak a Picocrypten és miattatok tudom továbbra is ingyenesesen nyújtani azt mindenkinek!
 
-Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
+Szintén nagy köszönet a következő 5 embernek akik az elsők adományozói és támogatói voltak a Picocryptnek:
 <ul>
 	<li>W.Graham</li>
 	<li>N. Chin</li>
@@ -87,7 +87,7 @@ Also, a huge thanks to the following list of five people, who were the first to 
 	<li>E. Zahard</li>
 </ul>
 
-As well, a great thanks to these people, who have helped translate Picocrypt and make it more accessible to the world:
+Úgyszintén nagy köszönet ezeknek az embereknek akik segítettek a Picocrypt lefordításában és elérhetőbbé tették azt a világ számára:
 <ul>
 	<li>@umitseyhan75 for Turkish</li>
 	<li>@digitalblossom for German</li>
@@ -97,10 +97,10 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>yn for Russian</li>
 </ul>
 
-Finally, thanks to these people for helping me out when needed:
+Végül köszönet ezeknek az embereknek amiért segítettek amikor szükségem volt rá:
 <ul>
-	<li>Fuderal on Discord for helping me setup a Discord server</li>
-	<li>u/greenreddits for constant feedback and support</li>
-	<li>u/Tall_Escape for helping me test Picocrypt</li>
-	<li>u/NSABackdoors for doing plenty of testing</li>
+	<li>Fuderal Discordon amiért segített egy Discord szerver létrehozásában</li>
+	<li>u/greenreddits az állandó visszajelzésért és támogatásért</li>
+	<li>u/Tall_Escape mert segített tesztelni Picocryptet</li>
+	<li>u/NSABackdoors a rengeteg tesztelésért</li>
 </ul>
