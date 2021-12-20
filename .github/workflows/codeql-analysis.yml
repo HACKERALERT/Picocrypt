@@ -1,6 +1,7 @@
 name: "CodeQL"
 on:
   push:
+    branches: [ main ]
     paths:
       - "src/Picocrypt.go"
       - "src/go.mod"
