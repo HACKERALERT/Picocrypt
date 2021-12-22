@@ -1020,6 +1020,14 @@ func onDrop(names []string) {
 					fin.Close()
 					return
 				}
+				if string(tmp) == "v1.17" || string(tmp) == "v1.18" || string(tmp) == "v1.19" ||
+					string(tmp) == "v1.20" || string(tmp) == "v1.21" {
+					resetUI()
+					mainStatus = "Please use Picocrypt v1.21 to decrypt this file."
+					mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
+					fin.Close()
+					return
+				}
 				tmp = make([]byte, 15)
 				fin.Read(tmp)
 				tmp, err = rsDecode(rs5, tmp)
