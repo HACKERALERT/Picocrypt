@@ -10,14 +10,14 @@
 	<li>Remove EXIF data from keyfiles</li>
 	<li>Customizable Argon2 parameters</li>
 	<li>Finish adding tooltips</li>
+	<li>Improve Internals documentation (header format, etc.)</li>
 </ul>
 
-# v1.22 (ETA unknown for now)
+# v1.22 (ETA 1 week)
 <ul>
-	<li>✓ <strike>Fix keyfile order bug</strike> (redundant, so there was no bug)</li>
+	<li>✓ <strike>Fix keyfile order bug</strike> (redundant, so there actually was no bug)</li>
 	<li>✓ Remove fast mode, as a change for the normal mode will make fast mode obselete</li>
 	<li>✓ For normal mode, change HMAC-SHA3 to a keyed Blake2b</li>
-	<li>Improve Internals documentation (header format, etc.)</li>
 </ul>
 
 # v1.21 (Released 11/19/2021)
