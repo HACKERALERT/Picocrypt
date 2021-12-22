@@ -1,1 +1,0 @@
-This is the latest and in-development version of Picocrypt. It might be unstable (and might not even work), as it will have new fixes and features, so I recommend you not use any file in here for production.
