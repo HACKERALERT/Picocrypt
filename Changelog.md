@@ -13,7 +13,7 @@
 	<li>Improve Internals documentation (header format, etc.)</li>
 </ul>
 
-# v1.22 (ETA 1 week)
+# v1.22 (Released 12/22/2021)
 <ul>
 	<li>✓ <strike>Fix keyfile order bug</strike> (redundant, so there actually was no bug)</li>
 	<li>✓ Remove fast mode, as a change for the normal mode will make fast mode obselete</li>
