@@ -1,17 +1,23 @@
 # Features Under Consideration
 <ul>
-	<li>Get Picocrypt audited (<i>please donate</i> to help fund the audit)</li>
-	<li>Hidden volume like VeraCrypt (thanks u/greenreddits)</li>
 	<li>CLI (thanks u/your_username)</li>
 </ul>
 
-# v1.22 (A future release)
+# v1.23 (A future release)
 <ul>
 	<li>Associate .pcv file extension with Picocrypt</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Remove EXIF data from keyfiles</li>
 	<li>Customizable Argon2 parameters</li>
 	<li>Finish adding tooltips</li>
+	<li>Improve Internals documentation (header format, etc.)</li>
+</ul>
+
+# v1.22 (Released 12/22/2021)
+<ul>
+	<li>✓ <strike>Fix keyfile order bug</strike> (redundant, so there actually was no bug)</li>
+	<li>✓ Remove fast mode, as a change for the normal mode will make fast mode obselete</li>
+	<li>✓ For normal mode, change HMAC-SHA3 to a keyed Blake2b</li>
 </ul>
 
 # v1.21 (Released 11/19/2021)

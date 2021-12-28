@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.21 
+Picocrypt v1.22
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -45,7 +45,7 @@ import (
 	"crypto/sha256"
 	"crypto/subtle"
 
-	"github.com/HACKERALERT/serpent"
+	"github.com/HACKERALERT/serpent" //v0.0.0-20210716182301-293b29869c66
 	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/blake2s"
@@ -54,16 +54,16 @@ import (
 	"golang.org/x/crypto/sha3"
 
 	// UI
-	"github.com/HACKERALERT/giu"
+	"github.com/HACKERALERT/giu" //v0.5.7-0.20211216020632-65de69857557
 
 	// Reed-Solomon
-	"github.com/HACKERALERT/infectious"
+	"github.com/HACKERALERT/infectious" //v0.0.0-20211215232025-9d20874ad4b1
 
 	// Helpers
-	"github.com/HACKERALERT/clipboard"
-	"github.com/HACKERALERT/dialog"
-	"github.com/HACKERALERT/jibber_jabber"
-	"github.com/HACKERALERT/zxcvbn-go"
+	"github.com/HACKERALERT/clipboard"     //v0.1.5-0.20211215214929-7345ba96aeca
+	"github.com/HACKERALERT/dialog"        //v0.0.0-20211215220206-17f428aa513e
+	"github.com/HACKERALERT/jibber_jabber" //v0.0.0-20211215234401-c23e432f628b
+	"github.com/HACKERALERT/zxcvbn-go"     //v0.0.0-20210927200100-f131a4666ad5
 )
 
 //go:embed icon.png
@@ -92,7 +92,7 @@ var languages = []string{
 var languageSelected int32
 
 // Generic variables
-var version = "v1.21"
+var version = "v1.22"
 var window *giu.MasterWindow
 var windowOptimized bool
 var dpi float32
@@ -139,7 +139,6 @@ var metadataPrompt = "Metadata:"
 var metadataDisabled bool
 
 // Advanced options
-var fast bool
 var paranoid bool
 var reedsolo bool
 var deleteWhenDone bool
@@ -174,7 +173,6 @@ var showConfirmation bool
 // Reed-Solomon encoders
 var rs1, _ = infectious.NewFEC(1, 3) // 1 data shard, 3 total -> 2 parity shards
 var rs5, _ = infectious.NewFEC(5, 15)
-var rs6, _ = infectious.NewFEC(6, 18)
 var rs16, _ = infectious.NewFEC(16, 48)
 var rs24, _ = infectious.NewFEC(24, 72)
 var rs32, _ = infectious.NewFEC(32, 96)
@@ -182,6 +180,7 @@ var rs64, _ = infectious.NewFEC(64, 192)
 var rs128, _ = infectious.NewFEC(128, 136)
 
 // File checksum generator variables
+var csProgress float32
 var csMd5 string
 var csSha1 string
 var csSha256 string
@@ -195,7 +194,6 @@ var sha256Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
 var sha3Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
 var blake2bColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
 var blake2sColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
-var csProgress float32 = 0
 var md5Selected = true
 var sha1Selected = true
 var sha256Selected = true
@@ -543,20 +541,18 @@ func draw() {
 						giu.Custom(func() {
 							if mode != "decrypt" {
 								giu.Row(
-									giu.Checkbox(s("Use fast mode"), &fast),
-									giu.Dummy(-221, 0),
-									giu.Checkbox(s("Encode with Reed-Solomon"), &reedsolo),
-								).Build()
-								giu.Row(
 									giu.Checkbox(s("Use paranoid mode"), &paranoid),
 									giu.Dummy(-221, 0),
-									giu.Checkbox(s("Delete files when complete"), &deleteWhenDone),
+									giu.Checkbox(s("Encode with Reed-Solomon"), &reedsolo),
 								).Build()
 								giu.Row(
 									giu.Style().SetDisabled(!(len(allFiles) > 1 || len(onlyFolders) > 0)).To(
 										giu.Checkbox(s("Compress files"), &compress),
 									),
 									giu.Dummy(-221, 0),
+									giu.Checkbox(s("Delete files when complete"), &deleteWhenDone),
+								).Build()
+								giu.Row(
 									giu.Checkbox(s("Split every"), &split),
 									giu.InputText(&splitSize).Size(55/dpi).Flags(giu.InputTextFlagsCharsHexadecimal).OnChange(func() {
 										split = splitSize != ""
@@ -865,19 +861,18 @@ func draw() {
 					giu.Label(fmt.Sprintf(s("Picocrypt %s, created by Evan Su (https://evansu.cc/)."), version)),
 					giu.Label(s("Released under a GNU GPL v3 License.")),
 					giu.Label(s("A warm thank you to all the people listed below.")),
-					giu.Label(s("Patrons:")),
-					giu.Label("    - Frederick Doe"),
-					giu.Label(s("Donators:")),
+					giu.Label(s("Donors:")),
 					giu.Label("    - jp26"),
+					giu.Label("    - Tybbs"),
 					giu.Label("    - W.Graham"),
 					giu.Label("    - N. Chin"),
 					giu.Label("    - Manjot"),
 					giu.Label("    - Phil P."),
 					giu.Label("    - E. Zahard"),
 					giu.Label(s("Translators:")),
-					giu.Label("umitseyhan75, digitalblossom, zeeaall, francirc, kurpau"),
-					giu.Label(s("Other:")),
-					giu.Label("Fuderal, u/greenreddits, u/Tall_Escape, u/NSABackdoors"),
+					giu.Label("umitseyhan75, digitalblossom, zeeaall, kurpau, francirc, yn, Etim-Orb").Wrapped(true),
+					giu.Label(s("Others:")),
+					giu.Label("Fuderal, u/greenreddits, u/Tall_Escape, u/NSABackdoors, @samuel-lucas6").Wrapped(true),
 				),
 			).Build()
 		}),
@@ -1025,6 +1020,14 @@ func onDrop(names []string) {
 					fin.Close()
 					return
 				}
+				if string(tmp) == "v1.17" || string(tmp) == "v1.18" || string(tmp) == "v1.19" ||
+					string(tmp) == "v1.20" || string(tmp) == "v1.21" {
+					resetUI()
+					mainStatus = "Please use Picocrypt v1.21 to decrypt this file."
+					mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
+					fin.Close()
+					return
+				}
 				tmp = make([]byte, 15)
 				fin.Read(tmp)
 				tmp, err = rsDecode(rs5, tmp)
@@ -1047,23 +1050,23 @@ func onDrop(names []string) {
 					metadata = s("Metadata is corrupted.")
 				}
 
-				flags := make([]byte, 18)
+				flags := make([]byte, 15)
 				fin.Read(flags)
 				fin.Close()
-				flags, err = rsDecode(rs6, flags)
+				flags, err = rsDecode(rs5, flags)
 				if err != nil {
 					mainStatus = "Input file is corrupt and cannot be decrypted."
 					mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
 					return
 				}
 
-				if flags[2] == 1 {
+				if flags[1] == 1 {
 					keyfile = true
 					keyfilePrompt = s("Keyfiles required.")
 				} else {
 					keyfilePrompt = s("Not applicable.")
 				}
-				if flags[5] == 1 {
+				if flags[2] == 1 {
 					keyfileOrderMatters = true
 				}
 			} else {
@@ -1245,7 +1248,7 @@ func work() {
 	stat, _ := os.Stat(inputFile)
 	total := stat.Size()
 	if mode == "decrypt" {
-		total -= 789
+		total -= 786
 	}
 
 	// XChaCha20's max message size is 256 GiB
@@ -1299,14 +1302,14 @@ func work() {
 			fout.Write(rsEncode(rs1, []byte{i}))
 		}
 
-		flags := make([]byte, 6)
-		if fast {
+		flags := make([]byte, 5)
+		if paranoid {
 			flags[0] = 1
 		}
-		if paranoid {
+		if len(keyfiles) > 0 {
 			flags[1] = 1
 		}
-		if len(keyfiles) > 0 {
+		if keyfileOrderMatters {
 			flags[2] = 1
 		}
 		if reedsolo {
@@ -1315,10 +1318,7 @@ func work() {
 		if total%1048576 >= 1048448 {
 			flags[4] = 1
 		}
-		if keyfileOrderMatters {
-			flags[5] = 1
-		}
-		flags = rsEncode(rs6, flags)
+		flags = rsEncode(rs5, flags)
 		fout.Write(flags)
 
 		// Fill salts and nonce with Go's CSPRNG
@@ -1377,11 +1377,10 @@ func work() {
 
 		fin.Read(make([]byte, metadataLength*3))
 
-		flags := make([]byte, 18)
+		flags := make([]byte, 15)
 		fin.Read(flags)
-		flags, err3 = rsDecode(rs6, flags)
-		fast = flags[0] == 1
-		paranoid = flags[1] == 1
+		flags, err3 = rsDecode(rs5, flags)
+		paranoid = flags[0] == 1
 		reedsolo = flags[3] == 1
 		padded = flags[4] == 1
 
@@ -1434,16 +1433,7 @@ func work() {
 
 	// Derive encryption/decryption keys and subkeys
 	var key []byte
-	if fast {
-		key = argon2.IDKey(
-			[]byte(password),
-			salt,
-			4,
-			131072,
-			4,
-			32,
-		)
-	} else if paranoid {
+	if paranoid {
 		key = argon2.IDKey(
 			[]byte(password),
 			salt,
@@ -1527,9 +1517,9 @@ func work() {
 		keyfileCorrect := true
 		var tmp bool
 
-		keyCorrect = !(subtle.ConstantTimeCompare(keyHash, _keyHash) == 0)
+		keyCorrect = subtle.ConstantTimeCompare(keyHash, _keyHash) != 0
 		if keyfile {
-			keyfileCorrect = !(subtle.ConstantTimeCompare(keyfileHash, _keyfileHash) == 0)
+			keyfileCorrect = subtle.ConstantTimeCompare(keyfileHash, _keyfileHash) != 0
 			tmp = !keyCorrect || !keyfileCorrect
 		} else {
 			tmp = !keyCorrect
@@ -1586,12 +1576,12 @@ func work() {
 	subkey := make([]byte, 32)
 	hkdf := hkdf.New(sha3.New256, key, hkdfSalt, nil)
 	hkdf.Read(subkey)
-	if fast {
-		// Keyed BLAKE2b
-		mac, _ = blake2b.New512(subkey)
-	} else {
+	if paranoid {
 		// HMAC-SHA3
 		mac = hmac.New(sha3.New512, subkey)
+	} else {
+		// Keyed BLAKE2b
+		mac, _ = blake2b.New512(subkey)
 	}
 
 	// Generate another subkey and cipher (not used unless paranoid mode is checked)
@@ -1757,7 +1747,7 @@ func work() {
 
 	if mode == "encrypt" {
 		// Seek back to header and write important data
-		fout.Seek(int64(312+len(metadata)*3), 0)
+		fout.Seek(int64(309+len(metadata)*3), 0)
 		fout.Write(rsEncode(rs64, keyHash))
 		fout.Write(rsEncode(rs32, keyfileHash))
 		fout.Write(rsEncode(rs64, mac.Sum(nil)))
@@ -2032,7 +2022,6 @@ func resetUI() {
 	split = false
 	splitSize = ""
 	splitSelected = 1
-	fast = false
 	deleteWhenDone = false
 	paranoid = false
 	compress = false
