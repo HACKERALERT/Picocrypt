@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.22
+Picocrypt v1.22 
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
