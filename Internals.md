@@ -1,5 +1,5 @@
 # Internals
-If you're wondering about how Picocrypt handles cryptography, you've come to the right place! This page contains the technical details about the cryptographic algorithms and parameters used. This page does not go in-depth, as you can just review the source (there's only one file) to understand the nitty-gritty details.
+If you're wondering about how Picocrypt handles cryptography, you've come to the right place! This page contains the technical details about the cryptographic algorithms and parameters used, as well as how cryptographic values are stored in the header format. Note: This is a work in progress...
 
 # Core Cryptography
 Picocrypt uses the following cryptographic primitives:
