@@ -2,7 +2,7 @@ name: "CodeQL"
 on:
   push:
     paths:
-      - "src/Picocrypt.go"
+      - "src/*.go"
       - "src/go.mod"
       - "src/go.sum"
   pull_request:
