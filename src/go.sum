@@ -12,8 +12,6 @@ github.com/HACKERALERT/imgui-go v1.12.1-0.20211216003024-285d689cbdfc h1:40aJqXA
 github.com/HACKERALERT/imgui-go v1.12.1-0.20211216003024-285d689cbdfc/go.mod h1:Yo2L7QsU7d+Y6+Uput8+3AHYji0EFojRg4Sokun4Xb0=
 github.com/HACKERALERT/infectious v0.0.0-20211215232025-9d20874ad4b1 h1:+Qp4t5OHvokaLdZO7Y1i7pX+i85kNtrHRzCg7S+Lj/s=
 github.com/HACKERALERT/infectious v0.0.0-20211215232025-9d20874ad4b1/go.mod h1:Nr/zKoJunuzBaGVWwWRNz9F2D3iEXuBNWjRu3tgunYI=
-github.com/HACKERALERT/jibber_jabber v0.0.0-20211215234401-c23e432f628b h1:/oowRlgjIPB9nTJGoRssumobxLz0q0GL5Sump5Wf3Vo=
-github.com/HACKERALERT/jibber_jabber v0.0.0-20211215234401-c23e432f628b/go.mod h1:LhYTEuww35ooZaTD3BIjp9CyZqwv++gAnanWXKdiWJ8=
 github.com/HACKERALERT/jibber_jabber v0.0.0-20211222174950-71570b6ee48b h1:Rl9dd3fhAtzbIE4AJeU2x4gwI0dHA1kXsn9v0AZJDOE=
 github.com/HACKERALERT/jibber_jabber v0.0.0-20211222174950-71570b6ee48b/go.mod h1:LhYTEuww35ooZaTD3BIjp9CyZqwv++gAnanWXKdiWJ8=
 github.com/HACKERALERT/mainthread v0.0.0-20211027212305-2ec9e701cc14 h1:DwWXverhu/dEsPM/GPykuHGh4SxW69DaGZL5t3fANG4=
