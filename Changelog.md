@@ -3,18 +3,24 @@
 	<li>CLI (thanks u/your_username)</li>
 </ul>
 
-# v1.23 (A future release)
+# v1.24 (A future release)
 <ul>
-	<li>Associate .pcv file extension with Picocrypt</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Remove EXIF data from keyfiles</li>
-	<li>Customizable Argon2 parameters</li>
 	<li>Finish adding tooltips</li>
 	<li>Improve Internals documentation (header format, etc.)</li>
 </ul>
 
+# v1.23 (no ETA yet)
+<ul>
+	<li>✓ Split source code into multiple files for easier reading and maintenance</li>
+	<li>✓ Optimize checksum generator (~100 lines of code saved!)</li>
+	<li>Associate .pcv file extension with Picocrypt</li>
+</ul>
+
 # v1.22 (Released 12/22/2021)
 <ul>
+	<li>✓ <strike>Customizable Argon2 parameters</strike> (the default parameters are already overkill, and paranoid mode is even more. There really is no practical need for customizable Argon2 because the current default parameters are high enough that any higher parameters won't offer any added security)</li>
 	<li>✓ <strike>Fix keyfile order bug</strike> (redundant, so there actually was no bug)</li>
 	<li>✓ Remove fast mode, as a change for the normal mode will make fast mode obselete</li>
 	<li>✓ For normal mode, change HMAC-SHA3 to a keyed Blake2b</li>
