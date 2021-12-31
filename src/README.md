@@ -2,15 +2,16 @@
 If you would like to run Picocrypt from source, or an executable isn't available for your platform, you've come to the right place. Running from source is very simple, and I've made it even easier with these straightforward instructions. Unlike VeraCrypt, which requires complex build procedures, SDKs, and assemblers, Picocrypt can easily be compiled from source with only a Go and C compiler. All you need is ten minutes and an Internet connection.
 
 # 1. Prerequisites
-Linux:
+**Linux:**
 ```bash
 apt install -y gcc libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev libxxf86vm-dev libgtk-3-dev libglu1-mesa xclip
 ```
-macOS:
+**macOS:**
 ```bash
 xcode-select --install
+brew install glfw glew
 ```
-Windows: A C compiler, ideally [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
+**Windows:** A C compiler, ideally [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
 
 # 2. Install the Go Programming Language
 If you don't have Go installed, download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager (`apt install golang-go`). The latest version of Go is recommended.
