@@ -20,6 +20,9 @@ Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://
 ## Linux
 A Snap is available for Linux. Assuming you're on a Debian-based system, a simple `apt install snapd` and `snap install picocrypt` will be enough. For other distros such as Fedora, detailed instructions are available at https://snapcraft.io/picocrypt. Due to the complexity of dependencies and static linking, I don't distribute standalone .deb or .rpm binaries because they would be unreliable and not worth the hassle. Snapcraft manages all dependencies and runtimes automatically and is the recommended way to run Picocrypt on any major Linux distribution. Additionally, Snapcraft provides better security and containerization than Flatpaks and AppImages, which is important for an encryption tool like Picocrypt. If you would prefer not to deal with Canonical, remember that building from source is always an option.
 
+## Paranoid Packs
+The Paranoid Pack is a compressed archive that contains executables for every version of Picocrypt ever released for Windows, macOS, and Linux. As long as you have it stored in a place you can access, you'll be able to open it and use any version of Picocrypt in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt. As long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in cases of catastrophic events like GitHub shutting down suddenly or the NSA capturing me (just in case, you know?). The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. So if you are worried about being unable to access Picocrypt in the future, well, here's your solution.
+
 # Why Picocrypt?
 Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should choose Picocrypt:
 <ul>
