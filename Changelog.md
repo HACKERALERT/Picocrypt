@@ -6,12 +6,12 @@
 # v1.24 (A future release)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
-	<li>Remove EXIF data from keyfiles</li>
+	<li><strike>Remove EXIF data from keyfiles</strike> (there is no native or "official" EXIF stripper, and existing implementations are either not written in Go, or experimental)</li>
 	<li>Finish adding tooltips</li>
 	<li>Improve Internals documentation (header format, etc.)</li>
 </ul>
 
-# v1.23 (no ETA yet)
+# v1.23 (ETA: 4 weeks)
 <ul>
 	<li>✓ Split source code into multiple files for easier reading and maintenance</li>
 	<li>✓ Optimize checksum generator (~100 lines of code saved!)</li>
