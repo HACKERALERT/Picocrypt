@@ -13,9 +13,10 @@
 
 # v1.23 (ETA: 4 weeks)
 <ul>
+	<li>✓ Bug: Progressbar modal moves around weirdly sometimes</li>
 	<li>✓ Split source code into multiple files for easier reading and maintenance</li>
 	<li>✓ Optimize checksum generator (~100 lines of code saved!)</li>
-	<li>✓ Associate .pcv file extension with Picocrypt</li>
+	<li>Associate .pcv file extension with Picocrypt</li>
 </ul>
 
 # v1.22 (Released 12/22/2021)
