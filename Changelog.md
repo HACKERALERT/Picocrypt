@@ -11,9 +11,10 @@
 	<li>Improve Internals documentation (header format, etc.)</li>
 </ul>
 
-# v1.23 (ETA: 4 weeks)
+# v1.23 (ETA: 6 weeks)
 <ul>
-	<li>✓ Bug: Progressbar modal moves around weirdly sometimes</li>
+	<li>Bug: Progressbar modal moves around weirdly sometimes</li>
+	<li>Show compression speed and percentage</li>
 	<li>✓ Split source code into multiple files for easier reading and maintenance</li>
 	<li>✓ Optimize checksum generator (~100 lines of code saved!)</li>
 	<li>Associate .pcv file extension with Picocrypt</li>
