@@ -1,8 +1,4 @@
 
-<![endif]-->
-
-<p>English | <a  href="/translations/french.md">Français</a> | <a  href="/translations/spanish.md">Español</a> | <a  href="/translations/german.md">Deutsch</a> | <a  href="/translations/portuguese.md">Português</a> | <a  href="/translations/turkish.md">Türkçe</a> | <a  href="/translations/chinese.md">中文</a> | <a  href="/translations/russian.md">русский</a> | <a  href="/translations/hungarian.md">Magyar</a></p>
-
 <p  align="center"><img  align="center"  src="/images/logo.svg"  width="512"  alt="Picocrypt"></p>
 
 Picocrypt è uno strumento di crittografia piccolissimo (ecco perché <i>Pico</i>) e semplicissimo, ma, allo stesso tempo, estremamente che puoi usare per proteggere i tuoi file, generare checksum, e molto altro ancora. È progettato per essere lo strumento <i>go-to</i> quando si parla di crittografia, con particolare attenzione su sicurezza, semplicità d'uso e affidabilità. Picocrypt usa la cifratura sicura Xchacha20 e la funzione di derivazione della password Argon2 per garantire un elevato standard di sicurezza, anche da agenzie "a 3 lettere" come l'NSA. È progettato per garantire la massima sicurezza senza alcun compresso ed è realizzato con i moduli standard x/crypto di Go. <strong>La tua sicurezza e la tua privacy sono sotto attacco. Difenditi in modo sicuro proteggendo i tuoi file con Picocrypt.</strong>
