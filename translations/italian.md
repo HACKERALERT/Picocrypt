@@ -29,7 +29,7 @@ Uno Snap è disponibile per Linux. Ammesso che tu sia su un sistema basato su De
 
 La "Confezione paranoia" è un archivio compresso che contiene gli eseguibili di ogni versione distribuita di Picocrypt per Windows, macOS e Linux. Fino a che lo conservi in un posto a cui hai accesso, potrai aprirlo ed usare qualsiasi versione di Picocrypt nel caso in cui questa pagina svanisca misteriosamente o bruciasse l'intero Internet. Vedila come una cassaforte di seed di Picocrypt. Finché almeno una persona ha una "Confezione paranoia" a portata di mano, questa può condividerla con il resto del mondo facendo così rimanere Picocrypt funzionante anche in caso di eventi catastrofici come, ad esempio, la chiusura improvvisa di GitHub o il mio arresto da parte dell'NSA (non si sa mai, giusto?). Il miglior modo per far sì che Picocrypt sia accessibile per molte decadi è quello di conservare una "Confezione paranoia" in un posto sicuro. Quindi, se ti preoccupa non poter più avere accesso a Picocrypt nel futuro, bhe, ora hai la soluzione.
 
-# Why Picocrypt?
+# Perché Picocrypt?
 
 Perché dovresti usare Picocrypt invece di BitLocker, NordLocker, VeraCrypt, AxCrypt, o 7-Zip? Ecco alcuni motivi per scegliere Picocrypt:
 
