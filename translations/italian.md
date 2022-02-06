@@ -155,7 +155,7 @@ Inoltre, un enorme ringraziamento a queste persone, che hanno aiutato a tradurre
 
 <li>@umitseyhan75 per il Turco</li>
 
-<li>@digitalblossom per il tedesco</li>
+<li>@digitalblossom per il Tedesco</li>
 
 <li>@zeeaall per il Portoghese Brasiliano</li>
 
@@ -165,7 +165,9 @@ Inoltre, un enorme ringraziamento a queste persone, che hanno aiutato a tradurre
 
 <li>yn per il Russo</li>
 
-<li>@Etim-Orb for Hungarian</li>
+<li>@Etim-Orb per l'Ungherese</li>
+
+<li>@Minibus93 per l'Italiano</li>
 
 </ul>
 
