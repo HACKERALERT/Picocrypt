@@ -11,7 +11,7 @@ Fai una donazione a Picocrypt su <a  href="https://opencollective.com/picocrypt"
 
 # Download
 
-<strong>Important:</strong> Nella rete si trova, cercando Picocrypt, anche un programma, ormai inutile e non più seguito, chiamato "PicoCrypt". PicoCrypt non è correlato in alcun modo a Picocrypt (questo progetto). Assicurati di scaricare Picocrypt da questa pagina per essere certo di ottenere una copia di Picocrypt autentica e priva di backdoor.
+<strong>Importante:</strong> Nella rete si trova, cercando Picocrypt, anche un programma, ormai inutile e non più seguito, chiamato "PicoCrypt". PicoCrypt non è correlato in alcun modo a Picocrypt (questo progetto). Assicurati di scaricare Picocrypt da questa pagina per essere certo di ottenere una copia di Picocrypt autentica e priva di backdoor.
 
 ## Windows
 
