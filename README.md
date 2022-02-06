@@ -103,6 +103,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>u/francirc for Spanish</li>
 	<li>yn for Russian</li>
 	<li>@Etim-Orb for Hungarian</li>
+	<li>@Minibus93 for Italian</li>
 </ul>
 
 Finally, thanks to these people for helping me out when needed:
