@@ -1,7 +1,7 @@
 
 <p  align="center"><img  align="center"  src="/images/logo.svg"  width="512"  alt="Picocrypt"></p>
 
-Picocrypt è uno strumento di crittografia piccolissimo (ecco perché <i>Pico</i>) e semplicissimo, ma, allo stesso tempo, estremamente che puoi usare per proteggere i tuoi file, generare checksum, e molto altro ancora. È progettato per essere lo strumento <i>go-to</i> quando si parla di crittografia, con particolare attenzione su sicurezza, semplicità d'uso e affidabilità. Picocrypt usa la cifratura sicura Xchacha20 e la funzione di derivazione della password Argon2 per garantire un elevato standard di sicurezza, anche da agenzie "a 3 lettere" come l'NSA. È progettato per garantire la massima sicurezza senza alcun compresso ed è realizzato con i moduli standard x/crypto di Go. <strong>La tua sicurezza e la tua privacy sono sotto attacco. Difenditi in modo sicuro proteggendo i tuoi file con Picocrypt.</strong>
+Picocrypt è uno strumento di crittografia piccolissimo (ecco perché <i>Pico</i>) e semplicissimo, ma, allo stesso tempo, estremamente sicuro che puoi usare per proteggere i tuoi file, generare checksum, e molto altro ancora. È progettato per essere lo strumento <i>go-to</i> quando si parla di crittografia, con particolare attenzione su sicurezza, semplicità d'uso e affidabilità. Picocrypt usa la cifratura sicura Xchacha20 e la funzione di derivazione della password Argon2 per garantire un elevato standard di sicurezza, anche da agenzie "a 3 lettere" come l'NSA. È progettato per garantire la massima sicurezza senza alcun compromesso ed è realizzato con i moduli standard x/crypto di Go. <strong>La tua sicurezza e la tua privacy sono sotto attacco. Difenditi in modo sicuro proteggendo i tuoi file con Picocrypt.</strong>
 
 <p  align="center"><img  align="center"  src="/images/screenshot.png"  width="384"  alt="Picocrypt"></p>
 
@@ -11,7 +11,7 @@ Fai una donazione a Picocrypt su <a  href="https://opencollective.com/picocrypt"
 
 # Download
 
-<strong>Important:</strong> Nella rete si trova, cercando Picocrypt, anche un programma, ormai inutile e non più seguito, chiamato "PicoCrypt". PicoCrypt non è correlato in alcun modo a Picocrypt (questo progetto). Assicurati di scaricare Picocrypt da questa pagina per essere certo di ottenere una copia di Picocrypt autentica e priva di backdoor.
+<strong>Importante:</strong> Nella rete si trova, cercando Picocrypt, anche un programma, ormai inutile e non più seguito, chiamato "PicoCrypt". PicoCrypt non è correlato in alcun modo a Picocrypt (questo progetto). Assicurati di scaricare Picocrypt da questa pagina per essere certo di ottenere una copia di Picocrypt autentica e priva di backdoor.
 
 ## Windows
 
@@ -29,7 +29,7 @@ Uno Snap è disponibile per Linux. Ammesso che tu sia su un sistema basato su De
 
 La "Confezione paranoia" è un archivio compresso che contiene gli eseguibili di ogni versione distribuita di Picocrypt per Windows, macOS e Linux. Fino a che lo conservi in un posto a cui hai accesso, potrai aprirlo ed usare qualsiasi versione di Picocrypt nel caso in cui questa pagina svanisca misteriosamente o bruciasse l'intero Internet. Vedila come una cassaforte di seed di Picocrypt. Finché almeno una persona ha una "Confezione paranoia" a portata di mano, questa può condividerla con il resto del mondo facendo così rimanere Picocrypt funzionante anche in caso di eventi catastrofici come, ad esempio, la chiusura improvvisa di GitHub o il mio arresto da parte dell'NSA (non si sa mai, giusto?). Il miglior modo per far sì che Picocrypt sia accessibile per molte decadi è quello di conservare una "Confezione paranoia" in un posto sicuro. Quindi, se ti preoccupa non poter più avere accesso a Picocrypt nel futuro, bhe, ora hai la soluzione.
 
-# Why Picocrypt?
+# Perché Picocrypt?
 
 Perché dovresti usare Picocrypt invece di BitLocker, NordLocker, VeraCrypt, AxCrypt, o 7-Zip? Ecco alcuni motivi per scegliere Picocrypt:
 
@@ -155,7 +155,7 @@ Inoltre, un enorme ringraziamento a queste persone, che hanno aiutato a tradurre
 
 <li>@umitseyhan75 per il Turco</li>
 
-<li>@digitalblossom per il tedesco</li>
+<li>@digitalblossom per il Tedesco</li>
 
 <li>@zeeaall per il Portoghese Brasiliano</li>
 
@@ -165,7 +165,9 @@ Inoltre, un enorme ringraziamento a queste persone, che hanno aiutato a tradurre
 
 <li>yn per il Russo</li>
 
-<li>@Etim-Orb for Hungarian</li>
+<li>@Etim-Orb per l'Ungherese</li>
+
+<li>@Minibus93 per l'Italiano</li>
 
 </ul>
 
