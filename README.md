@@ -82,6 +82,7 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>Manjot ($10)</li>
 	<li>Phil P. ($10)</li>
 	<li>donor39 (backer)</li>
+	<li>Pokabu (backer)</li>
 </ul>
 You are the people who inspire me to work on Picocrypt and provide it free of charge to everyone!
 
