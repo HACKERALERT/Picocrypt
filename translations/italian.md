@@ -129,6 +129,8 @@ Un grazie dal profondo del mio cuore alle persone di Open Collective che hanno d
 
 <li>donor39 (backer)</li>
 
+<li>Pokabu (backer)</li>
+
 </ul>
 
 Voi siete le persone che mi ispirano a lavorare su Picocrypt e a renderlo gratuito per tutti!
