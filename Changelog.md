@@ -11,7 +11,7 @@
 	<li>Improve Internals documentation (header format, etc.)</li>
 </ul>
 
-# v1.23 (ETA: 6 weeks)
+# v1.23 (ETA: Unknown)
 <ul>
 	<li>Bug: Progressbar modal moves around weirdly sometimes</li>
 	<li>Show compression speed and percentage</li>
