@@ -11,7 +11,7 @@ apt install -y gcc libgtk-3-dev libglu1-mesa xclip xorg-dev
 xcode-select --install
 brew install glfw glew
 ```
-**Windows:** A C compiler, ideally [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
+**Windows:** A C compiler, ideally `choco install mingw`, but [TDM-GCC](https://jmeubank.github.io/tdm-gcc/) works too.
 
 # 2. Install the Go Programming Language
 If you don't have Go installed, download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager (`apt install golang-go`). The latest version of Go is recommended.
@@ -21,9 +21,9 @@ Download the source files as a zip from the homepage or `git clone` this reposit
 
 # 4. Build From Source
 Finally, build Picocrypt from source:
-- Windows: <code>go build -ldflags "-s -w -H=windowsgui -extldflags=-static" Picocrypt.go</code>
-- macOS: <code>go build -ldflags "-s -w" Picocrypt.go</code>
-- Linux: <code>go build -ldflags "-s -w" Picocrypt.go</code>
+- Windows: <code>go build -ldflags="-s -w -H=windowsgui -extldflags=-static" Picocrypt.go</code>
+- macOS: <code>go build -ldflags="-s -w" Picocrypt.go</code>
+- Linux: <code>go build -ldflags="-s -w" Picocrypt.go</code>
 
 # 5. Done!
 You should now see a compiled executable (`Picocrypt.exe`/`Picocrypt`) in your directory. You can run it by double-clicking or executing it in your terminal. That wasn't too hard, right? Enjoy!
