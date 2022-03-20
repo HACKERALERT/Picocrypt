@@ -143,7 +143,7 @@ var rs64, _ = infectious.NewFEC(64, 192)
 var rs128, _ = infectious.NewFEC(128, 136)
 
 func draw() {
-	giu.SingleWindow().Layout(
+	giu.SingleWindow().Flags(524351).Layout(
 		giu.Custom(func() {
 			if showGenpass {
 				giu.PopupModal("Generate password:").Flags(6).Layout(
