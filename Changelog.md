@@ -1,4 +1,4 @@
-# v1.24 (A future release)
+# v1.25 (A future release)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
 	<li><strike>Remove EXIF data from keyfiles</strike> (there is no native or "official" EXIF stripper, and existing implementations are either not written in Go, or experimental)</li>
@@ -6,6 +6,11 @@
 	<li>Improve Internals documentation (header format, etc.)</li>
 	<li>Bug: Progressbar modal moves around weirdly sometimes</li>
 	<li>Show compression speed and percentage</li>
+</ul>
+
+# v1.24 (ETA unknown)
+<ul>
+	<li>✓ Fixed layout bug that allowed scrolling within window</li>	
 </ul>
 
 # v1.23 (Released 03/19/2022)
