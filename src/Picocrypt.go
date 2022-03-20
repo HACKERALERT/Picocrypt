@@ -29,7 +29,6 @@ import (
 	"io"
 	"math"
 	"math/big"
-	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -60,7 +59,6 @@ var font []byte
 // Generic variables
 var version = "v1.23"
 var window *giu.MasterWindow
-var windowOptimized bool
 var dpi float32
 var mode string
 var working bool
@@ -143,28 +141,6 @@ var rs24, _ = infectious.NewFEC(24, 72)
 var rs32, _ = infectious.NewFEC(32, 96)
 var rs64, _ = infectious.NewFEC(64, 192)
 var rs128, _ = infectious.NewFEC(128, 136)
-
-// File checksum generator variables
-var csProgress float32
-var csMd5 string
-var csSha1 string
-var csSha256 string
-var csSha3 string
-var csBlake2b string
-var csBlake2s string
-var csValidate string
-var md5Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
-var sha1Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
-var sha256Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
-var sha3Color = color.RGBA{0x00, 0x00, 0x00, 0x00}
-var blake2bColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
-var blake2sColor = color.RGBA{0x00, 0x00, 0x00, 0x00}
-var md5Selected = true
-var sha1Selected = true
-var sha256Selected = true
-var sha3Selected = false
-var blake2bSelected = false
-var blake2sSelected = false
 
 func draw() {
 	giu.SingleWindow().Layout(
@@ -583,10 +559,7 @@ func draw() {
 		),
 
 		giu.Custom(func() {
-			if !windowOptimized || windowOptimized {
-				windowOptimized = true
-				window.SetSize(int(442*dpi), giu.GetCursorPos().Y+1)
-			}
+			window.SetSize(int(442*dpi), giu.GetCursorPos().Y)
 		}),
 	)
 }
@@ -1704,7 +1677,7 @@ func main() {
 	giu.SetDefaultFontFromBytes(font, 18)
 
 	// Create the master window
-	window = giu.NewMasterWindow("Picocrypt", 442, 532, giu.MasterWindowFlagsNotResizable)
+	window = giu.NewMasterWindow("Picocrypt", 442, 452, giu.MasterWindowFlagsNotResizable)
 	dialog.Init()
 
 	// Set window icon
@@ -1720,21 +1693,6 @@ func main() {
 
 	// Set universal DPI
 	dpi = giu.Context.GetPlatform().GetContentScale()
-
-	// Start a goroutine to check if a newer version is available
-	go func() {
-		v, err := http.Get("https://raw.githubusercontent.com/HACKERALERT/Picocrypt/main/internals/version.txt")
-		if err == nil {
-			body, err := io.ReadAll(v.Body)
-			v.Body.Close()
-			if err == nil {
-				if string(body[:5]) != version {
-					mainStatus = fmt.Sprintf("A newer version (%s) is available.", string(body[:5]))
-					mainStatusColor = color.RGBA{0x00, 0xff, 0x00, 0xff}
-				}
-			}
-		}
-	}()
 
 	// Start the UI
 	window.Run(draw)
