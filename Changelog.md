@@ -1,27 +1,20 @@
-# Features Under Consideration
-<ul>
-	<li>CLI (thanks u/your_username)</li>
-</ul>
-
-# v1.25 (A future release)
+# v1.24 (A future release)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
 	<li><strike>Remove EXIF data from keyfiles</strike> (there is no native or "official" EXIF stripper, and existing implementations are either not written in Go, or experimental)</li>
 	<li>Finish adding tooltips</li>
 	<li>Improve Internals documentation (header format, etc.)</li>
-</ul>
-
-# v1.24 (ETA: Unknown)
-<ul>
 	<li>Bug: Progressbar modal moves around weirdly sometimes</li>
 	<li>Show compression speed and percentage</li>
-	<li>✓ Split source code into multiple files for easier reading and maintenance</li>
-	<li>✓ Optimize checksum generator (~100 lines of code saved!)</li>
-	<li>Associate .pcv file extension with Picocrypt</li>
 </ul>
 
-# v1.23
-Minor optimizations and compiled with the latest dependencies and Go 1.18.
+# v1.23 (Release 03/19/2022)
+<ul>
+	<li>✓ Removed the checksum generator to get back on track with original Picocrypt ideology</li>
+	<li>✓ Cleaned up and optimized code</li>
+	<li>✓ Compiled with MinGW GCC11 instead of TDM-GCC, Go 1.18 instead of Go 1.17</li>
+	<li>✓ Picocrypt no longer checks for new versions, so no network requests are ever made</li>
+</ul>
 
 # v1.22 (Released 12/22/2021)
 <ul>
