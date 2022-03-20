@@ -8,7 +8,7 @@
 	<li>Show compression speed and percentage</li>
 </ul>
 
-# v1.23 (Release 03/19/2022)
+# v1.23 (Released 03/19/2022)
 <ul>
 	<li>✓ Removed the checksum generator to get back on track with original Picocrypt ideology</li>
 	<li>✓ Cleaned up and optimized code</li>
