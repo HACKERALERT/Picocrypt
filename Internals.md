@@ -1,11 +1,13 @@
 # Internals
-If you're wondering about how Picocrypt handles cryptography, you've come to the right place! This page contains the technical details about the cryptographic algorithms and parameters used, as well as how cryptographic values are stored in the header format. Note: This is a work in progress...
+If you're wondering about how Picocrypt handles cryptography, you've come to the right place! This page contains the technical details about the cryptographic algorithms and parameters used, as well as how cryptographic values are stored in the header format.
+
+**Note: This is a work in progress.**
 
 # Core Cryptography
 Picocrypt uses the following cryptographic primitives:
 - XChaCha20 (cascaded with Serpent in CTR mode for paranoid mode)
 - Keyed-BLAKE2b for normal mode, HMAC-SHA3 for paranoid mode (256-bit key, 512-bit digest)
-- HKDF-SHA3 for deriving a subkey used with the MAC above, as well as a key for Serpent
+- HKDF-SHA3 for deriving a subkey for the MAC above, as well as a key for Serpent
 - Argon2id:
     - Normal mode: 4 passes, 1 GiB memory, 4 threads
     - Paranoid mode: 8 passes, 1 GiB memory, 8 threads
@@ -13,7 +15,7 @@ Picocrypt uses the following cryptographic primitives:
 All primitives used are from the well-known golang.org/x/crypto module.
 
 # Keyfile Design
-Picocrypt allows the use of keyfiles as an additional (or only) form of authentication. Picocrypt's unique "Require correct order" feature enforces the user to drop keyfiles into the window in the exact same order as he/she did when encrypting, in order to decrypt the volume successfully. Here's how it works:
+Picocrypt allows the use of keyfiles as an additional form of authentication. Picocrypt's unique "Require correct order" feature enforces the user to drop keyfiles into the window in the exact same order as they did when encrypting, in order to decrypt the volume successfully. Here's how it works:
 
 If "Require correct order" is not checked, Picocrypt will take the SHA3 hash of each file individually, and XORs the hashes together. Finally, the result is XORed to the master key. Because the XOR operation is both commutative and associative, the order in which the keyfiles hashes are XORed to each other doesn't matter -- the end result is the same.
 
