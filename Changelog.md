@@ -1,20 +1,21 @@
 # v1.25 (A future release)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
-	<li><strike>Remove EXIF data from keyfiles</strike> (there is no native or "official" EXIF stripper, and existing implementations are either not written in Go, or experimental)</li>
 	<li>Finish adding tooltips</li>
 	<li>Improve Internals documentation (header format, etc.)</li>
 	<li>Bug: Progressbar modal moves around weirdly sometimes</li>
 	<li>Show compression speed and percentage</li>
 </ul>
 
-# v1.24 (ETA unknown)
+# v1.24 (ETA: a few days)
 <ul>
-	<li>✓ Fixed layout bug that allowed scrolling within window</li>	
+	<li>✓ Fixed layout bug that allowed scrolling within window</li>
+	<li>✓ Optimize dependencies</li>
 </ul>
 
 # v1.23 (Released 03/19/2022)
 <ul>
+	<li><strike>Remove EXIF data from keyfiles</strike> (there is no native or "official" EXIF stripper, and existing implementations are either not written in Go, or experimental)</li>
 	<li>✓ Removed the checksum generator to get back on track with original Picocrypt ideology</li>
 	<li>✓ Cleaned up and optimized code</li>
 	<li>✓ Compiled with MinGW GCC11 instead of TDM-GCC, Go 1.18 instead of Go 1.17</li>
