@@ -25,7 +25,6 @@ import (
 	"hash"
 	"image"
 	"image/color"
-	"image/png"
 	"io"
 	"math"
 	"math/big"
@@ -49,12 +48,6 @@ import (
 	"golang.org/x/crypto/hkdf"
 	"golang.org/x/crypto/sha3"
 )
-
-//go:embed icon.png
-var icon []byte
-
-//go:embed font.ttf
-var font []byte
 
 // Generic variables
 var version = "v1.23"
@@ -1673,17 +1666,9 @@ func humanize(seconds int) string {
 }
 
 func main() {
-	// Set a universal font
-	giu.SetDefaultFontFromBytes(font, 18)
-
 	// Create the master window
 	window = giu.NewMasterWindow("Picocrypt", 442, 452, giu.MasterWindowFlagsNotResizable)
 	dialog.Init()
-
-	// Set window icon
-	reader := bytes.NewReader(icon)
-	decoded, _ := png.Decode(reader)
-	window.SetIcon([]image.Image{decoded})
 
 	// Set callbacks
 	window.SetDropCallback(onDrop)
