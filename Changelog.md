@@ -1,7 +1,6 @@
 # v1.25 (A future release)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
-	<li>Finish adding tooltips</li>
 	<li>Improve Internals documentation (header format, etc.)</li>
 	<li>Bug: Progressbar modal moves around weirdly sometimes</li>
 	<li>Show compression speed and percentage</li>
@@ -11,6 +10,8 @@
 <ul>
 	<li>✓ Fixed layout bug that allowed scrolling within window</li>
 	<li>✓ Optimize dependencies</li>
+	<li>✓ Numerous code and UI optimizations</li>
+	<li>Finish adding tooltips</li>
 </ul>
 
 # v1.23 (Released 03/19/2022)
