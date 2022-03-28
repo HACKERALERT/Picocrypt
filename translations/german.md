@@ -57,7 +57,7 @@ Picocrypt ist zwar einfach, will aber in den Händen erfahrener und fortgeschrit
   <li><strong>Aufteilung von Dateien in Teile (Chunks)</strong>: Sie haben keine Lust, sich mit riesigen Dateien herumzuschlagen? Kein Grund zur Sorge! Mit Picocrypt können Sie Ihre Ausgabedatei in Stücke benutzerdefinierter Größe aufteilen, so dass große Dateien überschaubarer werden und leichter zu Cloud-Anbietern hochgeladen werden können. Wählen Sie einfach eine Einheit (KiB, MiB oder GiB) und geben Sie die gewünschte Anzahl für diese Einheit ein. Um die Chunks zu entschlüsseln, ziehen Sie einfach einen von ihnen in Picocrypt, und die Chunks werden bei der Entschlüsselung automatisch wieder zusammengefügt.</li>
 </ul>
 
-#Sicherheit
+# Sicherheit
 
 Weitere Informationen darüber, wie Picocrypt die Kryptographie handhabt, finden Sie <a href="Internals.md">hier</a> in den technischen Details. Wenn Sie sich Sorgen um meine Sicherheit oder die Sicherheit dieses Projekts machen, kann ich Ihnen versichern, dass dieses Repository nicht gekapert oder manipuliert werden kann. Ich habe 2FA (TOTP) auf allen Konten aktiviert, die mit Picocrypt verbunden sind (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), zusätzlich zu einer vollständigen Festplattenverschlüsselung auf all meinen tragbaren Geräten. Zur weiteren Absicherung verwendet Picocrypt meine isolierten Forks von Abhängigkeiten, und ich hole Upstream nur, wenn ich mir die Änderungen angesehen habe und glaube, dass es keine Sicherheitsprobleme gibt. Das bedeutet, dass, wenn eine Abhängigkeit gehackt oder vom Autor gelöscht wird, Picocrypt meinen Fork davon verwendet und davon völlig unberührt bleibt. Sie können Picocrypt getrost verwenden.
 
