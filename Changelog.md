@@ -11,6 +11,7 @@
 	<li>✓ Fixed layout bug that allowed scrolling within window</li>
 	<li>✓ Optimize dependencies</li>
 	<li>✓ Numerous code and UI optimizations</li>
+	<li>✓ Keyfile modal will recenter automatically upon dropping a keyfile</li>
 	<li>Save as file dialog now opens in the directory of dropped files</li>
 	<li>Finish adding tooltips</li>
 </ul>
