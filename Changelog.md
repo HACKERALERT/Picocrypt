@@ -12,6 +12,7 @@
 	<li>✓ Optimize dependencies</li>
 	<li>✓ Numerous code and UI optimizations, including better comments</li>
 	<li>✓ Keyfile modal will recenter automatically upon dropping a keyfile</li>
+	<li>✓ Fix modals moving around randomly when open and closed numerous times</li>
 	<li>Save as file dialog now opens in the directory of dropped files</li>
 	<li>Finish adding tooltips</li>
 </ul>
