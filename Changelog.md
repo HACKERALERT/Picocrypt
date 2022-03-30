@@ -13,6 +13,7 @@
 	<li>✓ Fix modals moving around randomly when open and closed numerous times</li>
 	<li>✓ Fixed: Progressbar modal moves around weirdly sometimes</li>
 	<li>✓ Improve Reed-Solomon performance</li>
+	<li>✓ Better error handling</li>
 	<li>Save as file dialog now opens in the directory of dropped files</li>
 	<li>Finish adding tooltips</li>
 </ul>
