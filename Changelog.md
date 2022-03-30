@@ -1,7 +1,6 @@
 # v1.25 (A future release)
 <ul>
 	<li>Improve Internals documentation (header format, etc.)</li>
-	<li>Show compression speed and percentage</li>
 </ul>
 
 # v1.24 (ETA: a few days)
@@ -12,8 +11,9 @@
 	<li>✓ Keyfile modal will recenter automatically upon dropping a keyfile</li>
 	<li>✓ Fix modals moving around randomly when open and closed numerous times</li>
 	<li>✓ Fixed: Progressbar modal moves around weirdly sometimes</li>
-	<li>✓ Improve Reed-Solomon performance</li>
 	<li>✓ Better error handling</li>
+	<li>✓ Show compression speed and percentage</li>
+	<li>Improve Reed-Solomon performance</li>
 	<li>Save as file dialog now opens in the directory of dropped files</li>
 	<li>Finish adding tooltips</li>
 </ul>
