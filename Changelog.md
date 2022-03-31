@@ -13,6 +13,7 @@
 	<li>✓ Fixed: Progressbar modal moves around weirdly sometimes</li>
 	<li>✓ Better error handling</li>
 	<li>✓ Show compression speed and percentage</li>
+	<li>✓ Smoothen splitting file and recombing file progress bars</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Save as file dialog now opens in the directory of dropped files</li>
 	<li>Finish adding tooltips</li>
