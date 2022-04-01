@@ -14,9 +14,9 @@
 	<li>✓ Better error handling</li>
 	<li>✓ Show compression speed and percentage</li>
 	<li>✓ Smoothen splitting file and recombing file progress bars</li>
+	<li>✓ Finish adding tooltips</li>
 	<li>Improve Reed-Solomon performance</li>
-	<li>Save as file dialog now opens in the directory of dropped files</li>
-	<li>Finish adding tooltips</li>
+	<li>Save as file dialog now opens in the same directory as dropped files</li>
 </ul>
 
 # v1.23 (Released 03/19/2022)
@@ -113,7 +113,7 @@
 <strong>v1.14 will unfortunately be incompatible with v1.13, as I have dropped Poly1305 in favour of an HMAC. Because I have appended the encryptor version to the encrypted data in v1.13, however, v1.14 and on will be able to tell you which version your data was encrypted with so that you can fetch the correct verion of Picocrypt. There are no security issues in any previous versions of Picocrypt as long as you use a strong password.</strong>
 <ul>
 	<li>Low-severity security fix for the recently discovered <a href="https://eprint.iacr.org/2020/1491.pdf">partitioning oracle attacks</a></li>
-	<li>Move from Monocypher to Go's standard supplemental ChaCha20 in favour of being the latter being stateful</li>
+	<li>Move from Monocypher to Go's standard supplemental ChaCha20 in favour of the latter being stateful</li>
 	<li>Add SHA3 (normal mode) and BLAKE2b (fast mode) as HMAC to replace Poly1305 and prevent partitioning oracle attacks</li>
 	<li>Removed ~100 lines of unnecessary code now that Picocrypt uses Go's ChaCha20 (cleaner and stabler code)</li>
 	<li>Added window icons</li>
