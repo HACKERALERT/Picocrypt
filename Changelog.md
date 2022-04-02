@@ -1,9 +1,11 @@
 # v1.25 (A future release)
 <ul>
 	<li>Improve Internals documentation (header format, etc.)</li>
+	<li>Improve Reed-Solomon performance</li>
+	<li>Save as file dialog now opens in the same directory as dropped files</li>
 </ul>
 
-# v1.24 (ETA: a few days)
+# v1.24 (Released 04/02/2022)
 <ul>
 	<li>✓ Fixed layout bug that allowed scrolling within window</li>
 	<li>✓ Optimize dependencies</li>
@@ -15,8 +17,6 @@
 	<li>✓ Show compression speed and percentage</li>
 	<li>✓ Smoothen splitting file and recombing file progress bars</li>
 	<li>✓ Finish adding tooltips</li>
-	<li>Improve Reed-Solomon performance</li>
-	<li>Save as file dialog now opens in the same directory as dropped files</li>
 </ul>
 
 # v1.23 (Released 03/19/2022)
