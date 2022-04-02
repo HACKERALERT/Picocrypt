@@ -11,7 +11,7 @@ apt install -y gcc libgtk-3-dev libglu1-mesa xclip xorg-dev
 xcode-select --install
 brew install glfw glew
 ```
-**Windows:** A C compiler, ideally `choco install mingw`, but [TDM-GCC](https://jmeubank.github.io/tdm-gcc/) works too.
+**Windows:** A C compiler, ideally  [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
 
 # 2. Install the Go Programming Language
 If you don't have Go installed, download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager (`apt install golang-go`). The latest version of Go is recommended.
