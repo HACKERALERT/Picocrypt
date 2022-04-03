@@ -22,4 +22,20 @@ If "Require correct order" is not checked, Picocrypt will take the SHA3 hash of 
 If "Require correct order" is checked, Picocrypt will combine (concatenate) the files together in the order they were dropped into the window, and take the SHA3 hash of the combined keyfiles. If the order is not correct, the keyfiles, when appended to each other, will result in a different file, and therefore a different hash. Thus, the correct order of keyfiles is required to successfully decrypt the volume.
 
 # Header Format
-Work in progress...
+A Picocrypt volume's header is encoded with Reed-Solomon by default, since it is, after all, the most important part of the entire file. An encoded value will take up three times the size of the unencoded value.
+
+**All offsets and sizes below are in bytes.**
+| Offset | Encoded size | Decoded size | Description
+| ------ | ------------ | ------------ | -----------
+| 0      | 15           | 5            | Version number (ex. "v1.15")
+| 15     | 15           | 5            | Length of comments, padded to 5 bytes
+| 30     | 3C           | C            | Comments with a length of C characters
+| 30+3C  | 15           | 5            | Flags (paranoid mode, use keyfiles, etc.)
+| 45+3C  | 48           | 16           | Salt for Argon2
+| 93+3C  | 96           | 32           | Salt for HKDF-SHA3
+| 189+3C | 48           | 16           | Salt for Serpent
+| 237+3C | 72           | 24           | Nonce for XChaCha20
+| 309+3C | 192          | 64           | SHA3-512 of encryption key
+| 501+3C | 96           | 32           | Hash of keyfile key
+| 597+3C | 192          | 64           | Message authentication code (BLAKE2b/HMAC-SHA3)
+| 789+3C |              |              | Encrypted contents of input data
