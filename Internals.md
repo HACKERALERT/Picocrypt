@@ -28,7 +28,7 @@ A Picocrypt volume's header is encoded with Reed-Solomon by default, since it is
 | Offset | Encoded size | Decoded size | Description
 | ------ | ------------ | ------------ | -----------
 | 0      | 15           | 5            | Version number (ex. "v1.15")
-| 15     | 15           | 5            | Length of comments, padded to 5 bytes
+| 15     | 15           | 5            | Length of comments, zero-padded to 5 bytes
 | 30     | 3C           | C            | Comments with a length of C characters
 | 30+3C  | 15           | 5            | Flags (paranoid mode, use keyfiles, etc.)
 | 45+3C  | 48           | 16           | Salt for Argon2
