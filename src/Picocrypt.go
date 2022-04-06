@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.24
+Picocrypt v1.25
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -48,7 +48,7 @@ import (
 )
 
 // Generic variables
-var version = "v1.24"
+var version = "v1.25"
 var window *giu.MasterWindow
 var dpi float32
 var mode string
@@ -926,12 +926,12 @@ func work() {
 	stat, _ := os.Stat(inputFile)
 	total := stat.Size()
 	if mode == "decrypt" {
-		total -= 786
+		total -= 789
 	}
 
-	// XChaCha20's max message size is 256 GiB
-	if total > 256*1073741824 {
-		mainStatus = "The input file is too big to encrypt."
+	// XChaCha20's max input is 256 GiB, panic at one block less
+	if total >= int64((math.Pow(2, 32)-1)*64) {
+		mainStatus = "The input data is too big to encrypt."
 		mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
 		if len(allFiles) > 1 || len(onlyFolders) > 0 {
 			os.Remove(inputFile)
@@ -1041,6 +1041,7 @@ func work() {
 		tmp, errs[1] = rsDecode(rs5, tmp)
 		commentsLength, _ := strconv.Atoi(string(tmp))
 		fin.Read(make([]byte, commentsLength*3))
+		total -= int64(commentsLength) * 3
 
 		flags := make([]byte, 15)
 		fin.Read(flags)
