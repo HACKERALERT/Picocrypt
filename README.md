@@ -44,12 +44,12 @@ Here's a brief comparison of Picocrypt to other popular encryption tools.
 | Portable       |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |✅ Yes          |
 | Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |❌ Admin        |
 | Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |🟧 Medium       |🟧 Medium      |✅ Easy         |
-| Key Derivation |✅ Argon2      |🆗 PBKDF2       |❌ SHA256      |✅ Argon2       |❓Unknown      |🆗 PBKDF2       |
-| Data Integrity |✅ Always      |❌ No           |❌ No          |✅ Always       |❓Unknown      |✅ Always       |
+| Key Derivation |✅ Argon2      |🆗 PBKDF2       |❌ SHA256      |✅ Argon2       |❓ Unknown     |🆗 PBKDF2       |
+| Data Integrity |✅ Always      |❌ No           |❌ No          |✅ Always       |❓ Unknown     |✅ Always       |
 | Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |❌ No           |
 | Compression    |✅ Yes         |❌ No           |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |
-| Phones Home    |✅ Never       |✅ Never        |✅ Never       |❌ Analytics    |❓Unknown      |❌ Accounts     |
-| Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓Unknown       |❓Unknown      |❌ No           |
+| Phones Home    |✅ Never       |✅ Never        |✅ Never       |❌ Analytics    |❓ Unknown     |❌ Accounts     |
+| Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓ Unknown      |❓ Unknown     |❌ No           |
 
 # Features
 Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a basic level, simply dropping your files, entering a password, and hitting Start is all that's needed to encrypt your files. Pretty simple, right?
