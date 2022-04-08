@@ -17,7 +17,7 @@ All primitives used are from the well-known golang.org/x/crypto module.
 # Keyfile Design
 Picocrypt allows the use of keyfiles as an additional form of authentication. Picocrypt's unique "Require correct order" feature enforces the user to drop keyfiles into the window in the exact same order as they did when encrypting, in order to decrypt the volume successfully. Here's how it works:
 
-If "Require correct order" is not checked, Picocrypt will take the SHA3 hash of each file individually, and XORs the hashes together. Finally, the result is XORed to the master key. Because the XOR operation is both commutative and associative, the order in which the keyfiles hashes are XORed to each other doesn't matter -- the end result is the same.
+If "Require correct order" is not checked, Picocrypt will take the SHA3 hash of each file individually, and XORs the hashes together. Finally, the result is XORed to the master key. Because the XOR operation is both commutative and associative, the order in which the keyfiles hashes are XORed to each other doesn't matter - the end result is the same.
 
 If "Require correct order" is checked, Picocrypt will combine (concatenate) the files together in the order they were dropped into the window, and take the SHA3 hash of the combined keyfiles. If the order is not correct, the keyfiles, when appended to each other, will result in a different file, and therefore a different hash. Thus, the correct order of keyfiles is required to successfully decrypt the volume.
 
