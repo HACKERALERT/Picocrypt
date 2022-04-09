@@ -2,7 +2,7 @@
 
 Picocrypt ist ein sehr kleines (daher <i>Pico</i>), sehr einfaches, aber sehr sicheres Verschlüsselungsprogramm, mit dem Sie Ihre Dateien schützen können. Es wurde entwickelt, um die erste Wahl für die Verschlüsselung zu sein, mit einem Schwerpunkt auf Sicherheit, Einfachheit und Zuverlässigkeit. Picocrypt verwendet die sichere XChaCha20-Chiffre und die Argon2id-Schlüsselableitungsfunktion, um ein hohes Maß an Sicherheit zu bieten, selbst vor Agenturen mit drei Buchstaben wie der NSA. Picocrypt ist auf maximale Sicherheit ausgelegt, ohne Kompromisse bei der Sicherheit einzugehen, und wird mit den Standard x/crypto-Modulen von Go gebaut. <strong>Ihre Privatsphäre und Sicherheit werden angegriffen. Holen Sie sich mit Zuversicht zurück, indem Sie Ihre Dateien mit Picocrypt schützen.</strong>
 
-<p align="center"><img align="center" src="/images/screenshot.png" width="384" alt="Picocrypt"></p>
+<p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
 # Finanzierung
 
@@ -32,14 +32,31 @@ Warum sollten Sie Picocrypt anstelle von BitLocker, NordLocker, VeraCrypt, AxCry
 
 <ul>
   <li>Im Gegensatz zu NordLocker, BitLocker, AxCrypt und den meisten Cloud-Speicheranbietern sind Picocrypt und seine Abhängigkeiten vollständig quelloffen und überprüfbar. Sie können sich selbst davon überzeugen, dass es keine Hintertüren oder Schwachstellen gibt.</li>
-  <li>Picocrypt ist <i>winzig</i>. Während NordLocker mehr als 50 MB und VeraCrypt mehr als 20 MB groß sind, ist Picocrypt nur 3 MB groß, etwa so groß wie ein hochauflösendes Foto. Und das ist noch nicht alles - Picocrypt ist portabel (es muss nicht installiert werden) und erfordert keine Administrator-/Root-Rechte.</li>
+  <li>Picocrypt ist <i>winzig</i>. Während NordLocker mehr als 50 MB und VeraCrypt mehr als 20 MB groß sind, ist Picocrypt nur 2 MB groß, etwa so groß wie ein Foto mittlerer Auflösung. Und das ist noch nicht alles - Picocrypt ist portabel (es muss nicht installiert werden) und erfordert keine Administrator-/Root-Rechte.</li>
   <li>Picocrypt ist einfacher und produktiver zu verwenden als VeraCrypt. Um Dateien mit VeraCrypt zu verschlüsseln, müssten Sie mindestens fünf Minuten damit verbringen, ein Volume einzurichten. Mit der einfachen Benutzeroberfläche von Picocrypt müssen Sie nur Ihre Dateien auf das Fenster ziehen und ablegen, ein Passwort eingeben und auf Start klicken. Alle komplexen Vorgänge werden von Picocrypt intern abgewickelt. Wer sagt denn, dass sichere Verschlüsselung nicht einfach sein kann?</li>
   <li>Picocrypt ist auf Sicherheit ausgelegt. 7-Zip ist ein Archivierungsprogramm und kein Verschlüsselungstool, daher liegt sein Schwerpunkt nicht auf Sicherheit. Picocrypt hingegen wurde mit Sicherheit als oberster Priorität entwickelt. Jeder Teil von Picocrypt existiert aus einem bestimmten Grund und alles, was die Sicherheit von Picocrypt beeinträchtigen könnte, wurde entfernt. Picocrypt ist mit einer Kryptographie aufgebaut, der Sie vertrauen können.</li>
   <li>Picocrypt schützt die Daten nicht nur, sondern authentifiziert sie auch und verhindert so, dass Hacker sensible Daten böswillig verändern. Dies ist nützlich, wenn Sie verschlüsselte Dateien über einen unsicheren Kanal versenden und sicher sein wollen, dass sie unangetastet ankommen.</li>
   <li>Picocrypt schützt verschlüsselte Header-Daten aktiv vor Beschädigung, indem es zusätzliche Reed-Solomon-Paritätsbytes hinzufügt. Wenn also ein Teil des Headers eines Datenträgers (der wichtige kryptografische Komponenten enthält) beschädigt wird (z. B. durch Bitfäule auf der Festplatte), kann Picocrypt den Header trotzdem wiederherstellen und Ihre Daten mit einer hohen Erfolgsquote entschlüsseln. Picocrypt kann auch den gesamten Datenträger mit Reed-Solomon verschlüsseln, um eine Beschädigung Ihrer wichtigen Dateien zu verhindern.</li>
   </ul>
 
-Immer noch nicht überzeugt? Unten finden Sie noch mehr Gründe, warum Picocrypt sich von den anderen abhebt.
+# Vergleich
+Hier ein kurzer Vergleich von Picocrypt mit anderen gängigen Verschlüsselungsprogrammen.
+
+|                         | Picocrypt      | VeraCrypt         | 7-Zip (GUI)      | NordLocker       | BitLocker        | AxCrypt           |
+| --------------          | -------------- | --------------    | --------------   | --------------   | --------------   | --------------    |
+| Kostenlos               |✅ Ja           |✅ Ja             |✅ Ja             |🟧 Teilweise      |🟧 Teilweise      |🟧 Teilweise      |
+| Open Source             |✅ GPLv3        |✅ Multi          |✅ LGPL           |❌ Nein           |❌ Nein           |❌ Nein           |
+| Plattformübergreifend   |✅ Ja           |✅ Ja             |❌ Nein           |❌ Nein           |❌ Nein           |❌ Nein           |
+| Größe                   |✅ 2MB          |❌ 20MB           |✅ 2MB            |❌ 60MB           |✅ Included       |🟧 8MB            |
+| Portable                |✅ Ja           |✅ Ja             |❌ Nein           |❌ Nein           |✅ Ja             |✅ Ja             |
+| Berechtigungen          |✅ Keine        |❌ Administrator  |❌ Administrator  |❌ Administrator  |❌ Administrator  |❌ Administrator  |
+| Benutzerfreundlichkeit  |✅ Leicht       |❌ Schwer         |✅ Leicht         |🟧 Mittel         |🟧 Mittel         |✅ Leicht         |
+| Schlüssel Ableitung     |✅ Argon2       |🆗 PBKDF2         |❌ SHA256         |✅ Argon2         |❓ Unbekannt       |🆗 PBKDF2         |
+| Datenintegrität         |✅ Always       |❌ Nein           |❌ Nein           |✅ Always         |❓ Unbekannt       |✅ Always         |
+| Reed-Solomon            |✅ Ja           |❌ Nein           |❌ Nein           |❌ Nein           |❌ Nein           |❌ Nein           |
+| Komprimierung           |✅ Ja           |❌ Nein           |✅ Ja             |❌ Nein           |✅ Ja             |✅ Ja             |
+| Übermittelt Daten       |✅ Niemals      |✅ Niemals        |✅ Niemals        |❌ Analytics      |❓ Unbekannt       |❌ Accounts       |
+| Geprüft                 |🟧 Geplant      |✅ Ja             |❌ Nein           |❓ Unbekannt       |❓ Unbekannt       |❌ Nein           |
 
 # Eigenschaften
 
@@ -49,12 +66,12 @@ Picocrypt ist zwar einfach, will aber in den Händen erfahrener und fortgeschrit
 
 <ul>
   <li><strong>Passwortgenerator</strong>: Picocrypt bietet einen sicheren Passwortgenerator, mit dem Sie kryptografisch sichere Passwörter erstellen können. Sie können die Länge des Passworts sowie die Art der zu verwendenden Zeichen anpassen.</li>
-  <li><strong>Datei-Metadaten</strong>: Hier können Sie Notizen, Informationen und Text zusammen mit der Datei speichern (Diese werden nicht verschlüsselt). Sie können zum Beispiel eine Beschreibung der zu verschlüsselnden Datei eingeben, bevor Sie sie an jemanden schicken. Wenn die Person, an die Sie die Datei geschickt haben, diese in Picocrypt ablegt, wird Ihre Beschreibung angezeigt.</li>
+  <li><strong>Kommentare</strong>: Hier können Sie Notizen, Informationen und Text zusammen mit der Datei speichern (Diese werden nicht verschlüsselt). Sie können zum Beispiel eine Beschreibung der zu verschlüsselnden Datei eingeben, bevor Sie sie an jemanden schicken. Wenn die Person, an die Sie die Datei geschickt haben, diese in Picocrypt ablegt, wird Ihre Beschreibung angezeigt.</li>
   <li><strong>Schlüsseldateien</strong>: Picocrypt unterstützt die Verwendung von Schlüsseldateien als eine zusätzliche Form der Authentifizierung. Sie können nicht nur mehrere Schlüsseldateien verwenden, sondern auch verlangen, dass die richtige Reihenfolge der Schlüsseldateien vorhanden sein muss, damit eine erfolgreiche Entschlüsselung stattfinden kann. Ein besonders guter Anwendungsfall für mehrere Schlüsseldateien ist die Erstellung eines gemeinsamen Datenträgers, bei dem jede Person eine Schlüsseldatei besitzt und alle (und ihre Schlüsseldateien) vorhanden sein müssen, um den gemeinsamen Datenträger zu entschlüsseln.</li>
-  <li><strong>Paranoidmodus</strong>: In diesem Modus werden Ihre Daten sowohl mit XChaCha20 als auch mit Serpent kaskadenartig verschlüsselt, und zur Authentifizierung der Daten wird HMAC-SHA3 anstelle von BLAKE2b verwendet. Dies wird für den Schutz streng geheimer Dateien empfohlen und bietet die höchste erreichbare Sicherheitsstufe in der Praxis. Damit ein Hacker Ihre verschlüsselten Daten knacken kann, müssen sowohl die XChaCha20-Chiffre als auch die Serpent-Chiffre geknackt werden, vorausgesetzt, Sie haben ein gutes Passwort gewählt.</li>
-  <li><strong>Verhinderung von Korruption mit Reed-Solomon</strong>: Diese Funktion ist sehr nützlich, wenn Sie vorhaben, wichtige Daten bei einem Cloud-Anbieter oder auf einem externen Medium über einen längeren Zeitraum zu archivieren. Wenn diese Funktion aktiviert ist, verwendet Picocrypt den Reed-Solomon-Fehlerkorrekturcode, um 8 zusätzliche Bytes für jeweils 128 Bytes hinzuzufügen, um eine Beschädigung der Datei zu verhindern. Das bedeutet, dass bis zu ~3 % Ihrer Datei beschädigt sein können und Picocrypt trotzdem in der Lage ist, die Fehler zu korrigieren und Ihre Dateien ohne Beschädigung zu entschlüsseln. Natürlich kann Picocrypt Ihre Dateien nicht vollständig wiederherstellen, wenn sie sehr stark beschädigt sind (z. B. wenn Ihnen die Festplatte heruntergefallen ist), aber es wird sein Bestes tun, um zu retten, was es kann. Beachten Sie, dass diese Option die Ver- und Entschlüsselung erheblich verlangsamt.</li>
-  <li><strong>Behalten Sie die entschlüsselte Ausgabe, auch wenn sie beschädigt oder verändert ist</strong>: Picocrypt überprüft bei der Entschlüsselung automatisch die Integrität der Datei. Wenn die Datei geändert wurde oder beschädigt ist, löscht Picocrypt die Ausgabe zur Sicherheit des Benutzers automatisch. Wenn Sie die beschädigten oder veränderten Daten nach der Entschlüsselung behalten möchten, aktivieren Sie diese Option. Wenn diese Option aktiviert ist und die Reed-Solomon-Funktion für die verschlüsselte Datei verwendet wurde, versucht Picocrypt außerdem, während der Entschlüsselung so viel wie möglich von der Datei wiederherzustellen.</li>
-  <li><strong>Aufteilung von Dateien in Teile (Chunks)</strong>: Sie haben keine Lust, sich mit riesigen Dateien herumzuschlagen? Kein Grund zur Sorge! Mit Picocrypt können Sie Ihre Ausgabedatei in Stücke benutzerdefinierter Größe aufteilen, so dass große Dateien überschaubarer werden und leichter zu Cloud-Anbietern hochgeladen werden können. Wählen Sie einfach eine Einheit (KiB, MiB oder GiB) und geben Sie die gewünschte Anzahl für diese Einheit ein. Um die Chunks zu entschlüsseln, ziehen Sie einfach einen von ihnen in Picocrypt, und die Chunks werden bei der Entschlüsselung automatisch wieder zusammengefügt.</li>
+  <li><strong>Paranoidmodus</strong>: In diesem Modus werden Ihre Daten sowohl mit XChaCha20 als auch mit Serpent kaskadenartig verschlüsselt, und zur Authentifizierung der Daten wird HMAC-SHA3 anstelle von BLAKE2b verwendet. Dies wird für den Schutz streng geheimer Dateien empfohlen und bietet, in der Praxis, die höchste erreichbare Sicherheitsstufe. Damit ein Hacker Ihre verschlüsselten Daten entschlüsseln kann, müssen sowohl die XChaCha20-Chiffre als auch die Serpent-Chiffre geknackt werden, vorausgesetzt, Sie haben ein gutes Passwort gewählt. Man kann mit Sicherheit sagen, dass Ihre Dateien in diesem Modus nicht zu knacken sind.</li>
+  <li><strong>Reed-Solomon</strong>: Diese Funktion ist sehr nützlich, wenn Sie vorhaben, wichtige Daten bei einem Cloud-Anbieter oder auf einem externen Medium über einen längeren Zeitraum zu archivieren. Wenn diese Funktion aktiviert ist, verwendet Picocrypt den Reed-Solomon-Fehlerkorrekturcode, um 8 zusätzliche Bytes für jeweils 128 Bytes hinzuzufügen, um eine Beschädigung der Datei zu verhindern. Das bedeutet, dass bis zu ~3 % Ihrer Datei beschädigt sein können und Picocrypt trotzdem in der Lage ist, die Fehler zu korrigieren und Ihre Dateien ohne Beschädigung zu entschlüsseln. Natürlich kann Picocrypt Ihre Dateien nicht vollständig wiederherstellen, wenn sie sehr stark beschädigt sind (z. B. wenn Ihnen die Festplatte heruntergefallen ist), aber es wird sein Bestes tun, um zu retten, was es kann. Beachten Sie, dass diese Option die Ver- und Entschlüsselung erheblich verlangsamt.</li>
+  <li><strong>Entschlüsselung erzwingen</strong>: Picocrypt überprüft bei der Entschlüsselung automatisch die Integrität der Datei. Wenn die Datei geändert wurde oder beschädigt ist, löscht Picocrypt die Ausgabe zur Sicherheit des Benutzers automatisch. Wenn Sie die beschädigten oder veränderten Daten nach der Entschlüsselung behalten möchten, aktivieren Sie diese Option. Wenn diese Option aktiviert ist und die Reed-Solomon-Funktion für die verschlüsselte Datei verwendet wurde, versucht Picocrypt außerdem, während der Entschlüsselung so viel wie möglich von der Datei wiederherzustellen.</li>
+  <li><strong>Aufteilung von Dateien in Teile (Chunks)</strong>: Sie haben keine Lust, sich mit riesigen Dateien herumzuschlagen? Kein Grund zur Sorge! Mit Picocrypt können Sie Ihre Ausgabedatei in Stücke benutzerdefinierter Größe aufteilen, so dass große Dateien überschaubarer werden und leichter zu Cloud-Anbietern hochgeladen werden können. Wählen Sie einfach eine Chunkgröße (KiB, MiB oder GiB) und geben Sie die gewünschte Anzahl für diese Einheit ein. Um die Chunks zu entschlüsseln, ziehen Sie einfach einen von ihnen in Picocrypt, und die Chunks werden bei der Entschlüsselung automatisch wieder zusammengefügt.</li>
 </ul>
 
 # Sicherheit
@@ -69,12 +86,13 @@ Hier finden Sie einige Stellen, an denen Sie über Picocrypt auf dem Laufenden b
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
 	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
 </ul>
+
 Ich empfehle Ihnen dringend, dem Picocrypt-Subreddit beizutreten, da alle Updates und Umfragen dort veröffentlicht werden. Denken Sie daran, nur diesen sozialen Netzwerken zu vertrauen und sich vor Hackern in Acht zu nehmen, die versuchen könnten, sich für mich auszugeben. Ich werde Sie niemals nach Ihrem Passwort fragen, und jeder, der das tut, ist nicht ich. Ich werde Sie niemals auffordern, eine Datei von einem verdächtigen Link herunterzuladen, und jeder, der das tut, ist nicht ich.
 
 # Stargazers(GitHub-Sterne)
 
 Wie läuft es mit Picocrypt? Werfen Sie einen Blick darauf, um es herauszufinden.
-[![Stargazers over time](https://starchart.cc/HACKERALERT/Picocrypt.svg)](https://starchart.cc/HACKERALERT/Picocrypt)
+![Stargazers Over Time](https://starchart.cc/HACKERALERT/Picocrypt.svg)
 
 # Spenden
 
@@ -94,6 +112,7 @@ Ich möchte mich von ganzem Herzen bei den Leuten von Open Collective bedanken, 
 	<li>donor39 (Unterstützer)</li>
 	<li>Pokabu (Unterstützer)</li>
 </ul>
+
 Ihr seid die Menschen, die mich inspirieren, an Picocrypt zu arbeiten und es jedem kostenlos zur Verfügung zu stellen!
 
 Ein großes Dankeschön geht auch an die folgenden fünf Personen, die als erste gespendet und Picocrypt unterstützt haben:
@@ -117,6 +136,7 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
 	<li>yn für Russisch</li>
 	<li>@Etim-Orb für Ungarisch</li>
 	<li>@Minibus93 für Italienisch</li>
+  <li>Michel für Französisch</li>
 </ul>
 
 Schließlich möchte ich mich bei diesen Leuten dafür bedanken, dass sie mir im Bedarfsfall geholfen haben:
