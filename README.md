@@ -74,6 +74,7 @@ Here are some places where you can stay up to date with Picocrypt and get involv
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
 	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
 </ul>
+
 I highly recommend you join Picocrypt's subreddit because all updates and polls will be posted there. Remember to only trust these social networks and be aware of hackers that might try to impersonate me. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
 
 # Stargazers
@@ -95,6 +96,7 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>donor39 (backer)</li>
 	<li>Pokabu (backer)</li>
 </ul>
+
 You are the people who inspire me to work on Picocrypt and provide it free of charge to everyone!
 
 Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
