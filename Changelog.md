@@ -1,6 +1,6 @@
 # v1.25 (A future release)
 <ul>
-	<li>Improve Internals documentation (header format, etc.)</li>
+	<li>✓ Improve Internals documentation (header format, etc.)</li>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Save as file dialog now opens in the same directory as dropped files</li>
 </ul>
