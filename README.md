@@ -48,7 +48,7 @@ Here's a brief comparison of Picocrypt to other popular encryption tools.
 | Data Integrity |✅ Always      |❌ No           |❌ No          |✅ Always       |❓ Unknown     |✅ Always       |
 | Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |❌ No           |
 | Compression    |✅ Yes         |❌ No           |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |
-| Phones Home    |✅ Never       |✅ Never        |✅ Never       |❌ Analytics    |❓ Unknown     |❌ Accounts     |
+| Telemetry      |✅ None        |✅ None         |✅ None        |❌ Analytics    |❓ Unknown     |❌ Accounts     |
 | Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓ Unknown      |❓ Unknown     |❌ No           |
 
 # Features
