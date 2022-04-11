@@ -2,7 +2,7 @@
 <ul>
 	<li>✓ Improve Internals documentation (header format, etc.)</li>
 	<li>Improve Reed-Solomon performance</li>
-	<li>Save as file dialog now opens in the same directory as dropped files</li>
+	<li>✓ Save as and keyfile file dialog now opens in the same directory as dropped files</li>
 </ul>
 
 # v1.24 (Released 04/02/2022)
