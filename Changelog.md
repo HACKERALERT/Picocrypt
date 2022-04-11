@@ -1,4 +1,4 @@
-# v1.25 (A future release)
+# v1.25 (ETA: 5 days)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
 	<li>✓ Improve Internals documentation (header format, etc.)</li>
@@ -146,7 +146,7 @@
 	<li>✓ Added file chunking support</li>
 </ul>
 
-# v1.12.1 (Bug fix patch, released 04/11/2021)
+# v1.12.1 (Released 04/11/2021)
 There was a major bug in v1.12 that caused the "Secure wipe" feature to show "Unknown error" when done. This wasn't anything serious security-wise and v1.12.1 has the fix for this bug. Also, a bug that causes "Secure wipe" to hang has been fixed.
 
 # v1.12 (Released 04/07/2021)
@@ -164,7 +164,7 @@ There was a major bug in v1.12 that caused the "Secure wipe" feature to show "Un
 </ul>
 <strong>Note: v1.12 will be INCOMPATIBLE with all previous releases!</strong>
 
-# v1.11 (released 03/23/2021)
+# v1.11 (Released 03/23/2021)
 <ul>
 	<li>✓ Much more secure wipe via <code>sdelete64</code> for Windows, <code>shred</code> for Linux, and <code>rm -P</code> for MacOS</li>
 	<li>✓ Much more beautiful UI for MacOS</li>
