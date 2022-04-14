@@ -12,11 +12,11 @@ Bitte spenden Sie für Picocrypt auf <a href="https://opencollective.com/picocry
 
 ## Windows
 
-Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.24/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm, damit alle davon profitieren können.
+Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.25/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm, damit alle davon profitieren können.
 
 ## macOS
 
-Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.24/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
+Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.25/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
 
 ## Linux
 
@@ -55,7 +55,7 @@ Hier ein kurzer Vergleich von Picocrypt mit anderen gängigen Verschlüsselungsp
 | Datenintegrität         |✅ Always       |❌ Nein           |❌ Nein           |✅ Always         |❓ Unbekannt       |✅ Always         |
 | Reed-Solomon            |✅ Ja           |❌ Nein           |❌ Nein           |❌ Nein           |❌ Nein           |❌ Nein           |
 | Komprimierung           |✅ Ja           |❌ Nein           |✅ Ja             |❌ Nein           |✅ Ja             |✅ Ja             |
-| Übermittelt Daten       |✅ Niemals      |✅ Niemals        |✅ Niemals        |❌ Analytics      |❓ Unbekannt       |❌ Accounts       |
+| Telemetrie              |✅ Keine        |✅ Keine          |✅ Keine          |❌ Analytics      |❓ Unbekannt       |❌ Accounts       |
 | Geprüft                 |🟧 Geplant      |✅ Ja             |❌ Nein           |❓ Unbekannt       |❓ Unbekannt       |❌ Nein           |
 
 # Eigenschaften
