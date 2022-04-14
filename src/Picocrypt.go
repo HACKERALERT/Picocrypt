@@ -35,16 +35,16 @@ import (
 	"time"
 
 	"github.com/HACKERALERT/clipboard"
+	"github.com/HACKERALERT/crypto/argon2"
+	"github.com/HACKERALERT/crypto/blake2b"
+	"github.com/HACKERALERT/crypto/chacha20"
+	"github.com/HACKERALERT/crypto/hkdf"
+	"github.com/HACKERALERT/crypto/sha3"
 	"github.com/HACKERALERT/dialog"
 	"github.com/HACKERALERT/giu"
 	"github.com/HACKERALERT/infectious"
 	"github.com/HACKERALERT/serpent"
 	"github.com/HACKERALERT/zxcvbn-go"
-	"golang.org/x/crypto/argon2"
-	"golang.org/x/crypto/blake2b"
-	"golang.org/x/crypto/chacha20"
-	"golang.org/x/crypto/hkdf"
-	"golang.org/x/crypto/sha3"
 )
 
 // Generic variables
@@ -107,6 +107,7 @@ var keep bool
 var kept bool
 
 // Status variables
+var startLabel = "Start"
 var mainStatus = "Ready."
 var mainStatusColor = color.RGBA{0xff, 0xff, 0xff, 0xff}
 var popupStatus string
@@ -193,7 +194,11 @@ func draw() {
 					giu.Row(
 						giu.Button("Clear").Size(100, 0).OnClick(func() {
 							keyfiles = nil
-							keyfilePrompt = "None selected."
+							if keyfile {
+								keyfilePrompt = "Keyfiles required."
+							} else {
+								keyfilePrompt = "None selected."
+							}
 							modalId++
 						}),
 						giu.Tooltip("Remove all keyfiles."),
@@ -374,16 +379,16 @@ func draw() {
 
 					giu.Style().SetDisabled(mode == "decrypt").To(
 						giu.Button("Create").Size(54, 0).OnClick(func() {
-							f := dialog.File()
-							f.Title("Save keyfile as:")
+							f := dialog.File().Title("Choose where to save the keyfile.")
 							f.SetStartDir(func() string {
 								if len(onlyFiles) > 0 {
 									return filepath.Dir(onlyFiles[0])
 								}
 								return filepath.Dir(onlyFolders[0])
 							}())
-							file, _ := f.Save()
-							if file == "" {
+							f.SetInitFilename("Keyfile")
+							file, err := f.Save()
+							if file == "" || err != nil {
 								return
 							}
 
@@ -396,7 +401,7 @@ func draw() {
 						giu.Tooltip("Generate a cryptographically secure keyfile."),
 					),
 					giu.Style().SetDisabled(true).To(
-						giu.InputText(&keyfilePrompt).Size(giu.Auto),
+						giu.Button(keyfilePrompt).Size(giu.Auto, 0),
 					),
 				),
 			),
@@ -462,50 +467,44 @@ func draw() {
 				giu.Style().SetDisabled(true).To(
 					giu.InputText(&outputFile).Size(dw / dpi / dpi).Flags(16384),
 				).Build()
+
 				giu.SameLine()
 				giu.Button("Change").Size(bw/dpi, 0).OnClick(func() {
-					f := dialog.File()
-					f.Title("Save output as:")
+					f := dialog.File().Title("Choose where to save the output. Don't include extensions.")
 					f.SetStartDir(func() string {
 						if len(onlyFiles) > 0 {
 							return filepath.Dir(onlyFiles[0])
 						}
 						return filepath.Dir(onlyFolders[0])
 					}())
-					file, _ := f.Save()
-					if file == "" {
+
+					// Prefill the filename
+					tmp := strings.TrimSuffix(filepath.Base(outputFile), ".pcv")
+					f.SetInitFilename(strings.TrimSuffix(tmp, filepath.Ext(tmp)))
+					if mode == "encrypt" && (len(allFiles) > 1 || len(onlyFolders) > 0) {
+						f.SetInitFilename("Encrypted")
+					}
+
+					file, err := f.Save()
+					if file == "" || err != nil {
 						return
 					}
 
+					// Add the correct extensions
 					if mode == "encrypt" {
 						if len(allFiles) > 1 || len(onlyFolders) > 0 {
-							file = strings.TrimSuffix(file, ".zip.pcv")
-							file = strings.TrimSuffix(file, ".pcv")
-							if !strings.HasSuffix(file, ".zip.pcv") {
-								file += ".zip.pcv"
-							}
+							file += ".zip.pcv"
 						} else {
-							file = strings.TrimSuffix(file, ".pcv")
-							ind := strings.Index(inputFile, ".")
-							file += inputFile[ind:]
-							if !strings.HasSuffix(file, ".pcv") {
-								file += ".pcv"
-							}
+							file += filepath.Ext(inputFile) + ".pcv"
 						}
 					} else {
-						ind := strings.Index(file, ".")
-						if ind != -1 {
-							file = file[:ind]
-						}
 						if strings.HasSuffix(inputFile, ".zip.pcv") {
 							file += ".zip"
 						} else {
 							tmp := strings.TrimSuffix(filepath.Base(inputFile), ".pcv")
-							tmp = tmp[strings.Index(tmp, "."):]
-							file += tmp
+							file += filepath.Ext(tmp)
 						}
 					}
-
 					outputFile = file
 				}).Build()
 				giu.Tooltip("Save the output with a custom name and path.").Build()
@@ -514,7 +513,7 @@ func draw() {
 			giu.Dummy(0, 0),
 			giu.Separator(),
 			giu.Dummy(0, 0),
-			giu.Button("Start").Size(giu.Auto, 34).OnClick(func() {
+			giu.Button(startLabel).Size(giu.Auto, 34).OnClick(func() {
 				if keyfile && keyfiles == nil {
 					mainStatus = "Please select your keyfiles."
 					mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
@@ -597,6 +596,7 @@ func onDrop(names []string) {
 			folders++
 			mode = "encrypt"
 			inputLabel = "1 folder selected."
+			startLabel = "Encrypt"
 			onlyFolders = append(onlyFolders, names[0])
 			inputFile = filepath.Join(filepath.Dir(names[0]), "Encrypted") + ".zip"
 			outputFile = inputFile + ".pcv"
@@ -617,7 +617,8 @@ func onDrop(names []string) {
 			// Decide if encrypting or decrypting
 			if strings.HasSuffix(names[0], ".pcv") || isSplit {
 				mode = "decrypt"
-				inputLabel = name + " (will decrypt)"
+				inputLabel = name
+				startLabel = "Decrypt"
 				commentsPrompt = "Comments (read-only):"
 				commentsDisabled = true
 
@@ -722,7 +723,8 @@ func onDrop(names []string) {
 				}
 			} else { // One file that is not a Picocrypt volume was dropped
 				mode = "encrypt"
-				inputLabel = name + " (will encrypt)"
+				inputLabel = name
+				startLabel = "Encrypt"
 				inputFile = names[0]
 				outputFile = names[0] + ".pcv"
 			}
@@ -751,7 +753,7 @@ func onDrop(names []string) {
 		if folders == 0 {
 			inputLabel = fmt.Sprintf("%d files selected.", files)
 		} else if files == 0 {
-			inputLabel = fmt.Sprintf("%d folders selected.", files)
+			inputLabel = fmt.Sprintf("%d folders selected.", folders)
 		} else {
 			if files == 1 && folders > 1 {
 				inputLabel = fmt.Sprintf("1 file and %d folders selected.", folders)
@@ -763,6 +765,7 @@ func onDrop(names []string) {
 				inputLabel = fmt.Sprintf("%d files and %d folders selected.", files, folders)
 			}
 		}
+		startLabel = "Encrypt"
 
 		// Set the input and output paths
 		inputFile = filepath.Join(filepath.Dir(names[0]), "Encrypted") + ".zip"
@@ -1601,6 +1604,7 @@ func resetUI() {
 	onlyFolders = nil
 	allFiles = nil
 	inputLabel = "Drop files and folders into this window."
+	startLabel = "Start"
 	password = ""
 	cpassword = ""
 	keyfiles = nil
