@@ -3,7 +3,7 @@
 	<li>Improve Reed-Solomon performance</li>
 </ul>
 
-# v1.25 (Release 04/13/2022)
+# v1.25 (Released 04/13/2022)
 <ul>
 	<li>✓ Improve Internals documentation (header format, etc.)</li>
 	<li>✓ Save as and keyfile file dialog now opens in the same directory as dropped files</li>
