@@ -4,6 +4,7 @@
 	<li>✓ Improve Internals documentation (header format, etc.)</li>
 	<li>✓ Save as and keyfile file dialog now opens in the same directory as dropped files</li>
 	<li>✓ Improvements for long file names</li>
+	<li>✓ Minor UI improvements and fixes</li>
 </ul>
 
 # v1.24 (Released 04/02/2022)
