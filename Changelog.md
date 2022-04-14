@@ -1,6 +1,10 @@
-# v1.25 (ETA: 5 days)
+# v1.26
 <ul>
 	<li>Improve Reed-Solomon performance</li>
+</ul>
+
+# v1.25 (ETA: 2 days)
+<ul>
 	<li>✓ Improve Internals documentation (header format, etc.)</li>
 	<li>✓ Save as and keyfile file dialog now opens in the same directory as dropped files</li>
 	<li>✓ Improvements for long file names</li>
