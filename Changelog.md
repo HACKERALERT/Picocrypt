@@ -1,6 +1,7 @@
-# v1.26
+# v1.26 (ETA: 3 days)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
+	<li>✓ UI improvements and tweaks</li>
 </ul>
 
 # v1.25 (Released 04/13/2022)
