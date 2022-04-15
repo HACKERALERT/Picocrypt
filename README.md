@@ -111,7 +111,7 @@ Also, a huge thanks to the following list of five people, who were the first to 
 As well, a great thanks to these people, who have helped translate Picocrypt and make it more accessible to the world:
 <ul>
 	<li>@umitseyhan75 for Turkish</li>
-	<li>@digitalblossom for German</li>
+	<li>@digitalblossom & @Pokabu26 for German</li>
 	<li>@zeeaall for Brazilian Portuguese</li>
 	<li>@kurpau for Lithuanian</li>
 	<li>u/francirc for Spanish</li>
