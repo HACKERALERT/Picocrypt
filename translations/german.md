@@ -40,7 +40,8 @@ Warum sollten Sie Picocrypt anstelle von BitLocker, NordLocker, VeraCrypt, AxCry
   </ul>
 
 # Vergleich
-Hier ein kurzer Vergleich von Picocrypt mit anderen gängigen Verschlüsselungsprogrammen.
+
+Hier sehen Sie, wie Picocrypt im Vergleich zu anderen gängigen Verschlüsselungsprogrammen abschneidet.
 
 |                         | Picocrypt      | VeraCrypt         | 7-Zip (GUI)      | NordLocker       | BitLocker        | AxCrypt           |
 | --------------          | -------------- | --------------    | --------------   | --------------   | --------------   | --------------    |
@@ -67,11 +68,11 @@ Picocrypt ist zwar einfach, will aber in den Händen erfahrener und fortgeschrit
 <ul>
   <li><strong>Passwortgenerator</strong>: Picocrypt bietet einen sicheren Passwortgenerator, mit dem Sie kryptografisch sichere Passwörter erstellen können. Sie können die Länge des Passworts sowie die Art der zu verwendenden Zeichen anpassen.</li>
   <li><strong>Kommentare</strong>: Hier können Sie Notizen, Informationen und Text zusammen mit der Datei speichern (Diese werden nicht verschlüsselt). Sie können zum Beispiel eine Beschreibung der zu verschlüsselnden Datei eingeben, bevor Sie sie an jemanden schicken. Wenn die Person, an die Sie die Datei geschickt haben, diese in Picocrypt ablegt, wird Ihre Beschreibung angezeigt.</li>
-  <li><strong>Schlüsseldateien</strong>: Picocrypt unterstützt die Verwendung von Schlüsseldateien als eine zusätzliche Form der Authentifizierung. Sie können nicht nur mehrere Schlüsseldateien verwenden, sondern auch verlangen, dass die richtige Reihenfolge der Schlüsseldateien vorhanden sein muss, damit eine erfolgreiche Entschlüsselung stattfinden kann. Ein besonders guter Anwendungsfall für mehrere Schlüsseldateien ist die Erstellung eines gemeinsamen Datenträgers, bei dem jede Person eine Schlüsseldatei besitzt und alle (und ihre Schlüsseldateien) vorhanden sein müssen, um den gemeinsamen Datenträger zu entschlüsseln.</li>
+  <li><strong>Schlüsseldateien</strong>: Picocrypt unterstützt die Verwendung von Schlüsseldateien als eine zusätzliche Form der Authentifizierung (oder als die einzige Art der Authentifizierung). Sie können nicht nur mehrere Schlüsseldateien verwenden, sondern auch verlangen, dass die richtige Reihenfolge der Schlüsseldateien vorhanden sein muss, damit eine erfolgreiche Entschlüsselung stattfinden kann. Ein besonders guter Anwendungsfall für mehrere Schlüsseldateien ist die Erstellung eines gemeinsamen Datenträgers, bei dem jede Person eine Schlüsseldatei besitzt und alle (und ihre Schlüsseldateien) vorhanden sein müssen, um den gemeinsamen Datenträger zu entschlüsseln.</li>
   <li><strong>Paranoidmodus</strong>: In diesem Modus werden Ihre Daten sowohl mit XChaCha20 als auch mit Serpent kaskadenartig verschlüsselt, und zur Authentifizierung der Daten wird HMAC-SHA3 anstelle von BLAKE2b verwendet. Dies wird für den Schutz streng geheimer Dateien empfohlen und bietet, in der Praxis, die höchste erreichbare Sicherheitsstufe. Damit ein Hacker Ihre verschlüsselten Daten entschlüsseln kann, müssen sowohl die XChaCha20-Chiffre als auch die Serpent-Chiffre geknackt werden, vorausgesetzt, Sie haben ein gutes Passwort gewählt. Man kann mit Sicherheit sagen, dass Ihre Dateien in diesem Modus nicht zu knacken sind.</li>
   <li><strong>Reed-Solomon</strong>: Diese Funktion ist sehr nützlich, wenn Sie vorhaben, wichtige Daten bei einem Cloud-Anbieter oder auf einem externen Medium über einen längeren Zeitraum zu archivieren. Wenn diese Funktion aktiviert ist, verwendet Picocrypt den Reed-Solomon-Fehlerkorrekturcode, um 8 zusätzliche Bytes für jeweils 128 Bytes hinzuzufügen, um eine Beschädigung der Datei zu verhindern. Das bedeutet, dass bis zu ~3 % Ihrer Datei beschädigt sein können und Picocrypt trotzdem in der Lage ist, die Fehler zu korrigieren und Ihre Dateien ohne Beschädigung zu entschlüsseln. Natürlich kann Picocrypt Ihre Dateien nicht vollständig wiederherstellen, wenn sie sehr stark beschädigt sind (z. B. wenn Ihnen die Festplatte heruntergefallen ist), aber es wird sein Bestes tun, um zu retten, was es kann. Beachten Sie, dass diese Option die Ver- und Entschlüsselung erheblich verlangsamt.</li>
   <li><strong>Entschlüsselung erzwingen</strong>: Picocrypt überprüft bei der Entschlüsselung automatisch die Integrität der Datei. Wenn die Datei geändert wurde oder beschädigt ist, löscht Picocrypt die Ausgabe zur Sicherheit des Benutzers automatisch. Wenn Sie die beschädigten oder veränderten Daten nach der Entschlüsselung behalten möchten, aktivieren Sie diese Option. Wenn diese Option aktiviert ist und die Reed-Solomon-Funktion für die verschlüsselte Datei verwendet wurde, versucht Picocrypt außerdem, während der Entschlüsselung so viel wie möglich von der Datei wiederherzustellen.</li>
-  <li><strong>Aufteilung von Dateien in Teile (Chunks)</strong>: Sie haben keine Lust, sich mit riesigen Dateien herumzuschlagen? Kein Grund zur Sorge! Mit Picocrypt können Sie Ihre Ausgabedatei in Stücke benutzerdefinierter Größe aufteilen, so dass große Dateien überschaubarer werden und leichter zu Cloud-Anbietern hochgeladen werden können. Wählen Sie einfach eine Chunkgröße (KiB, MiB oder GiB) und geben Sie die gewünschte Anzahl für diese Einheit ein. Um die Chunks zu entschlüsseln, ziehen Sie einfach einen von ihnen in Picocrypt, und die Chunks werden bei der Entschlüsselung automatisch wieder zusammengefügt.</li>
+  <li><strong>Aufteilung von Dateien in Teile (Chunks)</strong>: Sie haben keine Lust, sich mit riesigen Dateien herumzuschlagen? Kein Grund zur Sorge! Mit Picocrypt können Sie Ihre Ausgabedatei in Stücke benutzerdefinierter Größe aufteilen, so dass große Dateien überschaubarer werden und leichter zu Cloud-Anbietern hochgeladen werden können. Wählen Sie einfach eine Chunkgröße (KiB, MiB, GiB or TiB) und geben Sie die gewünschte Anzahl für diese Einheit ein. Um die Chunks zu entschlüsseln, ziehen Sie einfach einen von ihnen in Picocrypt, und die Chunks werden bei der Entschlüsselung automatisch wieder zusammengefügt.</li>
 </ul>
 
 # Sicherheit
@@ -129,7 +130,7 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
 
 <ul>
 	<li>@umitseyhan75 für Türkisch</li>
-	<li>@digitalblossom für Deutsch</li>
+	<li>@digitalblossom & Pokabu26 für Deutsch</li>
 	<li>@zeeaall für Brasilianisches Portugiesisch</li>
 	<li>@kurpau für Litauisch</li>
 	<li>u/francirc für Spanisch</li>
