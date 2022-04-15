@@ -51,6 +51,25 @@ Perché dovresti usare Picocrypt invece di BitLocker, NordLocker, VeraCrypt, AxC
 
 Non sei ancora convinto? Qui sotto ci sono ulteriori motivi per cui Picocrypt si distingue dalla massa.
 
+# Paragoni
+Ecco Picocrypt paragonato ai software di crittografia più famosi: 
+
+|                | Picocrypt      | VeraCrypt      | 7-Zip (GUI)    | NordLocker     | BitLocker      | AxCrypt        |
+| -------------- | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- |
+| Gratis           |✅ Si         |✅ Si         |✅ Si         |🟧 In parte    |🟧 In parte   |🟧 In parte    |
+| Open Source    |✅ GPLv3       |✅ Multi        |✅ LGPL        |❌ No           |❌ No          |❌ No           |
+| Multi-piattaforma |✅ Si         |✅ Si          |❌ No          |❌ No           |❌ No          |❌ No           |
+| Dimensione          |✅ 2MB         |❌ 20MB         |✅ 2MB         |❌ 60MB         |✅ Inclusa    |🟧 8MB          |
+| Portatile       |✅ Si         |✅ Si          |❌ No          |❌ No           |✅ Si         |✅ Si          |
+| Permessi   |✅ Nessuno        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |❌ Admin        |
+| Semplicità d'uso    |✅ Semplice        |❌ Difficile         |✅ Semplice        |🟧 Media       |🟧 Media      |✅ Semplice         |
+| Derivazione della chiave |✅ Argon2      |🆗 PBKDF2       |❌ SHA256      |✅ Argon2       |❓ Sconosciuta     |🆗 PBKDF2       |
+| Controllo integrità dei dati |✅ Sempre      |❌ No           |❌ No          |✅ Sempre       |❓ Sconosciuta     |✅ Sempre       |
+| Reed-Solomon   |✅ Si         |❌ No           |❌ No          |❌ No           |❌ No          |❌ No           |
+| Compressione    |✅ Si         |❌ No           |✅ Si         |❌ No           |✅ Si         |✅ Si          |
+| Telemetria      |✅ Nessuna       |✅ Nessuna         |✅ Nessuna        |❌ Analytics    |❓ Sconosciuta     |❌ Account     |
+| Revisionato        |🟧 Pianificata     |✅ Si          |❌ No          |❓ Sconosciuta      |❓ Sconosciuta     |❌ No           |
+
 # Funzionalità
 
 Picocrypt è uno strumento molto semplice, ed, in pochi secondi, la maggior parte degli utenti capirà intuitivamente come usarlo. Limitandoci ad un livello molto basico, è sufficiente rilasciare i file, inserire una password e premere Start per crittografare i file. Abbastanza semplice, no?
@@ -63,7 +82,7 @@ Pur essendo semplice, Picocrypt si sforza anche di essere efficace nelle mani di
 
 <li><strong>File metadata</strong>: Usalo per conservare note, informazioni e testo insieme al file (queste note/informazioni non saranno criptate). Per esempio, puoi mettere una descrizione del file che stai criptando prima di inviarlo a qualcuno. Quando la persona a cui l'hai inviato inserisce il file in Picocrypt, potrà vedere la tua descrizione.</li>
 
-<li><strong>File chiave</strong>: Picocrypt supporta l'uso di file chiave come forma aggiuntiva di autenticazione. Non solo è possibile usare più file chiave, ma si può anche fare in modo che il corretto ordine dei file chiave sia richiesto, affinché la decrittazione abbia successo. Un modo d'uso particolarmente conveniente dei file chiave multipli è la creazione di un volume condiviso, dove ogni persona possiede un file chiave, e tutti loro (con i loro file chiave) devono essere presenti per decifrare il volume condiviso.
+<li><strong>File chiave</strong>: Picocrypt supporta l'uso di file chiave come forma aggiuntiva di autenticazione (o come unica forma di autenticazione). Non solo è possibile usare più file chiave, ma si può anche fare in modo che il corretto ordine dei file chiave sia richiesto, affinché la decrittazione abbia successo. Un modo d'uso particolarmente conveniente dei file chiave multipli è la creazione di un volume condiviso, dove ogni persona possiede un file chiave, e tutti loro (con i loro file chiave) devono essere presenti per decifrare il volume condiviso.
 
 </li>
 
@@ -73,7 +92,7 @@ Pur essendo semplice, Picocrypt si sforza anche di essere efficace nelle mani di
 
 <li><strong>Mantieni l'output decriptato anche se è corrotto o modificato</strong>: Picocrypt controlla automaticamente l'integrità al momento della decrittazione. Se il file è stato modificato o è corrotto, Picocrypt cancellerà automaticamente l'output per la sicurezza dell'utente. Se vuoi mantenere i dati corrotti o modificati dopo la decrittazione, allora dovrai selezionare questa opzione. Inoltre, se questa opzione è selezionata e la funzione Reed-Solomon è stata utilizzata sul file crittografato, Picocrypt tenterà di recuperare quanto più possibile del file durante la decrittazione.</li>
 
-<li><strong>Dividi il file in pezzi</strong>: Non avete voglia di avere a che fare con file enormi? Non preoccupatevi! Con Picocrypt, puoi scegliere di dividere il tuo file di output in pezzi di dimensioni personalizzate, così i file di grandi dimensioni possono diventare più gestibili e più facili da caricare sui cloud. Basta scegliere un'unità (KiB, MiB o GiB) e inserire la dimensione desiderata. Per decriptare i pezzi, basta trascinarne uno in Picocrypt, e i pezzi saranno automaticamente ricombinati durante la decriptazione.</li>
+<li><strong>Dividi il file in pezzi</strong>: Non avete voglia di avere a che fare con file enormi? Non preoccupatevi! Con Picocrypt, puoi scegliere di dividere il tuo file di output in pezzi di dimensioni personalizzate, così i file di grandi dimensioni possono diventare più gestibili e più facili da caricare sui cloud. Basta scegliere un'unità (KiB, MiB, GiB o TiB) e inserire la dimensione desiderata. Per decriptare i pezzi, basta trascinarne uno in Picocrypt, e i pezzi saranno automaticamente ricombinati durante la decriptazione.</li>
 
 </ul>
 
@@ -157,7 +176,7 @@ Inoltre, un enorme ringraziamento a queste persone, che hanno aiutato a tradurre
 
 <li>@umitseyhan75 per il Turco</li>
 
-<li>@digitalblossom per il Tedesco</li>
+<li>@digitalblossom e @Pokabu per il Tedesco</li>
 
 <li>@zeeaall per il Portoghese Brasiliano</li>
 
