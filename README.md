@@ -33,7 +33,7 @@ Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCryp
 </ul>
 
 # Comparison
-Here's a brief comparison of Picocrypt to other popular encryption tools.
+Here's how Picocrypt compares to other popular encryption tools.
 
 |                | Picocrypt      | VeraCrypt      | 7-Zip (GUI)    | NordLocker     | BitLocker      | AxCrypt        |
 | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- |
