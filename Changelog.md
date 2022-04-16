@@ -1,6 +1,8 @@
 # v1.26 (ETA: 3 days)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
+	<li>Debug bad pointer when decrypting files >256GB</li>
+	<li>Review Internals.md</li>
 	<li>✓ UI improvements and tweaks</li>
 	<li>✓ Fix crash on Windows when saving to the root directory of a drive</li>
 	<li>✓ Max file size limit removed! Picocrypt can now encrypt files of unlimited size instead of being capped at 256 GiB 🥳</li>
