@@ -7,6 +7,7 @@
 	<li>✓ Fix crash on Windows when saving to the root directory of a drive</li>
 	<li>✓ Max file size limit removed! Picocrypt can now encrypt files of unlimited size instead of being capped at 256 GiB 🥳</li>
 	<li>✓ Shows total input size along with input label</li>
+	<li>✓ Update to GLFW 3.3.6 for better stability</li>
 </ul>
 
 # v1.25 (Released 04/13/2022)
