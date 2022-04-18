@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.25
+Picocrypt v1.26
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -48,7 +48,7 @@ import (
 )
 
 // Generic variables
-var version = "v1.25"
+var version = "v1.26"
 var window *giu.MasterWindow
 var dpi float32
 var mode string
@@ -100,7 +100,7 @@ var reedsolo bool
 var deleteWhenDone bool
 var split bool
 var splitSize string
-var splitUnits = []string{"KiB", "MiB", "GiB"}
+var splitUnits = []string{"KiB", "MiB", "GiB", "TiB"}
 var splitSelected int32 = 1
 var compress bool
 var keep bool
@@ -393,7 +393,7 @@ func draw() {
 							}
 
 							fout, _ := os.Create(file)
-							data := make([]byte, 1048576)
+							data := make([]byte, 1<<20)
 							rand.Read(data)
 							fout.Write(data)
 							fout.Close()
@@ -401,14 +401,16 @@ func draw() {
 						giu.Tooltip("Generate a cryptographically secure keyfile."),
 					),
 					giu.Style().SetDisabled(true).To(
-						giu.Button(keyfilePrompt).Size(giu.Auto, 0),
+						giu.InputText(&keyfilePrompt).Size(giu.Auto),
 					),
 				),
 			),
 		),
 
 		giu.Separator(),
-		giu.Style().SetDisabled(password == "" || (password != cpassword && mode == "encrypt")).To(
+		giu.Style().SetDisabled((len(keyfiles) == 0 && password == "") ||
+			(mode == "encrypt" && password != cpassword)).To(
+
 			giu.Label(commentsPrompt),
 			giu.Style().SetDisabled(commentsDisabled).To(
 				giu.InputText(&comments).Size(giu.Auto),
@@ -465,7 +467,14 @@ func draw() {
 				bw += p * 2
 				dw := w - bw - p
 				giu.Style().SetDisabled(true).To(
-					giu.InputText(&outputFile).Size(dw / dpi / dpi).Flags(16384),
+					giu.InputText(func() *string {
+						tmp := ""
+						if outputFile == "" {
+							return &tmp
+						}
+						tmp = filepath.Base(outputFile)
+						return &tmp
+					}()).Size(dw / dpi / dpi).Flags(16384),
 				).Build()
 
 				giu.SameLine()
@@ -585,6 +594,7 @@ func onDrop(names []string) {
 	onlyFolders = nil
 	allFiles = nil
 	files, folders := 0, 0
+	size := 0
 	resetUI()
 
 	// One item dropped
@@ -732,6 +742,7 @@ func onDrop(names []string) {
 			// Add the file
 			onlyFiles = append(onlyFiles, names[0])
 			inputFile = names[0]
+			size += int(stat.Size())
 		}
 	} else { // There are multiple dropped items
 		mode = "encrypt"
@@ -746,6 +757,7 @@ func onDrop(names []string) {
 				files++
 				onlyFiles = append(onlyFiles, name)
 				allFiles = append(allFiles, name)
+				size += int(stat.Size())
 			}
 		}
 
@@ -778,10 +790,13 @@ func onDrop(names []string) {
 			stat, _ := os.Stat(path)
 			if !stat.IsDir() {
 				allFiles = append(allFiles, path)
+				size += int(stat.Size())
 			}
 			return nil
 		})
 	}
+
+	inputLabel = fmt.Sprintf("%s (%s)", inputLabel, sizeify(int64(size)))
 }
 
 func work() {
@@ -907,7 +922,7 @@ func work() {
 		for i := 0; i < total; i++ {
 			fin, _ := os.Open(fmt.Sprintf("%s.%d", inputFile, i))
 			for {
-				data := make([]byte, 1048576)
+				data := make([]byte, 1<<20)
 				read, err := fin.Read(data)
 				if err != nil {
 					break
@@ -930,16 +945,6 @@ func work() {
 	total := stat.Size()
 	if mode == "decrypt" {
 		total -= 789
-	}
-
-	// XChaCha20's max input is 256 GiB, panic at one block less
-	if total >= int64((math.Pow(2, 32)-1)*64) {
-		mainStatus = "The input data is too big to encrypt."
-		mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
-		if len(allFiles) > 1 || len(onlyFolders) > 0 {
-			os.Remove(inputFile)
-		}
-		return
 	}
 
 	// Open input file in read-only mode
@@ -1008,7 +1013,7 @@ func work() {
 		if reedsolo { // Full Reed-Solomon encoding is selected
 			flags[3] = 1
 		}
-		if total%1048576 >= 1048448 { // Reed-Solomon internals
+		if total%(1<<20) >= 1<<20-128 { // Reed-Solomon internals
 			flags[4] = 1
 		}
 		flags = rsEncode(rs5, flags)
@@ -1110,17 +1115,17 @@ func work() {
 		key = argon2.IDKey(
 			[]byte(password),
 			salt,
-			8,       // 8 passes
-			1048576, // 1 GiB memory
-			8,       // 8 threads
-			32,      // 32-byte output key
+			8,     // 8 passes
+			1<<20, // 1 GiB memory
+			8,     // 8 threads
+			32,    // 32-byte output key
 		)
 	} else { // High Argon2 parameters by default
 		key = argon2.IDKey(
 			[]byte(password),
 			salt,
 			4,
-			1048576,
+			1<<20,
 			4,
 			32,
 		)
@@ -1251,9 +1256,10 @@ func work() {
 	}
 
 	done := 0
+	counterDone := 0
 	counter := 0
 	startTime := time.Now()
-	chacha20, _ := chacha20.NewUnauthenticatedCipher(key, nonce)
+	chacha, _ := chacha20.NewUnauthenticatedCipher(key, nonce)
 
 	// Use HKDF-SHA3 to generate a subkey
 	var mac hash.Hash
@@ -1269,8 +1275,8 @@ func work() {
 	// Generate another subkey and cipher (not used unless paranoid mode is checked)
 	serpentKey := make([]byte, 32)
 	hkdf.Read(serpentKey)
-	srpnt, _ := serpent.NewCipher(serpentKey)
-	serpent := cipher.NewCTR(srpnt, serpentSalt)
+	s, _ := serpent.NewCipher(serpentKey)
+	serpent := cipher.NewCTR(s, serpentSalt)
 
 	for {
 		// If the user cancels the process, stop and clean up
@@ -1292,9 +1298,9 @@ func work() {
 		// Read in data from the file
 		var src []byte
 		if mode == "decrypt" && reedsolo {
-			src = make([]byte, 1114112)
+			src = make([]byte, 1<<20/128*136)
 		} else {
-			src = make([]byte, 1048576)
+			src = make([]byte, 1<<20)
 		}
 		size, err := fin.Read(src)
 		if err != nil {
@@ -1310,16 +1316,16 @@ func work() {
 				copy(src, dst)
 			}
 
-			chacha20.XORKeyStream(dst, src)
+			chacha.XORKeyStream(dst, src)
 			mac.Write(dst)
 
 			if reedsolo {
 				copy(src, dst)
 				dst = nil
 				// If a full MiB is available
-				if len(src) == 1048576 {
+				if len(src) == 1<<20 {
 					// Encode every chunk
-					for i := 0; i < 1048576; i += 128 {
+					for i := 0; i < 1<<20; i += 128 {
 						dst = append(dst, rsEncode(rs128, src[i:i+128])...)
 					}
 				} else {
@@ -1338,9 +1344,9 @@ func work() {
 				copy(dst, src)
 				src = nil
 				// If a complete 1 MiB block is available
-				if len(dst) == 1114112 {
+				if len(dst) == 1<<20/128*136 {
 					// Decode every chunk
-					for i := 0; i < 1114112; i += 136 {
+					for i := 0; i < 1<<20/128*136; i += 136 {
 						tmp, err := rsDecode(rs128, dst[i:i+136])
 						if err != nil {
 							if keep {
@@ -1353,7 +1359,7 @@ func work() {
 								return
 							}
 						}
-						if i == 1113976 && done+1114112 >= int(total) && padded {
+						if i == 1113976 && done+1<<20/128*136 >= int(total) && padded {
 							tmp = unpad(tmp)
 						}
 						src = append(src, tmp...)
@@ -1396,7 +1402,7 @@ func work() {
 			}
 
 			mac.Write(src)
-			chacha20.XORKeyStream(dst, src)
+			chacha.XORKeyStream(dst, src)
 
 			if paranoid {
 				copy(src, dst)
@@ -1407,21 +1413,29 @@ func work() {
 
 		// Update stats
 		if mode == "decrypt" && reedsolo {
-			done += 1114112
+			done += 1 << 20 / 128 * 136
 		} else {
-			done += 1048576
+			done += 1 << 20
 		}
+		counterDone += 1 << 20
 		counter++
 		progress = float32(done) / float32(total)
-		elapsed := float64(time.Since(startTime)) / math.Pow(10, 9)
-		speed := float64(done) / elapsed / math.Pow(10, 6)
-		eta := int(math.Floor(float64(total-int64(done)) / (speed * math.Pow(10, 6))))
-		if progress > 1 { // If the progress bar ever goes out of bounds, cap it at 100%
-			progress = 1
-		}
+		elapsed := float64(time.Since(startTime)) / (1 << 20) / 1000
+		speed := float64(done) / elapsed / (1 << 20)
+		eta := int(math.Floor(float64(total-int64(done)) / (speed * (1 << 20))))
+		progress = float32(math.Min(float64(progress), 1)) // Cap progress to 100%
 		progressInfo = fmt.Sprintf("%.2f%%", progress*100)
-		popupStatus = fmt.Sprintf("Working at %.2f MB/s (ETA: %s)", speed, humanize(eta))
+		popupStatus = fmt.Sprintf("Working at %.2f MiB/s (ETA: %s)", speed, humanize(eta))
 		giu.Update()
+
+		// If more than 256 GiB passed, change the nonce to prevent counter overflow
+		blocks := counterDone/64 + 1
+		if blocks+(1<<20/64) > 1<<32 {
+			nonce = make([]byte, 24)
+			hkdf.Read(nonce)
+			chacha, _ = chacha20.NewUnauthenticatedCipher(key, nonce)
+			counterDone = 0
+		}
 	}
 
 	if mode == "encrypt" {
@@ -1457,13 +1471,15 @@ func work() {
 		finishedRaw := 0
 		chunkSize, _ := strconv.Atoi(splitSize)
 
-		// User can choose KiB, MiB, and GiB
+		// User can choose KiB, MiB, GiB, or TiB
 		if splitSelected == 0 {
-			chunkSize *= 1024
+			chunkSize *= 1 << 10
 		} else if splitSelected == 1 {
-			chunkSize *= 1048576
+			chunkSize *= 1 << 20
+		} else if splitSelected == 2 {
+			chunkSize *= 1 << 30
 		} else {
-			chunkSize *= 1073741824
+			chunkSize *= 1 << 40
 		}
 
 		// Get the number of required chunks
@@ -1478,7 +1494,7 @@ func work() {
 
 			// Copy data into the chunk
 			for {
-				data := make([]byte, 1048576)
+				data := make([]byte, 1<<20)
 				read, err := fin.Read(data)
 				if err != nil {
 					break
@@ -1712,6 +1728,19 @@ func humanize(seconds int) string {
 	minutes = int(math.Max(float64(minutes), 0))
 	seconds = int(math.Max(float64(seconds), 0))
 	return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)
+}
+
+// Convert bytes to KiB, MiB, etc.
+func sizeify(size int64) string {
+	if size >= int64(1<<40) {
+		return fmt.Sprintf("%.2fT", float64(size)/(1<<40))
+	} else if size >= int64(1<<30) {
+		return fmt.Sprintf("%.2fG", float64(size)/(1<<30))
+	} else if size >= int64(1<<20) {
+		return fmt.Sprintf("%.0fM", float64(size)/(1<<20))
+	} else {
+		return fmt.Sprintf("%.0fK", float64(size)/(1<<10))
+	}
 }
 
 func main() {
