@@ -1359,7 +1359,7 @@ func work() {
 								return
 							}
 						}
-						if i == 1113976 && done+1<<20/128*136 >= int(total) && padded {
+						if i == 1113976 && done+1114112 >= int(total) && padded {
 							tmp = unpad(tmp)
 						}
 						src = append(src, tmp...)
@@ -1413,16 +1413,16 @@ func work() {
 
 		// Update stats
 		if mode == "decrypt" && reedsolo {
-			done += 1 << 20 / 128 * 136
+			done += 1<<20/128*136
 		} else {
-			done += 1 << 20
+			done += 1<<20
 		}
-		counterDone += 1 << 20
+		counterDone += 1<<20
 		counter++
 		progress = float32(done) / float32(total)
-		elapsed := float64(time.Since(startTime)) / (1 << 20) / 1000
+		elapsed := float64(time.Since(startTime)) / (1<<20) / 1000
 		speed := float64(done) / elapsed / (1 << 20)
-		eta := int(math.Floor(float64(total-int64(done)) / (speed * (1 << 20))))
+		eta := int(math.Floor(float64(total-int64(done)) / (speed * (1<<20))))
 		progress = float32(math.Min(float64(progress), 1)) // Cap progress to 100%
 		progressInfo = fmt.Sprintf("%.2f%%", progress*100)
 		popupStatus = fmt.Sprintf("Working at %.2f MiB/s (ETA: %s)", speed, humanize(eta))
