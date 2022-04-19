@@ -8,15 +8,17 @@ Picocrypt ist ein sehr kleines (daher <i>Pico</i>), sehr einfaches, aber sehr si
 
 Bitte spenden Sie für Picocrypt auf <a href="https://opencollective.com/picocrypt">Open Collective</a> (Kryptowährungen werden akzeptiert), um Geld für einen mögliche Sicherheitsaudit durch Cure53 zu sammeln. Da dies ein Projekt ist, in das ich viele Stunden investiere und mit dem ich kein Geld verdiene, kann ich einen Sicherheitsaudit nicht selbst bezahlen. <i>Picocrypt braucht die Unterstützung der Community.</i>
 
-# Download
+# Downloads
+
+**Wichtig**: Es gibt ein veraltetes und nutzloses Stück Abandonware namens PicoCrypt im Internet, das zuletzt 2005 aktualisiert wurde. PicoCrypt ist in keiner Weise mit Picocrypt (diesem Projekt) verwandt. Stellen Sie sicher, dass Sie Picocrypt nur von diesem Repository herunterladen, um sicherzustellen, dass Sie das authentische und Backdoor-freie Picocrypt erhalten.
 
 ## Windows
 
-Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.25/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm, damit alle davon profitieren können.
+Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.26/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm, damit alle davon profitieren können.
 
 ## macOS
 
-Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.25/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
+Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.26/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
 
 ## Linux
 
@@ -104,6 +106,7 @@ Wenn Sie Picocrypt nützlich finden, ziehen Sie bitte in Betracht, mir ein Trink
 Ich möchte mich von ganzem Herzen bei den Leuten von Open Collective bedanken, die einen wichtigen Beitrag geleistet haben:
 
 <ul>
+  <li>YellowNight ($818)</li>
 	<li>jp26 ($50)</li>
 	<li>guest-116103ad ($50)</li>
 	<li>Tybbs ($10)</li>
@@ -140,7 +143,7 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
   <li>Michel für Französisch</li>
 </ul>
 
-Schließlich möchte ich mich bei diesen Leuten dafür bedanken, dass sie mir im Bedarfsfall geholfen haben:
+Schließlich möchte ich mich bei diesen Leuten/Organisationen dafür bedanken, dass sie mir im Bedarfsfall geholfen haben:
 
 <ul>
 	<li>Fuderal auf Discord für die Hilfe bei der Einrichtung eines Discord-Servers</li>
@@ -148,4 +151,6 @@ Schließlich möchte ich mich bei diesen Leuten dafür bedanken, dass sie mir im
 	<li>u/Tall_Escape für die Hilfe beim Testen von Picocrypt</li>
 	<li>u/NSABackdoors für die Durchführung zahlreicher Tests</li>
 	<li>@samuel-lucas6 für Feedback, Vorschläge und Unterstützung</li>
+  <li><a href="https://privacytools.io">PrivacyToolsIO</a> für die Aufnahme von Picocrypt</li>
+	<li><a href="https://privacyguides.org">PrivacyGuides</a> für die Aufnahme von Picocrypt</li>
 </ul>
