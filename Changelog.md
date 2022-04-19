@@ -1,7 +1,11 @@
-# v1.26 (ETA: 1 day)
+# v1.27 (ETA Unknown)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Review/improve Internals.md</li>
+</ul>
+
+# v1.26 (Released 04/18/2022)
+<ul>
 	<li>✓ Fix race conditions, running `go run -race Picocrypt.go` now yields no issues</li>
 	<li>✓ Fix invalid pointer crash when decrypting files >256GB</li>
 	<li>✓ UI improvements and tweaks</li>
