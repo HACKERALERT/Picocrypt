@@ -2,6 +2,7 @@
 <ul>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Review/improve Internals.md</li>
+	<li>✓ Fix race conditions, running `go run -race Picocrypt.go` now yields no issues</li>
 	<li>✓ Fix invalid pointer crash when decrypting files >256GB</li>
 	<li>✓ UI improvements and tweaks</li>
 	<li>✓ Fix crash on Windows when saving to the root directory of a drive</li>
