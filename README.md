@@ -9,6 +9,8 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a potential audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
 
 # Downloads
+**Important**: There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt.
+
 ## Windows
 Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.25/Picocrypt.exe">here</a>. If Windows Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
 
@@ -122,11 +124,13 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>Michel for French</li>
 </ul>
 
-Finally, thanks to these people for helping me out when needed:
+Finally, thanks to these people/organizations for helping me out when needed:
 <ul>
 	<li>Fuderal on Discord for helping me setup a Discord server</li>
 	<li>u/greenreddits for constant feedback and support</li>
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
 	<li>u/NSABackdoors for doing plenty of testing</li>
 	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
+	<li><a href="https://privacytools.io">PrivacyToolsIO</a> for listing Picocrypt</li>
+	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
 </ul>
