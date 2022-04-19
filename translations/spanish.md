@@ -38,16 +38,16 @@ Así es como Picocrypt se compara con otras herramientas de cifrado populares.
 	
 |                | Picocrypt        | VeraCrypt       | 7-Zip (GUI)    | NordLocker     | BitLocker        | AxCrypt        |
 | -------------- | ---------------- | --------------- | -------------- | -------------- | ---------------- | -------------- |
-| Free           |✅ Sí             |✅ Sí           |✅ Sí           |🟧 Parcialmente |🟧 Parcialmente   |🟧 Parcialmente|
-| Open Source    |✅ GPLv3          |✅ Multi        |✅ LGPL         |❌ No           |❌ No             |❌ No          |
-| Cross-Platform |✅ Sí             |✅ Sí           |❌ No           |❌ No           |❌ No             |❌ No          |
-| Size           |✅ 2MB            |❌ 20MB         |✅ 2MB          |❌ 60MB         |✅ Incluido       |🟧 8MB         |
+| Libre          |✅ Sí             |✅ Sí           |✅ Sí           |🟧 Parcialmente |🟧 Parcialmente   |🟧 Parcialmente|
+| Código abierto |✅ GPLv3          |✅ Multi        |✅ LGPL         |❌ No           |❌ No             |❌ No          |
+| Multiplataforma|✅ Sí             |✅ Sí           |❌ No           |❌ No           |❌ No             |❌ No          |
+| Tamaño         |✅ 2MB            |❌ 20MB         |✅ 2MB          |❌ 60MB         |✅ Incluido       |🟧 8MB         |
 | Portable       |✅ Sí             |✅ Sí           |❌ No           |❌ No           |✅ Sí             |✅ Sí          |
-| Permissions    |✅ Ninguno        |❌ Admin        |❌ Admin        |❌ Admin        |❌ Admin          |❌ Admin       |
-| Ease-Of-Use    |✅ Fácil          |❌ Hard         |✅ Fácil        |🟧 Medio        |🟧 Medio          |✅ Fácil       |
-| Key Derivation |✅ Argon2         |🆗 PBKDF2       |❌ SHA256       |✅ Argon2       |❓ Desconocido     |🆗 PBKDF2      |
-| Data Integrity |✅ Siempre        |❌ No           |❌ No           |✅ Siempre      |❓ Desconocido     |✅ Siempre     |
+| Permisos       |✅ Ninguno        |❌ Admin        |❌ Admin        |❌ Admin        |❌ Admin          |❌ Admin       |
+| Facilidad de uso|✅ Fácil          |❌ Hard         |✅ Fácil        |🟧 Medio        |🟧 Medio          |✅ Fácil       |
+| Derivac. de clave|✅ Argon2         |🆗 PBKDF2       |❌ SHA256       |✅ Argon2       |❓ Desconocido     |🆗 PBKDF2      |
+| Integridad datos |✅ Siempre        |❌ No           |❌ No           |✅ Siempre      |❓ Desconocido     |✅ Siempre     |
 | Reed-Solomon   |✅ Sí             |❌ No           |❌ No           |❌ No           |❌ No              |❌ No         |
-| Compression    |✅ Sí             |❌ No           |✅ Sí           |❌ No           |✅ Sí             |✅ Sí          |
-| Telemetry      |✅ Ninguna        |✅ Ninguna      |✅ Ninguna      |❌ Analíticas   |❓ Desconocido     |❌ Cuentas     |
-| Audited        |🟧 Plaificado     |✅ Yes          |❌ No           |❓ Desconocido   |❓ Desconocido     |❌ No          |
+| Compresión     |✅ Sí             |❌ No           |✅ Sí           |❌ No           |✅ Sí             |✅ Sí          |
+| Telemetría     |✅ Ninguna        |✅ Ninguna      |✅ Ninguna      |❌ Analíticas   |❓ Desconocido     |❌ Cuentas     |
+| Auditado       |🟧 Plaificado     |✅ Yes          |❌ No           |❓ Desconocido   |❓ Desconocido     |❌ No          |
