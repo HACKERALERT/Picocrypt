@@ -32,3 +32,22 @@ Paranoid Pack es un archivo comprimido que contiene ejecutables para cada versi�
 	<li>Picocrypt autentica los datos además de protegerlos, evitando que los delincuentes informáticos modifiquen datos confidenciales de forma malintencionada. Esto es útil cuando envía archivos cifrados a través de un canal inseguro y quiere asegurarse de que lleguen intactos.</li>
 	<li>Picocrypt protege activamente los datos del cifrados del encabezado contra la corrupción al agregar bytes de paridad Reed-Solomon adicionales, por lo que si parte del encabezado de un volumen (que contiene componentes criptográficos importantes) se corrompe (por ejemplo, se pudre el bit del disco duro), Picocrypt aún puede recuperar el encabezado y descifrar sus datos con una alta tasa de éxito. Picocrypt también puede codificar todo el volumen con Reed-Solomon para evitar que sus archivos importantes se dañen.</li>
 </ul>
+	
+# Comparativa
+Así es como Picocrypt se compara con otras herramientas de cifrado populares.
+	
+|                | Picocrypt        | VeraCrypt       | 7-Zip (GUI)    | NordLocker     | BitLocker        | AxCrypt        |
+| -------------- | ---------------- | --------------- | -------------- | -------------- | ---------------- | -------------- |
+| Free           |✅ Sí             |✅ Sí           |✅ Sí           |🟧 Parcialmente |🟧 Parcialmente   |🟧 Parcialmente|
+| Open Source    |✅ GPLv3          |✅ Multi        |✅ LGPL         |❌ No           |❌ No             |❌ No          |
+| Cross-Platform |✅ Sí             |✅ Sí           |❌ No           |❌ No           |❌ No             |❌ No          |
+| Size           |✅ 2MB            |❌ 20MB         |✅ 2MB          |❌ 60MB         |✅ Incluido       |🟧 8MB         |
+| Portable       |✅ Sí             |✅ Sí           |❌ No           |❌ No           |✅ Sí             |✅ Sí          |
+| Permissions    |✅ Ninguno        |❌ Admin        |❌ Admin        |❌ Admin        |❌ Admin          |❌ Admin       |
+| Ease-Of-Use    |✅ Fácil          |❌ Hard         |✅ Fácil        |🟧 Medio        |🟧 Medio          |✅ Fácil       |
+| Key Derivation |✅ Argon2         |🆗 PBKDF2       |❌ SHA256       |✅ Argon2       |❓ Desconocido     |🆗 PBKDF2      |
+| Data Integrity |✅ Siempre        |❌ No           |❌ No           |✅ Siempre      |❓ Desconocido     |✅ Siempre     |
+| Reed-Solomon   |✅ Sí             |❌ No           |❌ No           |❌ No           |❌ No              |❌ No         |
+| Compression    |✅ Sí             |❌ No           |✅ Sí           |❌ No           |✅ Sí             |✅ Sí          |
+| Telemetry      |✅ Ninguna        |✅ Ninguna      |✅ Ninguna      |❌ Analíticas   |❓ Desconocido     |❌ Cuentas     |
+| Audited        |🟧 Plaificado     |✅ Yes          |❌ No           |❓ Desconocido   |❓ Desconocido     |❌ No          |
