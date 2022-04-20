@@ -67,7 +67,6 @@ Si bien es simple, Picocrypt también se esfuerza por ser poderoso en manos de u
 
 # Seguridad
 Para obtener más información sobre cómo Picocrypt maneja la criptografía, consulte <a href="Internals.md">Internals</a> para más detalles técnicos. Si está preocupado por mi seguridad o por la de este proyecto, permítame asegurarle que este repositorio no será secuestrado ni podrá incluir puertas traseras. Tengo habilitado 2FA (TOTP) en todas las cuentas vinculadas a Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), además de cifrado de disco completo en todos mis dispositivos portátiles. Para un mayor fortalecimiento, Picocrypt usa mis _forks_ aisladas de dependencias y añado los cambios de los proyectos originales solo cuando he echado un vistazo a los cambios y creo que no hay ningún problema de seguridad. Esto significa que si una dependencia es atacada o el autor elimina una dependencia, Picocrypt usará mi _fork_ y no se verá afectado en absoluto. Puede sentirse seguro al usar Picocrypt.
-<ul>
 
 # Comunidad
 Aquí hay algunos lugares donde puede mantenerse al día con Picocrypt y participar:
@@ -123,13 +122,13 @@ También, un gran agradecimiento a estas personas, que han ayudado a traducir Pi
 	<li>Michel para el fracés</li>
 </ul>
 
-Finally, thanks to these people/organizations for helping me out when needed:
+Fianlmente, gracias a estas personas/organizaciones que me ayudaron cuando lo necesité:
 <ul>
-	<li>Fuderal on Discord for helping me setup a Discord server</li>
-	<li>u/greenreddits for constant feedback and support</li>
-	<li>u/Tall_Escape for helping me test Picocrypt</li>
-	<li>u/NSABackdoors for doing plenty of testing</li>
-	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
-	<li><a href="https://privacytools.io">PrivacyToolsIO</a> for listing Picocrypt</li>
-	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
+	<li>Fuderal en Discord por ayudarme a configurar un servidor de Discord</li>
+	<li>u/greenreddits por el apoyo y comentarios constantes</li>
+	<li>u/Tall_Escape por ayudarme a probar Picocrypt</li>
+	<li>u/NSABackdoors por hacer un completo trabajo de pruebas</li>
+	<li>@samuel-lucas6 por los comentarios, sugerencias y apoyo</li>
+	<li><a href="https://privacytools.io">PrivacyToolsIO</a> por incluir en su lista a Picocrypt</li>
+	<li><a href="https://privacyguides.org">PrivacyGuides</a> por incluir en su lista a Picocrypt</li>
 </ul>
