@@ -38,7 +38,7 @@ Así es como Picocrypt se compara con otras herramientas de cifrado populares.
 	
 |                | Picocrypt        | VeraCrypt       | 7-Zip (GUI)    | NordLocker     | BitLocker        | AxCrypt        |
 | -------------- | ---------------- | --------------- | -------------- | -------------- | ---------------- | -------------- |
-| Libre          |✅ Sí             |✅ Sí           |✅ Sí           |🟧 Parcialmente |🟧 Parcialmente   |🟧 Parcialmente|
+| Gratuito       |✅ Sí             |✅ Sí           |✅ Sí           |🟧 Parcialmente |🟧 Parcialmente   |🟧 Parcialmente|
 | Código abierto |✅ GPLv3          |✅ Multi        |✅ LGPL         |❌ No           |❌ No             |❌ No          |
 | Multiplataforma|✅ Sí             |✅ Sí           |❌ No           |❌ No           |❌ No             |❌ No          |
 | Tamaño         |✅ 2MB            |❌ 20MB         |✅ 2MB          |❌ 60MB         |✅ Incluido       |🟧 8MB         |
@@ -51,3 +51,85 @@ Así es como Picocrypt se compara con otras herramientas de cifrado populares.
 | Compresión     |✅ Sí             |❌ No           |✅ Sí           |❌ No           |✅ Sí             |✅ Sí          |
 | Telemetría     |✅ Ninguna        |✅ Ninguna      |✅ Ninguna      |❌ Analíticas   |❓ Desconocido     |❌ Cuentas     |
 | Auditado       |🟧 Plaificado     |✅ Yes          |❌ No           |❓ Desconocido   |❓ Desconocido     |❌ No          |
+	
+# Características
+Picocrypt es una herramienta muy simple, y la mayoría de los usuarios comprenderán intuitivamente cómo usarla en unos segundos. En un nivel básico, simplemente arrastrar y soltar sus archivos, ingresar una contraseña y presionar Iniciar es todo lo que necesita para cifrar sus archivos. Bastante simple, ¿verdad?
+
+Si bien es simple, Picocrypt también se esfuerza por ser poderoso en manos de usuarios expertos y avanzados. Por lo tanto, hay algunas opciones adicionales que puede utilizar para satisfacer sus necesidades.
+	<li><strong>Generador de contraseña</strong>: Picocrypt proporciona un generador de contraseñas seguras que puede usar para crear contraseñas criptográficamente seguras. Puede personalizar la longitud de la contraseña, así como los tipos de caracteres que se incluirán.</li>
+	<li><strong>Comentarios</strong>: Úselo para almacenar notas, información y texto junto con el archivo (no se cifrará). Por ejemplo, puede poner una descripción del archivo que está cifrando antes de enviárselo a alguien. Cuando la persona a la que se lo poga el archivo en Picocrypt, su descripción se mostrará a esa persona.</li>
+	<li><strong>Archivos de claves</strong>: Picocrypt admite el uso de archivos de claves como una forma adicional de autenticación (o la única forma de autenticación). No solo puede usar varios archivos de claves, sino que también puede requerir que esté presente el orden correcto de los archivos de claves para que se produzca un descifrado exitoso. Un caso de uso particularmente bueno de varios archivos de claves es la creación de un volumen compartido, donde cada persona tiene un archivo de claves, y todos ellos (y sus archivos de claves) deben estar presentes para descifrar el volumen compartido.</li>
+	<li><strong>Modo paranóico mode</strong>: El uso de este modo cifrará sus datos con XChaCha20 y Serpent en forma de cascada, y utilizará HMAC-SHA3 para autenticar los datos en lugar de BLAKE2b. Esto se recomienda para proteger archivos de alto secreto y proporciona el nivel más alto de seguridad práctica posible. Para que un delincuente informático pueda descifrar sus datos cifrados, tanto el cifrado XChaCha20 como el cifrado Serpent deben estar rotos, suponiendo que haya elegido una buena contraseña. Es seguro decir que en este modo, sus archivos son imposibles de descifrar.</li>
+	<li><strong>Reed-Solomon</strong>: Esta función es muy útil si planea archivar datos importantes en un proveedor de la nube o en un medio externo durante mucho tiempo. Si está marcado, Picocrypt utilizará el código de corrección de errores Reed-Solomon para agregar 8 bytes adicionales por cada 128 bytes para evitar la corrupción de archivos. Esto significa que hasta ~3% de su archivo puede corromperse y Picocrypt aún podrá corregir los errores y descifrar sus archivos sin corrupción. Por supuesto, si su archivo se corrompe mucho (por ejemplo, se le cayó el disco duro), Picocrypt no podrá recuperar sus archivos por completo, pero hará todo lo posible para recuperar lo que pueda. Tenga en cuenta que esta opción ralentizará considerablemente el cifrado y el descifrado.</li>
+	<li><strong>Forzar descifrado</strong>: Picocrypt verifica automáticamente la integridad del archivo al descifrarlo. Si el archivo se ha modificado o está dañado, Picocrypt eliminará automáticamente la salida para la seguridad del usuario. Si desea anular estas medidas de seguridad, marque esta opción. Además, si esta opción está marcada y se utilizó la función Reed-Solomon en el volumen cifrado, Picocrypt intentará recuperar la mayor cantidad posible del archivo durante el descifrado.</li>
+	<li><strong>Dividir archivos en fragmentos</strong>: ¿No tiene ganas de lidiar con archivos gigantescos? ¡No hay problema! Con Picocrypt, puede optar por dividir su archivo de salida en fragmentos de tamaño personalizado, de modo que los archivos grandes sean más manejables y más fáciles de cargar a los proveedores de la nube. Simplemente elija una unidad (KiB, MiB, GiB o TiB) e ingrese el tamaño de porción deseado para esa unidad. Para descifrar los fragmentos, simplemente arrastre uno de ellos a Picocrypt y los fragmentos se recombinarán automáticamente durante el descifrado.</li>
+</ul>
+
+# Seguridad
+Para obtener más información sobre cómo Picocrypt maneja la criptografía, consulte <a href="Internals.md">Internals</a> para más detalles técnicos. Si está preocupado por mi seguridad o por la de este proyecto, permítame asegurarle que este repositorio no será secuestrado ni podrá incluir puertas traseras. Tengo habilitado 2FA (TOTP) en todas las cuentas vinculadas a Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), además de cifrado de disco completo en todos mis dispositivos portátiles. Para un mayor fortalecimiento, Picocrypt usa mis _forks_ aisladas de dependencias y añado los cambios de los proyectos originales solo cuando he echado un vistazo a los cambios y creo que no hay ningún problema de seguridad. Esto significa que si una dependencia es atacada o el autor elimina una dependencia, Picocrypt usará mi _fork_ y no se verá afectado en absoluto. Puede sentirse seguro al usar Picocrypt.
+<ul>
+
+# Comunidad
+Aquí hay algunos lugares donde puede mantenerse al día con Picocrypt y participar:
+<ul>
+	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
+	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
+</ul>
+
+Le recomiendo que se una al subreddit de Picocrypt porque todas las actualizaciones y encuestas se publicarán allí. Recuerde confiar solo en estas redes sociales y estar atento a los delincuentes informáticos que podrían intentar hacerse pasar por mí. Nunca le pediré su contraseña, y cualquiera que lo haga no soy yo. Nunca le diré que descargue un archivo de un enlace sospechoso, y cualquiera que lo haga no soy yo.
+
+# _Stargazers_
+¿Cómo va Picocrypt? Echa un vistazo a continuación para averiguarlo
+![Stargazers Over Time](https://starchart.cc/HACKERALERT/Picocrypt.svg)
+
+# Donaciones
+Si encuentra útil Picocrypt, por favor considere en darme una propina en mi <a href="https://paypal.me/evanyiwensu">PayPal</a>. Ofrezco este software completamente gratuito y me encantaría tener algunos donante que me motivarán a continuar mi trabajo en Picocrypt.
+	
+# Gracias
+Un agradecimiento desde el fondo de mi corazón a la gente de Open Collective que ha hecho una contribución significativa:
+<ul>
+	<li>YellowNight ($818)</li>
+	<li>jp26 ($50)</li>
+	<li>guest-116103ad ($50)</li>
+	<li>Tybbs ($10)</li>
+	<li>N. Chin ($10)</li>
+	<li>Manjot ($10)</li>
+	<li>Phil P. ($10)</li>
+	<li>donor39 (backer)</li>
+	<li>Pokabu (backer)</li>
+</ul>
+
+¡Ustedes son las personas que me inspiran a trabajar en Picocrypt y ofrecerlo de manera gratuita a todos!
+	
+También, un gran agradecimiento a las siguientes cinco personas que fueron las primeras en donar y apoyar Picocrypt:
+<ul>
+	<li>W.Graham</li>
+	<li>N. Chin</li>
+	<li>Manjot</li>
+	<li>Phil P.</li>
+	<li>E. Zahard</li>
+</ul>
+
+También, un gran agradecimiento a estas personas, que han ayudado a traducir Picocrypt y hacerlo más accesible al mundo:
+<ul>
+	<li>@umitseyhan75 para el turco</li>
+	<li>@digitalblossom y @Pokabu26 para el alemán</li>
+	<li>@zeeaall para el portugués de Brasil</li>
+	<li>@kurpau para el lituano</li>
+	<li>u/francirc para el español</li>
+	<li>yn para el ruso</li>
+	<li>@Etim-Orb para el húngaro</li>
+	<li>@Minibus93 para el italiano</li>
+	<li>Michel para el fracés</li>
+</ul>
+
+Finally, thanks to these people/organizations for helping me out when needed:
+<ul>
+	<li>Fuderal on Discord for helping me setup a Discord server</li>
+	<li>u/greenreddits for constant feedback and support</li>
+	<li>u/Tall_Escape for helping me test Picocrypt</li>
+	<li>u/NSABackdoors for doing plenty of testing</li>
+	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
+	<li><a href="https://privacytools.io">PrivacyToolsIO</a> for listing Picocrypt</li>
+	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
+</ul>
