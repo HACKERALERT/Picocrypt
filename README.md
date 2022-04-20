@@ -122,6 +122,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>@Etim-Orb for Hungarian</li>
 	<li>@Minibus93 for Italian</li>
 	<li>Michel for French</li>
+	<li>@victorhck for Spanish</li>
 </ul>
 
 Finally, thanks to these people/organizations for helping me out when needed:
