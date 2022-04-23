@@ -45,21 +45,21 @@ Warum sollten Sie Picocrypt anstelle von BitLocker, NordLocker, VeraCrypt, AxCry
 
 Hier sehen Sie, wie Picocrypt im Vergleich zu anderen gängigen Verschlüsselungsprogrammen abschneidet.
 
-|                         | Picocrypt      | VeraCrypt         | 7-Zip (GUI)      | NordLocker       | BitLocker        | AxCrypt           |
-| --------------          | -------------- | --------------    | --------------   | --------------   | --------------   | --------------    |
-| Kostenlos               |✅ Ja           |✅ Ja             |✅ Ja             |🟧 Teilweise      |🟧 Teilweise      |🟧 Teilweise      |
-| Open Source             |✅ GPLv3        |✅ Multi          |✅ LGPL           |❌ Nein           |❌ Nein           |❌ Nein           |
-| Plattformübergreifend   |✅ Ja           |✅ Ja             |❌ Nein           |❌ Nein           |❌ Nein           |❌ Nein           |
-| Größe                   |✅ 2MB          |❌ 20MB           |✅ 2MB            |❌ 60MB           |✅ Included       |🟧 8MB            |
-| Portable                |✅ Ja           |✅ Ja             |❌ Nein           |❌ Nein           |✅ Ja             |✅ Ja             |
-| Berechtigungen          |✅ Keine        |❌ Administrator  |❌ Administrator  |❌ Administrator  |❌ Administrator  |❌ Administrator  |
-| Benutzerfreundlichkeit  |✅ Leicht       |❌ Schwer         |✅ Leicht         |🟧 Mittel         |🟧 Mittel         |✅ Leicht         |
-| Schlüssel Ableitung     |✅ Argon2       |🆗 PBKDF2         |❌ SHA256         |✅ Argon2         |❓ Unbekannt       |🆗 PBKDF2         |
-| Datenintegrität         |✅ Always       |❌ Nein           |❌ Nein           |✅ Always         |❓ Unbekannt       |✅ Always         |
-| Reed-Solomon            |✅ Ja           |❌ Nein           |❌ Nein           |❌ Nein           |❌ Nein           |❌ Nein           |
-| Komprimierung           |✅ Ja           |❌ Nein           |✅ Ja             |❌ Nein           |✅ Ja             |✅ Ja             |
-| Telemetrie              |✅ Keine        |✅ Keine          |✅ Keine          |❌ Analytics      |❓ Unbekannt       |❌ Accounts       |
-| Geprüft                 |🟧 Geplant      |✅ Ja             |❌ Nein           |❓ Unbekannt       |❓ Unbekannt       |❌ Nein           |
+|                         | Picocrypt      | VeraCrypt         | 7-Zip (GUI)      | Bitlocker              | Cryptomator        | NordLocker           | AxCrypt
+| --------------          | -------------- | --------------    | --------------   | --------------         | --------------     | --------------    | --------------
+| Kostenlos               |✅ Ja           |✅ Ja             |✅ Ja             |🟧 Teilweise            |✅ Ja              |🟧 Teilweise      |🟧 Teilweise
+| Open Source             |✅ GPLv3        |✅ Multi          |✅ LGPL           |❌ Nein                 |✅ GPLv3           |❌ Nein           |❌ Nein
+| Plattformübergreifend   |✅ Ja           |✅ Ja             |❌ Nein           |❌ Nein                 |✅ Ja             |❌ Nein           |❌ Nein
+| Größe                   |✅ 2MB          |❌ 20MB           |✅ 2MB            |✅ In Windows vorhanden |❌ 50MB           |❌ 60MB            |🟧 8MB
+| Portable                |✅ Ja           |✅ Ja             |❌ Nein           |✅ Ja                   |❌ Nein             |❌ Nein             |✅ Ja
+| Berechtigungen          |✅ Keine        |❌ Administrator  |❌ Administrator  |❌ Administrator        |❌ Administrator  |❌ Administrator  |❌ Administrator
+| Benutzerfreundlichkeit  |✅ Leicht       |❌ Schwer         |✅ Leicht         |🟧 Mittel               |🟧 Mittel         |🟧 Mittel         |✅ Leicht
+| Schlüssel Ableitung     |✅ Argon2       |🆗 PBKDF2         |❌ SHA256         |❓ Unbekannt             |✅ Scrypt       |✅ Argon2        |🆗 PBKDF2
+| Datenintegrität         |✅ Gegeben      |❌ Nein           |❌ Nein           |❓ Unbekannt             |✅ Gegeben       |✅ Gegeben         |✅ Gegeben
+| Reed-Solomon            |✅ Ja           |❌ Nein           |❌ Nein           |❌ Nein                 |❌ Nein           |❌ Nein           |❌ Nein
+| Komprimierung           |✅ Ja           |❌ Nein           |✅ Ja             |✅ Ja                   |❌ Nein             |❌ Nein             |
+| Telemetrie              |✅ Keine        |✅ Keine          |✅ Keine          |❓ Unbekannt             |✅ Keine       |❌ Analytics       |✅ Ja
+| Sicherheitsaudit durchlaufen |🟧 Geplant      |✅ Ja             |❌ Nein           |❓ Unbekannt             |✅ Ja       |❌ Unbekannt           |❌ Nein
 
 # Eigenschaften
 
@@ -141,6 +141,7 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
 	<li>@Etim-Orb für Ungarisch</li>
 	<li>@Minibus93 für Italienisch</li>
   <li>Michel für Französisch</li>
+  <li>@victorhck für Spanisch</li>
 </ul>
 
 Schließlich möchte ich mich bei diesen Leuten/Organisationen dafür bedanken, dass sie mir im Bedarfsfall geholfen haben:
