@@ -37,21 +37,21 @@ Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCryp
 # Comparison
 Here's how Picocrypt compares to other popular encryption tools.
 
-|                | Picocrypt      | VeraCrypt      | 7-Zip (GUI)    | NordLocker     | BitLocker      | AxCrypt        |
-| -------------- | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- |
-| Free           |✅ Yes         |✅ Yes          |✅ Yes         |🟧 Partially    |🟧 Partially   |🟧 Partially    |
-| Open Source    |✅ GPLv3       |✅ Multi        |✅ LGPL        |❌ No           |❌ No          |❌ No           |
-| Cross-Platform |✅ Yes         |✅ Yes          |❌ No          |❌ No           |❌ No          |❌ No           |
-| Size           |✅ 2MB         |❌ 20MB         |✅ 2MB         |❌ 60MB         |✅ Included    |🟧 8MB          |
-| Portable       |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |✅ Yes          |
-| Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |❌ Admin        |
-| Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |🟧 Medium       |🟧 Medium      |✅ Easy         |
-| Key Derivation |✅ Argon2      |🆗 PBKDF2       |❌ SHA256      |✅ Argon2       |❓ Unknown     |🆗 PBKDF2       |
-| Data Integrity |✅ Always      |❌ No           |❌ No          |✅ Always       |❓ Unknown     |✅ Always       |
-| Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |❌ No           |
-| Compression    |✅ Yes         |❌ No           |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |
-| Telemetry      |✅ None        |✅ None         |✅ None        |❌ Analytics    |❓ Unknown     |❌ Accounts     |
-| Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓ Unknown      |❓ Unknown     |❌ No           |
+|                | Picocrypt      | VeraCrypt      | 7-Zip (GUI)    | BitLocker      | Cryptomator    | NordLocker     | AxCrypt        |
+| -------------- | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- |
+| Free           |✅ Yes         |✅ Yes          |✅ Yes         |🟧 Partially    |✅ Yes         |🟧 Partially    |🟧 Partially   |
+| Open Source    |✅ GPLv3       |✅ Multi        |✅ LGPL        |❌ No           |✅ GPLv3       |❌ No           |❌ No          |
+| Cross-Platform |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |❌ No           |❌ No          |
+| Size           |✅ 2MB         |❌ 20MB         |✅ 2MB         |✅ Included     |❌ 50MB        |❌ 60MB         |🟧 8MB         |
+| Portable       |✅ Yes         |✅ Yes          |❌ No          |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
+| Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |
+| Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |🟧 Medium       |🟧 Medium      |🟧 Medium       |✅ Easy        |
+| Key Derivation |✅ Argon2      |🆗 PBKDF2       |❌ SHA256      |❓ Unknown      |✅ Scrypt      |✅ Argon2       |🆗 PBKDF2      |
+| Data Integrity |✅ Always      |❌ No           |❌ No          |❓ Unknown      |✅ Always      |✅ Always       |✅ Always      |
+| Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |❌ No           |❌ No          |
+| Compression    |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
+| Telemetry      |✅ None        |✅ None         |✅ None        |❓ Unknown      |✅ None        |❌ Analytics    |❌ Accounts    |
+| Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓ Unknown      |✅ Yes         |❓ Unknown      |❌ No          |
 
 # Features
 Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a basic level, simply dropping your files, entering a password, and hitting Start is all that's needed to encrypt your files. Pretty simple, right?
