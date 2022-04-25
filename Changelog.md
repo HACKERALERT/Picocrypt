@@ -2,6 +2,8 @@
 <ul>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Review/improve Internals.md</li>
+	<li>✓ Input validation for split size</li>
+	<li>✓ Ability to split into a custom number of total chunks in addition to by size</li>
 </ul>
 
 # v1.26 (Released 04/18/2022)
