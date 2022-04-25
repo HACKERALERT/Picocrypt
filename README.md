@@ -46,6 +46,7 @@ Here's how Picocrypt compares to other popular encryption tools.
 | Portable       |✅ Yes         |✅ Yes          |❌ No          |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
 | Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |
 | Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |🟧 Medium       |🟧 Medium      |🟧 Medium       |✅ Easy        |
+| Cipher         |✅ XChaCha20   |✅ AES-256      |✅ AES-256     |🟧 AES-128      |✅ AES-256     |✅ AES-256      |🟧 AES-128     |
 | Key Derivation |✅ Argon2      |🆗 PBKDF2       |❌ SHA256      |❓ Unknown      |✅ Scrypt      |✅ Argon2       |🆗 PBKDF2      |
 | Data Integrity |✅ Always      |❌ No           |❌ No          |❓ Unknown      |✅ Always      |✅ Always       |✅ Always      |
 | Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |❌ No           |❌ No          |
