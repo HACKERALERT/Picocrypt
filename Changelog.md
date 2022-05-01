@@ -5,7 +5,7 @@
 	<li>✓ Input validation for split size</li>
 	<li>✓ Ability to split into a custom number of total chunks in addition to by size</li>
 	<li>✓ Fix issue with long comments</li>
-	<li>Deprecate Snapcraft and provide a .deb instead (possible along with an AppImage)</li>
+	<li>✓ Deprecate Snapcraft and provide a .deb instead (possibly along with an AppImage)</li>
 </ul>
 
 # v1.26 (Released 04/18/2022)
