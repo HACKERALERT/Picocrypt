@@ -100,7 +100,7 @@ var reedsolo bool
 var deleteWhenDone bool
 var split bool
 var splitSize string
-var splitUnits = []string{"KiB", "MiB", "GiB", "TiB"}
+var splitUnits = []string{"KiB", "MiB", "GiB", "TiB", "Total"}
 var splitSelected int32 = 1
 var compress bool
 var keep bool
@@ -408,14 +408,20 @@ func draw() {
 		),
 
 		giu.Separator(),
+		giu.Style().SetDisabled((mode == "decrypt" && comments == "") ||
+			(mode != "decrypt" && ((len(keyfiles) == 0 && password == "") || (password != cpassword)))).To(
+			giu.Style().SetDisabled(mode == "decrypt" && comments == "").To(
+				giu.Label(commentsPrompt),
+				giu.InputText(&comments).Size(giu.Auto).Flags(func() giu.InputTextFlags {
+					if commentsDisabled {
+						return giu.InputTextFlagsReadOnly
+					}
+					return giu.InputTextFlagsNone
+				}()),
+			),
+		),
 		giu.Style().SetDisabled((len(keyfiles) == 0 && password == "") ||
 			(mode == "encrypt" && password != cpassword)).To(
-
-			giu.Label(commentsPrompt),
-			giu.Style().SetDisabled(commentsDisabled).To(
-				giu.InputText(&comments).Size(giu.Auto),
-			),
-
 			giu.Label("Advanced:"),
 			giu.Custom(func() {
 				if mode != "decrypt" {
@@ -528,7 +534,13 @@ func draw() {
 					mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
 					return
 				}
-				_, err := os.Stat(outputFile)
+				tmp, err := strconv.Atoi(splitSize)
+				if split && (splitSize == "" || tmp <= 0 || err != nil) {
+					mainStatus = "Invalid split size."
+					mainStatusColor = color.RGBA{0xff, 0x00, 0x00, 0xff}
+					return
+				}
+				_, err = os.Stat(outputFile)
 				if err == nil {
 					modalId++
 					showConfirmation = true
@@ -1413,16 +1425,16 @@ func work() {
 
 		// Update stats
 		if mode == "decrypt" && reedsolo {
-			done += 1<<20/128*136
+			done += 1 << 20 / 128 * 136
 		} else {
-			done += 1<<20
+			done += 1 << 20
 		}
-		counterDone += 1<<20
+		counterDone += 1 << 20
 		counter++
 		progress = float32(done) / float32(total)
-		elapsed := float64(time.Since(startTime)) / (1<<20) / 1000
+		elapsed := float64(time.Since(startTime)) / (1 << 20) / 1000
 		speed := float64(done) / elapsed / (1 << 20)
-		eta := int(math.Floor(float64(total-int64(done)) / (speed * (1<<20))))
+		eta := int(math.Floor(float64(total-int64(done)) / (speed * (1 << 20))))
 		progress = float32(math.Min(float64(progress), 1)) // Cap progress to 100%
 		progressInfo = fmt.Sprintf("%.2f%%", progress*100)
 		popupStatus = fmt.Sprintf("Working at %.2f MiB/s (ETA: %s)", speed, humanize(eta))
@@ -1471,15 +1483,17 @@ func work() {
 		finishedRaw := 0
 		chunkSize, _ := strconv.Atoi(splitSize)
 
-		// User can choose KiB, MiB, GiB, or TiB
+		// User can choose KiB, MiB, GiB, TiB, or custom number of chunks
 		if splitSelected == 0 {
 			chunkSize *= 1 << 10
 		} else if splitSelected == 1 {
 			chunkSize *= 1 << 20
 		} else if splitSelected == 2 {
 			chunkSize *= 1 << 30
-		} else {
+		} else if splitSelected == 3 {
 			chunkSize *= 1 << 40
+		} else {
+			chunkSize = int(math.Ceil(float64(size) / float64(chunkSize)))
 		}
 
 		// Get the number of required chunks
@@ -1495,6 +1509,10 @@ func work() {
 			// Copy data into the chunk
 			for {
 				data := make([]byte, 1<<20)
+				for done+len(data) > chunkSize {
+					data = make([]byte, int(math.Ceil(float64(len(data))/2)))
+				}
+
 				read, err := fin.Read(data)
 				if err != nil {
 					break
