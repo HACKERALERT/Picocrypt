@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.27
+Picocrypt v1.28
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -48,7 +48,7 @@ import (
 )
 
 // Generic variables
-var version = "v1.27"
+var version = "v1.28"
 var window *giu.MasterWindow
 var dpi float32
 var mode string
