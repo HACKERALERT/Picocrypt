@@ -129,6 +129,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 
 Finally, thanks to these people/organizations for helping me out when needed:
 <ul>
+	<li>[ REDACTED ] for helping me create an AppImage for Picocrypt</li>
 	<li>Fuderal on Discord for helping me setup a Discord server</li>
 	<li>u/greenreddits for constant feedback and support</li>
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
