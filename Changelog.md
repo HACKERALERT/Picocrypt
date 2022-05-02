@@ -1,11 +1,15 @@
-# v1.27 (ETA Unknown)
+# v1.28 (ETA unknown)
 <ul>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Review/improve Internals.md</li>
+</ul>
+
+# v1.27 (Released 05/02/2022)
+<ul>
 	<li>✓ Input validation for split size</li>
 	<li>✓ Ability to split into a custom number of total chunks in addition to by size</li>
 	<li>✓ Fix issue with long comments</li>
-	<li>✓ Deprecate Snapcraft and provide a .deb instead (possibly along with an AppImage)</li>
+	<li>✓ Deprecate Snapcraft and provide a .deb and AppImage instead</li>
 </ul>
 
 # v1.26 (Released 04/18/2022)
