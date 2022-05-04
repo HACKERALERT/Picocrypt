@@ -14,15 +14,15 @@ Bitte spenden Sie für Picocrypt auf <a href="https://opencollective.com/picocry
 
 ## Windows
 
-Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.26/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm, damit alle davon profitieren können.
+Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.27/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm, damit alle davon profitieren können.
 
 ## macOS
 
-Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.26/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
+Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.27/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
 
 ## Linux
 
-Ein Snap ist für Linux verfügbar. Wenn Sie mit einem Debian-basierten System arbeiten, genügt ein einfaches `apt install snapd` und `snap install picocrypt`. Für andere Distributionen wie Fedora sind detaillierte Anweisungen unter https://snapcraft.io/picocrypt verfügbar. Aufgrund der Komplexität der Abhängigkeiten und des statischen Linkings verteile ich keine eigenständigen .deb- oder .rpm-Binärdateien, da diese unzuverlässig wären und den Aufwand nicht wert wären. Snapcraft verwaltet alle Abhängigkeiten und Laufzeiten automatisch und ist der empfohlene Weg, um Picocrypt auf jeder größeren Linux-Distribution auszuführen. Außerdem bietet Snapcraft eine bessere Sicherheit und Containerisierung als Flatpaks und AppImages, was für ein Verschlüsselungstool wie Picocrypt wichtig ist. Wenn Sie es vorziehen, sich nicht mit Canonical zu befassen, denken Sie daran, dass das Kompilieren aus dem Quellcode immer eine Option ist.
+Es gibt mehrer Wege, wie Sie Picocrypt unter Linux verwenden können. Die empfohlene Art ist es, Picocrypt als <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.27/Picocrypt.deb">.deb-Paket</a> (Debain 11+ und Ubuntu 20+) zu installieren. Falls .deb nicht ihren Bedürfnissen entspricht oder Sie eine nicht Debain-basierte Distro verwenden, steht auch ein <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.27/Picocrypt.AppImage">AppImage</a> zur Verfügung. Falls keine dieser Optionen funktioniert, können Sie Picocrypt auch über <a href="https://snapcraft.io/picocrypt">Snapcraft</a> installieren.
 
 ## Paranoid Packs
 
@@ -45,21 +45,22 @@ Warum sollten Sie Picocrypt anstelle von BitLocker, NordLocker, VeraCrypt, AxCry
 
 Hier sehen Sie, wie Picocrypt im Vergleich zu anderen gängigen Verschlüsselungsprogrammen abschneidet.
 
-|                         | Picocrypt      | VeraCrypt         | 7-Zip (GUI)      | Bitlocker              | Cryptomator        | NordLocker           | AxCrypt
-| --------------          | -------------- | --------------    | --------------   | --------------         | --------------     | --------------    | --------------
-| Kostenlos               |✅ Ja           |✅ Ja             |✅ Ja             |🟧 Teilweise            |✅ Ja              |🟧 Teilweise      |🟧 Teilweise
-| Open Source             |✅ GPLv3        |✅ Multi          |✅ LGPL           |❌ Nein                 |✅ GPLv3           |❌ Nein           |❌ Nein
-| Plattformübergreifend   |✅ Ja           |✅ Ja             |❌ Nein           |❌ Nein                 |✅ Ja             |❌ Nein           |❌ Nein
-| Größe                   |✅ 2MB          |❌ 20MB           |✅ 2MB            |✅ In Windows vorhanden |❌ 50MB           |❌ 60MB            |🟧 8MB
-| Portable                |✅ Ja           |✅ Ja             |❌ Nein           |✅ Ja                   |❌ Nein             |❌ Nein             |✅ Ja
-| Berechtigungen          |✅ Keine        |❌ Administrator  |❌ Administrator  |❌ Administrator        |❌ Administrator  |❌ Administrator  |❌ Administrator
-| Benutzerfreundlichkeit  |✅ Leicht       |❌ Schwer         |✅ Leicht         |🟧 Mittel               |🟧 Mittel         |🟧 Mittel         |✅ Leicht
-| Schlüssel Ableitung     |✅ Argon2       |🆗 PBKDF2         |❌ SHA256         |❓ Unbekannt             |✅ Scrypt       |✅ Argon2        |🆗 PBKDF2
-| Datenintegrität         |✅ Gegeben      |❌ Nein           |❌ Nein           |❓ Unbekannt             |✅ Gegeben       |✅ Gegeben         |✅ Gegeben
-| Reed-Solomon            |✅ Ja           |❌ Nein           |❌ Nein           |❌ Nein                 |❌ Nein           |❌ Nein           |❌ Nein
-| Komprimierung           |✅ Ja           |❌ Nein           |✅ Ja             |✅ Ja                   |❌ Nein             |❌ Nein             |
-| Telemetrie              |✅ Keine        |✅ Keine          |✅ Keine          |❓ Unbekannt             |✅ Keine       |❌ Analytics       |✅ Ja
-| Sicherheitsaudit durchlaufen |🟧 Geplant      |✅ Ja             |❌ Nein           |❓ Unbekannt             |✅ Ja       |❌ Unbekannt           |❌ Nein
+|                               | Picocrypt      | VeraCrypt         | 7-Zip (GUI)      | Bitlocker              | Cryptomator       | NordLocker         | AxCrypt
+| --------------                | -------------- | --------------    | --------------   | --------------         | --------------    | --------------     | --------------
+| Kostenlos                     |✅ Ja           |✅ Ja             |✅ Ja             |🟧 Teilweise            |✅ Ja             |🟧 Teilweise        |🟧 Teilweise
+| Open Source                   |✅ GPLv3        |✅ Multi          |✅ LGPL           |❌ Nein                 |✅ GPLv3          |❌ Nein             |❌ Nein
+| Plattformübergreifend         |✅ Ja           |✅ Ja             |❌ Nein           |❌ Nein                 |✅ Ja             |❌ Nein             |❌ Nein
+| Größe                         |✅ 2MB          |❌ 20MB           |✅ 2MB            |✅ In Windows vorhanden |❌ 50MB           |❌ 60MB             |🟧 8MB
+| Portable                      |✅ Ja           |✅ Ja             |❌ Nein           |✅ Ja                   |❌ Nein           |❌ Nein             |✅ Ja
+| Berechtigungen                |✅ Keine        |❌ Administrator  |❌ Administrator  |❌ Administrator        |❌ Administrator  |❌ Administrator    |❌ Administrator
+| Benutzerfreundlichkeit        |✅ Leicht       |❌ Schwer         |✅ Leicht         |🟧 Mittel               |🟧 Mittel         |🟧 Mittel           |✅ Leicht
+| Verschlüsselung               |✅ XChaCha20    |✅ AES-256        |✅ AES-256        |🟧 AES-128              |✅ AES-256        |✅ AES-256          |🟧 AES-128
+| Schlüssel Ableitung           |✅ Argon2       |🆗 PBKDF2         |❌ SHA256         |❓ Unbekannt             |✅ Scrypt         |✅ Argon2           |🆗 PBKDF2
+| Datenintegrität               |✅ Gegeben      |❌ Nein           |❌ Nein           |❓ Unbekannt             |✅ Gegeben        |✅ Gegeben          |✅ Gegeben
+| Reed-Solomon                  |✅ Ja           |❌ Nein           |❌ Nein           |❌ Nein                 |❌ Nein           |❌ Nein             |❌ Nein
+| Komprimierung                 |✅ Ja           |❌ Nein           |✅ Ja             |✅ Ja                   |❌ Nein           |❌ Nein             |✅ Ja
+| Telemetrie                    |✅ Keine        |✅ Keine          |✅ Keine          |❓ Unbekannt             |✅ Keine          |❌ Analytics        |❌ Accounts
+| Sicherheitsaudit durchlaufen  |🟧 Geplant      |✅ Ja             |❌ Nein           |❓ Unbekannt             |✅ Ja             |❓ Unbekannt        |❌ Nein
 
 # Eigenschaften
 
@@ -107,6 +108,7 @@ Ich möchte mich von ganzem Herzen bei den Leuten von Open Collective bedanken, 
 
 <ul>
   <li>YellowNight ($818)</li>
+  <li>evelian ($50)</li>
 	<li>jp26 ($50)</li>
 	<li>guest-116103ad ($50)</li>
 	<li>Tybbs ($10)</li>
@@ -147,6 +149,7 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
 Schließlich möchte ich mich bei diesen Leuten/Organisationen dafür bedanken, dass sie mir im Bedarfsfall geholfen haben:
 
 <ul>
+  <li>[ REDACTED ] für die Hilfe beim Erstellen eines AppImage für Picocrypt</li>
 	<li>Fuderal auf Discord für die Hilfe bei der Einrichtung eines Discord-Servers</li>
 	<li>u/greenreddits für ständiges Feedback und Unterstützung</li>
 	<li>u/Tall_Escape für die Hilfe beim Testen von Picocrypt</li>
