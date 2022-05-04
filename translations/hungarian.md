@@ -1,6 +1,6 @@
 <p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p> 
 
-A Picocrypt egy nagyon apró (<i>Pico</i>), nagyon egyszerű, de mégis nagyon biztonságos adattitkosító eszköz amit használhatsz a fájljaid megvédésére, checksum generálásra, és sok minden másra is. Egy <i>go-to</i> adattitkosító eszköznek lett kialakítva, ahol a fókusz a biztonságon, egyszerűségen, és megbízhatóságon van. Picocrypt a biztonságos XChaCha20 ciphert és az Argon2 kulcs deriváció funkciót használja, hogy magas szintű biztonságot nyújtson, még három betűs ügynökségek ellen is, mint az NSA. A maximális biztonságra lett tervezve, így nem köt semmilyen kompromisszumot ilyen téren, valamint a Go standard x/crypto moduljaival lett kiépítve. <strong>A magánéleted és az adatbiztonságod támadás alatt áll. Védd a fájljaidat Picocrypttel és szerezd vissza ezeket magabiztossággal.</strong>
+A Picocrypt egy nagyon apró (tehát <i>Pico</i>), nagyon egyszerű, de mégis nagyon biztonságos adattitkosító eszköz amit használhatsz a fájljaid megvédésére, checksum generálásra, és sok minden másra is. Egy <i>go-to</i> adattitkosító eszköznek lett kialakítva, ahol a fókusz a biztonságon, egyszerűségen, és megbízhatóságon van. Picocrypt a biztonságos XChaCha20 ciphert és az Argon2 kulcs deriváció funkciót használja, hogy magas szintű biztonságot nyújtson, még három betűs ügynökségek ellen is, mint az NSA. A maximális biztonságra lett tervezve, így nem köt semmilyen kompromisszumot ilyen téren, valamint a Go standard x/crypto moduljaival lett kiépítve. <strong>A magánéleted és az adatbiztonságod támadás alatt áll. Védd a fájljaidat Picocrypttel és szerezd vissza ezeket magabiztossággal.</strong>
 
 <p align="center"><img align="center" src="/images/screenshot.png" width="384" alt="Picocrypt"></p>
 
@@ -18,6 +18,9 @@ Picocrypt a macOS-en szintén egyszerű. Töltsd le a Picocrypt-et <a href="http
 
 ## Linux
 Linuxhoz egy Snap elérhető. Feltételezve, hogy egy Debian alapú rendszeren vagy, egy egyszerű `apt install snapd` és `snap install picocrypt` elég lesz. Más disztrókhoz, mint a Fedora, részletes utasítások elérhetőek a https://snapcraft.io/picocrypt linken. A dependency-k komplexitása és statikus linkelés miatt, én nem készítek .deb és .rpb binary-kat, mivel megbízhatatlanok lennének és nem éri meg a kavarodást. A Snapcraft autómatikusan kezel minden dependency-t valamint futtatót és ez az ajánlott módja a Picocrypt futtatásának bármely fő Linux disztribúción. Ezen felül, a Snapcraft jobb biztonságot és kompartmentalizációt nyújt, mint a Flatpak-ek és AppImage-ek, ami fontos egy titkosító eszköznél mint a Picocrypt. Ha nem szeretnél a Canonical-lal foglalkozni, emlékeztetlek, hogy a forrásból buildelés mindig lehetséges.
+
+## Paranoid csomagok
+A paranoid csomag egy tömörített archívum ami futtatóprogramokat tartalmaz az összes Picocrypt verzióhoz valaha, Windowshoz, macOS-hez, és Linuxhoz. Ameddig As long as you have it stored in a place you can access, you'll be able to open it and use any version of Picocrypt in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt. As long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in cases of catastrophic events like GitHub shutting down suddenly or the NSA capturing me (just in case, you know?). The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. So if you are worried about being unable to access Picocrypt in the future, well, here's your solution.
 
 # Miért a Picocrypt?
 Miért használd a Picocryptet a BitLocker, NordLocker, VeraCrypt, AxCrypt, vagy 7-Zip helyett? Itt van pár ok, hogy miért válaszd a Picocryptet:
@@ -75,6 +78,7 @@ Egy köszönet a szívem mélyéről azoknak akik jelentős hozzájárulásukat 
 	<li>N. Chin ($10)</li>
 	<li>Manjot ($10)</li>
 	<li>Phil P. ($10)</li>
+	<li>donor39 (backer)</li>
 </ul>
 Ti vagytok azok, akik továbbra is inspirálnak arra, hogy dolgozzak a Picocrypten és miattatok tudom továbbra is ingyenesesen nyújtani azt mindenkinek!
 
@@ -87,7 +91,7 @@ Szintén nagy köszönet a következő 5 embernek akik az első adományozói é
 	<li>E. Zahard</li>
 </ul>
 
-Úgyszintén nagy köszönet ezeknek az embereknek akik segítettek a Picocrypt lefordításában és elérhetőbbé tették azt a világ számára:
+Úgyszintén nagy köszönet ezeknek az embereknek akik segítettek a Picocrypt lefordításában és jobban hozzáférhetőbbé tették azt a világ számára:
 <ul>
 	<li>@umitseyhan75 Török</li>
 	<li>@digitalblossom Német</li>
@@ -96,6 +100,7 @@ Szintén nagy köszönet a következő 5 embernek akik az első adományozói é
 	<li>u/francirc Spanyol</li>
 	<li>yn Orosz</li>
 	<li>@Etim-Orb Magyar</li>
+	<li>@Minibus93 Olasz</li>
 </ul>
 
 Végül köszönet ezeknek az embereknek amiért segítettek amikor szükségem volt rá:
