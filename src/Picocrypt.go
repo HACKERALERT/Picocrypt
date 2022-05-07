@@ -161,13 +161,15 @@ func draw() {
 							giu.CloseCurrentPopup()
 							showPassgen = false
 						}),
-						giu.Button("Generate").Size(100, 0).OnClick(func() {
-							password = genPassword()
-							cpassword = password
-							passwordStrength = zxcvbn.PasswordStrength(password, nil).Score
-							giu.CloseCurrentPopup()
-							showPassgen = false
-						}),
+						giu.Style().SetDisabled(!(passgenUpper || passgenLower || passgenNums || passgenSymbols)).To(
+							giu.Button("Generate").Size(100, 0).OnClick(func() {
+								password = genPassword()
+								cpassword = password
+								passwordStrength = zxcvbn.PasswordStrength(password, nil).Score
+								giu.CloseCurrentPopup()
+								showPassgen = false
+							}),
+						),
 					),
 				).Build()
 				giu.OpenPopup("Generate password:##" + strconv.Itoa(modalId))
@@ -1639,6 +1641,12 @@ func resetUI() {
 	allFiles = nil
 	inputLabel = "Drop files and folders into this window."
 	startLabel = "Start"
+	passgenCopy = true
+	passgenLength = 32
+	passgenUpper = true
+	passgenLower = true
+	passgenNums = true
+	passgenSymbols = true
 	password = ""
 	cpassword = ""
 	keyfiles = nil
