@@ -3,6 +3,7 @@
 	<li>Improve Reed-Solomon performance</li>
 	<li>Review/improve Internals.md</li>
 	<li>✓ Fix bug on Windows where copying from the password field using Ctrl+C and then pasting with the "Paste" button would cause a crash</li>
+	<li>✓ Make sure at least one password characters category is checked when generating</li>
 </ul>
 
 # v1.27 (Released 05/02/2022)
