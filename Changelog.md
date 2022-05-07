@@ -2,8 +2,12 @@
 <ul>
 	<li>Improve Reed-Solomon performance</li>
 	<li>Review/improve Internals.md</li>
+	<li>✓ Fix bad pointer issue when running with `-race`</li>
 	<li>✓ Fix bug on Windows where copying from the password field using Ctrl+C and then pasting with the "Paste" button would cause a crash</li>
 	<li>✓ Make sure at least one password characters category is checked when generating</li>
+	<li>✓ Use `desktop-file-validate` to find and remove deprecated fields and fix invalid ones in the .desktop for .deb and AppImage</li>
+	<li>✓ .deb and AppImage optimizations</li>
+	<li>✓ Snapcraft uses software OpenGL rendering as well now, I statically linked libc6 et al for best cross-platform compatibility, also added NO_AT_BRIDGE=1 to fix an issue on Arch Linux (<a href="https://github.com/HACKERALERT/Picocrypt/issues/75">#75</a>)</li>
 </ul>
 
 # v1.27 (Released 05/02/2022)
@@ -16,7 +20,7 @@
 
 # v1.26 (Released 04/18/2022)
 <ul>
-	<li>✓ Fix race conditions, running `go run -race Picocrypt.go` now yields no issues</li>
+	<li>✓ <strike>Fix race conditions, running `go run -race Picocrypt.go` now yields no issues</strike></li>
 	<li>✓ Fix invalid pointer crash when decrypting files >256GB</li>
 	<li>✓ UI improvements and tweaks</li>
 	<li>✓ Fix crash on Windows when saving to the root directory of a drive</li>
