@@ -3,6 +3,7 @@
 	<li>Improve Reed-Solomon performance</li>
 	<li>Review/improve Internals.md</li>
 	<li>✓ Fix bad pointer issue when running with `-race`</li>
+	<li>✓ Fix focus bug where input boxes are not cleared if they are focused when file is dropped</li>
 	<li>✓ Fix bug on Windows where copying from the password field using Ctrl+C and then pasting with the "Paste" button would cause a crash</li>
 	<li>✓ Make sure at least one password characters category is checked when generating</li>
 	<li>✓ Use `desktop-file-validate` to find and remove deprecated fields and fix invalid ones in the .desktop for .deb and AppImage</li>
