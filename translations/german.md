@@ -1,20 +1,20 @@
 <p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p>
 
-Picocrypt ist ein sehr kleines (daher <i>Pico</i>), sehr einfaches, aber sehr sicheres Verschlüsselungsprogramm, mit dem Sie Ihre Dateien schützen können. Es wurde entwickelt, um die erste Wahl für die Verschlüsselung zu sein, mit einem Schwerpunkt auf Sicherheit, Einfachheit und Zuverlässigkeit. Picocrypt verwendet die sichere XChaCha20-Chiffre und die Argon2id-Schlüsselableitungsfunktion, um ein hohes Maß an Sicherheit zu bieten, selbst vor Agenturen mit drei Buchstaben wie der NSA. Picocrypt ist auf maximale Sicherheit ausgelegt, ohne Kompromisse bei der Sicherheit einzugehen, und wird mit den Standard x/crypto-Modulen von Go gebaut. <strong>Ihre Privatsphäre und Sicherheit werden angegriffen. Holen Sie sich mit Zuversicht zurück, indem Sie Ihre Dateien mit Picocrypt schützen.</strong>
+Picocrypt ist ein sehr kleines (daher <i>Pico</i>), sehr einfaches, aber sehr sicheres Verschlüsselungsprogramm, mit dem Sie Ihre Dateien schützen können. Es wurde entwickelt, um die erste Wahl für Dateiverschlüsselung zu sein, mit einem Schwerpunkt auf Sicherheit, Einfachheit und Zuverlässigkeit. Picocrypt verwendet die sichere XChaCha20-Chiffre und die Argon2id-Schlüsselableitungsfunktion, um ein hohes Maß an Sicherheit zu bieten, selbst vor Agenturen mit drei Buchstaben wie der NSA. Picocrypt ist auf maximale Sicherheit ausgelegt, ohne Kompromisse bei der Sicherheit einzugehen, und wird mit den Standard x/crypto-Modulen von Go gebaut. <strong>Ihre Privatsphäre und Sicherheit werden angegriffen. Holen Sie sich mit Zuversicht zurück, indem Sie Ihre Dateien mit Picocrypt schützen.</strong>
 
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
 # Finanzierung
 
-Bitte spenden Sie für Picocrypt auf <a href="https://opencollective.com/picocrypt">Open Collective</a> (Kryptowährungen werden akzeptiert), um Geld für einen mögliche Sicherheitsaudit durch Cure53 zu sammeln. Da dies ein Projekt ist, in das ich viele Stunden investiere und mit dem ich kein Geld verdiene, kann ich einen Sicherheitsaudit nicht selbst bezahlen. <i>Picocrypt braucht die Unterstützung der Community.</i>
+Bitte spenden Sie für Picocrypt auf <a href="https://opencollective.com/picocrypt">Open Collective</a> (Kryptowährungen werden akzeptiert), um Geld für einen möglichen Sicherheitsaudit durch Cure53 zu sammeln. Da dies ein Projekt ist, in das ich viele Stunden investiere und mit dem ich kein Geld verdiene, kann ich einen Sicherheitsaudit nicht selbst bezahlen. <i>Picocrypt braucht die Unterstützung der Community.</i>
 
 # Downloads
 
-**Wichtig**: Es gibt ein veraltetes und nutzloses Stück Abandonware namens PicoCrypt im Internet, das zuletzt 2005 aktualisiert wurde. PicoCrypt ist in keiner Weise mit Picocrypt (diesem Projekt) verwandt. Stellen Sie sicher, dass Sie Picocrypt nur von diesem Repository herunterladen, um sicherzustellen, dass Sie das authentische und Backdoor-freie Picocrypt erhalten.
+**Wichtig**: Es gibt eine veraltete und nutzlose Abandonware namens PicoCrypt im Internet, die zuletzt 2005 aktualisiert wurde. PicoCrypt ist in keiner Weise mit Picocrypt (diesem Projekt) verwandt. Stellen Sie sicher, dass Sie Picocrypt nur von diesem Repository herunterladen, um zu gewährleisten, dass Sie das authentische und Backdoor-freie Picocrypt erhalten.
 
 ## Windows
 
-Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.27/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm, damit alle davon profitieren können.
+Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.27/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm (false positive), damit andere Picocrypt-Nutzer nicht verwirrt werden.
 
 ## macOS
 
@@ -26,7 +26,7 @@ Es gibt mehrer Wege, wie Sie Picocrypt unter Linux verwenden können. Die empfoh
 
 ## Paranoid Packs
 
-Das Paranoid Pack ist ein komprimiertes Archiv, das ausführbare Dateien für jede Version von Picocrypt enthält, die jemals für Windows, macOS und Linux veröffentlicht wurde. Solange Sie es an einem Ort aufbewahren, auf den Sie zugreifen können, sind Sie in der Lage, es zu öffnen und jede Version von Picocrypt zu verwenden, falls dieses Repository auf mysteriöse Weise verschwindet oder das gesamte Internet abbrennt. Betrachten Sie es als eine Art Saatgut-Tresor für Picocrypt. Solange eine Person das Paranoid Pack in Reichweite hat, kann sie es mit dem Rest der Welt teilen und Picocrypt im Falle von katastrophalen Ereignissen wie dem plötzlichen Abschalten von GitHub oder der Verhaftung durch die NSA funktionsfähig halten (nur für den Fall der Fälle, weißt du?). Der beste Weg, um sicherzustellen, dass Picocrypt auch in vielen Jahrzehnten noch zugänglich ist, besteht darin, ein Paranoid Pack an einem sicheren Ort aufzubewahren. Wenn Sie sich also Sorgen machen, dass Sie in Zukunft nicht mehr auf Picocrypt zugreifen können, dann haben wir hier die Lösung für Sie. Gehen Sie in die Release Sektion und holen Sie sich ihre Kopie.
+Das Paranoid Pack ist ein komprimiertes Archiv, das ausführbare Dateien für jede Version von Picocrypt enthält, die jemals für Windows, macOS und Linux veröffentlicht wurde. Solange Sie es an einem Ort aufbewahren, auf den Sie zugreifen können, sind Sie in der Lage, es zu öffnen und jede Version von Picocrypt zu verwenden, falls dieses Repository auf mysteriöse Weise verschwindet oder das gesamte Internet abbrennt. Betrachten Sie es als eine Art Saatgut-Tresor für Picocrypt. Solange eine Person das Paranoid Pack in Reichweite hat, kann sie es mit dem Rest der Welt teilen und Picocrypt im Falle von katastrophalen Ereignissen wie dem plötzlichen Abschalten von GitHub oder einer Verhaftung durch die NSA funktionsfähig halten (nur für den Fall der Fälle ;) ). Der beste Weg, um sicherzustellen, dass Picocrypt auch in vielen Jahrzehnten noch zugänglich ist, besteht darin, ein Paranoid Pack an einem sicheren Ort aufzubewahren. Wenn Sie sich also Sorgen machen, dass Sie in Zukunft nicht mehr auf Picocrypt zugreifen können, dann haben wir hier die Lösung für Sie. Gehen Sie in die Release Sektion und holen Sie sich ihre Kopie.
 
 # Warum PicoCrypt?
 
