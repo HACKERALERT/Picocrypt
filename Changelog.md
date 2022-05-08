@@ -8,8 +8,11 @@
 	<li>✓ Fix bug on Windows where copying from the password field using Ctrl+C and then pasting with the "Paste" button would cause a crash</li>
 	<li>✓ Make sure at least one password characters category is checked when generating</li>
 	<li>✓ Use `desktop-file-validate` to find and remove deprecated fields and fix invalid ones in the .desktop for .deb and AppImage</li>
-	<li>✓ .deb and AppImage optimizations</li>
-	<li>✓ Snapcraft uses software OpenGL rendering as well now, I statically linked libc6 et al for best cross-platform compatibility, also added NO_AT_BRIDGE=1 to fix an issue on Arch Linux (<a href="https://github.com/HACKERALERT/Picocrypt/issues/75">#75</a>)</li>
+	<li>✓ .deb and AppImage optimizations, reliability improvements</li>
+	<li>✓ Snapcraft uses software OpenGL rendering as well now</li>
+	<li>✓ Statically linked libc6, etc. for best cross-platform compatibility for Snapcraft</li>
+	<li>✓ Added NO_AT_BRIDGE=1 to Snapcraft to fix an issue on Arch Linux (<a href="https://github.com/HACKERALERT/Picocrypt/issues/75">#75</a>)</li>
+	<li>✓ Clean up unnecessary files in dependencies</li>
 </ul>
 
 # v1.27 (Released 05/02/2022)
