@@ -42,6 +42,7 @@ import (
 	"github.com/HACKERALERT/crypto/sha3"
 	"github.com/HACKERALERT/dialog"
 	"github.com/HACKERALERT/giu"
+	"github.com/HACKERALERT/imgui-go"
 	"github.com/HACKERALERT/infectious"
 	"github.com/HACKERALERT/serpent"
 	"github.com/HACKERALERT/zxcvbn-go"
@@ -1635,6 +1636,7 @@ func broken() {
 
 // Reset the UI to a clean state with nothing selected or checked
 func resetUI() {
+	imgui.ClearActiveID()
 	mode = ""
 	onlyFiles = nil
 	onlyFolders = nil
