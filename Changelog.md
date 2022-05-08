@@ -1,7 +1,11 @@
+# To Do
+<ul>
+	<li>Review/improve Internals.md</li>
+</ul>
+
 # v1.28 (ETA unknown)
 <ul>
-	<li>Improve Reed-Solomon performance</li>
-	<li>Review/improve Internals.md</li>
+	<li>✓ Improve Reed-Solomon performance (only rebuild data if corruption is detected)</li>
 	<li>✓ `gofmt` and `go mod tidy` all dependencies</li>
 	<li>✓ Fix bad pointer issue when running with `-race`</li>
 	<li>✓ Fix focus bug where input boxes are not cleared if they are focused when file is dropped</li>
