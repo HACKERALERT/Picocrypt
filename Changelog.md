@@ -5,6 +5,7 @@
 
 # v1.28 (ETA unknown)
 <ul>
+	<li>✓ Minor code cleanups</li>
 	<li>✓ Improve Reed-Solomon performance (only rebuild data if corruption is detected)</li>
 	<li>✓ `gofmt` and `go mod tidy` all dependencies</li>
 	<li>✓ Fix bad pointer issue when running with `-race`</li>
