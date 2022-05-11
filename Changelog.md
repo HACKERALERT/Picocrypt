@@ -3,9 +3,10 @@
 	<li>Review/improve Internals.md</li>
 </ul>
 
-# v1.28 (ETA: 5 days)
+# v1.28 (ETA: 3 days)
 <ul>
 	<li>✓ Major code cleanups and organizing</li>
+	<li>✓ <i>Much better</i> file permission handling</li>
 	<li>✓ Numerous minor fixes and improvements</li>
 	<li>✓ Improve Reed-Solomon performance (only rebuild data if corruption is detected)</li>
 	<li>✓ `gofmt` and `go mod tidy` all dependencies</li>
