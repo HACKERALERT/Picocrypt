@@ -5,6 +5,7 @@
 
 # v1.28 (ETA: 3 days)
 <ul>
+	<li>✓ Improve overall IO performance</li>
 	<li>✓ Major code cleanups and organizing</li>
 	<li>✓ <i>Much better</i> file permission handling</li>
 	<li>✓ Numerous minor fixes and improvements</li>
