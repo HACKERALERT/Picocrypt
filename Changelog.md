@@ -5,7 +5,7 @@
 
 # v1.28 (ETA: 5 days)
 <ul>
-	<li>Software OpenGL rendering on Windows (for Windows on ARM compatibility)</li>
+	<li>✓ Software OpenGL rendering on Windows (for Windows on ARM compatibility)</li>
 	<li>✓ Progress, speed, and ETA for combining/compressing files, recombining files, and splitting files</li>
 	<li>✓ Improve overall IO performance</li>
 	<li>✓ Major code cleanups and organizing</li>
