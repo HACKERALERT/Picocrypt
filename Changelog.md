@@ -3,11 +3,12 @@
 	<li>Review/improve Internals.md</li>
 </ul>
 
-# v1.28 (ETA: 5 days)
+# v1.28 (ETA: 2 days)
 <ul>
 	<li>✓ Software OpenGL rendering on Windows (for Windows on ARM compatibility)</li>
 	<li>✓ Progress, speed, and ETA for combining/compressing files, recombining files, and splitting files</li>
 	<li>✓ Improve overall IO performance</li>
+	<li>✓ Much smoother Reed-Solomon decryption flow, slightly better performance</li>
 	<li>✓ Major code cleanups and organizing</li>
 	<li>✓ <i>Much better</i> file permission handling</li>
 	<li>✓ Numerous minor fixes and improvements</li>
