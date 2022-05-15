@@ -5,7 +5,8 @@
 
 # v1.28 (ETA: 2 days)
 <ul>
-	<li>✓ Software OpenGL rendering on Windows (for Windows on ARM compatibility)</li>
+	<li>✓ Improve responsiveness of cancel button (instant cancel when pressed instead of delays)</li>
+	<li>✓ Software OpenGL rendering on Windows (for Windows on ARM compatibility and older hardware)</li>
 	<li>✓ Progress, speed, and ETA for combining/compressing files, recombining files, and splitting files</li>
 	<li>✓ Improve overall IO performance</li>
 	<li>✓ Much smoother Reed-Solomon decryption flow, slightly better performance</li>
