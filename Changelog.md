@@ -25,6 +25,7 @@
 	<li>✓ Statically linked libc6, etc. for best cross-platform compatibility for Snapcraft</li>
 	<li>✓ Added NO_AT_BRIDGE=1 to Snapcraft to fix an issue on Arch Linux (<a href="https://github.com/HACKERALERT/Picocrypt/issues/75">#75</a>)</li>
 	<li>✓ Clean up unnecessary files in dependencies</li>
+	<li>✓ Sign executables with OpenPGP</li>
 </ul>
 
 # v1.27 (Released 05/02/2022)
