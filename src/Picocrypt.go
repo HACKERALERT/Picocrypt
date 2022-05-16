@@ -74,6 +74,7 @@ var showProgress bool
 
 // Input and output files
 var inputFile string
+var inputFileOld string
 var outputFile string
 var onlyFiles []string
 var onlyFolders []string
@@ -996,6 +997,7 @@ func work() {
 			fin.Close()
 		}
 		fout.Close()
+		inputFileOld = inputFile
 		inputFile = outputFile + ".pcv"
 	}
 
@@ -1634,11 +1636,11 @@ func work() {
 			if recombine { // Remove each chunk
 				i := 0
 				for {
-					_, err := os.Stat(fmt.Sprintf("%s.%d", inputFile, i))
+					_, err := os.Stat(fmt.Sprintf("%s.%d", inputFileOld, i))
 					if err != nil {
 						break
 					}
-					os.Remove(fmt.Sprintf("%s.%d", inputFile, i))
+					os.Remove(fmt.Sprintf("%s.%d", inputFileOld, i))
 					i++
 				}
 			} else {
@@ -1701,6 +1703,7 @@ func resetUI() {
 	mode = ""
 
 	inputFile = ""
+	inputFileOld = ""
 	outputFile = ""
 	onlyFiles = nil
 	onlyFolders = nil
