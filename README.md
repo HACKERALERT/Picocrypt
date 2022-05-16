@@ -71,6 +71,20 @@ While being simple, Picocrypt also strives to be powerful in the hands of knowle
 # Security
 For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my isolated forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
 
+## Signatures
+For the paranoid, Picocrypt is signed with PGP. The fingerprint and public key are listed below.
+
+<pre>B342A744BDEEA57B6A583E33A247E73798946F55</pre>
+<pre>-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mDMEYoGUHxYJKwYBBAHaRw8BAQdAvmQA+pdbDB/ynJxHhNDpz6Sb5tgkNuuNJIvw
+HYwZtqi0CVBpY29jcnlwdIiTBBMWCgA7FiEEs0KnRL3upXtqWD4zokfnN5iUb1UF
+AmKBlB8CGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQokfnN5iUb1UZ
+RgEA8jbIsdqCr21DWxcqW/eLlbxRkuA8kflVYvWWUxtVqsUA/jQPSDpvA8rakvaL
+PIbXjQvrAMkEVIc0HbCzLxr1k3sH
+=YFwz
+-----END PGP PUBLIC KEY BLOCK-----</pre>
+
 # Community
 Here are some places where you can stay up to date with Picocrypt and get involved:
 <ul>
@@ -130,7 +144,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 Finally, thanks to these people/organizations for helping me out when needed:
 <ul>
 	<li>[ REDACTED ] for helping me create an AppImage for Picocrypt</li>
-	<li>u/Upstairs-Fishing867 for helping me test OpenPGP signatures</li>
+	<li>u/Upstairs-Fishing867 for helping me test PGP signatures</li>
 	<li>Fuderal on Discord for helping me setup a Discord server</li>
 	<li>u/greenreddits for constant feedback and support</li>
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
