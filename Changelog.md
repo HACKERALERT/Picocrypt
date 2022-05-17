@@ -3,12 +3,12 @@
 	<li>Review/improve Internals.md</li>
 </ul>
 
-# v1.29
+# v1.29 (ETA: Unknown)
 <ul>
 	<li>Nothing yet</li>
 </ul>
 
-# v1.28 (ETA: 2 days)
+# v1.28 (Released 05/16/2022)
 <ul>
 	<li>✓ Fix bug when decrypting a splitted volume with a custom output name and "Delete files" selected</li>
 	<li>✓ Improve responsiveness of cancel button (instant cancel when pressed instead of delays)</li>
