@@ -564,6 +564,8 @@ func draw() {
 						}
 					}
 					outputFile = file
+					mainStatus = "Ready."
+					mainStatusColor = WHITE
 				}).Build()
 				giu.Tooltip("Save the output with a custom name and path.").Build()
 			}),
@@ -663,7 +665,7 @@ func onDrop(names []string) {
 		if stat.IsDir() {
 			folders++
 			mode = "encrypt"
-			inputLabel = "1 folder selected."
+			inputLabel = "1 folder."
 			startLabel = "Encrypt"
 			onlyFolders = append(onlyFolders, names[0])
 			inputFile = filepath.Join(filepath.Dir(names[0]), "Encrypted") + ".zip"
@@ -684,7 +686,7 @@ func onDrop(names []string) {
 			// Decide if encrypting or decrypting
 			if strings.HasSuffix(names[0], ".pcv") || isSplit {
 				mode = "decrypt"
-				inputLabel = "Volume selected for decryption."
+				inputLabel = "Volume for decryption."
 				startLabel = "Decrypt"
 				commentsLabel = "Comments (read-only):"
 				commentsDisabled = true
@@ -696,6 +698,17 @@ func onDrop(names []string) {
 					inputFile = names[0]
 					outputFile = names[0][:ind]
 					recombine = true
+
+					totalFiles := 0
+					// Find out the number of splitted chunks
+					for {
+						stat, err := os.Stat(fmt.Sprintf("%s.%d", inputFile, totalFiles))
+						if err != nil {
+							break
+						}
+						totalFiles++
+						size += int(stat.Size())
+					}
 				} else {
 					outputFile = names[0][:len(names[0])-4]
 				}
@@ -770,7 +783,7 @@ func onDrop(names []string) {
 				}
 			} else { // One file was dropped for encryption
 				mode = "encrypt"
-				inputLabel = "1 file selected."
+				inputLabel = "1 file."
 				startLabel = "Encrypt"
 				inputFile = names[0]
 				outputFile = names[0] + ".pcv"
@@ -779,7 +792,9 @@ func onDrop(names []string) {
 			// Add the file
 			onlyFiles = append(onlyFiles, names[0])
 			inputFile = names[0]
-			size += int(stat.Size())
+			if !isSplit {
+				size += int(stat.Size())
+			}
 		}
 	} else { // There are multiple dropped items
 		mode = "encrypt"
@@ -804,18 +819,18 @@ func onDrop(names []string) {
 
 		// Update UI with the number of files and folders selected
 		if folders == 0 {
-			inputLabel = fmt.Sprintf("%d files selected.", files)
+			inputLabel = fmt.Sprintf("%d files.", files)
 		} else if files == 0 {
-			inputLabel = fmt.Sprintf("%d folders selected.", folders)
+			inputLabel = fmt.Sprintf("%d folders.", folders)
 		} else {
 			if files == 1 && folders > 1 {
-				inputLabel = fmt.Sprintf("1 file and %d folders selected.", folders)
+				inputLabel = fmt.Sprintf("1 file and %d folders.", folders)
 			} else if folders == 1 && files > 1 {
-				inputLabel = fmt.Sprintf("%d files and 1 folder selected.", files)
+				inputLabel = fmt.Sprintf("%d files and 1 folder.", files)
 			} else if folders == 1 && files == 1 {
-				inputLabel = "1 file and 1 folder selected."
+				inputLabel = "1 file and 1 folder."
 			} else {
-				inputLabel = fmt.Sprintf("%d files and %d folders selected.", files, folders)
+				inputLabel = fmt.Sprintf("%d files and %d folders.", files, folders)
 			}
 		}
 
@@ -927,8 +942,16 @@ func work() {
 			// Use a passthrough to catch compression progress
 			passthrough := &compressorProgress{Reader: fin}
 			buf := make([]byte, MiB)
-			io.CopyBuffer(entry, passthrough, buf)
+			_, err = io.CopyBuffer(entry, passthrough, buf)
 			fin.Close()
+
+			if err != nil {
+				insufficientSpace()
+				writer.Close()
+				file.Close()
+				os.Remove(inputFile)
+				return
+			}
 
 			if !working {
 				cancel()
@@ -985,8 +1008,16 @@ func work() {
 					break
 				}
 				data = data[:read]
-				fout.Write(data)
+				_, err = fout.Write(data)
 				done += read
+
+				if err != nil {
+					insufficientSpace()
+					fin.Close()
+					fout.Close()
+					os.Remove(outputFile + ".pcv")
+					return
+				}
 
 				// Update the stats
 				progress, speed, eta = statify(int64(done), totalBytes, startTime)
@@ -1445,7 +1476,17 @@ func work() {
 				serpent.XORKeyStream(dst, src)
 			}
 		}
-		fout.Write(dst)
+		_, err = fout.Write(dst)
+		if err != nil {
+			insufficientSpace()
+			fin.Close()
+			fout.Close()
+			if recombine || len(allFiles) > 1 || len(onlyFolders) > 0 {
+				os.Remove(inputFile)
+			}
+			os.Remove(outputFile)
+			return
+		}
 
 		// Update stats
 		if mode == "decrypt" && reedsolo {
@@ -1584,7 +1625,24 @@ func work() {
 				}
 
 				data = data[:read]
-				fout.Write(data)
+				_, err = fout.Write(data)
+				if err != nil {
+					insufficientSpace()
+					fin.Close()
+					fout.Close()
+					if len(allFiles) > 1 || len(onlyFolders) > 0 {
+						os.Remove(inputFile)
+					}
+					os.Remove(outputFile)
+
+					// If user cancels, remove the unfinished files
+					for _, j := range splitted {
+						os.Remove(j)
+					}
+					os.Remove(fmt.Sprintf("%s.%d", outputFile, i))
+
+					return
+				}
 				done += read
 				if done >= chunkSize {
 					break
@@ -1674,6 +1732,12 @@ func work() {
 // If the OS denies reading or writing to a file
 func accessDenied(s string) {
 	mainStatus = s + " access denied by operating system."
+	mainStatusColor = RED
+}
+
+// If there isn't enough disk space
+func insufficientSpace() {
+	mainStatus = "Insufficient disk space."
 	mainStatusColor = RED
 }
 
@@ -1848,13 +1912,13 @@ func timeify(seconds int) string {
 // Convert bytes to KiB, MiB, etc.
 func sizeify(size int64) string {
 	if size >= int64(TiB) {
-		return fmt.Sprintf("%.1fT", float64(size)/float64(TiB))
+		return fmt.Sprintf("%.2f TiB", float64(size)/float64(TiB))
 	} else if size >= int64(GiB) {
-		return fmt.Sprintf("%.1fG", float64(size)/float64(GiB))
+		return fmt.Sprintf("%.2f GiB", float64(size)/float64(GiB))
 	} else if size >= int64(MiB) {
-		return fmt.Sprintf("%.1fM", float64(size)/float64(MiB))
+		return fmt.Sprintf("%.2f MiB", float64(size)/float64(MiB))
 	} else {
-		return fmt.Sprintf("%.1fK", float64(size)/float64(KiB))
+		return fmt.Sprintf("%.2f KiB", float64(size)/float64(KiB))
 	}
 }
 
