@@ -471,10 +471,16 @@ func draw() {
 						giu.Checkbox("Paranoid mode", &paranoid),
 						giu.Tooltip("Provides the highest level of security attainable."),
 						giu.Dummy(-170, 0),
-						giu.Style().SetDisabled(!(len(allFiles) > 1 || len(onlyFolders) > 0)).To(
-							giu.Checkbox("Compress files", &compress),
-							giu.Tooltip("Compress files with Deflate before encrypting."),
-						),
+						giu.Checkbox("Compress files", &compress).OnChange(func() {
+							if !(len(allFiles) > 1 || len(onlyFolders) > 0) {
+								if compress {
+									outputFile = filepath.Join(filepath.Dir(outputFile), "Encrypted") + ".zip.pcv"
+								} else {
+									outputFile = filepath.Join(filepath.Dir(outputFile), filepath.Base(inputFile)) + ".pcv"
+								}
+							}
+						}),
+						giu.Tooltip("Compress files with Deflate before encrypting."),
 					).Build()
 
 					giu.Row(
@@ -538,7 +544,7 @@ func draw() {
 					// Prefill the filename
 					tmp := strings.TrimSuffix(filepath.Base(outputFile), ".pcv")
 					f.SetInitFilename(strings.TrimSuffix(tmp, filepath.Ext(tmp)))
-					if mode == "encrypt" && (len(allFiles) > 1 || len(onlyFolders) > 0) {
+					if mode == "encrypt" && (len(allFiles) > 1 || len(onlyFolders) > 0 || compress) {
 						f.SetInitFilename("Encrypted")
 					}
 
@@ -550,7 +556,7 @@ func draw() {
 
 					// Add the correct extensions
 					if mode == "encrypt" {
-						if len(allFiles) > 1 || len(onlyFolders) > 0 {
+						if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 							file += ".zip.pcv"
 						} else {
 							file += filepath.Ext(inputFile) + ".pcv"
@@ -881,7 +887,13 @@ func work() {
 	var authTag []byte                 // 64-byte authentication tag (BLAKE2b or HMAC-SHA3)
 
 	// Combine/compress all files into a .zip file if needed
-	if len(allFiles) > 1 || len(onlyFolders) > 0 {
+	if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
+		// Consider case where compressing only one file
+		files := allFiles
+		if len(allFiles) == 0 {
+			files = onlyFiles
+		}
+
 		// Get the root directory of the selected files
 		var rootDir string
 		if len(onlyFolders) > 0 {
@@ -900,7 +912,7 @@ func work() {
 
 		// Calculate total size of uncompressed files
 		compressTotal = 0
-		for _, path := range allFiles {
+		for _, path := range files {
 			stat, _ := os.Stat(path)
 			compressTotal += stat.Size()
 		}
@@ -910,8 +922,9 @@ func work() {
 		compressStart = time.Now()
 
 		// Add each file to the .zip
-		for i, path := range allFiles {
-			progressInfo = fmt.Sprintf("%d/%d", i+1, len(allFiles))
+
+		for i, path := range files {
+			progressInfo = fmt.Sprintf("%d/%d", i+1, len(files))
 			giu.Update()
 
 			// Create file info header (size, last modified, etc.)
@@ -1350,7 +1363,7 @@ func work() {
 			cancel()
 			fin.Close()
 			fout.Close()
-			if recombine || len(allFiles) > 1 || len(onlyFolders) > 0 {
+			if recombine || len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 				os.Remove(inputFile)
 			}
 			os.Remove(outputFile)
@@ -1476,12 +1489,13 @@ func work() {
 				serpent.XORKeyStream(dst, src)
 			}
 		}
+
 		_, err = fout.Write(dst)
 		if err != nil {
 			insufficientSpace()
 			fin.Close()
 			fout.Close()
-			if recombine || len(allFiles) > 1 || len(onlyFolders) > 0 {
+			if recombine || len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 				os.Remove(inputFile)
 			}
 			os.Remove(outputFile)
@@ -1610,7 +1624,7 @@ func work() {
 					cancel()
 					fin.Close()
 					fout.Close()
-					if len(allFiles) > 1 || len(onlyFolders) > 0 {
+					if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 						os.Remove(inputFile)
 					}
 					os.Remove(outputFile)
@@ -1630,7 +1644,7 @@ func work() {
 					insufficientSpace()
 					fin.Close()
 					fout.Close()
-					if len(allFiles) > 1 || len(onlyFolders) > 0 {
+					if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 						os.Remove(inputFile)
 					}
 					os.Remove(outputFile)
@@ -1681,7 +1695,7 @@ func work() {
 	}
 
 	// Delete the temporary .zip used to encrypt files
-	if len(allFiles) > 1 || len(onlyFolders) > 0 {
+	if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 		os.Remove(inputFile)
 	}
 
