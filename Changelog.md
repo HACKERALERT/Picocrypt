@@ -6,8 +6,7 @@
 # v1.29 (ETA: Unknown)
 <ul>
 	<li>Add FAQ</li>
-	<li>Add option to compress when encrypting a single file</li>
-	<li>Add a "Test volume" option when decrypting</li>
+	<li>✓ Add option to compress when encrypting a single file</li>
 	<li>✓ Check for errors when not enough disk space</li>
 	<li>✓ Show MiB/GiB instead of M/G in the input label to prevent confusion</li>
 	<li>✓ Minor consistency improvements</li>
