@@ -12,8 +12,11 @@ Picocrypt uses the following cryptographic primitives:
 
 All primitives used are from the well-known [golang.org/x/crypto](https://golang.org/x/crypto) module.
 
+# Counter Overflow
+Since XChaCha20 has a max message size of 256 GiB, Picocrypt will use the HKDF-SHA3 mentioned above to generate a new nonce for XChaCha20 and a new IV for Serpent if the total encrypted data is more than 60 GiB. While this threshold can be increased up to 256 GiB, Picocrypt uses 60 GiB to prevent any edge cases with blocks or the counter used by Serpent.
+
 # Header Format
-A Picocrypt volume's header is encoded with Reed-Solomon by default, since it is, after all, the most important part of the entire file. An encoded value will take up three times the size of the unencoded value.
+A Picocrypt volume's header is encoded with Reed-Solomon by default since it is, after all, the most important part of the entire file. An encoded value will take up three times the size of the unencoded value.
 
 **All offsets and sizes below are in bytes.**
 | Offset | Encoded size | Decoded size | Description
@@ -27,16 +30,19 @@ A Picocrypt volume's header is encoded with Reed-Solomon by default, since it is
 | 189+3C | 48           | 16           | Salt for Serpent
 | 237+3C | 72           | 24           | Nonce for XChaCha20
 | 309+3C | 192          | 64           | SHA3-512 of encryption key
-| 501+3C | 96           | 32           | Hash of keyfile key
+| 501+3C | 96           | 32           | SHA3-256 of keyfile key
 | 597+3C | 192          | 64           | Authentication tag (BLAKE2b/HMAC-SHA3)
 | 789+3C |              |              | Encrypted contents of input data
 
 # Keyfile Design
-Picocrypt allows the use of keyfiles as an additional form of authentication. Picocrypt's unique "Require correct order" feature enforces the user to drop keyfiles into the window in the exact same order as they did when encrypting, in order to decrypt the volume successfully. Here's how it works:
+Picocrypt allows the use of keyfiles as an additional form of authentication. Picocrypt's unique "Require correct order" feature enforces the user to drop keyfiles into the window in the same order as they did when encrypting in order to decrypt the volume successfully. Here's how it works:
 
-If "Require correct order" is not checked, Picocrypt will take the SHA3 hash of each file individually, and XOR the hashes together. Finally, the result is XORed with the master key. Because the XOR operation is both commutative and associative, the order in which the keyfile hashes are XORed with each other doesn't matter - the end result is the same.
+If correct order is not required, Picocrypt will take the SHA3-256 of each keyfile individually and XOR the hashes together. Finally, the result is XORed with the master key. Because the XOR operation is both commutative and associative, the order in which the keyfile hashes are XORed with each other doesn't matter - the end result is the same.
 
-If "Require correct order" is checked, Picocrypt will concatenate the files together in the order they were dropped into the window and take the SHA3 hash of the combined keyfiles. If the order is not correct, the keyfiles, when appended to each other, will result in a different file, and therefore a different hash. Thus, the correct order of keyfiles is required to successfully decrypt the volume.
+If correct order is required, Picocrypt will concatenate the keyfiles together in the order they were dropped into the window and take the SHA3-256 of the combined keyfiles. If the order is not correct, the keyfiles, when appended to each other, will result in a different file, and thus a different hash. So, the correct order of keyfiles is required to decrypt the volume successfully.
 
 # Reed-Solomon
 By default, all Picocrypt volume headers are encoded with Reed-Solomon to improve resiliency against bit rot, etc. The header uses N+2N encoding, where N is the size of a particular header field such as the version number or the Argon2 salt. If Reed-Solomon is to be used with the input data itself, the data will be encoded using 128+8 encoding, with the data being read in chunks of 1 MiB, and the final set padded to 128 bytes using PKCS#7.
+
+# Just Read the Code
+Picocrypt is a very simple tool and only has one source file. The source Go file is less than 2k lines and a lot of the code is dealing with the UI. The core cryptography code is only about 1k lines of code, and even so, a lot of that code deals with the UI and features of Picocrypt. So if you need more information about how Picocrypt works, just read the code. It's not long, and it is well commented and will explain what happens under the hood better than a document can.
