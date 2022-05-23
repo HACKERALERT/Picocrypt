@@ -103,7 +103,7 @@ How's Picocrypt doing? Take a look below to find out.
 # Donations
 If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt.
 
-# Thank You's
+# Thank Yous
 A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
 <ul>
 	<li>YellowNight ($818)</li>
