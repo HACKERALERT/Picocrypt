@@ -44,5 +44,7 @@ If correct order is required, Picocrypt will concatenate the keyfiles together i
 # Reed-Solomon
 By default, all Picocrypt volume headers are encoded with Reed-Solomon to improve resiliency against bit rot, etc. The header uses N+2N encoding, where N is the size of a particular header field such as the version number or the Argon2 salt. If Reed-Solomon is to be used with the input data itself, the data will be encoded using 128+8 encoding, with the data being read in chunks of 1 MiB, and the final set padded to 128 bytes using PKCS#7.
 
+In the edge case where the final 128-byte block happens to be padded so that it completes a full 1 MiB chunk, a flag is used to distinguish whether the last 128-byte block was padded originally or if it is just a full 128 bytes of data.
+
 # Just Read the Code
 Picocrypt is a very simple tool and only has one source file. The source Go file is less than 2k lines and a lot of the code is dealing with the UI. The core cryptography code is only about 1k lines of code, and even so, a lot of that code deals with the UI and features of Picocrypt. So if you need more information about how Picocrypt works, just read the code. It's not long, and it is well commented and will explain what happens under the hood better than a document can.
