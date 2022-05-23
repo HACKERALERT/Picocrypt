@@ -42,7 +42,7 @@ If correct order is not required, Picocrypt will take the SHA3-256 of each keyfi
 If correct order is required, Picocrypt will concatenate the keyfiles together in the order they were dropped into the window and take the SHA3-256 of the combined keyfiles. If the order is not correct, the keyfiles, when appended to each other, will result in a different file, and thus a different hash. So, the correct order of keyfiles is required to decrypt the volume successfully.
 
 # Reed-Solomon
-By default, all Picocrypt volume headers are encoded with Reed-Solomon to improve resiliency against bit rot, etc. The header uses N+2N encoding, where N is the size of a particular header field such as the version number or the Argon2 salt. If Reed-Solomon is to be used with the input data itself, the data will be encoded using 128+8 encoding, with the data being read in chunks of 1 MiB, and the final set padded to 128 bytes using PKCS#7.
+By default, all Picocrypt volume headers are encoded with Reed-Solomon to improve resiliency against bit rot. The header uses N+2N encoding, where N is the size of a particular header field such as the version number, and 2N is the number of parity bytes. If Reed-Solomon is to be used with the input data itself, the data will be encoded using 128+8 encoding, with the data being read in chunks of 1 MiB, and the final set padded to 128 bytes using PKCS#7.
 
 In the edge case where the final 128-byte block happens to be padded so that it completes a full 1 MiB chunk, a flag is used to distinguish whether the last 128-byte block was padded originally or if it is just a full 128 bytes of data.
 
