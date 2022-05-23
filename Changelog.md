@@ -1,6 +1,10 @@
-# v1.29 (ETA: 1 day?)
+# To Do
 <ul>
 	<li>Add FAQ</li>
+</ul>
+
+# v1.29 (ETA: 1 day?)
+<ul>
 	<li>✓ Review/improve Internals.md</li>
 	<li>✓ Add option to compress when encrypting a single file</li>
 	<li>✓ Check for errors when not enough disk space</li>
