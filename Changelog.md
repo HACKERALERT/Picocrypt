@@ -1,11 +1,7 @@
-# To Do
-<ul>
-	<li>Review/improve Internals.md</li>
-</ul>
-
-# v1.29 (ETA: Unknown)
+# v1.29 (ETA: 1 day?)
 <ul>
 	<li>Add FAQ</li>
+	<li>✓ Review/improve Internals.md</li>
 	<li>✓ Add option to compress when encrypting a single file</li>
 	<li>✓ Check for errors when not enough disk space</li>
 	<li>✓ Show MiB/GiB instead of M/G in the input label to prevent confusion</li>
