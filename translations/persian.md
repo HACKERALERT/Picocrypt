@@ -5,7 +5,7 @@
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
 # سرمایه گذاری
-لطفاً در سایت <a href="https://opencollective.com/picocrypt">Open Collective</a> (رمزارز هم پذیرفته میشود) به پیکوکریپت کمک مالی کنید تا پول مورد نیاز برای انجام یک ممیزی امنیتی روی پیکوکریپت از طرف گروه امنیتی Cure53 جمع آوری شود. چون این پروژه ای است که من ساعت ها وقت میگذارم و درآمدی از آن ندارم، نمیتوانم خودم پول برای یک ممیزی امنیتی پرداخت کنم. <i>پیکوکریپت به حمایت از طرف جامعه کاربرانش نیاز دارد.</i>
+لطفاً در سایت <a href="https://opencollective.com/picocrypt">Open Collective</a> (رمزارز هم پذیرفته میشود) به پیکوکریپت کمک مالی کنید تا پول مورد نیاز برای انجام یک ممیزی امنیتی روی پیکوکریپت از طرف گروه امنیتی Cure53 جمع آوری شود. چون این پروژه ای است که من ساعت ها روی آن وقت میگذارم و درآمدی از آن ندارم، نمیتوانم خودم پول برای یک ممیزی امنیتی پرداخت کنم. <i>پیکوکریپت به حمایت از طرف جامعه کاربرانش نیاز دارد.</i>
 
 # دانلود
 **نکته مهم**: یک نرم افزار رها شده، قدیمی و بی مصرف به نام PicoCrypt که آخرین بار در سال 2005 (1384 خورشیدی) بروز شده، در اینترنت وجود دارد. PicoCrypt به هیچ وجه با Picocrypt (این پروژه) ارتباطی ندارد. دقت داشته باشید که پیکوکریپت را فقط از این صفحه دانلود کنید تا بتوانید اطمینان داشته باشید که پیکوکریپتِ اصل و بدون درپشتی (حفره امنیتی) را دریافت کرده اید.
@@ -21,18 +21,19 @@
 ## گنو/لینوکس
 برای استفاده از پیکوکریپت در گنو/لینوکس چند راه وجود دارد. راه پیشنهادی، نصب پیکوکریپت از <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.28/Picocrypt.deb">این</a> فایل deb. میباشد (پشتیبانی شده در +11 Debian و +20 Ubuntu). اگر فایل نصبی deb. نیاز های شما را برآورده نمیکند و یا از یک توزیع برپایه دبیان استفاده نمیکنید، با خیال راحت از <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.28/Picocrypt.AppImage">این</a> فایل AppImage استفاده کنید. اگر هیچکدام از این دو گزینه کار نمیکند، میتوانید پیکوکریپت را از Snapcraft نصب کنید که باید روی همه توزیع ها کار کند. توضیحات مربوط به نصب از Snapcraft را <a href="https://snapcraft.io/picocrypt">اینجا</a> میتوانید پیدا کنید.
 
-## Paranoid Packs
-The Paranoid Pack is a compressed archive that contains executables for every version of Picocrypt ever released for Windows, macOS, and Linux. As long as you have it stored in a place you can access, you'll be able to open it and use any version of Picocrypt in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt. As long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in cases of catastrophic events like GitHub shutting down suddenly or the NSA capturing me (just in case, you know?). The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. So if you are worried about being unable to access Picocrypt in the future, well, here's your solution. Just head to the Releases tab and get yourself a copy.
+## پک اضطراری
+پک اضطراری یک فایل فشرده است که شامل فایل های اجرایی همه نسخه های پیکوکریپت برای ویندوز، مکOS و گنو/لینوکس میباشد. تا زمانی که شما این فایل را در یک جای قابل دسترس نگهداری کنید، اگر یک زمان این صفحه به طرز مرموزی ناپدید شد و یا کل اینترنت سوخت و از بین رفت، میتوانید آن فایل را باز کنید و هر نسخه ای از پیکوکریپت که نیاز دارید را استفاده کنید. به این پک به چشم یک خزانه بذر (سیلو) نگاه کنید. تا زمانی که یک نفر پک اضطراری را در دسترس داشته باشد، در صورتی که اتفاق وحشتناکی مثل خاموش شدن GitHub یا دستگیر شدن من توسط سازمان امنیت آمریکا (نگی نگفتی) رخ بدهد، آن فرد میتواند این پک را با بقیه جهان در اشتراک بگذارد و پیکوکریپت را زنده نگه دارد. بهترین راهی که میتوانید مطمئن باشید پیکوکریپت تا چندین دهه بعد در دسترس میماند، این است که پک اضطراری را در یک مکان امن نگهداری کنید. پس بنابراین اگر نگرانید که در آینده نتوانید به پیکوکریپت دسترسی داشته باشید، خب راه حل همین بود. فقط کافیست به بخش Releases (انتشارات) بروید و یک نسخه برای خودتان ذخیره کنید.
 
-# Why Picocrypt?
-Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should choose Picocrypt:
+# چرا پیکوکریپت؟
+چرا به جای BitLocker، NordLocker، VeraCrypt، AxCrypt یا 7Zip بهتر است از پیکوکریپت استفاده کنید؟ چند دلیل که چرا بهتر است پیکوکریپت را انتخاب کنید:
 <ul>
-	<li>Unlike NordLocker, BitLocker, AxCrypt, and most cloud storage providers, Picocrypt and its dependencies are completely open-source and auditable. You can verify for yourself that there aren't any backdoors or flaws.</li>
-	<li>Picocrypt is <i>tiny</i>. While NordLocker is over 50MB and VeraCrypt is over 20MB, Picocrypt sits at just 2MB, about the size of a medium-resolution photo. And that's not all - Picocrypt is portable (doesn't need to be installed) and doesn't require administrator/root privileges.</li>
-	<li>Picocrypt is easier and more productive to use than VeraCrypt. To encrypt files with VeraCrypt, you'd have to spend at least five minutes setting up a volume. With Picocrypt's simple UI, all you have to do is drag and drop your files, enter a password, and hit Start. All the complex procedures are handled by Picocrypt internally. Who said secure encryption can't be simple?</li>
-	<li>Picocrypt is designed for security. 7-Zip is an archive utility and not an encryption tool, so its focus is not on security. Picocrypt, however, is built with security as the number one priority. Every part of Picocrypt exists for a reason and anything that could impact the security of Picocrypt is removed. Picocrypt is built with cryptography you can trust.</li>
-	<li>Picocrypt authenticates data in addition to protecting it, preventing hackers from maliciously modifying sensitive data. This is useful when you are sending encrypted files over an insecure channel and want to be sure that it arrives untouched.</li>
-	<li>Picocrypt actively protects encrypted header data from corruption by adding extra Reed-Solomon parity bytes, so if part of a volume's header (which contains important cryptographic components) corrupts (e.g., hard drive bit rot), Picocrypt can still recover the header and decrypt your data with a high success rate. Picocrypt can also encode the entire volume with Reed-Solomon to prevent any corruption to your important files.</li>
+	<li>برخلاف NordLocker، BitLocker، AxCrypt و بیشتر فراهم کننده های حافظه ابری، پیکوکریپت و کتابخانه ها و Dependency هایش کاملاً آزاد و قابل بررسی هستند (میتوانید کد های آنها را مطالعه کنید). شما میتوانید خودتان مطمئن شوید که هیچ عیب عمدی یا درپشتی در پیکوکریپت وجود ندارد.</li>
+	<li>پیکوکریپت <i>کوچک و کم حجم</i> است</i>. در حالی که NordLocker بیش از 50 مگ و VeraCrypt بیش از 20 مگ حجم دارد، پیکوکریپت فقط 2 مگ فضا میگیرد، تقریباً به اندازه یک عکس با کیفیت متوسط. و این همه ماجرا نیست، پیکوکریپت قابل حمل است (نیازی به نصب شدن ندارد) و نیاز به دسترسی ادمین/روت ندارد.</li>
+	<li>استفاده از پیکوکریپت ساده تر و نوآورانه تر از VeraCrypt است. برای رمزگذاری فایل هایتان توسط VeraCrypt شما باید حداقل 5 دقیقه زمان بگذارید و یک پارتیشن راه اندازی کنید. اما با ظاهر کاربری ساده پیکوکریپت، تنها کاری که باید بکنید این است که فایلتان را بکشید و داخل پیکوکریپت بندازید، یک گذرواژه وارد کنید و دکمه آغاز/Start را بزنید. همه فرایند های پیچیده توسط پیکوکریپت به صورت داخلی انجام میشوند. کی گفته بود رمزگذاری کار سختیه؟</li>
+	<li>پیکوکریپت برای امنیت طراحی شده است. اما 7Zip یک ابزار بایگانی و فشرده سازی داده هاست و یک ابزار رمزگذاری نیست، بنابراین تمرکزی بر امنیت ندارد. 
+اما پیکوکریپت با امنیت به عنوان بالاترین اولویت طراحی شده است. هر بخش از پیکوکریپت به یک دلیل خاص وجود دارد و هر چیزی که میتواند روی امنیت پیکوکریپت تاثیر منفی بگذارد حذف شده است. پیکوکریپت با الگوریتم رمزنگاری که مورد اطمینان شما باشد ساخته شده است.</li>
+	<li>پیکوکریپت علاوه بر محافظت کردن از داده، از موثق و اصل بودن داده هم اطمینان حاصل میکند تا هکر ها نتوانند با قصد بد یا مخربی اطلاعات حساس شما را دستکاری کنند. این موضوع زمانی کارآمد است که شما قصد دارید فایل های رمزگذاری شده ای را از طریق یک راه ارتباطی ناامن بفرستید و میخواهید مطمئن باشید که فایل ها دست نخورده به دست طرف مقابل میرسند.</li>
+	<li>پیکوکریپت با اضافه کردن بایت های توازن (Parity)، به طور فعالانه از سربرگ داده ها در برابر خراب شدن محافظت میکند، بنابراین اگر بخشی از سربرگ داده ها (که شامل اجزای مهم رمزنگاری میباشد) خراب بشود (مثلاً هارد درایو دچار پوسیدگی بیت/ Bit rot بشود)، پیکوکریپت هنوز هم میتواند سربرگ را بازیابی کند و اطلاعات شما را با درصد موفقیت بالایی بازیابی کند. پیکوکریپت همچنین میتواند کل داده ها را با الگوریتم تصحیح خطا رید-سالامون کدگذاری نماید تا از خراب شدن فایل های مهم شما پیشگیری کند.</li>
 </ul>
 
 # مقایسه
@@ -55,25 +56,25 @@ Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCryp
 | جمع آوری داده      |✅ هیچ        |✅ هیچ         |✅ هیچ        |❓ نامشخص      |✅ هیچ        |❌ داده های آماری    |❌ حساب کاربری    |
 | ممیزی امنیتی        |🟧 تحت اقدام     |✅ بله          |❌ خیر          |❓ نامشخص      |✅ بله         |❓ نامشخص      |❌ خیر          |
 
-# Features
-Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a basic level, simply dropping your files, entering a password, and hitting Start is all that's needed to encrypt your files. Pretty simple, right?
+# امکانات
+پیکوکریپت یک ابزار بسیار ساده است، و اکثر کاربران به طور حسی و شهودی روش کار کردن با آن را در چند ثانیه متوجه میشوند. در یک سطح مقدماتی، فقط کافیست فایل های خودتان را به داخل برنامه بکشید (Drag کنید) و یک گذرواژه وارد کنید، سپس دکمه آغاز/Start را بزنید و فقط همین چند کار برای رمزگذاری کردن بقیه فایل هایتان نیاز است. تقریباً آسونه، مگه نه؟
 
-While being simple, Picocrypt also strives to be powerful in the hands of knowledgeable and advanced users. Thus, there are some additional options that you may use to suit your needs.
+با وجود ساده بودن، پیکوکریپت تلاش میکند که برای افراد حرفه ای و وارد، قوی و قدرتمند عمل کند. بنابراین، چند ویژگی اضافه تر وجود دارد که ممکن است به کار شما بیاید.
 <ul>
-	<li><strong>Password generator</strong>: Picocrypt provides a secure password generator that you can use to create cryptographically secure passwords. You can customize the password length, as well as the types of characters to include.</li>
-	<li><strong>Comments</strong>: Use this to store notes, information, and text along with the file (it won't be encrypted). For example, you can put a description of the file you're encrypting before sending it to someone. When the person you sent it to drops the file into Picocrypt, your description will be shown to that person.</li>
-	<li><strong>Keyfiles</strong>: Picocrypt supports the use of keyfiles as an additional form of authentication (or the only form of authentication). Not only can you use multiple keyfiles, but you can also require the correct order of keyfiles to be present, for a successful decryption to occur. A particularly good use case of multiple keyfiles is creating a shared volume, where each person holds a keyfile, and all of them (and their keyfiles) must be present in order to decrypt the shared volume.</li>
-	<li><strong>Paranoid mode</strong>: Using this mode will encrypt your data with both XChaCha20 and Serpent in a cascade fashion, and use HMAC-SHA3 to authenticate data instead of BLAKE2b. This is recommended for protecting top-secret files and provides the highest level of practical security attainable. In order for a hacker to crack your encrypted data, both the XChaCha20 cipher and the Serpent cipher must be broken, assuming you've chosen a good password. It's safe to say that in this mode, your files are impossible to crack.</li>
-	<li><strong>Reed-Solomon</strong>: This feature is very useful if you are planning to archive important data on a cloud provider or external medium for a long time. If checked, Picocrypt will use the Reed-Solomon error correction code to add 8 extra bytes for every 128 bytes to prevent file corruption. This means that up to ~3% of your file can corrupt and Picocrypt will still be able to correct the errors and decrypt your files with no corruption. Of course, if your file corrupts very badly (e.g., you dropped your hard drive), Picocrypt won't be able to fully recover your files, but it will try its best to recover what it can. Note that this option will slow down encryption and decryption considerably.</li>
-	<li><strong>Force decrypt</strong>: Picocrypt automatically checks for file integrity upon decryption. If the file has been modified or is corrupted, Picocrypt will automatically delete the output for the user's safety. If you would like to override these safeguards, check this option. Also, if this option is checked and the Reed-Solomon feature was used on the encrypted volume, Picocrypt will attempt to recover as much of the file as possible during decryption.</li>
-	<li><strong>Split files into chunks</strong>: Don't feel like dealing with gargantuan files? No worries! With Picocrypt, you can choose to split your output file into custom-sized chunks, so large files can become more manageable and easier to upload to cloud providers. Simply choose a unit (KiB, MiB, GiB, or TiB) and enter your desired chunk size for that unit. To decrypt the chunks, simply drag one of them into Picocrypt and the chunks will be automatically recombined during decryption.</li>
+	<li><strong>گذرواژه ساز</strong>: پیکوکریپت یک گذرواژه ساز امن فراهم میکند که میتوانید به کمک آن گذرواژه های امن و قوی بسازید. شما میتوانید طول گذرواژه و نوع حروف آن را شخصی سازی کنید.</li>
+	<li><strong>یادداشت ها</strong>: به کمک این قابلیت میتوانید یادداشت، اطلاعات و هر متن دیگری را در کنار فایل ذخیره کنید (یادداشت ها رمزنگاری نخواهند شد). برای مثال، اگر قرار است فایل را برای کسی بفرستید، میتوانید هنگام رمزنگاری کردن توضیحاتی درباره فایل هم در کنار آن قرار دهید. زمانی که طرف مقابل فایل شما را در پیکوکریپت بیندازد، توضیحاتی که نوشته بودید به او نشان داده میشود.</li>
+	<li><strong>کلیدفایل ها</strong>: پیکوکریپت از کلیدفایل به عنوان شکل اضافه تری برای اصالت سنجی و احراز هویت پشتیبانی میکند (و یا به عنوان تنها روش اصالت سنجی به این معنا که فقط به کمک کلیدفایل بتوانید فایل ها را رمزگشایی کنید). شما میتوانید از چند کلیدفایل استفاده کنید و علاوه بر این میتوانید تعیین کنید که کلیدفایل ها به ترتیب مشخصی اعمال بشوند تا رمزگشایی با موفقیت انجام بگیرد. یک کاربرد نسبتاً خوبِ چند کلیدفایل برای زمانی است که میخوایید یک فایل مشترک را رمزگذاری کنید، در این شرایط یک کلیدفایل به هر نفر اختصاص داده میشود و برای رمزگشایی کردن آن فایل مشترک در آینده، باید همه آن افراد (و کلیدفایل هایشان) حاضر باشند.</li>
+	<li><strong>حالت جنون</strong>: در این حالت، داده های شما هم با الگوریتم قفل گذاری XChaCha20 و هم با الگوریتم Serpent به شکل آبشاری رمزگذاری خواهند شد و برای بررسی اصالت داده ها، به جای BLAKE2b از کد اصالت سنجیِ HMAC-SHA3 استفاده میشود. این حالت بالاترین سطح امنیت که در عمل، شدنی و دست یافتنی باشد را فراهم میکند و برای محافظت از فایل های فوق سری پیشنهاد میشود. با فرض بر اینکه گذرواژه خوبی انتخاب کرده باشید، یک هکر به منظور اینکه بتواند قفل داده های شما را باز کند، باید هم الگوریتم قفل گذاری XChaCha20 و هم الگوریتم Serpent را بشکند. به جرئت میتوان گفت که در این حالت، شکستن قفل فایل های شما نشدنی خواهد بود.</li>
+	<li><strong>تصحیح خطا (رید-سالامون)</strong>: اگر قصد دارید اطلاعات مهمی را در فضای ابری یا هارد اکسترنال برای مدت خیلی طولانی نگهداری کنید، این قابلیت برای شما بسیار کاربردی خواهد بود. اگر آن را فعال کنید، پیکوکریپت از کد تصحیح خطا رید-سالامون استفاده کرده و 8 بایت اضافی به ازای هر 128 بایت اضافه میکند تا از خرابی فایل پیشگیری کند. این بدان معناست که تا حداکثر تقریباً 3 درصد فایل شما میتواند خراب بشود و با این حال پیکوکریپت میتواند خطا ها را رفع کند و فایل های شما را بدون هیچ خرابی رمزگشایی کند. البته، اگر فایل های شما خرابی زیادی پیدا کنند (مثلاً هارد اکسترنال از دستتان بیفتد)، پیکوکریپت نمیتواند فایل های شما را کاملاً بازیابی کند، اما همه تلاشش را میکند تا هر چقدر را که میتواند بازیابی کند. در جریان باشید که این قابلیت، رمزگذاری و رمزگشایی را به طور قابل توجهی کند میکند.</li>
+	<li><strong>رمزگشایی زوری</strong>: پیکوکریپت به طور خودکار هنگام رمزگشایی، یکپارچگی فایل را بررسی میکند. اگر فایل دستکاری یا خراب شده باشد، پیکوکریپت برای امنیت کاربر به صورت خودکار خروجی را حذف میکند (خروجی یعنی مقداری که تا آن لحظه رمزگشایی شده). اگر تمایل دارید که این تدابیر امنیتی را غیرفعال کنید، میتوانید این قابلیت (رمزگشایی زوری) را فعّال کنید. همچنین، اگر این قابلیت فعّال باشد و تصحیح خطا (رید-سالامون) هم در فایل رمزگذاری شده به کار رفته باشد، پیکوکریپت تلاش خواهد کرد که در فرایند رمزگشایی، هر چقدر که میتواند را بازیابی کند.</li>
+	<li><strong>تقسیم فایل به تکه های کوچکتر</strong>: حوصله سر و کله زدن با فایل های غول پیکر و حجم بالا را ندارید؟ نگران نباشید! با پیکوکریپت شما میتوانید فایل هایتان را به تکه های کوچکتر با اندازه دلخواه خودتان تقسیم کنید. بنابراین مدیریت فایل های بزرگتر راحت تر شده و بارگذاری فایل هایتان در سرویس های ابری نیز آسان تر میگردد. شما میتوانید به سادگی یک واحد (کیلوبایت، مگابایت، گیگابایت یا ترابایت) را انتخاب کنید و اندازه تکه های موردنظرتان را وارد کنید. برای رمزگشایی کردن تکه ها، کافیست یکی از آنها را به درون پیکوکریپت بکشید و بیندازید و همه تکه ها به صورت خودکار هنگام رمزگشایی تبدیل به یک فایل خواهند شد.</li>
 </ul>
 
-# Security
-For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, Discord, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my isolated forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
+# امنیت
+برای اطلاعات بیشتر درباره اینکه پیکوکریپت چگونه رمزنگاری را مدیریت میکند، <a href="Internals.md">این</a> فایل را برای جزئیات فنی مطالعه کنید. اگر درباره امنیت من یا این پروژه نگران هستید، بگذارید به شما اطمینان بدهم که این صفحه هرگز دزدیده یا هک نخواهد شد. من ورود دو مرحله ای (TOTP: گذرواژه یکبارمصرف بر اساس زمان) روی همه حساب های کاربری که به پیکوکریپت ارتباط دارند فعّال کرده ام (گیتهاب، گوگل، ردیت، اسنپ کرفت اوبونتو، دیسکورد و ...)، همچنین همه دستگاه های قابل حمل خودم را رمزگذاری کرده ام. برای امن سازی بیشتر، کتابخانه ها و Dependency هایی که پیکوکریپت از آن استفاده میکند را در یک محیط ایزوله نگهداری میکنم و فقط زمانی نسخه بروز آن ها را اعمال میکنم که تغییرات جدید آن ها را نگاه کرده باشم و مطمئن باشم که هیچ مشکل امنیتی در آنها وجود ندارد. این بدان معناست که اگر یک کتابخانه هک شده یا توسط سازنده اش حذف شود، پیکوکریپت اصلاً تحت تاثیر قرار نمیگیرد و با نسخه ای که من دارم به کار کردن ادامه خواهد داد. شما میتوانید درباره استفاده از پیکوکریپت اطمینان خاطر داشته باشید.
 
-## Signatures
-For the paranoid, Picocrypt is signed with PGP. The fingerprint and public key are listed below.
+## امضا های دیجیتال
+برای جلب رضایتِ افراد گوش به زنگ و بیش از حد مراقب، پیکوکریپت با PGP امضا شده است. اثرانگشت و کلید عمومی در پایین نوشته شده اند.
 
 <pre>B342A744BDEEA57B6A583E33A247E73798946F55</pre>
 <pre>-----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -86,40 +87,40 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 =YFwz
 -----END PGP PUBLIC KEY BLOCK-----</pre>
 
-# Community
-Here are some places where you can stay up to date with Picocrypt and get involved:
+# جامعه کاربران
+در این دو جا میتوانید درباره پیکوکریپت اطلاعات جدید کسب کنید و در بهبود آن مشارکت کنید:
 <ul>
-	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
-	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
+	<li><a href="https://www.reddit.com/r/Picocrypt/">ردیت</a></li>
+	<li><a href="https://discord.gg/8QM4A2caxH">دیسکورد</a></li>
 </ul>
 
-I highly recommend you join Picocrypt's subreddit because all updates and polls will be posted there. Remember to only trust these social networks and be aware of hackers that might try to impersonate me. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
+من شدیداً پیشنهاد میکنم که عضو ساب ردیتِ پیکوکریپت بشوید چون همه بروزرسانی ها و نظرسنجی ها آنجا قرار خواهد گرفت. به یاد داشته باشید که فقط به این شبکه اجتماعی پیکوکریپت اعتماد کنید و مراقب هکر هایی که ممکن است خودشان را به جای من بزنند باشید. من هرگز از شما گذرواژه تان را نمیپرسم و هر کس که این کار را میکند از طرف من نیست. من هرگز به شمان خواهم گفت که فایلی را از یک لینک مشکوک دانلود کنید و هر کس که این کار را میکند از طرف من نیست.
 
-# Stargazers
-How's Picocrypt doing? Take a look below to find out.
-![Stargazers Over Time](https://starchart.cc/HACKERALERT/Picocrypt.svg)
+# ستاره های این برنامه
+پیکوکریپت چطور عمل کرده؟ این عکس را ببینید تا متوجه بشوید.
+![ستاره های برنامه در گذر زمان](https://starchart.cc/HACKERALERT/Picocrypt.svg)
 
-# Donations
-If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt.
+# کمک مالی
+اگر پیکوکریپت به کار شما آمده و به دردتان خورده، لطفاً در نظر بگیرید که از طریق <a href="https://paypal.me/evanyiwensu">پی پال</a> به من کمک مالی کنید. من این نرم افزار را به صورت کاملاً رایگان در اختیار شما قرار داده ام و دوست دارم که یک سری حامی مالی داشته باشم که به من انگیزه بدهند تا به کار کردن روی پیکوکریپت ادامه بدهم.
 
-# Thank Yous
-A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
+# سپاس گزاری
+یک تشکر از صمیم قلب به همه کسانی که در سایت Open Collective کمک مالی چشمگیری کرده اند:
 <ul>
-	<li>YellowNight ($818)</li>
-	<li>evelian ($50)</li>
-	<li>jp26 ($50)</li>
-	<li>guest-116103ad ($50)</li>
-	<li>Tybbs ($10)</li>
-	<li>N. Chin ($10)</li>
-	<li>Manjot ($10)</li>
-	<li>Phil P. ($10)</li>
-	<li>donor39 (backer)</li>
-	<li>Pokabu (backer)</li>
+	<li>YellowNight ($818 = 24,500,000 تومان)</li>
+	<li>evelian ($50 = 1,500,000 تومان)</li>
+	<li>jp26 ($50 = 1,500,000 تومان)</li>
+	<li>guest-116103ad ($50 = 1,500,000 تومان)</li>
+	<li>Tybbs ($10 = 300,000 تومان)</li>
+	<li>N. Chin ($10 = 300,000 تومان)</li>
+	<li>Manjot ($10 = 300,000 تومان)</li>
+	<li>Phil P. ($10 = 300,000 تومان)</li>
+	<li>donor39 (حامی)</li>
+	<li>Pokabu (حامی)</li>
 </ul>
 
-You are the people who inspire me to work on Picocrypt and provide it free of charge to everyone!
+شما کسانی هستید که به من انگیزه میدهید تا روی پیکوکریپت کار کنم و آن را رایگان در اختیار همه قرار بدهم! 
 
-Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
+همچنین، یک تشکر بزرگ به این پنج نفر، که جزو نخستین کسانی بودند که حمایت مالی انجام دادند و از پیکوکریپت حمایت کردند:
 <ul>
 	<li>W.Graham</li>
 	<li>N. Chin</li>
@@ -128,29 +129,30 @@ Also, a huge thanks to the following list of five people, who were the first to 
 	<li>E. Zahard</li>
 </ul>
 
-As well, a great thanks to these people, who have helped translate Picocrypt and make it more accessible to the world:
+همچنین یک تشکر بزرگ به این افراد، که در ترجمه پیکوکریپت یاری رساندند و آن را برای جهانیان قابل دسترس تر کردند:
 <ul>
-	<li>@umitseyhan75 for Turkish</li>
-	<li>@digitalblossom & @Pokabu26 for German</li>
-	<li>@zeeaall for Brazilian Portuguese</li>
-	<li>@kurpau for Lithuanian</li>
-	<li>u/francirc for Spanish</li>
-	<li>yn for Russian</li>
-	<li>@Etim-Orb for Hungarian</li>
-	<li>@Minibus93 for Italian</li>
-	<li>Michel for French</li>
-	<li>@victorhck for Spanish</li>
+	<li>@umitseyhan75 برای ترکی</li>
+	<li>@digitalblossom & @Pokabu26 برای آلمانی</li>
+	<li>@zeeaall برای پرتغالی برزیلی</li>
+	<li>@kurpau برای لیتوانیایی</li>
+	<li>u/francirc برای اسپانیایی</li>
+	<li>yn برای روسی</li>
+	<li>@Etim-Orb برای مجارستانی</li>
+	<li>@Minibus93 برای ایتالیایی</li>
+	<li>Michel برای فرانسوی</li>
+	<li>@victorhck برای اسپانیایی</li>
+	<li>@MasterKia برای پارسی</li>
 </ul>
 
-Finally, thanks to these people/organizations for helping me out when needed:
+و در پایان، سپاس از همه این افراد/سازمان ها که در موقع نیاز به من کمک کردند:
 <ul>
-	<li>[ REDACTED ] for helping me create an AppImage for Picocrypt</li>
-	<li>u/Upstairs-Fishing867 for helping me test PGP signatures</li>
-	<li>Fuderal on Discord for helping me setup a Discord server</li>
-	<li>u/greenreddits for constant feedback and support</li>
-	<li>u/Tall_Escape for helping me test Picocrypt</li>
-	<li>u/NSABackdoors for doing plenty of testing</li>
-	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
-	<li><a href="https://privacytools.io">PrivacyToolsIO</a> for listing Picocrypt</li>
-	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
+	<li>[ سانسور شده ] برای کمک به من برای ساخت یک فایل نصبی AppImage برای پیکوکریپت</li>
+	<li>u/Upstairs-Fishing867 برای کمک به من برای آزمایش کردن امضای دیجیتالِ PGP</li>
+	<li>Fuderal در دیسکورد برای کمک به من برای راه اندازی یک سرور دیسکورد</li>
+	<li>u/greenreddits برای بازخورد های پی در پی و پشتیبانی</li>
+	<li>u/Tall_Escape برای کمک به من برای آزمایش و تست کردن پیکوکریپت</li>
+	<li>u/NSABackdoors برای انجام کلی آزمایش و تست</li>
+	<li>@samuel-lucas6 برای بازخورد، پیشنهاد ها و پشتیبانی</li>
+	<li><a href="https://privacytools.io">PrivacyToolsIO</a> برای ذکر کردن پیکوکریپت</li>
+	<li><a href="https://privacyguides.org">PrivacyGuides</a> برای ذکر کردن پیکوکریپت</li>
 </ul>
