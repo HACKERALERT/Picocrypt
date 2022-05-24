@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.29
+Picocrypt v1.30
 Copyright (c) Evan Su (https://evansu.cc)
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -59,7 +59,7 @@ var TRANSPARENT = color.RGBA{0x00, 0x00, 0x00, 0x00}
 
 // Generic variables
 var window *giu.MasterWindow
-var version = "v1.29"
+var version = "v1.30"
 var dpi float32
 var mode string
 var working bool
