@@ -437,10 +437,17 @@ func draw() {
 							}
 
 							fout, _ := os.Create(file)
-							data := make([]byte, MiB)
+							data := make([]byte, KiB)
 							rand.Read(data)
-							fout.Write(data)
+							_, err = fout.Write(data)
 							fout.Close()
+							if err != nil {
+								insufficientSpace(nil, nil)
+								os.Remove(file)
+							} else {
+								mainStatus = "Ready."
+								mainStatusColor = WHITE
+							}
 						}),
 						giu.Tooltip("Generate a cryptographically secure keyfile."),
 					),
@@ -625,7 +632,7 @@ func onDrop(names []string) {
 	if showKeyfile {
 		keyfiles = append(keyfiles, names...)
 
-		// Remove duplicate keyfiles and make sure they're accessible
+		// Make sure keyfiles are accessible, remove duplicates
 		var tmp []string
 		for _, i := range keyfiles {
 			duplicate := false
@@ -638,6 +645,12 @@ func onDrop(names []string) {
 			fin, err := os.Open(i)
 			if err == nil {
 				fin.Close()
+			} else {
+				showKeyfile = false
+				resetUI()
+				accessDenied("Keyfile read")
+				giu.Update()
+				return
 			}
 			if !duplicate && !stat.IsDir() && err == nil {
 				tmp = append(tmp, i)
@@ -705,8 +718,8 @@ func onDrop(names []string) {
 					outputFile = names[0][:ind]
 					recombine = true
 
-					totalFiles := 0
 					// Find out the number of splitted chunks
+					totalFiles := 0
 					for {
 						stat, err := os.Stat(fmt.Sprintf("%s.%d", inputFile, totalFiles))
 						if err != nil {
@@ -918,11 +931,9 @@ func work() {
 		}
 		compressDone = 0
 
+		// Add each file to the .zip
 		writer := zip.NewWriter(file)
 		compressStart = time.Now()
-
-		// Add each file to the .zip
-
 		for i, path := range files {
 			progressInfo = fmt.Sprintf("%d/%d", i+1, len(files))
 			giu.Update()
@@ -959,17 +970,15 @@ func work() {
 			fin.Close()
 
 			if err != nil {
-				insufficientSpace()
+				insufficientSpace(nil, file)
 				writer.Close()
-				file.Close()
 				os.Remove(inputFile)
 				return
 			}
 
 			if !working {
-				cancel()
+				cancel(nil, file)
 				writer.Close()
-				file.Close()
 				os.Remove(inputFile)
 				return
 			}
@@ -1004,12 +1013,18 @@ func work() {
 		// Merge all chunks into one file
 		startTime := time.Now()
 		for i := 0; i < totalFiles; i++ {
-			fin, _ := os.Open(fmt.Sprintf("%s.%d", inputFile, i))
+			fin, err := os.Open(fmt.Sprintf("%s.%d", inputFile, i))
+			if err != nil {
+				fout.Close()
+				os.Remove(outputFile + ".pcv")
+				resetUI()
+				accessDenied("Read")
+				return
+			}
+
 			for {
 				if !working {
-					cancel()
-					fin.Close()
-					fout.Close()
+					cancel(fin, fout)
 					os.Remove(outputFile + ".pcv")
 					return
 				}
@@ -1025,9 +1040,7 @@ func work() {
 				done += read
 
 				if err != nil {
-					insufficientSpace()
-					fin.Close()
-					fout.Close()
+					insufficientSpace(fin, fout)
 					os.Remove(outputFile + ".pcv")
 					return
 				}
@@ -1065,13 +1078,16 @@ func work() {
 		return
 	}
 
-	// Set up output file
+	// Setup output file
 	var fout *os.File
 
 	// If encrypting, generate values and write to file
 	if mode == "encrypt" {
 		popupStatus = "Generating values..."
 		giu.Update()
+
+		// Stores any errors when writing to file
+		errs := make([]error, 11)
 
 		// Create the output file
 		var err error
@@ -1089,15 +1105,18 @@ func work() {
 		nonce = make([]byte, 24)
 
 		// Write the program version to file
-		fout.Write(rsEncode(rs5, []byte(version)))
+		_, errs[0] = fout.Write(rsEncode(rs5, []byte(version)))
 
 		// Encode and write the comment length to file
 		commentsLength := []byte(fmt.Sprintf("%05d", len(comments)))
-		fout.Write(rsEncode(rs5, commentsLength))
+		_, errs[1] = fout.Write(rsEncode(rs5, commentsLength))
 
 		// Encode the comment and write to file
 		for _, i := range []byte(comments) {
-			fout.Write(rsEncode(rs1, []byte{i}))
+			_, err := fout.Write(rsEncode(rs1, []byte{i}))
+			if err != nil {
+				errs[2] = err
+			}
 		}
 
 		// Configure flags and write to file
@@ -1117,7 +1136,7 @@ func work() {
 		if total%int64(MiB) >= int64(MiB)-128 { // Reed-Solomon internals
 			flags[4] = 1
 		}
-		fout.Write(rsEncode(rs5, flags))
+		_, errs[3] = fout.Write(rsEncode(rs5, flags))
 
 		// Fill values with Go's CSPRNG
 		rand.Read(salt)
@@ -1126,15 +1145,27 @@ func work() {
 		rand.Read(nonce)
 
 		// Encode values with Reed-Solomon and write to file
-		fout.Write(rsEncode(rs16, salt))
-		fout.Write(rsEncode(rs32, hkdfSalt))
-		fout.Write(rsEncode(rs16, serpentSalt))
-		fout.Write(rsEncode(rs24, nonce))
+		_, errs[4] = fout.Write(rsEncode(rs16, salt))
+		_, errs[5] = fout.Write(rsEncode(rs32, hkdfSalt))
+		_, errs[6] = fout.Write(rsEncode(rs16, serpentSalt))
+		_, errs[7] = fout.Write(rsEncode(rs24, nonce))
 
 		// Write placeholders for future use
-		fout.Write(make([]byte, 192)) // Hash of encryption key
-		fout.Write(make([]byte, 96))  // Hash of keyfile key
-		fout.Write(make([]byte, 192)) // BLAKE2b/HMAC-SHA3 tag
+		_, errs[8] = fout.Write(make([]byte, 192))  // Hash of encryption key
+		_, errs[9] = fout.Write(make([]byte, 96))   // Hash of keyfile key
+		_, errs[10] = fout.Write(make([]byte, 192)) // BLAKE2b/HMAC-SHA3 tag
+
+		for _, err := range errs {
+			if err != nil {
+				insufficientSpace(fin, fout)
+				os.Remove(outputFile + ".pcv")
+				if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
+					os.Remove(inputFile)
+				}
+				return
+			}
+		}
+
 	} else { // Decrypting, read values from file and decode
 		popupStatus = "Reading values..."
 		giu.Update()
@@ -1194,12 +1225,7 @@ func work() {
 				if keep { // If the user chooses to force decrypt
 					kept = true
 				} else {
-					mainStatus = "The volume header is damaged."
-					mainStatusColor = RED
-					fin.Close()
-					if recombine {
-						os.Remove(inputFile)
-					}
+					broken(fin, nil, "The volume header is damaged.")
 					return
 				}
 			}
@@ -1238,16 +1264,19 @@ func work() {
 
 		if keyfileOrdered { // If order matters, hash progressively
 			var tmp = sha3.New256()
+
+			// For each keyfile...
 			for _, path := range keyfiles {
 				fin, _ := os.Open(path)
 				stat, _ := os.Stat(path)
 				data := make([]byte, stat.Size())
-				fin.Read(data)
+				fin.Read(data) // Read the keyfile
 				fin.Close()
-				tmp.Write(data)
+				tmp.Write(data) // Hash the data
 			}
-			keyfileKey = tmp.Sum(nil)
+			keyfileKey = tmp.Sum(nil) // Get the SHA3-256
 
+			// Store a hash of 'keyfileKey' for comparison
 			tmp = sha3.New256()
 			tmp.Write(keyfileKey)
 			keyfileHash = tmp.Sum(nil)
@@ -1256,11 +1285,15 @@ func work() {
 				fin, _ := os.Open(path)
 				stat, _ := os.Stat(path)
 				data := make([]byte, stat.Size())
-				fin.Read(data)
+				fin.Read(data) // Read the keyfile
 				fin.Close()
+
+				// Get the SHA3-256
 				tmp := sha3.New256()
 				tmp.Write(data)
 				sum := tmp.Sum(nil)
+
+				// XOR keyfile hash with 'keyfileKey'
 				if keyfileKey == nil {
 					keyfileKey = sum
 				} else {
@@ -1270,7 +1303,7 @@ func work() {
 				}
 			}
 
-			// Store a hash of the keyfile key for comparison
+			// Store a hash of 'keyfileKey' for comparison
 			tmp := sha3.New256()
 			tmp.Write(keyfileKey)
 			keyfileHash = tmp.Sum(nil)
@@ -1308,11 +1341,7 @@ func work() {
 						mainStatus = "Incorrect keyfiles."
 					}
 				}
-				mainStatusColor = RED
-				fin.Close()
-				if recombine {
-					os.Remove(inputFile)
-				}
+				broken(fin, nil, mainStatus)
 				return
 			}
 		}
@@ -1338,7 +1367,7 @@ func work() {
 	done, counter := 0, 0
 	chacha, _ := chacha20.NewUnauthenticatedCipher(key, nonce)
 
-	// Use HKDF-SHA3 to generate a subkey
+	// Use HKDF-SHA3 to generate a subkey for the MAC
 	var mac hash.Hash
 	subkey := make([]byte, 32)
 	hkdf := hkdf.New(sha3.New256, key, hkdfSalt, nil)
@@ -1355,14 +1384,12 @@ func work() {
 	s, _ := serpent.NewCipher(serpentKey)
 	serpent := cipher.NewCTR(s, serpentSalt)
 
+	// Start the main encryption process
 	canCancel = true
 	startTime := time.Now()
 	for {
-		// If the user cancels the process, stop and clean up
 		if !working {
-			cancel()
-			fin.Close()
-			fout.Close()
+			cancel(fin, fout)
 			if recombine || len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 				os.Remove(inputFile)
 			}
@@ -1490,11 +1517,10 @@ func work() {
 			}
 		}
 
+		// Write the data to output file
 		_, err = fout.Write(dst)
 		if err != nil {
-			insufficientSpace()
-			fin.Close()
-			fout.Close()
+			insufficientSpace(fin, fout)
 			if recombine || len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 				os.Remove(inputFile)
 			}
@@ -1520,7 +1546,7 @@ func work() {
 		}
 		giu.Update()
 
-		// Change counters after 60 GiB to prevent overflow
+		// Change values after 60 GiB to prevent overflow
 		if counter >= 60*GiB {
 			// ChaCha20
 			nonce = make([]byte, 24)
@@ -1556,6 +1582,7 @@ func work() {
 
 		// Validate the authenticity of decrypted data
 		if subtle.ConstantTimeCompare(mac.Sum(nil), authTag) == 0 {
+			// Decrypt again but this time rebuilding the input data
 			if reedsolo && fastDecode {
 				fastDecode = false
 				fin.Close()
@@ -1563,6 +1590,7 @@ func work() {
 				work()
 				return
 			}
+
 			if keep {
 				kept = true
 			} else {
@@ -1603,6 +1631,7 @@ func work() {
 		giu.Update()
 		fin, _ := os.Open(outputFile)
 
+		// Start the splitting process
 		startTime := time.Now()
 		for i := 0; i < chunks; i++ {
 			// Make the chunk
@@ -1621,40 +1650,30 @@ func work() {
 					break
 				}
 				if !working {
-					cancel()
-					fin.Close()
-					fout.Close()
+					cancel(fin, fout)
 					if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 						os.Remove(inputFile)
 					}
 					os.Remove(outputFile)
-
-					// If user cancels, remove the unfinished files
-					for _, j := range splitted {
+					for _, j := range splitted { // Remove unfinished chunks
 						os.Remove(j)
 					}
 					os.Remove(fmt.Sprintf("%s.%d", outputFile, i))
-
 					return
 				}
 
 				data = data[:read]
 				_, err = fout.Write(data)
 				if err != nil {
-					insufficientSpace()
-					fin.Close()
-					fout.Close()
+					insufficientSpace(fin, fout)
 					if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 						os.Remove(inputFile)
 					}
 					os.Remove(outputFile)
-
-					// If user cancels, remove the unfinished files
-					for _, j := range splitted {
+					for _, j := range splitted { // Remove unfinished chunks
 						os.Remove(j)
 					}
 					os.Remove(fmt.Sprintf("%s.%d", outputFile, i))
-
 					return
 				}
 				done += read
@@ -1694,7 +1713,7 @@ func work() {
 		os.Remove(inputFile)
 	}
 
-	// Delete the temporary .zip used to encrypt files
+	// Delete the temporary .zip used to encrypt multiple files
 	if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 		os.Remove(inputFile)
 	}
@@ -1705,7 +1724,7 @@ func work() {
 		giu.Update()
 
 		if mode == "decrypt" {
-			if recombine { // Remove each chunk
+			if recombine { // Remove each chunk of volume
 				i := 0
 				for {
 					_, err := os.Stat(fmt.Sprintf("%s.%d", inputFileOld, i))
@@ -1750,7 +1769,9 @@ func accessDenied(s string) {
 }
 
 // If there isn't enough disk space
-func insufficientSpace() {
+func insufficientSpace(fin *os.File, fout *os.File) {
+	fin.Close()
+	fout.Close()
 	mainStatus = "Insufficient disk space."
 	mainStatusColor = RED
 }
@@ -1769,8 +1790,10 @@ func broken(fin *os.File, fout *os.File, message string) {
 	os.Remove(outputFile)
 }
 
-// Stop working
-func cancel() {
+// Stop working if user hits "Cancel"
+func cancel(fin *os.File, fout *os.File) {
+	fin.Close()
+	fout.Close()
 	mainStatus = "Operation cancelled by user."
 	mainStatusColor = WHITE
 }
@@ -1860,6 +1883,8 @@ func rsDecode(rs *infectious.FEC, data []byte) ([]byte, error) {
 		}
 		return data[:rs.Total()/3], err
 	}
+
+	// No issues, return the decoded data
 	return res, nil
 }
 
