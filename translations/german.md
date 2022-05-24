@@ -14,17 +14,17 @@ Bitte spenden Sie für Picocrypt auf <a href="https://opencollective.com/picocry
 
 ## Windows
 
-Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.28/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm (false positive), damit andere Picocrypt-Nutzer nicht verwirrt werden.
+Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm (false positive), damit andere Picocrypt-Nutzer nicht verwirrt werden.
 
-Sollte sich die Datei nicht ausführen lassen, liegt es wahrscheinlich daran, dass ihr System kein OpenGL unterstützt. Für diese Situation ist eine Alternative bereitgestellt, die auf jedem Windows System ausführbar ist. Sie können sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.28/Picocrypt-NoGL.exe">hier</a> herunterladen.
+Sollte sich die Datei nicht ausführen lassen, liegt es wahrscheinlich daran, dass ihr System kein OpenGL unterstützt. Für diese Situation ist eine Alternative bereitgestellt, die auf jedem Windows System ausführbar ist. Sie können sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt-NoGL.exe">hier</a> herunterladen.
 
 ## macOS
 
-Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.28/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
+Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
 
 ## Linux
 
-Es gibt mehrer Wege, wie Sie Picocrypt unter Linux verwenden können. Die empfohlene Art ist es, Picocrypt als <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.28/Picocrypt.deb">.deb-Paket</a> (Debain 11+ und Ubuntu 20+) zu installieren. Falls .deb nicht ihren Bedürfnissen entspricht oder Sie eine nicht Debain-basierte Distro verwenden, steht auch ein <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.28/Picocrypt.AppImage">AppImage</a> zur Verfügung. Falls keine dieser Optionen funktioniert, können Sie Picocrypt auch über <a href="https://snapcraft.io/picocrypt">Snapcraft</a> installieren.
+Es gibt mehrer Wege, wie Sie Picocrypt unter Linux verwenden können. Die empfohlene Art ist es, Picocrypt als <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.deb">.deb-Paket</a> (Debain 11+ und Ubuntu 20+) zu installieren. Falls .deb nicht ihren Bedürfnissen entspricht oder Sie eine nicht Debain-basierte Distro verwenden, steht auch ein <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.AppImage">AppImage</a> zur Verfügung. Falls keine dieser Optionen funktioniert, können Sie Picocrypt auch über <a href="https://snapcraft.io/picocrypt">Snapcraft</a> installieren.
 
 ## Paranoid Packs
 
@@ -161,6 +161,7 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
 	<li>@Minibus93 für Italienisch</li>
   <li>Michel für Französisch</li>
   <li>@victorhck für Spanisch</li>
+  <li>@MasterKia für Persisch</li>
 </ul>
 
 Schließlich möchte ich mich bei diesen Leuten/Organisationen dafür bedanken, dass sie mir im Bedarfsfall geholfen haben:
