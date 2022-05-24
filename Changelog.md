@@ -3,7 +3,7 @@
 	<li>Add FAQ</li>
 </ul>
 
-# v1.29 (ETA: 1 day?)
+# v1.29 (Released 05/23/2022)
 <ul>
 	<li>✓ Review/improve Internals.md</li>
 	<li>✓ Add option to compress when encrypting a single file</li>
