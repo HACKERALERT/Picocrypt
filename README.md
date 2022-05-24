@@ -141,6 +141,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>@Minibus93 for Italian</li>
 	<li>Michel for French</li>
 	<li>@victorhck for Spanish</li>
+	<li>@MasterKia for Persian</li>
 </ul>
 
 Finally, thanks to these people/organizations for helping me out when needed:
