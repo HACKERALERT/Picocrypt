@@ -108,7 +108,7 @@ Hier finden Sie einige Stellen, an denen Sie über Picocrypt auf dem Laufenden b
 	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
 </ul>
 
-Ich empfehle Ihnen dringend, dem Picocrypt-Subreddit beizutreten, da alle Updates und Umfragen dort veröffentlicht werden. Denken Sie daran, nur diesen sozialen Netzwerken zu vertrauen und sich vor Hackern in Acht zu nehmen, die versuchen könnten, sich für mich auszugeben. Ich werde Sie niemals nach Ihrem Passwort fragen, und jeder, der das tut, ist nicht ich. Ich werde Sie niemals auffordern, eine Datei von einem verdächtigen Link herunterzuladen, und jeder, der das tut, ist nicht ich.
+Ich empfehle Ihnen dringend, dem Picocrypt Discord Server beizutreten, da die meiste Kommunikation dort stattfinden wird. Denken Sie daran, nur diesen sozialen Netzwerken zu vertrauen und sich vor Hackern in Acht zu nehmen, die versuchen könnten, sich für mich auszugeben. Ich werde Sie niemals nach Ihrem Passwort fragen, und jeder, der das tut, ist nicht ich. Ich werde Sie niemals auffordern, eine Datei von einem verdächtigen Link herunterzuladen, und jeder, der das tut, ist nicht ich.
 
 # Stargazers(GitHub-Sterne)
 
