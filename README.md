@@ -6,10 +6,10 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
 # Funding
-Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a potential audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
+Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a security audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
 
 # Downloads
-**Important**: There's an outdated and useless piece of abandonware called PicoCrypt on the Internet, which was last updated in 2005. PicoCrypt is not related in any way to Picocrypt (this project). Make sure you only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt.
+**Important**: There are multiple entities under the name "Picocrypt". For example, there's an old encryption tool called PicoCrypt that uses a broken cipher. There's also an ERC-funded research project called PICOCRYPT. Please don't confuse any of these projects with Picocrypt (this project). Make sure to only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt. When sharing Picocrypt with others, be sure to link to this repository to prevent any confusion.
 
 ## Windows
 Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe">here</a>. If Windows Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
@@ -101,7 +101,21 @@ How's Picocrypt doing? Take a look below to find out.
 ![Stargazers Over Time](https://starchart.cc/HACKERALERT/Picocrypt.svg)
 
 # Donations
-If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt.
+If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge, and would love to have some supporters that will motivate me to continue my work on Picocrypt. Currently, however, funding the audit is more important, so if you would like to donate, please donate on Open Collective to fund the audit as opposed to supporting me, which is less of a priority right now.
+
+# FAQ
+
+**Is Picocrypt accepting new features?**
+
+No, Picocrypt is considered feature-complete and won't be getting any new features. Unlike other tools that try to constantly add new features (which introduces new bugs and security holes), Picocrypt focuses on just a few core features but does each of them exceptionally well. Remember Picocrypt's ideology: small, simple, and secure.
+
+**Will Android/iOS be supported?**
+
+No, I don't plan on supporting Android or iOS because they are very different from traditional desktop operating systems and require different toolchains to develop apps for. Due to the nature of open-source software, however, it is possible that a community-built version of Picocrypt for Android or iOS may appear in the future.
+
+**Why is Picocrypt not updated frequently?**
+
+People seem to have the notion that software must be constantly updated to stay relevant and secure. While this may be true for a lot of the software we use, it is not for Picocrypt. Picocrypt is good software and good software doesn't need constant updates to remain relevant and secure. Good software will always be good software.
 
 # Thank Yous
 A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
