@@ -1,11 +1,11 @@
 <p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p>
 
-Picocrypt est un outil de cryptage très petit (d'où <i>Pico</i>), très simple mais très sécurisé que vous pouvez utiliser pour protéger vos fichiers. Il est conçu pour être l'outil <i>de référence</i> pour le chiffrement, en mettant l'accent sur la sécurité, la simplicité et la fiabilité. Picocrypt utilise le chiffrement sécurisé XChaCha20  cipher et la fonction de dérivation de clé Argon2id pour fournir un haut niveau de sécurité, même en face d'agences à trois lettres comme la NSA. Il est conçu pour une sécurité maximale, ne faisant absolument aucun compromis en matière de sécurité, et il est construit avec les modules x/crypto standard de Go. <strong>Votre vie privée et votre sécurité sont attaquées. Reprenez-en le  contrôle en toute confiance en protégeant vos fichiers avec Picocrypt.</strong>
+Picocrypt est un outil de chiffrement très petit (d'où <i>Pico</i>), très simple mais très sécurisé que vous pouvez utiliser pour protéger vos fichiers. Il est conçu pour être l'outil <i>de référence</i> pour le chiffrement, en mettant l'accent sur la sécurité, la simplicité et la fiabilité. Picocrypt utilise le chiffrement sécurisé XChaCha20 cipher et la fonction de dérivation de clé Argon2id pour fournir un haut niveau de sécurité, même en face d'agences à trois lettres comme la NSA. Il est conçu pour une sécurité maximale, ne faisant absolument aucun compromis en matière de sécurité, et il est construit avec les modules x/crypto standard de Go. <strong>Votre vie privée et votre sécurité sont attaquées. Reprenez-en le  contrôle en toute confiance en protégeant vos fichiers avec Picocrypt.</strong>
 
 <p align="center"><img align="center" src="/images/screenshot.png" width="384" alt="Picocrypt"></p>
 
 # Financement
-Veuillez faire un don à Picocrypt sur <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto est accepté) pour collecter des fonds pour un audit potentiel de  type Cure53. Comme il s'agit d'un projet sur lequel je passe de nombreuses heures , qui ne rapporte rien, je ne peux pas payer moi-même cet audit. <i>Picocrypt a besoin du soutien de sa communauté pour se faire.</i>
+Veuillez faire un don à Picocrypt sur <a href="https://opencollective.com/picocrypt">Open Collective</a> (les cryptomonnaies sont acceptés) pour collecter des fonds pour un audit potentiel de type Cure53. Comme il s'agit d'un projet sur lequel je passe de nombreuses heures, qui ne me rapportent pas d'argent, je ne peux pas payer moi-même cet audit. <i>Picocrypt a besoin du soutien de sa communauté pour se faire.</i>
 
 # Téléghargements
 ## Windows
@@ -30,7 +30,7 @@ Pourquoi devriez-vous utiliser Picocrypt au lieu de BitLocker, NordLocker, VeraC
 
 <li>Picocrypt est plus facile et plus productif à utiliser que VeraCrypt. Pour chiffrer des fichiers avec VeraCrypt, vous devez passer au moins cinq minutes à configurer un volume. Avec l'interface utilisateur simple de Picocrypt, tout ce que vous avez à faire est de faire glisser et déposer vos fichiers, d'entrer un mot de passe et d'appuyer sur Démarrer. Toutes les procédures complexes sont gérées par Picocrypt en interne. Qui a dit que le chiffrement sécurisé ne pouvait pas être simple ?</li>
 
-<li>Picocrypt est conçu pour la sécurité. 7-Zip est un utilitaire d'archivage et non un outil de chiffrement, il n'est donc pas axé sur la sécurité. Picocrypt, lui, est construit avec la sécurité comme priorité numéro un. Chaque partie de Picocrypt existe pour éliminer  tout ce qui pourrait avoir un impact sur la sécurité de Picocrypt, . Picocrypt est construit avec une cryptographie de confiance.</li>
+<li>Picocrypt est conçu pour la sécurité. 7-Zip est un utilitaire d'archivage et non un outil de chiffrement, il n'est donc pas axé sur la sécurité. Picocrypt, lui, est construit avec la sécurité comme priorité numéro un. Chaque partie de Picocrypt existe pour éliminer tout ce qui pourrait avoir un impact sur la sécurité de Picocrypt. Picocrypt est construit avec une cryptographie de confiance.</li>
 
 <li>Picocrypt authentifie les données en plus de les protéger, empêchant les pirates de modifier de manière malveillante les données sensibles. Ceci est utile lorsque vous envoyez des fichiers chiffrés via un canal non sécurisé et que vous voulez être sûr qu'ils arrivent intacts.</li>
 
@@ -130,7 +130,7 @@ De plus, un grand merci à ces personnes, qui ont aidé à traduire Picocrypt et
   <li>Michel pour francais</li>
 </ul>
 
-Enfin, merci à ces personnes de m'avoir aidé dés que le besoin s'en est fait sentir  :
+Enfin, merci à ces personnes de m'avoir aidé dés que le besoin s'en est fait sentir :
 
 <ul>
 <li>Fuderal sur Discord pour m'avoir aidé à configurer un serveur Discord</li>

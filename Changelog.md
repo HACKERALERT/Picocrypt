@@ -3,6 +3,12 @@
 	<li>Add FAQ</li>
 </ul>
 
+# v1.30 (No ETA)
+<ul>
+	<li>✓ Improve tooltip clarity</li>
+	<li>Fix scaling issue when moving between monitors with different DPIs</li>
+</ul>
+
 # v1.29 (Released 05/23/2022)
 <ul>
 	<li>✓ Review/improve Internals.md</li>
