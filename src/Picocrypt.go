@@ -419,7 +419,7 @@ func draw() {
 						modalId++
 						giu.Update()
 					}),
-					giu.Tooltip("Manage your keyfiles."),
+					giu.Tooltip("Manage keyfiles to use for encryption."),
 
 					giu.Style().SetDisabled(mode == "decrypt").To(
 						giu.Button("Create").Size(54, 0).OnClick(func() {
@@ -492,7 +492,7 @@ func draw() {
 
 					giu.Row(
 						giu.Checkbox("Reed-Solomon", &reedsolo),
-						giu.Tooltip("Prevent file corruption by erasure coding (slow)."),
+						giu.Tooltip("Prevent file corruption with erasure coding."),
 						giu.Dummy(-170, 0),
 						giu.Checkbox("Delete files", &delete),
 						giu.Tooltip("Delete the input files after encryption."),
