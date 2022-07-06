@@ -190,6 +190,8 @@ Inoltre, un enorme ringraziamento a queste persone, che hanno aiutato a tradurre
 
 <li>@Minibus93 per l'Italiano</li>
 
+<li>@ungespurv per il Polacco</li>
+
 </ul>
 
 Infine, grazie a queste persone per avermi aiutato quando mi serviva:

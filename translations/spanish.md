@@ -122,6 +122,7 @@ También, un gran agradecimiento a estas personas, que han ayudado a traducir Pi
 	<li>@Minibus93 para el italiano</li>
 	<li>Michel para el fracés</li>
 	<li>@victorhck para el español</li>
+	<li>@ungespurv para el polaco</li>
 </ul>
 
 Fianlmente, gracias a estas personas/organizaciones que me ayudaron cuando lo necesité:

@@ -125,6 +125,7 @@ Szintén nagy köszönet a következő 5 embernek akik az első adományozói é
 	<li>@Minibus93 Olasz</li>
 	<li>Michel Francia</li>
 	<li>@victorhck Spanyol</li>
+	<li>@ungespurv Fényesít</li>
 </ul>
 
 Végül köszönet ezeknek az embereknek/szervezeteknek amiért segítettek mikor szükségem volt arra:
