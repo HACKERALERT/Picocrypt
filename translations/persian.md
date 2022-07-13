@@ -142,6 +142,7 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 	<li>Michel برای فرانسوی</li>
 	<li>@victorhck برای اسپانیایی</li>
 	<li>@MasterKia برای پارسی</li>
+	<li>@ungespurv برای لهستانی</li>
 </ul>
 
 و در پایان، سپاس از همه این افراد/سازمان ها که در موقع نیاز به من کمک کردند:

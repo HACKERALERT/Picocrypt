@@ -162,6 +162,8 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
   <li>Michel für Französisch</li>
   <li>@victorhck für Spanisch</li>
   <li>@MasterKia für Persisch</li>
+	<li>@ungespurv für Polnisch</li>
+
 </ul>
 
 Schließlich möchte ich mich bei diesen Leuten/Organisationen dafür bedanken, dass sie mir im Bedarfsfall geholfen haben:
