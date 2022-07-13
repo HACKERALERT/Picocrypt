@@ -19,6 +19,8 @@ If the executable above doesn't work, it likely means that your system doesn't s
 ## macOS
 Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, right click on Picocrypt and hit "Open". If you still get the warning, right click on Picocrypt and hit "Open" again and you should be able to start Picocrypt.
 
+One thing to keep in mind is that Picocrypt on macOS requires Rosetta 2 and OpenGL, both of which are likely to be removed by Apple in the future. This means that Picocrypt may no longer run on macOS in the future as Apple pushes their own proprietary graphics and silicon. The solution? Don't buy Apple. They don't care about developers.
+
 ## Linux
 There are multiple ways to use Picocrypt on Linux. The recommended way is to install Picocrypt from a .deb <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.deb">here</a> (Debian 11+ and Ubuntu 20+). If the .deb doesn't suit your needs or you don't use a Debian-based distro, feel free to use the AppImage from <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.AppImage">here</a>. If neither of the options above work, you may install Picocrypt from Snapcraft, which should work on all distros. Find the instructions for Snapcraft <a href="https://snapcraft.io/picocrypt">here</a>.
 
