@@ -1,11 +1,7 @@
-# To Do
-<ul>
-	<li>Add FAQ</li>
-</ul>
-
 # v1.30 (No ETA)
 <ul>
 	<li>✓ Improve tooltip clarity</li>
+	<li>✓ Add FAQ</li>
 	<li>Fix scaling issue when moving between monitors with different DPIs</li>
 </ul>
 
