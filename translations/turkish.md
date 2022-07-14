@@ -90,6 +90,7 @@ Picocrypt'i tercüme ettikleri ve dünya için daha erişilebilir hale getirmeye
 <ul>
 	<li>Türkçe için @umitseyhan75</li>
 	<li>Almanca için @digitalblossom</li>
+	<li>Polonya için @ungespurv</li>
 </ul> 
 
 Ayrıca bu kişilere de teşekkürü bir borç bilirim:

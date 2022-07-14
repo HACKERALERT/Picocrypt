@@ -1,4 +1,4 @@
-<p>English | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | <a href="/translations/german.md">Deutsch</a> | <a href="/translations/portuguese.md">Português</a> | <a href="/translations/turkish.md">Türkçe</a> | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">русский</a> | <a href="/translations/hungarian.md">Magyar</a> | <a href="/translations/italian.md">Italiano</a> | <a href="/translations/persian.md">پارسی</a></p>
+<p>English | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | <a href="/translations/german.md">Deutsch</a> | <a href="/translations/portuguese.md">Português</a> | <a href="/translations/turkish.md">Türkçe</a> | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">русский</a> | <a href="/translations/hungarian.md">Magyar</a> | <a href="/translations/italian.md">Italiano</a> | <a href="/translations/persian.md">پارسی</a> | <a href="/translations/polish.md">Polski</a></p>
 <p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p> 
 
 Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encryption tool that you can use to protect your files. It's designed to be the <i>go-to</i> tool for encryption, with a focus on security, simplicity, and reliability. Picocrypt uses the secure XChaCha20 cipher and the Argon2id key derivation function to provide a high level of security, even from three-letter agencies like the NSA. It's designed for maximal security, making absolutely no compromises security-wise, and is built with Go's standard x/crypto modules. <strong>Your privacy and security is under attack. Take it back with confidence by protecting your files with Picocrypt.</strong>
@@ -9,7 +9,7 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a security audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
 
 # Downloads
-**Important**: There are multiple entities under the name "Picocrypt". For example, there's an old encryption tool called PicoCrypt that uses a broken cipher. There's also an ERC-funded research project called PICOCRYPT. Please don't confuse any of these projects with Picocrypt (this project). Make sure to only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt. When sharing Picocrypt with others, be sure to link to this repository to prevent any confusion.
+**Important**: There are multiple entities under the name "Picocrypt". For example, there's an old encryption tool called PicoCrypt that uses a broken cipher. There's also an ERC-funded research project called PICOCRYPT. There are even domains related to Picocrypt that I've never registered. Please don't confuse any of these unrelated projects with Picocrypt (this project). Make sure to only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt. When sharing Picocrypt with others, be sure to link to this repository to prevent any confusion.
 
 ## Windows
 Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe">here</a>. If Windows Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
@@ -18,6 +18,8 @@ If the executable above doesn't work, it likely means that your system doesn't s
 
 ## macOS
 Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, right click on Picocrypt and hit "Open". If you still get the warning, right click on Picocrypt and hit "Open" again and you should be able to start Picocrypt.
+
+One thing to keep in mind is that Picocrypt on macOS requires Rosetta 2 and OpenGL, both of which are likely to be removed by Apple in the future. This means that Picocrypt may no longer run on macOS in the future as Apple pushes their own proprietary graphics and silicon. The solution? Don't buy Apple. They don't care about developers.
 
 ## Linux
 There are multiple ways to use Picocrypt on Linux. The recommended way is to install Picocrypt from a .deb <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.deb">here</a> (Debian 11+ and Ubuntu 20+). If the .deb doesn't suit your needs or you don't use a Debian-based distro, feel free to use the AppImage from <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.AppImage">here</a>. If neither of the options above work, you may install Picocrypt from Snapcraft, which should work on all distros. Find the instructions for Snapcraft <a href="https://snapcraft.io/picocrypt">here</a>.
@@ -88,13 +90,13 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 -----END PGP PUBLIC KEY BLOCK-----</pre>
 
 # Community
-Here are some places where you can stay up to date with Picocrypt and get involved:
+Here are some places where you can get involved with Picocrypt:
 <ul>
 	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
 </ul>
 
-I highly recommend you join the Discord server because most communication will take place there. Remember to only trust these social networks and be aware of hackers that might try to impersonate me. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
+While I won't be active in these communities myself, they are still a great place to ask questions and help one another out. Remember to only trust these social networks and be aware of hackers that might try to impersonate me. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
 
 # Stargazers
 How's Picocrypt doing? Take a look below to find out.
@@ -157,6 +159,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>Michel for French</li>
 	<li>@victorhck for Spanish</li>
 	<li>@MasterKia for Persian</li>
+	<li>@ungespurv for Polish</li>
 </ul>
 
 Finally, thanks to these people/organizations for helping me out when needed:

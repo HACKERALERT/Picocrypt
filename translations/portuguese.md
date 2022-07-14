@@ -97,6 +97,7 @@ Além disso, um grande obrigado a essas pessoas, que ajudaram a traduzir Picocry
 	<li>@umitseyhan75 para turco</li>
 	<li>@digitalblossom para o alemão</li>
 	<li>@zeeaall para o português brasileiro</li>
+	<li>@ungespurv para polonês</li>
 </ul>
 
 Finalmente, agradecimentos a essas pessoas por me ajudarem quando necessário:
