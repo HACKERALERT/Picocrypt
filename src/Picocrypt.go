@@ -419,7 +419,12 @@ func draw() {
 						modalId++
 						giu.Update()
 					}),
-					giu.Tooltip("Manage keyfiles to use for encryption."),
+					giu.Tooltip("Manage keyfiles to use for "+(func() string {
+						if mode != "decrypt" {
+							return "encryption."
+						}
+						return "decryption."
+					}())),
 
 					giu.Style().SetDisabled(mode == "decrypt").To(
 						giu.Button("Create").Size(54, 0).OnClick(func() {
