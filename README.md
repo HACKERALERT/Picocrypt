@@ -90,13 +90,13 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 -----END PGP PUBLIC KEY BLOCK-----</pre>
 
 # Community
-Here are some places where you can stay up to date with Picocrypt and get involved:
+Here are some places where you can get involved with Picocrypt:
 <ul>
 	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
 	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
 </ul>
 
-I highly recommend you join the Discord server because most communication will take place there. Remember to only trust these social networks and be aware of hackers that might try to impersonate me. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
+While I won't be active in these communities myself, they are still a great place to ask questions and help one another out. Remember to only trust these social networks and be aware of hackers that might try to impersonate me. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
 
 # Stargazers
 How's Picocrypt doing? Take a look below to find out.
