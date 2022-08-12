@@ -1,8 +1,9 @@
 # v1.30 (No ETA)
 <ul>
-	<li>✓ Improve tooltip clarity</li>
-	<li>✓ Add FAQ</li>
-	<li>Fix scaling issue when moving between monitors with different DPIs</li>
+	<li>✓ Improve tooltip word choice</li>
+	<li>✓ Add FAQ to README</li>
+	<li>✓ Fix scaling issue when moving between monitors with different DPIs (on Windows)</li>
+	<li>✓ Strip periods from custom output filename to prevent file extension problems</li>
 </ul>
 
 # v1.29 (Released 05/23/2022)
