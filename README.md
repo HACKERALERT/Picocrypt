@@ -103,7 +103,7 @@ How's Picocrypt doing? Take a look below to find out.
 ![Stargazers Over Time](https://starchart.cc/HACKERALERT/Picocrypt.svg)
 
 # Donations
-If you find Picocrypt useful, please consider tipping my <a href="https://paypal.me/evanyiwensu">PayPal</a>. I'm providing this software completely free of charge and would love to have some supporters that will motivate me to continue my work on Picocrypt. Currently, however, funding the audit is more important, so if you would like to donate, please donate on Open Collective to fund the audit as opposed to supporting me, which is less of a priority right now.
+When I was actively developing Picocrypt, I accepted donations, but now that Picocrypt is complete and production-ready, there's no need anymore. Instead, take your time and effort to share the love of Picocrypt with others. Donations are nice, but being able to help others is a lot more valuable to me than a few spare dollars. Knowing that Picocrypt is helping people secure their files is plenty enough for me.
 
 # FAQ
 
