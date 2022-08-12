@@ -28,8 +28,10 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/HACKERALERT/clipboard"
@@ -565,6 +567,7 @@ func draw() {
 					if file == "" || err != nil {
 						return
 					}
+					file = strings.Split(file, ".")[0]
 
 					// Add the correct extensions
 					if mode == "encrypt" {
@@ -895,7 +898,7 @@ func work() {
 	// Cryptography values
 	var salt []byte                    // Argon2 salt, 16 bytes
 	var hkdfSalt []byte                // HKDF-SHA3 salt, 32 bytes
-	var serpentSalt []byte             // Serpent salt, 16 bytes
+	var serpentIV []byte               // Serpent IV, 16 bytes
 	var nonce []byte                   // 24-byte XChaCha20 nonce
 	var keyHash []byte                 // SHA3-512 hash of encryption key
 	var keyHashRef []byte              // Same as 'keyHash', but used for comparison
@@ -1106,7 +1109,7 @@ func work() {
 		// Set up cryptographic values
 		salt = make([]byte, 16)
 		hkdfSalt = make([]byte, 32)
-		serpentSalt = make([]byte, 16)
+		serpentIV = make([]byte, 16)
 		nonce = make([]byte, 24)
 
 		// Write the program version to file
@@ -1146,13 +1149,13 @@ func work() {
 		// Fill values with Go's CSPRNG
 		rand.Read(salt)
 		rand.Read(hkdfSalt)
-		rand.Read(serpentSalt)
+		rand.Read(serpentIV)
 		rand.Read(nonce)
 
 		// Encode values with Reed-Solomon and write to file
 		_, errs[4] = fout.Write(rsEncode(rs16, salt))
 		_, errs[5] = fout.Write(rsEncode(rs32, hkdfSalt))
-		_, errs[6] = fout.Write(rsEncode(rs16, serpentSalt))
+		_, errs[6] = fout.Write(rsEncode(rs16, serpentIV))
 		_, errs[7] = fout.Write(rsEncode(rs24, nonce))
 
 		// Write placeholders for future use
@@ -1204,9 +1207,9 @@ func work() {
 		fin.Read(hkdfSalt)
 		hkdfSalt, errs[4] = rsDecode(rs32, hkdfSalt)
 
-		serpentSalt = make([]byte, 48)
-		fin.Read(serpentSalt)
-		serpentSalt, errs[5] = rsDecode(rs16, serpentSalt)
+		serpentIV = make([]byte, 48)
+		fin.Read(serpentIV)
+		serpentIV, errs[5] = rsDecode(rs16, serpentIV)
 
 		nonce = make([]byte, 72)
 		fin.Read(nonce)
@@ -1383,11 +1386,11 @@ func work() {
 		mac, _ = blake2b.New512(subkey) // Keyed BLAKE2b
 	}
 
-	// Generate another subkey for use as Serpent's salt
+	// Generate another subkey for use as Serpent's key
 	serpentKey := make([]byte, 32)
 	hkdf.Read(serpentKey)
 	s, _ := serpent.NewCipher(serpentKey)
-	serpent := cipher.NewCTR(s, serpentSalt)
+	serpent := cipher.NewCTR(s, serpentIV)
 
 	// Start the main encryption process
 	canCancel = true
@@ -1551,7 +1554,7 @@ func work() {
 		}
 		giu.Update()
 
-		// Change values after 60 GiB to prevent overflow
+		// Change nonce/IV after 60 GiB to prevent overflow
 		if counter >= 60*GiB {
 			// ChaCha20
 			nonce = make([]byte, 24)
@@ -1559,9 +1562,9 @@ func work() {
 			chacha, _ = chacha20.NewUnauthenticatedCipher(key, nonce)
 
 			// Serpent
-			serpentSalt = make([]byte, 16)
-			hkdf.Read(serpentSalt)
-			serpent = cipher.NewCTR(s, serpentSalt)
+			serpentIV = make([]byte, 16)
+			hkdf.Read(serpentIV)
+			serpent = cipher.NewCTR(s, serpentIV)
 
 			// Reset counter to 0
 			counter = 0
@@ -1967,6 +1970,13 @@ func sizeify(size int64) string {
 }
 
 func main() {
+	// Set DPI awareness to system aware (value of 1)
+	if runtime.GOOS == "windows" {
+		shcore := syscall.NewLazyDLL("Shcore.dll")
+		shproc := shcore.NewProc("SetProcessDpiAwareness")
+		shproc.Call(uintptr(1))
+	}
+
 	// Create the main window
 	window = giu.NewMasterWindow("Picocrypt", 318, 479, giu.MasterWindowFlagsNotResizable)
 
