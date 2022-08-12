@@ -126,11 +126,13 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>evelian ($50)</li>
 	<li>jp26 ($50)</li>
 	<li>guest-116103ad ($50)</li>
+	<li>oli ($20)</li>
 	<li>Markus ($15)</li>
 	<li>Tybbs ($10)</li>
 	<li>N. Chin ($10)</li>
 	<li>Manjot ($10)</li>
 	<li>Phil P. ($10)</li>
+	<li>Raymond ($10)</li>
 	<li>donor39 (backer)</li>
 	<li>Pokabu (backer)</li>
 </ul>
