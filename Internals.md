@@ -27,7 +27,7 @@ A Picocrypt volume's header is encoded with Reed-Solomon by default since it is,
 | 30+3C  | 15           | 5            | Flags (paranoid mode, use keyfiles, etc.)
 | 45+3C  | 48           | 16           | Salt for Argon2
 | 93+3C  | 96           | 32           | Salt for HKDF-SHA3
-| 189+3C | 48           | 16           | Salt for Serpent
+| 189+3C | 48           | 16           | IV for Serpent
 | 237+3C | 72           | 24           | Nonce for XChaCha20
 | 309+3C | 192          | 64           | SHA3-512 of encryption key
 | 501+3C | 96           | 32           | SHA3-256 of keyfile key
