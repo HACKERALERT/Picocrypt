@@ -122,6 +122,7 @@ People seem to have the notion that software must be constantly updated to stay 
 # Thank Yous
 A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
 <ul>
+	<li>Guest ($842)</li>
 	<li>YellowNight ($818)</li>
 	<li>evelian ($50)</li>
 	<li>jp26 ($50)</li>
@@ -150,7 +151,7 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 <ul>
 	<li>@umitseyhan75 for Turkish</li>
 	<li>@digitalblossom & @Pokabu26 for German</li>
-	<li>@zeeaall for Brazilian Portuguese</li>
+	<li>@zeeaall & @Rayserzor for Portuguese</li>
 	<li>@kurpau for Lithuanian</li>
 	<li>u/francirc for Spanish</li>
 	<li>yn for Russian</li>
