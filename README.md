@@ -51,7 +51,7 @@ Here's how Picocrypt compares to other popular encryption tools.
 | Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |
 | Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |🟧 Medium       |🟧 Medium      |🟧 Medium       |✅ Easy        |
 | Cipher         |✅ XChaCha20   |✅ AES-256      |✅ AES-256     |🟧 AES-128      |✅ AES-256     |✅ AES-256      |🟧 AES-128     |
-| Key Derivation |✅ Argon2      |🆗 PBKDF2       |❌ SHA256      |❓ Unknown      |✅ Scrypt      |✅ Argon2       |🆗 PBKDF2      |
+| Key Derivation |✅ Argon2      |🆗 PBKDF2       |❌ SHA-256     |❓ Unknown      |✅ Scrypt      |✅ Argon2       |🆗 PBKDF2      |
 | Data Integrity |✅ Always      |❌ No           |❌ No          |❓ Unknown      |✅ Always      |✅ Always       |✅ Always      |
 | Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |❌ No           |❌ No          |
 | Compression    |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
@@ -90,13 +90,7 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 -----END PGP PUBLIC KEY BLOCK-----</pre>
 
 # Community
-Here are some places where you can get involved with Picocrypt:
-<ul>
-	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
-	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
-</ul>
-
-While I won't be active in these communities myself, they are still a great place to ask questions and help one another out, especially if something happens to me or this repository in the future. Remember to only trust these specific social networks and be aware of hackers that might try to impersonate me on other platforms. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
+Consider joining the official subreddit (<a href="https://www.reddit.com/r/Picocrypt/">r/Picocrypt</a>). While I won't be active in the subreddit myself, it is still a great place to ask questions and help one another out, especially if something happens to me or this repository in the future. Remember to only trust the subreddit and be aware of hackers that might try to impersonate me on other platforms. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
 
 # Stargazers
 How's Picocrypt doing? Take a look below to find out.
@@ -167,7 +161,6 @@ Finally, thanks to these people/organizations for helping me out when needed:
 <ul>
 	<li>[ REDACTED ] for helping me create an AppImage for Picocrypt</li>
 	<li>u/Upstairs-Fishing867 for helping me test PGP signatures</li>
-	<li>Fuderal on Discord for helping me set up a Discord server</li>
 	<li>u/greenreddits for constant feedback and support</li>
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
 	<li>u/NSABackdoors for doing plenty of testing</li>
