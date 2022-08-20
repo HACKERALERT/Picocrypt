@@ -4,6 +4,12 @@
 	<li>✓ Add FAQ to README</li>
 	<li>✓ Fix scaling issue when moving between monitors with different DPIs (on Windows)</li>
 	<li>✓ Strip periods from custom output filename to prevent file extension problems</li>
+	<li>✓ Minor tweaks to keyfile modal</li>
+	<li>✓ Use temporary .zip file to prevent overwriting when encrypting</li>
+	<li>✓ Check if files already exist when recombining and splitting to prevent overwriting</li>
+	<li>✓ Show ".*" in the output box if splitting</li>
+	<li>✓ Skip temporary and inaccessible files when combining/compressing</li>
+	<li>✓ Improve file scanning performance by precomputing total size</li>
 </ul>
 
 # v1.29 (Released 05/23/2022)
