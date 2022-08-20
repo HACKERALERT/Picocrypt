@@ -212,13 +212,15 @@ func draw() {
 					giu.Custom(func() {
 						if mode != "decrypt" {
 							giu.Checkbox("Require correct order", &keyfileOrdered).Build()
-							giu.Tooltip("Decryption will require the correct keyfile order.").Build()
+							giu.Tooltip("Ordering of keyfiles will matter.").Build()
 						} else if keyfileOrdered {
-							giu.Label("Correct order is required.").Build()
+							giu.Label("Correct ordering is required.").Build()
 						}
 					}),
-					giu.Separator(),
 					giu.Custom(func() {
+						if len(keyfiles) > 0 {
+							giu.Separator().Build()
+						}
 						for _, i := range keyfiles {
 							giu.Label(filepath.Base(i)).Build()
 						}
@@ -541,6 +543,9 @@ func draw() {
 							return &tmp
 						}
 						tmp = filepath.Base(outputFile)
+						if split {
+							tmp += ".*"
+						}
 						return &tmp
 					}()).Size(dw / dpi / dpi).Flags(16384),
 				).Build()
@@ -602,16 +607,30 @@ func draw() {
 				}
 				tmp, err := strconv.Atoi(splitSize)
 				if split && (splitSize == "" || tmp <= 0 || err != nil) {
-					mainStatus = "Invalid split size."
+					mainStatus = "Invalid chunk size."
 					mainStatusColor = RED
 					return
 				}
+
+				// Check if output file already exists
 				_, err = os.Stat(outputFile)
+
+				// Check if any split chunks already exist
+				if split {
+					names, _ := filepath.Glob(outputFile + ".*")
+					if len(names) > 0 {
+						err = nil
+					} else {
+						err = os.ErrNotExist
+					}
+				}
+
+				// If files already exist, show the overwrite modal
 				if err == nil {
 					showOverwrite = true
 					modalId++
 					giu.Update()
-				} else {
+				} else { // Nothing to worry about, start working
 					showProgress = true
 					fastDecode = true
 					canCancel = true
@@ -681,7 +700,8 @@ func onDrop(names []string) {
 	}
 
 	scanning = true
-	files, folders, size := 0, 0, 0
+	files, folders := 0, 0
+	compressDone, compressTotal = 0, 0
 	resetUI()
 
 	// One item dropped
@@ -734,7 +754,7 @@ func onDrop(names []string) {
 							break
 						}
 						totalFiles++
-						size += int(stat.Size())
+						compressTotal += stat.Size()
 					}
 				} else {
 					outputFile = names[0][:len(names[0])-4]
@@ -820,7 +840,7 @@ func onDrop(names []string) {
 			onlyFiles = append(onlyFiles, names[0])
 			inputFile = names[0]
 			if !isSplit {
-				size += int(stat.Size())
+				compressTotal += stat.Size()
 			}
 		}
 	} else { // There are multiple dropped items
@@ -838,8 +858,8 @@ func onDrop(names []string) {
 				onlyFiles = append(onlyFiles, name)
 				allFiles = append(allFiles, name)
 
-				size += int(stat.Size())
-				inputLabel = fmt.Sprintf("Scanning files... (%s)", sizeify(int64(size)))
+				compressTotal += stat.Size()
+				inputLabel = fmt.Sprintf("Scanning files... (%s)", sizeify(compressTotal))
 				giu.Update()
 			}
 		}
@@ -871,17 +891,18 @@ func onDrop(names []string) {
 		oldInputLabel := inputLabel
 		for _, name := range onlyFolders {
 			filepath.Walk(name, func(path string, _ os.FileInfo, _ error) error {
-				stat, _ := os.Stat(path)
-				if !stat.IsDir() {
+				stat, err := os.Stat(path)
+				// If 'path' is a valid file path, add to 'allFiles'
+				if err == nil && !stat.IsDir() {
 					allFiles = append(allFiles, path)
-					size += int(stat.Size())
-					inputLabel = fmt.Sprintf("Scanning files... (%s)", sizeify(int64(size)))
+					compressTotal += stat.Size()
+					inputLabel = fmt.Sprintf("Scanning files... (%s)", sizeify(compressTotal))
 					giu.Update()
 				}
 				return nil
 			})
 		}
-		inputLabel = fmt.Sprintf("%s (%s)", oldInputLabel, sizeify(int64(size)))
+		inputLabel = fmt.Sprintf("%s (%s)", oldInputLabel, sizeify(compressTotal))
 		scanning = false
 		giu.Update()
 	}()
@@ -923,21 +944,18 @@ func work() {
 			rootDir = filepath.Dir(onlyFiles[0])
 		}
 
-		// Open a .zip file for writing
-		inputFile = strings.TrimSuffix(outputFile, ".pcv")
-		file, err := os.Create(inputFile)
-		if err != nil {
+		// Open a temporary .zip for writing
+		file, err := os.CreateTemp("", "*.zip")
+		if err != nil { // Error, fall back to output folder
+			inputFile = strings.TrimSuffix(outputFile, ".pcv")
+			file, err = os.Create(inputFile)
+		} else { // No issues, use the temporary .zip
+			inputFile = file.Name()
+		}
+		if err != nil { // Make sure file is writable
 			accessDenied("Write")
 			return
 		}
-
-		// Calculate total size of uncompressed files
-		compressTotal = 0
-		for _, path := range files {
-			stat, _ := os.Stat(path)
-			compressTotal += stat.Size()
-		}
-		compressDone = 0
 
 		// Add each file to the .zip
 		writer := zip.NewWriter(file)
@@ -947,7 +965,10 @@ func work() {
 			giu.Update()
 
 			// Create file info header (size, last modified, etc.)
-			stat, _ := os.Stat(path)
+			stat, err := os.Stat(path)
+			if err != nil {
+				continue // Skip temporary and inaccessible files
+			}
 			header, _ := zip.FileInfoHeader(stat)
 			header.Name = strings.TrimPrefix(path, rootDir)
 			header.Name = filepath.ToSlash(header.Name)
@@ -1011,9 +1032,17 @@ func work() {
 			totalBytes += stat.Size()
 		}
 
+		// Make sure not to overwrite anything
+		_, err := os.Stat(outputFile + ".pcv")
+		if err == nil { // File already exists
+			mainStatus = "Please remove " + filepath.Base(outputFile+".pcv") + "."
+			mainStatusColor = RED
+			return
+		}
+
 		// Create a .pcv to combine chunks into
 		fout, err := os.Create(outputFile + ".pcv")
-		if err != nil {
+		if err != nil { // Make sure file is writable
 			accessDenied("Write")
 			return
 		}
@@ -1097,8 +1126,16 @@ func work() {
 		// Stores any errors when writing to file
 		errs := make([]error, 11)
 
+		// Make sure not to overwrite anything
+		_, err = os.Stat(outputFile)
+		if split && err == nil { // File already exists
+			fin.Close()
+			mainStatus = "Please remove " + filepath.Base(outputFile) + "."
+			mainStatusColor = RED
+			return
+		}
+
 		// Create the output file
-		var err error
 		fout, err = os.Create(outputFile)
 		if err != nil {
 			fin.Close()
@@ -1173,7 +1210,6 @@ func work() {
 				return
 			}
 		}
-
 	} else { // Decrypting, read values from file and decode
 		popupStatus = "Reading values..."
 		giu.Update()
@@ -1344,7 +1380,7 @@ func work() {
 					mainStatus = "The provided password is incorrect."
 				} else {
 					if keyfileOrdered {
-						mainStatus = "Incorrect keyfiles or order."
+						mainStatus = "Incorrect keyfiles or ordering."
 					} else {
 						mainStatus = "Incorrect keyfiles."
 					}
@@ -1637,6 +1673,8 @@ func work() {
 		chunks := int(math.Ceil(float64(size) / float64(chunkSize)))
 		progressInfo = fmt.Sprintf("%d/%d", finishedFiles+1, chunks)
 		giu.Update()
+
+		// Open the volume for reading
 		fin, _ := os.Open(outputFile)
 
 		// Start the splitting process
