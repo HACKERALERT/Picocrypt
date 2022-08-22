@@ -10,6 +10,7 @@
 	<li>✓ Show ".*" in the output box if splitting</li>
 	<li>✓ Skip temporary and inaccessible files when combining/compressing</li>
 	<li>✓ Improve file scanning performance by precomputing total size</li>
+	<li>✓ Stability improvements and fixes for edge cases</li>
 </ul>
 
 # v1.29 (Released 05/23/2022)
