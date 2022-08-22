@@ -90,7 +90,7 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 -----END PGP PUBLIC KEY BLOCK-----</pre>
 
 # Community
-Consider joining the official subreddit (<a href="https://www.reddit.com/r/Picocrypt/">r/Picocrypt</a>). While I won't be active in the subreddit myself, it is still a great place to ask questions and help one another out, especially if something happens to me or this repository in the future. Remember to only trust the subreddit and be aware of hackers that might try to impersonate me on other platforms. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
+Consider joining <a href="https://www.reddit.com/r/Picocrypt/">r/Picocrypt</a>. While I won't be active in the subreddit myself, it's still a great place to ask questions and help one another out, especially if something happens to me or this repository in the future. Remember to only trust this specific subreddit and be aware of hackers that might try to impersonate me on other platforms. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
 
 # Stargazers
 How's Picocrypt doing? Take a look below to find out.
