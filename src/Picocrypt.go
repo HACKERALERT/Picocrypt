@@ -999,15 +999,15 @@ func work() {
 			fin.Close()
 
 			if err != nil {
-				insufficientSpace(nil, file)
 				writer.Close()
+				insufficientSpace(nil, file)
 				os.Remove(inputFile)
 				return
 			}
 
 			if !working {
-				cancel(nil, file)
 				writer.Close()
+				cancel(nil, file)
 				os.Remove(inputFile)
 				return
 			}
@@ -1130,6 +1130,9 @@ func work() {
 		_, err = os.Stat(outputFile)
 		if split && err == nil { // File already exists
 			fin.Close()
+			if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
+				os.Remove(inputFile)
+			}
 			mainStatus = "Please remove " + filepath.Base(outputFile) + "."
 			mainStatusColor = RED
 			return
@@ -1139,6 +1142,9 @@ func work() {
 		fout, err = os.Create(outputFile)
 		if err != nil {
 			fin.Close()
+			if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
+				os.Remove(inputFile)
+			}
 			accessDenied("Write")
 			return
 		}
@@ -1203,10 +1209,10 @@ func work() {
 		for _, err := range errs {
 			if err != nil {
 				insufficientSpace(fin, fout)
-				os.Remove(outputFile + ".pcv")
 				if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 					os.Remove(inputFile)
 				}
+				os.Remove(outputFile)
 				return
 			}
 		}
@@ -1269,7 +1275,7 @@ func work() {
 				if keep { // If the user chooses to force decrypt
 					kept = true
 				} else {
-					broken(fin, nil, "The volume header is damaged.")
+					broken(fin, nil, "The volume header is damaged.", true)
 					return
 				}
 			}
@@ -1385,7 +1391,7 @@ func work() {
 						mainStatus = "Incorrect keyfiles."
 					}
 				}
-				broken(fin, nil, mainStatus)
+				broken(fin, nil, mainStatus, true)
 				return
 			}
 		}
@@ -1394,6 +1400,9 @@ func work() {
 		fout, err = os.Create(outputFile)
 		if err != nil {
 			fin.Close()
+			if recombine {
+				os.Remove(inputFile)
+			}
 			accessDenied("Write")
 			return
 		}
@@ -1498,7 +1507,7 @@ func work() {
 							if keep {
 								kept = true
 							} else {
-								broken(fin, fout, "The input file is irrecoverably damaged.")
+								broken(fin, fout, "The input file is irrecoverably damaged.", false)
 								return
 							}
 						}
@@ -1523,7 +1532,7 @@ func work() {
 							if keep {
 								kept = true
 							} else {
-								broken(fin, fout, "The input file is irrecoverably damaged.")
+								broken(fin, fout, "The input file is irrecoverably damaged.", false)
 								return
 							}
 						}
@@ -1543,7 +1552,7 @@ func work() {
 						if keep {
 							kept = true
 						} else {
-							broken(fin, fout, "The input file is irrecoverably damaged.")
+							broken(fin, fout, "The input file is irrecoverably damaged.", false)
 							return
 						}
 					}
@@ -1638,7 +1647,7 @@ func work() {
 			if keep {
 				kept = true
 			} else {
-				broken(fin, fout, "The input file is damaged or modified.")
+				broken(fin, fout, "The input file is damaged or modified.", false)
 				return
 			}
 		}
@@ -1677,6 +1686,12 @@ func work() {
 		// Open the volume for reading
 		fin, _ := os.Open(outputFile)
 
+		// Delete existing chunks to prevent mixed chunks
+		names, _ := filepath.Glob(outputFile + ".*")
+		for _, i := range names {
+			os.Remove(i)
+		}
+
 		// Start the splitting process
 		startTime := time.Now()
 		for i := 0; i < chunks; i++ {
@@ -1701,7 +1716,7 @@ func work() {
 						os.Remove(inputFile)
 					}
 					os.Remove(outputFile)
-					for _, j := range splitted { // Remove unfinished chunks
+					for _, j := range splitted { // Remove existing chunks
 						os.Remove(j)
 					}
 					os.Remove(fmt.Sprintf("%s.%d", outputFile, i))
@@ -1716,7 +1731,7 @@ func work() {
 						os.Remove(inputFile)
 					}
 					os.Remove(outputFile)
-					for _, j := range splitted { // Remove unfinished chunks
+					for _, j := range splitted { // Remove existing chunks
 						os.Remove(j)
 					}
 					os.Remove(fmt.Sprintf("%s.%d", outputFile, i))
@@ -1754,13 +1769,8 @@ func work() {
 	progressInfo = ""
 	giu.Update()
 
-	// Remove the temporary file used to combine a splitted volume
-	if recombine {
-		os.Remove(inputFile)
-	}
-
-	// Delete the temporary .zip used to encrypt multiple files
-	if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
+	// Delete temporary files used during encryption and decryption
+	if recombine || len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
 		os.Remove(inputFile)
 	}
 
@@ -1823,7 +1833,7 @@ func insufficientSpace(fin *os.File, fout *os.File) {
 }
 
 // If corruption is detected during decryption
-func broken(fin *os.File, fout *os.File, message string) {
+func broken(fin *os.File, fout *os.File, message string, keepOutput bool) {
 	fin.Close()
 	fout.Close()
 	mainStatus = message
@@ -1833,7 +1843,9 @@ func broken(fin *os.File, fout *os.File, message string) {
 	if recombine {
 		os.Remove(inputFile)
 	}
-	os.Remove(outputFile)
+	if !keepOutput {
+		os.Remove(outputFile)
+	}
 }
 
 // Stop working if user hits "Cancel"
