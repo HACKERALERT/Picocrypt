@@ -13,7 +13,7 @@ brew install glfw glew
 ```
 **Windows:** A C compiler, ideally [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
 
-# 2. Install the Go Programming Language
+# 2. Install Go
 If you don't have Go installed, download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager (`apt install golang-go`). The latest version of Go is recommended.
 
 # 3. Get the Source Files
