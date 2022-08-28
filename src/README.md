@@ -11,10 +11,10 @@ apt install -y gcc xorg-dev libgtk-3-dev libgl1-mesa-dev libglu1-mesa xclip
 xcode-select --install
 brew install glfw glew
 ```
-**Windows:** A C compiler, ideally [TDM-GCC](https://jmeubank.github.io/tdm-gcc/)
+**Windows:** A C compiler, ideally TDM-GCC or MinGW-w64
 
 # 2. Install Go
-If you don't have Go installed, download the corresponding installer for Go from <a href="https://golang.org/dl">here</a>, or from your package manager (`apt install golang-go`). The latest version of Go is recommended.
+If you don't have Go installed, download the corresponding installer for Go from <a href="https://go.dev/dl/">here</a>, or from your package manager (`apt install golang-go`). The latest version of Go is recommended.
 
 # 3. Get the Source Files
 Download the source files as a zip from the homepage or `git clone` this repository. Next, navigate to the `src/` directory, where you will find the source file (`Picocrypt.go`).
