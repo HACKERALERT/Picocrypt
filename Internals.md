@@ -10,7 +10,7 @@ Picocrypt uses the following cryptographic primitives:
     - Normal mode: 4 passes, 1 GiB memory, 4 threads
     - Paranoid mode: 8 passes, 1 GiB memory, 8 threads
 
-All primitives used are from the well-known [golang.org/x/crypto](https://golang.org/x/crypto) module.
+All primitives used are from the well-known [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto) module.
 
 # Counter Overflow
 Since XChaCha20 has a max message size of 256 GiB, Picocrypt will use the HKDF-SHA3 mentioned above to generate a new nonce for XChaCha20 and a new IV for Serpent if the total encrypted data is more than 60 GiB. While this threshold can be increased up to 256 GiB, Picocrypt uses 60 GiB to prevent any edge cases with blocks or the counter used by Serpent.
