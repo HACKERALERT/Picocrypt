@@ -20,7 +20,7 @@ Sollte sich die Datei nicht ausführen lassen, liegt es wahrscheinlich daran, da
 
 ## macOS
 
-Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, klicken Sie mit der rechten Maustaste auf Picocrypt und wählen Sie "Öffnen". Wenn Sie immer noch die Warnung erhalten, klicken Sie mit der rechten Maustaste auf Picocrypt und klicken Sie erneut auf "Öffnen" und Sie sollten in der Lage sein, Picocrypt zu starten.
+Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, führen Sie einen Control-Klick auf Picocrypt aus, um diese Warnung zu umgehen.
 
 Zu beachten ist, dass Picocrypt unter macOS Rosetta 2 und OpenGL benötigt, die beide wahrscheinlich in Zukunft von Apple entfernt werden. Das bedeutet, dass Picocrypt in Zukunft möglicherweise nicht mehr unter macOS laufen wird, da Apple seine eigenen proprietären Grafik- und Prozessortechnologien vorantreibt. Die Lösung? Kaufen Sie kein Apple. Entwickler sind ihnen egal.
 
@@ -68,7 +68,7 @@ Hier sehen Sie, wie Picocrypt im Vergleich zu anderen gängigen Verschlüsselung
 
 # Eigenschaften
 
-Picocrypt ist ein sehr einfaches Werkzeug, und die meisten Benutzer werden intuitiv in wenigen Sekunden verstehen, wie man es benutzt. Um Ihre Dateien zu verschlüsseln, müssen Sie lediglich Ihre Dateien auf das Fenster ziehen, ablegen, ein Passwort eingeben und auf "Start" klicken. Ziemlich einfach, oder?
+Picocrypt ist ein sehr einfaches Werkzeug, und die meisten Benutzer werden intuitiv in wenigen Sekunden verstehen, wie man es benutzt. Um Ihre Dateien zu verschlüsseln, müssen Sie lediglich Ihre Dateien auf das Fenster ziehen, ablegen, ein Passwort eingeben und auf "Encrypt" klicken. Um eine verschlüsselte Datei zu entschlüsseln, ziehen Sie die Datei auf das Fenster, geben Sie das Passwort ein und klicken Sie auf "Decrypt". Ziemlich einfach, oder?
 
 Picocrypt ist zwar einfach, will aber in den Händen erfahrener und fortgeschrittener Benutzer auch leistungsstark sein. Daher gibt es einige zusätzliche Optionen, die Sie je nach Ihren Bedürfnissen nutzen können.
 
@@ -103,14 +103,7 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 
 # Community
 
-Hier sind einige Orte, an denen Sie sich an Picocrypt beteiligen können
-
-<ul>
-	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
-  <li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
-</ul>
-
-Auch wenn ich selbst nicht in diesen Communitys aktiv sein werde, so sind sie doch ein großartiger Ort, um Fragen zu stellen und sich gegenseitig zu helfen. Denken Sie daran, nur diesen sozialen Netzwerken zu vertrauen und sich vor Hackern in Acht zu nehmen, die versuchen könnten, sich für mich auszugeben. Ich werde Sie niemals nach Ihrem Passwort fragen, und jeder, der das tut, ist nicht ich. Ich werde Sie niemals auffordern, eine Datei von einem verdächtigen Link herunterzuladen, und jeder, der das tut, ist nicht ich.
+Ziehen Sie in Erwägung, dem Subreddit <a href="https://www.reddit.com/r/Picocrypt/">r/Picocrypt</a> beizutreten. Auch wenn ich selbst nicht mehr in diesem Subreddit aktiv sein werde, ist es doch ein großartiger Ort, um Fragen zu stellen und sich gegenseitig zu helfen, vor allem, wenn mir oder diesem Repository in Zukunft etwas zustößt. Denken Sie daran, nur diesem speziellen Subreddit zu vertrauen und sich vor Hackern in Acht zu nehmen, die versuchen könnten, sich auf anderen Plattformen für mich auszugeben. Ich werde dich niemals nach deinem Passwort fragen, und jeder, der das tut, ist nicht ich. Ich werde dich niemals auffordern, eine Datei von einem verdächtigen Link herunterzuladen, und jeder, der das tut, ist nicht ich.
 
 # Stargazers(GitHub-Sterne)
 
@@ -119,8 +112,7 @@ Wie läuft es mit Picocrypt? Werfen Sie einen Blick darauf, um es herauszufinden
 
 # Spenden
 
-Wenn Sie Picocrypt nützlich finden, ziehen Sie bitte in Betracht, mir ein Trinkgeld über mein <a href="https://paypal.me/evanyiwensu">PayPal</a> dazulassen. Ich stelle diese Software völlig kostenlos zur Verfügung und würde mich freuen, einige Unterstützer zu haben, die mich motivieren, meine Arbeit an Picocrypt fortzusetzen.
-Wenn Sie also spenden möchten, spenden Sie bitte auf Open Collective, um den Sicherheitsaudit zu finanzieren, und nicht, um mich zu unterstützen, was im Moment weniger wichtig ist.
+Als ich Picocrypt aktiv entwickelt habe, habe ich Spenden angenommen, aber jetzt, wo Picocrypt vollständig und produktionsreif ist, gibt es dafür keinen Grund mehr. Nehmen Sie sich stattdessen Zeit und Mühe, um die Liebe zu Picocrypt mit anderen zu teilen. Spenden sind nett, aber anderen helfen zu können, ist für mich viel wertvoller als ein paar Dollar übrig zu haben. Zu wissen, dass Picocrypt Menschen hilft, ihre Dateien zu sichern, reicht mir völlig aus.
 
 # FAQ
 
@@ -141,22 +133,23 @@ Die Leute scheinen die Vorstellung zu haben, dass Software ständig aktualisiert
 Ich möchte mich von ganzem Herzen bei den Leuten von Open Collective bedanken, die einen wichtigen Beitrag geleistet haben:
 
 <ul>
+<li>Guest ($842)</li>
   <li>YellowNight ($818)</li>
   <li>evelian ($50)</li>
 	<li>jp26 ($50)</li>
 	<li>guest-116103ad ($50)</li>
+	<li>oli ($20)</li>
   <li>Markus (15$)</li>
 	<li>Tybbs ($10)</li>
 	<li>N. Chin ($10)</li>
 	<li>Manjot ($10)</li>
 	<li>Phil P. ($10)</li>
+	<li>Raymond ($10)</li>
 	<li>donor39 (Unterstützer)</li>
 	<li>Pokabu (Unterstützer)</li>
 </ul>
 
-Ihr seid die Menschen, die mich inspirieren, an Picocrypt zu arbeiten und es jedem kostenlos zur Verfügung zu stellen!
-
-Ein großes Dankeschön geht auch an die folgenden fünf Personen, die als erste gespendet und Picocrypt unterstützt haben:
+Ein großes Dankeschön geht auch an die folgenden fünf Personen, die als Erste gespendet und Picocrypt unterstützt haben:
 
 <ul>
 	<li>W.Graham</li>
@@ -171,7 +164,7 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
 <ul>
 	<li>@umitseyhan75 für Türkisch</li>
 	<li>@digitalblossom & Pokabu26 für Deutsch</li>
-	<li>@zeeaall für Brasilianisches Portugiesisch</li>
+	<li>@zeeaall & @Rayserzor für Portugiesisch</li>
 	<li>@kurpau für Litauisch</li>
 	<li>u/francirc für Spanisch</li>
 	<li>yn für Russisch</li>
@@ -181,7 +174,7 @@ Ein großer Dank geht auch an diese Leute, die geholfen haben, Picocrypt zu übe
   <li>@victorhck für Spanisch</li>
   <li>@MasterKia für Persisch</li>
 	<li>@ungespurv für Polnisch</li>
-
+	<li>qaqland für Chinesisch</li>
 </ul>
 
 Schließlich möchte ich mich bei diesen Leuten/Organisationen dafür bedanken, dass sie mir im Bedarfsfall geholfen haben:
@@ -189,7 +182,6 @@ Schließlich möchte ich mich bei diesen Leuten/Organisationen dafür bedanken, 
 <ul>
   <li>[ REDACTED ] für die Hilfe beim Erstellen eines AppImage für Picocrypt</li>
   <li>u/Upstairs-Fishing867 für die Hilfe beim Testen der OpenPGP Signaturen</li>
-	<li>Fuderal auf Discord für die Hilfe bei der Einrichtung eines Discord-Servers</li>
 	<li>u/greenreddits für ständiges Feedback und Unterstützung</li>
 	<li>u/Tall_Escape für die Hilfe beim Testen von Picocrypt</li>
 	<li>u/NSABackdoors für die Durchführung zahlreicher Tests</li>
