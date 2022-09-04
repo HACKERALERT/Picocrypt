@@ -28,10 +28,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/HACKERALERT/clipboard"
@@ -2020,12 +2018,8 @@ func sizeify(size int64) string {
 }
 
 func main() {
-	// Set DPI awareness to system aware (value of 1)
-	if runtime.GOOS == "windows" {
-		shcore := syscall.NewLazyDLL("Shcore.dll")
-		shproc := shcore.NewProc("SetProcessDpiAwareness")
-		shproc.Call(uintptr(1))
-	}
+	// Set DPI awareness to system aware on Windows
+	giu.FixDPI()
 
 	// Create the main window
 	window = giu.NewMasterWindow("Picocrypt", 318, 479, giu.MasterWindowFlagsNotResizable)
