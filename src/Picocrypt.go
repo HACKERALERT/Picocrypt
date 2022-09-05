@@ -2018,9 +2018,6 @@ func sizeify(size int64) string {
 }
 
 func main() {
-	// Set DPI awareness to system aware on Windows
-	giu.FixDPI()
-
 	// Create the main window
 	window = giu.NewMasterWindow("Picocrypt", 318, 479, giu.MasterWindowFlagsNotResizable)
 
