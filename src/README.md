@@ -14,10 +14,10 @@ brew install glfw glew
 **Windows:** A C compiler, ideally TDM-GCC or MinGW-w64
 
 # 2. Install Go
-If you don't have Go installed, download the corresponding installer for Go from <a href="https://go.dev/dl/">here</a>, or from your package manager (`apt install golang-go`). The latest version of Go is recommended.
+If you don't have Go installed, download it from <a href="https://go.dev/dl/">here</a> or install it from your package manager (`apt install golang-go`). The latest version of Go is recommended, although you may fall back to Go 1.18 should any issues arise in the future.
 
 # 3. Get the Source Files
-Download the source files as a zip from the homepage or `git clone` this repository. Next, navigate to the `src/` directory, where you will find the source file (`Picocrypt.go`).
+Download the source files as a zip from the homepage or `git clone` this repository. Next, navigate to the `src/` directory, where you will find the source file (`Picocrypt.go`). You will need this file, along with `go.mod` and `go.sum`, to compile Picocrypt.
 
 # 4. Build From Source
 Finally, build Picocrypt from source:
@@ -27,3 +27,5 @@ Finally, build Picocrypt from source:
 
 # 5. Done!
 You should now see a compiled executable (`Picocrypt.exe`/`Picocrypt`) in your directory. You can run it by double-clicking or executing it in your terminal. That wasn't too hard, right? Enjoy!
+
+Note: On Linux, if hardware OpenGL isn't available, you can set `LIBGL_ALWAYS_SOFTWARE=1` to force Mesa to use software rendering. This way, Picocrypt will be able to run regardless of driver support and can even run without a GPU at all. You may also need to set `NO_AT_BRIDGE=1` to disable the accessibility bus which is known to cause potential issues.
