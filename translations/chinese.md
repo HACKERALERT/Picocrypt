@@ -1,4 +1,3 @@
-<p>English | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | <a href="/translations/german.md">Deutsch</a> | <a href="/translations/portuguese.md">Português</a> | <a href="/translations/turkish.md">Türkçe</a> | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">русский</a> | <a href="/translations/hungarian.md">Magyar</a> | <a href="/translations/italian.md">Italiano</a> | <a href="/translations/persian.md">پارسی</a> | <a href="/translations/polish.md">Polski</a></p>
 <p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p>
 
 Picocrypt 是一个非常小（因而叫 _Pico_）、简单、而且安全的加密工具，可以用来保护文件。它为成为加密的 _首选_ 工具而设计，着重于安全性、简易性和可靠性。Picocrypt 使用 XChaCha20 安全算法和 Argon2id 密钥推导函数，以提供高水平的、甚至能抵挡 NSA 攻击的安全性。使用 Go 的标准库 x/crypto 而构建，Picocrypt 为最大程度的安全而设计，在安全方面绝不做任何妥协。**你的隐私和安全正受到攻击，快使用 Picocrypt 夺回本属于我们的数据！奥利给！**
