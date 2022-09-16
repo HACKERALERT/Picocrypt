@@ -9,10 +9,10 @@ Veuillez faire un don à Picocrypt sur <a href="https://opencollective.com/picoc
 
 # Téléghargements
 ## Windows
-Picocrypt pour Windows est aussi simple que possible. Pour télécharger le dernier exécutable autonome et portable pour Windows, cliquez sur <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.24/Picocrypt.exe">ici</a>. Si Windows Defender ou votre antivirus signale Picocrypt comme un virus, faites en sorte de le soumettre comme un faux positif et ce pour le bien de tous.
+Picocrypt pour Windows est aussi simple que possible. Pour télécharger le dernier exécutable autonome et portable pour Windows, cliquez sur <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe">ici</a>. Si Windows Defender ou votre antivirus signale Picocrypt comme un virus, faites en sorte de le soumettre comme un faux positif et ce pour le bien de tous.
 
 ## macOS
-Picocrypt pour macOS est également très simple. Téléchargez Picocrypt https://github.com/HACKERALERT/Picocrypt/releases/download/1.24/Picocrypt.app.zip
+Picocrypt pour macOS est également très simple. Téléchargez Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">ici</a>.
 
 ## Linux
 Un Snap est disponible pour Linux. En supposant que vous êtes sur un système basé sur Debian, un simple `apt install snapd` et `snap install picocrypt` suffiront. Pour les autres distributions telles que Fedora, des instructions détaillées sont disponibles sur https://snapcraft.io/picocrypt. En raison de la complexité des dépendances et des liens statiques, je ne distribue pas de fichiers binaires .deb ou .rpm autonomes car ils ne seraient pas fiables et donc n'en valent pas la peine. Snapcraft gère automatiquement toutes les dépendances, les temps d'exécution et constitue la méthode qui est recommandée pour exécuter Picocrypt sur n'importe quelle distribution Linux majeure. De plus, Snapcraft offre une meilleure sécurité et conteneurisation que Flatpaks et AppImages, ce qui est important pour un outil de chiffrement comme Picocrypt. Si vous préférez ne pas traiter avec Canonical, rappelez-vous que la construction à partir du source est toujours une option.
