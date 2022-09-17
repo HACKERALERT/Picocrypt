@@ -114,7 +114,7 @@ No, I don't plan on supporting Android or iOS because they are very different fr
 
 People seem to have the notion that software must be constantly updated to stay relevant and secure. While this may be true for a lot of the software we use today, it is not for Picocrypt. Picocrypt is "good software" and good software doesn't need constant updates to remain relevant and secure. Good software will always be good software.
 
-# Thank Yous
+# Acknowledgements
 A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
 <ul>
 	<li>Guest ($842)</li>
@@ -131,6 +131,7 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>Raymond ($10)</li>
 	<li>donor39 (backer)</li>
 	<li>Pokabu (backer)</li>
+	<li>akp (backer)</li>
 </ul>
 
 Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
@@ -147,13 +148,11 @@ As well, a great thanks to these people, who have helped translate Picocrypt and
 	<li>@umitseyhan75 for Turkish</li>
 	<li>@digitalblossom & @Pokabu26 for German</li>
 	<li>@zeeaall & @Rayserzor for Portuguese</li>
-	<li>@kurpau for Lithuanian</li>
-	<li>u/francirc for Spanish</li>
-	<li>yn for Russian</li>
+	<li>u/francirc & @victorhck for Spanish</li>
+	<li>yn & Voron for Russian</li>
 	<li>@Etim-Orb for Hungarian</li>
 	<li>@Minibus93 for Italian</li>
 	<li>Michel for French</li>
-	<li>@victorhck for Spanish</li>
 	<li>@MasterKia for Persian</li>
 	<li>@ungespurv for Polish</li>
 	<li>@qaqland for Chinese</li>
@@ -169,4 +168,5 @@ Finally, thanks to these people/organizations for helping me out when needed:
 	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
 	<li><a href="https://privacytools.io">PrivacyTools</a> for listing Picocrypt</li>
 	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
+	<li>...You?</li>
 </ul>
