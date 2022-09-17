@@ -2,7 +2,7 @@
 
 Picocrypt; dosyalarınızı şifreleyebilmenizi, sağlama toplamları (checksums) oluşturabilmenizi, dosyalarınızı kalıcı olarak silebilmenizi ve daha fazlasını yapabilmenizi sağlayan oldukça küçük (bu yüzden <i>Pico</i>), oldukça basit ancak oldukça güvenli bir kriptografi aracıdır. Güvenlik, basitlik ve güvenilirliğe odaklanarak şifreleme için <i>ilk-tercih</i> bir araç olması için tasarlanmıştır. Picocrypt, NSA gibi üç harfli teşkilatlara karşı bile üst düzey güvenlik sağlamak için XChaCha20 şifrelemesi ve HMAC-SHA3 mesaj doğrulama kodunu kullanır. Olabilecek en üst düzey güvenlik için tasarlanmıştır, güvenlik açısından mutlak suretle taviz vermez ve denetlenmiş bir kriptografi kütüphanesi ile oluşturulmuştur. <strong>Gizliliğiniz ve güvenliğiniz saldırı altında. Dosyalarınızı Picocrypt ile koruyor olmanın verdiği güvenle buna bir son verin.</strong>
 
-<p align="center"><img align="center" src="/images/screenshot.png" width="384" alt="Picocrypt"></p>
+<p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
 # Finansman Sağlama
 Cure53 tarafından olası bir denetleme yaptırabilmem için gereken parayı toplayabilmem için lütfen Picocrypt'e <a href="https://opencollective.com/picocrypt">Open Collective</a> üzerinden bağışta bulunun. Bu projeyi hayata geçirebilmek için saatlerce çalıştım ve bundan herhangi bir parasal gelir elde etmiyorum, bu yüzden denetleme ücretini kendi başıma ödeyemem. <i>Picocrypt'in, topluluğunun desteğine ihtiyacı var.</i>
@@ -40,10 +40,7 @@ Picocrypt çok basit bir araçtır ve pek çok kullanıcı saniyeler içinde nas
 </ul>
 
 # Güvenlik
-Picocrypt'in kriptografi sürecini nasıl yürüttüüğyle ilgili daha fazla bilgi için <a href="Internals.md">Dahililer</a> bilgilendirmesini okuyun. Eğer Picocrypt'in pratikteki güvenliğiyle ilgili endişeleriniz varsa, bu deponun ele geçirilmeyeceğine dair sizi temin ederim. Picocrypt'e bağlı tüm hesaplarda (GitHub, Google, Reddit, Discord, vb.) 2 faktörlü kimlik doğrulamayı (TOTP) etkinleştirdim, böylece Picocrypt'i kullanma konusunda kendinizi güvende hissedebilirsiniz. Ayrıca, Tüm bağımlılıkları ayrı bir hesapta (https://github.com/Picocrypt) çatallıyorum ve sadece değişikliklere göz attıktan ve herhangi bir güvenlik sorunu olmadığından emin olduğumda ana akışa çekiyorum.
-
-# Yol Haritası
-Üzerinde düşündüğüm yeni özellik ve geliştirmeler için <a href="Roadmap.md">Roadmap</a> bilgilendirmesini okuyun.
+Picocrypt'in kriptografi sürecini nasıl yürüttüüğyle ilgili daha fazla bilgi için <a href="Internals.md">Dahililer</a> bilgilendirmesini okuyun. Eğer Picocrypt'in pratikteki güvenliğiyle ilgili endişeleriniz varsa, bu deponun ele geçirilmeyeceğine dair sizi temin ederim. Picocrypt'e bağlı tüm hesaplarda (GitHub, Google, Reddit, Discord, vb.) 2 faktörlü kimlik doğrulamayı (TOTP) etkinleştirdim, böylece Picocrypt'i kullanma konusunda kendinizi güvende hissedebilirsiniz.
 
 # Topluluk
 Picocrypt ile ilgili en son haberleri görebileceğiniz ve dahil olabileceğiniz bazı yerler:
@@ -58,9 +55,6 @@ Yalnızca bu topluluklara güvenin ve benim kimliğime bürünüp size kötü am
 
 # Katkı
 Eğer bir hata bulduysanız ya da özellik talebiniz varsa, lütfen bir Sorun girdisi (Issue) oluşturun. Ortaklık edebilecek çalışma arkadaşlarına açığım, ayrıca tüm Sorun girdilerinin ve çekme taleplerinin (Pull Requests) başım üstünde yeri var. Eğer bir güvenlik açığı tespit ettiyseniz, lütfen bildirmek için <a href="Security.md">buradaki</a> talimatları takip edin.
-
-# Bağışlar
-Eğer Picocrypt'i sevdiyseniz, <a href="https://patreon.com/evansu">Patreon</a> üzerinden beni desteklemeyi düşünebilirsiniz. Bu yazılımı tamamen ücretsiz olarak sağladığım için, Picocrypt üzerinde çalışmaya devam etmem için beni motive edecek bazı destekçilere sahip olmayı çok isterim.
 
 # Teşekkürler
 Open Collective üzerinden yaptıkları kayda değer bağışlardan ötürü bu kişilere özellikle çok teşekkür ederim.
