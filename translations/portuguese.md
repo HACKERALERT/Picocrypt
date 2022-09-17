@@ -2,7 +2,7 @@
 
 Picocrypt é uma ferramenta de criptografia muito pequena (daí <i>Pico</i>), muito simples mas muito segura, que você pode usar para proteger seus arquivos, gerar checksums, triturar arquivos, e muito mais. Ele foi projetado para ser a ferramenta <i>número um</i> de criptografia, com foco em segurança, simplicidade e confiabilidade. Picocrypt usa a cifra segura XChaCha20 e a função hash SHA3 para fornecer um alto nível de segurança, até mesmo de "agências de três letras" como a NSA. Ele foi projetado para máxima segurança, sem comprometê-la em absolutamente nada, e é construído com os módulos x/crypto padrões do Go. <strong>Sua privacidade e segurança estão sob ataque. Recupere-as com confiança protegendo seus arquivos com Picocrypt.</strong>
 
-<p align="center"><img align="center" src="/images/screenshot.png" width="384" alt="Picocrypt"></p>
+<p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
 # Financiamento
 Por favor, doe para o Picocrypt no <a href="https://opencollective.com/picocrypt">Open Collective</a> para arrecadar dinheiro para uma potencial auditoria da Cure53. Como este é um projeto no qual eu gasto muitas horas e não me gera dinheiro, não posso eu mesmo pagar por uma auditoria. <i>Picocrypt precisa do apoio de sua comunidade.</i>
