@@ -1,9 +1,8 @@
-
-<p  align="center"><img  align="center"  src="/images/logo.svg"  width="512"  alt="Picocrypt"></p>
+<p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p>
 
 Picocrypt è uno strumento di crittografia piccolissimo (ecco perché <i>Pico</i>) e semplicissimo, ma, allo stesso tempo, estremamente sicuro che puoi usare per proteggere i tuoi file. È progettato per essere lo strumento <i>go-to</i> quando si parla di crittografia, con particolare attenzione su sicurezza, semplicità d'uso e affidabilità. Picocrypt usa la cifratura sicura Xchacha20 e la funzione di derivazione della password Argon2id per garantire un elevato standard di sicurezza, anche da agenzie "a 3 lettere" come l'NSA. È progettato per garantire la massima sicurezza senza alcun compromesso ed è realizzato con i moduli standard x/crypto di Go. <strong>La tua sicurezza e la tua privacy sono sotto attacco. Difenditi in modo sicuro proteggendo i tuoi file con Picocrypt.</strong>
 
-<p  align="center"><img  align="center"  src="/images/screenshot.png"  width="384"  alt="Picocrypt"></p>
+<p align="center"><img align="center" src="/images/screenshot.png" width="384" alt="Picocrypt"></p>
 
 # Donazioni
 
@@ -15,11 +14,11 @@ Fai una donazione a Picocrypt su <a  href="https://opencollective.com/picocrypt"
 
 ## Windows
 
-Scaricare Picocrypt per Windows è semplicissimo. Scarica l'ultima versione, standalone e portable, degli eseguibili per Windows, cliccando <a  href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.24/Picocrypt.exe">qui</a>. Se Windows Defender o il tuo antivirus segnala Picocrypt come un virus, per piacere, per il bene di tutti, contribuisci al progetto segnalandolo come un falso positivo.
+Scaricare Picocrypt per Windows è semplicissimo. Scarica l'ultima versione, standalone e portable, degli eseguibili per Windows, cliccando <a  href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe">qui</a>. Se Windows Defender o il tuo antivirus segnala Picocrypt come un virus, per piacere, per il bene di tutti, contribuisci al progetto segnalandolo come un falso positivo.
 
 ## macOS
 
-Scaricare Picocrypt per macOS è altrettanto semplice. Scarica Picocrypt <a  href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.24/Picocrypt.app.zip">qui</a>, estrai l'archivio zip ed esegui il Picocrypt che troverai al suo interno. Se non riesci ad aprire Picocrypt perché non proviene da uno sviluppatore certificato, premi il tasto destro su Picocrypt e seleziona "Apri". Se nonostante tutto ricevi ancora un avviso, ripremi il tasto destro su Picocrypt e seleziona "Apri" ancora una volta. A questo punto dovresti poter eseguire Picocrypt.
+Scaricare Picocrypt per macOS è altrettanto semplice. Scarica Picocrypt <a  href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">qui</a>, estrai l'archivio zip ed esegui il Picocrypt che troverai al suo interno. Se non riesci ad aprire Picocrypt perché non proviene da uno sviluppatore certificato, premi il tasto destro su Picocrypt e seleziona "Apri". Se nonostante tutto ricevi ancora un avviso, ripremi il tasto destro su Picocrypt e seleziona "Apri" ancora una volta. A questo punto dovresti poter eseguire Picocrypt.
 
 ## Linux
 
