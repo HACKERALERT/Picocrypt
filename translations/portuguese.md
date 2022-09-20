@@ -48,15 +48,10 @@ Embora seja simples, Picocrypt também almeja ser poderoso nas mãos de usuário
 Além destas opções de encriptação/desencriptação, Picocrypt também fornece um triturador seguro de arquivos e um gerador de checksum.
 
 # Segurança
-Para mais informações sobre como Picocrypt lida com a criptografia, consulte os detalhes técnicos em <a href="Internals.md">Internals</a> Se você está preocupado com a minha segurança ou a deste projeto, deixe-me assegurar-lhe que este repositório não será roubado ou terá backdoors introduzidos. Tenho 2FA / TOTP (autenticação de dois fatores) habilitada em todas as contas ligadas ao Picocrypt (GitHub, Google, Reddit, Discord etc), além de criptografia de disco completo em todos os meus dispositivos portáteis. Para mais reforço ainda, Picocrypt usa meus forks "offline" de dependências, e eu só pego o upstream depois de dar uma olhada nas mudanças e acreditar que não há nenhum problema de segurança. Você pode usar o Picocrypt com confiança.
+Para mais informações sobre como Picocrypt lida com a criptografia, consulte os detalhes técnicos em <a href="Internals.md">Internals</a> Se você está preocupado com a minha segurança ou a deste projeto, deixe-me assegurar-lhe que este repositório não será roubado ou terá backdoors introduzidos. Tenho 2FA / TOTP (autenticação de dois fatores) habilitada em todas as contas ligadas ao Picocrypt (GitHub, Google, Reddit, etc), além de criptografia de disco completo em todos os meus dispositivos portáteis. Para mais reforço ainda, Picocrypt usa meus forks "offline" de dependências, e eu só pego o upstream depois de dar uma olhada nas mudanças e acreditar que não há nenhum problema de segurança. Você pode usar o Picocrypt com confiança.
 
 # Comunidade
-Aqui estão alguns lugares onde você pode ficar em dia com Picocrypt e se envolver:
-<ul>
-	<li><a href="https://www.reddit.com/r/Picocrypt/">Reddit</a></li>
-	<li><a href="https://discord.gg/8QM4A2caxH">Discord</a></li>
-</ul>
-Eu recomendo fortemente que você se inscreva no subreddit do Picocrypt, porque todas as atualizações e enquetes serão postadas lá. Lembre-se de confiar somente nestas redes sociais e tenha cuidado com hackers que possam tentar se fazer passar por mim. Nunca lhe pedirei sua senha, então se alguém pedir, não será eu. Eu nunca lhe direi para baixar um arquivo de um link suspeito, e qualquer um que diga não será eu.
+Considere entrar no [r/Picocrypt](https://www.reddit.com/r/Picocrypt). Apesar de eu mesmo não ser ativo no subreddit, é um bom lugar para fazer perguntas e ajudar um ao outro, especialmente se algo acontecer à minha pessoa ou a este repositório no futuro. Lembrando para confiarem apenas nesse subreddit específico e tomem cuidado com hackers que talvez tentem fingir que sou eu em outras plataformas. Nunca lhe pedirei sua senha, então se alguém pedir, não será eu. Eu nunca lhe direi para baixar um arquivo de um link suspeito, e qualquer um que diga não será eu.
 
 # Stargazers
 Como está o Picocrypt? Dê uma olhada abaixo para descobrir.
