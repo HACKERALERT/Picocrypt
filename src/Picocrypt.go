@@ -182,7 +182,9 @@ func draw() {
 					giu.Checkbox("Lowercase", &passgenLower),
 					giu.Checkbox("Numbers", &passgenNums),
 					giu.Checkbox("Symbols", &passgenSymbols),
-					giu.Checkbox("Copy to clipboard", &passgenCopy),
+					giu.Style().SetDisabled(clipboard.Unsupported).To(
+						giu.Checkbox("Copy to clipboard", &passgenCopy),
+					),
 					giu.Row(
 						giu.Button("Cancel").Size(100, 0).OnClick(func() {
 							giu.CloseCurrentPopup()
@@ -337,22 +339,26 @@ func draw() {
 				}),
 				giu.Tooltip("Clear the password entries."),
 
-				giu.Button("Copy").Size(54, 0).OnClick(func() {
-					clipboard.WriteAll(password)
-					giu.Update()
-				}),
-				giu.Tooltip("Copy the password into your clipboard."),
+				giu.Style().SetDisabled(clipboard.Unsupported).To(
+					giu.Row(
+						giu.Button("Copy").Size(54, 0).OnClick(func() {
+							clipboard.WriteAll(password)
+							giu.Update()
+						}),
+						giu.Tooltip("Copy the password into your clipboard."),
 
-				giu.Button("Paste").Size(54, 0).OnClick(func() {
-					tmp, _ := clipboard.ReadAll()
-					password = tmp
-					if mode != "decrypt" {
-						cpassword = tmp
-					}
-					passwordStrength = zxcvbn.PasswordStrength(password, nil).Score
-					giu.Update()
-				}),
-				giu.Tooltip("Paste a password from your clipboard."),
+						giu.Button("Paste").Size(54, 0).OnClick(func() {
+							tmp, _ := clipboard.ReadAll()
+							password = tmp
+							if mode != "decrypt" {
+								cpassword = tmp
+							}
+							passwordStrength = zxcvbn.PasswordStrength(password, nil).Score
+							giu.Update()
+						}),
+						giu.Tooltip("Paste a password from your clipboard."),
+					),
+				),
 
 				giu.Style().SetDisabled(mode == "decrypt").To(
 					giu.Button("Create").Size(54, 0).OnClick(func() {
@@ -570,7 +576,7 @@ func draw() {
 					if file == "" || err != nil {
 						return
 					}
-					file = strings.Split(file, ".")[0]
+					file = filepath.Join(filepath.Dir(file), strings.Split(filepath.Base(file), ".")[0])
 
 					// Add the correct extensions
 					if mode == "encrypt" {
@@ -1877,7 +1883,7 @@ func resetUI() {
 	passgenLower = true
 	passgenNums = true
 	passgenSymbols = true
-	passgenCopy = true
+	passgenCopy = !clipboard.Unsupported
 
 	keyfile = false
 	keyfiles = nil
@@ -2032,6 +2038,11 @@ func main() {
 
 	// Set universal DPI
 	dpi = giu.Context.GetPlatform().GetContentScale()
+
+	// Ensure clipboard support is available
+	if clipboard.Unsupported {
+		mainStatus = "Ready. (Note: No clipboard support found.)"
+	}
 
 	// Start the UI
 	window.Run(draw)
