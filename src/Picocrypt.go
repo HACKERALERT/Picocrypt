@@ -2039,7 +2039,7 @@ func main() {
 	// Set universal DPI
 	dpi = giu.Context.GetPlatform().GetContentScale()
 
-	// Ensure clipboard support is available
+	// Check for clipboard support
 	if clipboard.Unsupported {
 		mainStatus = "Ready. (Note: No clipboard support found.)"
 	}
