@@ -11,6 +11,7 @@
 	<li>✓ Skip temporary and inaccessible files when combining/compressing</li>
 	<li>✓ Improve file scanning performance by precomputing total size</li>
 	<li>✓ Stability improvements and fixes for edge cases</li>
+	<li>✓ Check for clipboard support on Linux</li>
 </ul>
 
 # v1.29 (Released 05/23/2022)
