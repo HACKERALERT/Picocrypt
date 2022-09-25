@@ -6,32 +6,28 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
 # Funding
-Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a security audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.</i>
+**Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a security audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.**</i>
 
 # Downloads
 **Important**: There are multiple entities under the name "Picocrypt". For example, there's an old encryption tool called PicoCrypt that uses a broken cipher. There's also an ERC-funded research project called PICOCRYPT. There are even domains related to Picocrypt that I've never registered. Please don't confuse any of these unrelated projects with Picocrypt (this project). Make sure to only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt. When sharing Picocrypt with others, be sure to link to this repository to prevent any confusion.
 
 ## Windows
-Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe">here</a>. If Windows Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
-
-If the executable above doesn't work, it likely means that your system doesn't support OpenGL. For this situation, I've provided an alternate implementation that will run on any Windows system, which you may download <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt-NoGL.exe">here</a>.
+Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.exe">here</a>. If Microsoft Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
 
 ## macOS
-Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, control-click on Picocrypt and hit "Open" to bypass the warning.
-
-One thing to keep in mind is that Picocrypt on macOS requires Rosetta 2 and OpenGL, both of which are likely to be removed by Apple in the future. This means that Picocrypt may no longer run on macOS in the future as Apple pushes their proprietary graphics and silicon. The solution? Don't buy Apple. They don't care about developers.
+Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, control-click on Picocrypt and hit "Open" to bypass the warning. Keep in mind that Picocrypt runs through Rosetta 2 and requires OpenGL, and may not work in the future should Apple remove either.
 
 ## Linux
-There are multiple ways to use Picocrypt on Linux. The recommended way is to install Picocrypt from a .deb <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.deb">here</a> (Debian 11+ and Ubuntu 20+). If the .deb doesn't suit your needs or you don't use a Debian-based distro, feel free to use the AppImage from <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.AppImage">here</a>. If neither of the options above work, you may install Picocrypt from Snapcraft, which should work on all distros. Find the instructions for Snapcraft <a href="https://snapcraft.io/picocrypt">here</a>.
+To use Picocrypt on Linux, you can download the AppImage <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.AppImage">here</a>. Make sure to have a clipboard utility such as `xclip` installed to use Picocrypt's clipboard features. While this AppImage should work on most systems, Linux is a mess when it comes to cross-distro and cross-release compatibility, so if the AppImage doesn't work, you can run Picocrypt from source using the instructions in the `src/` directory.
 
 ## Paranoid Packs
-The Paranoid Pack is a compressed archive that contains executables for every version of Picocrypt ever released for Windows, macOS, and Linux. As long as you have it stored in a place you can access, you'll be able to open it and use any version of Picocrypt in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt. As long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in cases of catastrophic events like GitHub shutting down suddenly or the NSA capturing me (just in case, you know?). The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. So if you are worried about being unable to access Picocrypt in the future, well, here's your solution. Just head to the Releases tab and get yourself a copy.
+The Paranoid Pack is a compressed archive that contains executables for Windows, macOS, and Linux, including the source code and dependencies. As long as you have it stored in a place you can access, you'll be able to open it and use Picocrypt on any desktop operating system in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt. As long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in cases of catastrophic events like GitHub shutting down suddenly or the NSA capturing me (just in case, you know?). The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. So if you are worried about being unable to access Picocrypt in the future, well, here's your solution. Just head to the Releases tab and get yourself a copy.
 
 # Why Picocrypt?
 Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should choose Picocrypt:
 <ul>
 	<li>Unlike NordLocker, BitLocker, AxCrypt, and most cloud storage providers, Picocrypt and its dependencies are completely open-source and auditable. You can verify for yourself that there aren't any backdoors or flaws.</li>
-	<li>Picocrypt is <i>tiny</i>. While NordLocker is over 50 MiB and VeraCrypt is over 20 MiB, Picocrypt sits at just 2 MiB, about the size of a medium-resolution photo. And that's not all - Picocrypt is portable (doesn't need to be installed) and doesn't require administrator/root privileges.</li>
+	<li>Picocrypt is <i>tiny</i>. While NordLocker is over 50 MiB and VeraCrypt is over 20 MiB, Picocrypt sits at just 3 MiB, about the size of a medium-resolution photo. And that's not all - Picocrypt is portable (doesn't need to be installed) and doesn't require administrator/root privileges.</li>
 	<li>Picocrypt is easier and more productive to use than VeraCrypt. To encrypt files with VeraCrypt, you'd have to spend at least five minutes setting up a volume. With Picocrypt's simple UI, all you have to do is drag and drop your files, enter a password, and hit Encrypt. All the complex procedures are handled by Picocrypt internally. Who said secure encryption can't be simple?</li>
 	<li>Picocrypt is designed for security. 7-Zip is an archive utility and not an encryption tool, so its focus is not on security. Picocrypt, however, is built with security as the number one priority. Every part of Picocrypt exists for a reason and anything that could impact the security of Picocrypt is removed. Picocrypt is built with cryptography you can trust.</li>
 	<li>Picocrypt authenticates data in addition to protecting it, preventing hackers from maliciously modifying sensitive data. This is useful when you are sending encrypted files over an insecure channel and want to be sure that it arrives untouched.</li>
@@ -46,7 +42,7 @@ Here's how Picocrypt compares to other popular encryption tools.
 | Free           |✅ Yes         |✅ Yes          |✅ Yes         |🟧 Partially    |✅ Yes         |🟧 Partially    |🟧 Partially   |
 | Open Source    |✅ GPLv3       |✅ Multi        |✅ LGPL        |❌ No           |✅ GPLv3       |❌ No           |❌ No          |
 | Cross-Platform |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |❌ No           |❌ No          |
-| Size           |✅ 2 MiB       |❌ 20 MiB       |✅ 2 MiB       |✅ Included     |❌ 50 MiB      |❌ 60 MiB       |🟧 8 MiB       |
+| Size           |✅ 3 MiB       |❌ 20 MiB       |✅ 2 MiB       |✅ Included     |❌ 50 MiB      |❌ 60 MiB       |🟧 8 MiB       |
 | Portable       |✅ Yes         |✅ Yes          |❌ No          |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
 | Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |
 | Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |🟧 Medium       |🟧 Medium      |🟧 Medium       |✅ Easy        |
@@ -113,6 +109,10 @@ No, I don't plan on supporting Android or iOS because they are very different fr
 **Why is Picocrypt not updated frequently?**
 
 People seem to have the notion that software must be constantly updated to stay relevant and secure. While this may be true for a lot of the software we use today, it is not for Picocrypt. Picocrypt is "good software" and good software doesn't need constant updates to remain relevant and secure. Good software will always be good software.
+
+**Does the "Delete files" feature shred files?**
+
+No, it doesn't shred any files and just deletes them as your file manager would. On modern storage mediums like SSDs, there is no such thing as shredding a file since wear leveling makes it impossible to overwrite a particular sector. Thus, to prevent giving users a false sense of security, Picocrypt doesn't include any shredding features at all.
 
 # Acknowledgements
 A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
