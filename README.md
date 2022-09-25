@@ -15,13 +15,13 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.exe">here</a>. If Microsoft Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
 
 ## macOS
-Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, control-click on Picocrypt and hit "Open" to bypass the warning. Keep in mind that Picocrypt runs through Rosetta 2 and requires OpenGL, and may not work in the future should Apple remove either.
+Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, control-click on Picocrypt and hit Open to bypass the warning. Keep in mind that Picocrypt runs through Rosetta 2 and requires OpenGL, and may not work in the future should Apple remove either.
 
 ## Linux
-To use Picocrypt on Linux, you can download the AppImage <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.AppImage">here</a>. Make sure to have a clipboard utility such as `xclip` installed to use Picocrypt's clipboard features. While this AppImage should work on most systems, Linux is a mess when it comes to cross-distro and cross-release compatibility, so if the AppImage doesn't work, you can run Picocrypt from source using the instructions in the `src/` directory.
+To use Picocrypt on Linux, you can download the AppImage <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.AppImage">here</a>. Make sure you have a clipboard utility such as `xclip` installed to use Picocrypt's clipboard features. While this AppImage should work on most systems, Linux is a mess when it comes to cross-distro and cross-release compatibility, so if the AppImage doesn't work, you can run Picocrypt from source using the instructions in the `src/` directory.
 
 ## Paranoid Packs
-The Paranoid Pack is a compressed archive that contains executables for Windows, macOS, and Linux, including the source code and dependencies. As long as you have it stored in a place you can access, you'll be able to open it and use Picocrypt on any desktop operating system in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt. As long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in cases of catastrophic events like GitHub shutting down suddenly or the NSA capturing me (just in case, you know?). The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. So if you are worried about being unable to access Picocrypt in the future, well, here's your solution. Just head to the Releases tab and get yourself a copy.
+The Paranoid Pack is a compressed archive that contains executables for Windows, macOS, and Linux, including the source code and dependencies. As long as you have it stored in a place you can access, you'll be able to open it and use Picocrypt on any desktop operating system in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt. As long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in case of catastrophic events. The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place.
 
 # Why Picocrypt?
 Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should choose Picocrypt:
@@ -70,7 +70,7 @@ While being simple, Picocrypt also strives to be powerful in the hands of knowle
 </ul>
 
 # Security
-For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Google, Reddit, Ubuntu One/Snapcraft, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my isolated forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
+For more information on how Picocrypt handles cryptography, see <a href="Internals.md">Internals</a> for the technical details. If you're worried about the safety of me or this project, let me assure you that this repository won't be hijacked or backdoored. I have 2FA (TOTP) enabled on all accounts with a tie to Picocrypt (GitHub, Reddit, Google, etc.), in addition to full-disk encryption on all of my portable devices. For further hardening, Picocrypt uses my isolated forks of dependencies and I fetch upstream only when I have taken a look at the changes and believe that there aren't any security issues. This means that if a dependency gets hacked or deleted by the author, Picocrypt will be using my fork of it and remain completely unaffected. You can feel confident about using Picocrypt.
 
 ## Signatures
 For the paranoid, Picocrypt is signed with PGP. The fingerprint and public key are listed below.
@@ -91,7 +91,7 @@ Consider joining <a href="https://www.reddit.com/r/Picocrypt/">r/Picocrypt</a>. 
 
 # Stargazers
 How's Picocrypt doing? Take a look below to find out.
-![Stargazers Over Time](https://starchart.cc/HACKERALERT/Picocrypt.svg)
+![](https://starchart.cc/HACKERALERT/Picocrypt.svg)
 
 # Donations
 When I was actively developing Picocrypt, I accepted donations, but now that Picocrypt is complete and production-ready, there's no need anymore. Instead, take your time and effort to share the love of Picocrypt with others. Donations are nice, but being able to help others is a lot more valuable to me than a few spare dollars. Knowing that Picocrypt is helping people secure their files is plenty enough for me.
@@ -122,6 +122,7 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>evelian ($50)</li>
 	<li>jp26 ($50)</li>
 	<li>guest-116103ad ($50)</li>
+	<li>Guest ($27)</li>
 	<li>oli ($20)</li>
 	<li>Markus ($15)</li>
 	<li>Tybbs ($10)</li>
@@ -133,6 +134,7 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>Pokabu (backer)</li>
 	<li>akp (backer)</li>
 </ul>
+<!-- Last updated September 25, 2022 -->
 
 Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
 <ul>
