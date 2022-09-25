@@ -1,4 +1,4 @@
-# v1.30 (No ETA)
+# v1.30 (Released 09/24/2022)
 <ul>
 	<li>✓ Improve tooltip word choice</li>
 	<li>✓ Add FAQ to README</li>
