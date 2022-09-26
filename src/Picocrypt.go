@@ -3,7 +3,7 @@ package main
 /*
 
 Picocrypt v1.30
-Copyright (c) Evan Su (https://evansu.cc)
+Copyright (c) Evan Su
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
 
