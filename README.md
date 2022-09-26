@@ -20,8 +20,8 @@ Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://
 ## Linux
 To use Picocrypt on Linux, you can download the AppImage <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Picocrypt.AppImage">here</a>. Make sure you have a clipboard utility such as `xclip` installed to use Picocrypt's clipboard features. While this AppImage should work on most systems, Linux is a mess when it comes to cross-distro and cross-release compatibility, so if the AppImage doesn't work, you can run Picocrypt from source using the instructions in the `src/` directory.
 
-## Paranoid Packs
-The Paranoid Pack is a compressed archive that contains executables for Windows, macOS, and Linux, including the source code and dependencies. As long as you have it stored in a place you can access, you'll be able to open it and use Picocrypt on any desktop operating system in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt. As long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in case of catastrophic events. The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place.
+## Paranoid Pack
+The Paranoid Pack is a compressed archive that contains executables for Windows, macOS, and Linux, including the source code and dependencies. As long as you have it stored in a place you can access, you'll be able to open it and use Picocrypt on any desktop operating system in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt; as long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in case of catastrophic events. The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. Get your copy <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Paranoid.zip">here</a>.
 
 # Why Picocrypt?
 Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should choose Picocrypt:
@@ -88,10 +88,6 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 
 # Community
 Consider joining <a href="https://www.reddit.com/r/Picocrypt/">r/Picocrypt</a>. While I won't be active in this subreddit myself, it's still a great place to ask questions and help one another out, especially if something happens to me or this repository in the future. Remember to only trust this specific subreddit and be aware of hackers that might try to impersonate me on other platforms. I will never ask you for your password, and anyone who does is not me. I will never tell you to download a file from a suspicious link, and anyone who does is not me.
-
-# Stargazers
-How's Picocrypt doing? Take a look below to find out.
-![](https://starchart.cc/HACKERALERT/Picocrypt.svg)
 
 # Donations
 When I was actively developing Picocrypt, I accepted donations, but now that Picocrypt is complete and production-ready, there's no need anymore. Instead, take your time and effort to share the love of Picocrypt with others. Donations are nice, but being able to help others is a lot more valuable to me than a few spare dollars. Knowing that Picocrypt is helping people secure their files is plenty enough for me.
