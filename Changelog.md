@@ -44,7 +44,7 @@
 	<li>✓ .deb and AppImage optimizations, reliability improvements</li>
 	<li>✓ Snapcraft uses software OpenGL rendering as well now</li>
 	<li>✓ Statically linked libc6, etc. for best cross-platform compatibility for Snapcraft</li>
-	<li>✓ Added NO_AT_BRIDGE=1 to Snapcraft to fix an issue on Arch Linux (<a href="https://github.com/HACKERALERT/Picocrypt/issues/75">#75</a>)</li>
+	<li>✓ Added NO_AT_BRIDGE=1 to Snapcraft to fix an issue on Arch Linux (#75)</li>
 	<li>✓ Clean up unnecessary files in dependencies</li>
 	<li>✓ Sign executables with OpenPGP</li>
 </ul>
@@ -63,7 +63,7 @@
 	<li>✓ Fix invalid pointer crash when decrypting files >256GB</li>
 	<li>✓ UI improvements and tweaks</li>
 	<li>✓ Fix crash on Windows when saving to the root directory of a drive</li>
-	<li>✓ Max file size limit removed! Picocrypt can now encrypt files of unlimited size instead of being capped at 256 GiB 🥳</li>
+	<li>✓ Max file size limit removed! Picocrypt can now encrypt files of unlimited size instead of being capped at 256 GiB</li>
 	<li>✓ Shows total input size along with input label</li>
 	<li>✓ Update to GLFW 3.3.6 for better stability</li>
 </ul>
@@ -178,7 +178,7 @@
 
 # v1.14 (Released 08/07/2021)
 <ul>
-	<li>✓ Low-severity security fix for the recently discovered <a href="https://eprint.iacr.org/2020/1491.pdf">partitioning oracle attacks</a></li>
+	<li>✓ Low-severity security fix for the recently discovered partitioning oracle attacks</li>
 	<li>✓ Move from Monocypher to Go's standard supplemental ChaCha20 in favour of the latter being stateful</li>
 	<li>✓ Add SHA3 (normal mode) and BLAKE2b (fast mode) as HMAC to replace Poly1305 and prevent partitioning oracle attacks</li>
 	<li>✓ Removed ~100 lines of unnecessary code now that Picocrypt uses Go's ChaCha20 (cleaner and stabler code)</li>
