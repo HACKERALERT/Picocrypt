@@ -2,6 +2,7 @@
 <ul>
 	<li>✓ Force software OpenGL rendering on macOS</li>
 	<li>✓ Use native clipboard APIs instead of external package (removes need for xclip)</li>
+	<li>✓ Revert using system temporary folder due to size issues</li>
 </ul>
 
 # v1.30 (Released 09/24/2022)
