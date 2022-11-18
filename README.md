@@ -121,16 +121,18 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>Guest ($27)</li>
 	<li>oli ($20)</li>
 	<li>Markus ($15)</li>
+	<li>Bright ($15)</li>
 	<li>Tybbs ($10)</li>
 	<li>N. Chin ($10)</li>
 	<li>Manjot ($10)</li>
 	<li>Phil P. ($10)</li>
 	<li>Raymond ($10)</li>
+	<li>Cohen ($10)</li>
 	<li>donor39 (backer)</li>
 	<li>Pokabu (backer)</li>
 	<li>akp (backer)</li>
 </ul>
-<!-- Last updated September 25, 2022 -->
+<!-- Last updated November 18, 2022 -->
 
 Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
 <ul>
