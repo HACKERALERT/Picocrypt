@@ -1,4 +1,4 @@
-# v1.31 (ETA: 5 days)
+# v1.31 (Released 11/18/2022)
 <ul>
 	<li>✓ Force software OpenGL rendering on macOS</li>
 	<li>✓ Use native clipboard APIs instead of external package (removes need for xclip)</li>
