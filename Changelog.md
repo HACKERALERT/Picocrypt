@@ -1,3 +1,8 @@
+# v1.31 (ETA: 5 days)
+<ul>
+	<li>✓ Force software OpenGL rendering on macOS</li>
+</ul>
+
 # v1.30 (Released 09/24/2022)
 <ul>
 	<li>✓ Improve tooltip word choice</li>
