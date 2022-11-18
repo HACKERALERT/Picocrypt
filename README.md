@@ -24,10 +24,10 @@ To use Picocrypt on Linux, you can download the AppImage <a href="https://github
 The Paranoid Pack is a compressed archive that contains executables for Windows, macOS, and Linux, including the source code and dependencies. As long as you have it stored in a place you can access, you'll be able to open it and use Picocrypt on any desktop operating system in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt; as long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in case of catastrophic events. The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. Get your copy <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.30/Paranoid.zip">here</a>.
 
 # Why Picocrypt?
-Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCrypt, or 7-Zip? Here are a few reasons why you should choose Picocrypt:
+Why should you use Picocrypt instead of VeraCrypt, 7-Zip, BitLocker, or Cryptomator? Here are a few reasons why you should choose Picocrypt:
 <ul>
-	<li>Unlike NordLocker, BitLocker, AxCrypt, and most cloud storage providers, Picocrypt and its dependencies are completely open-source and auditable. You can verify for yourself that there aren't any backdoors or flaws.</li>
-	<li>Picocrypt is <i>tiny</i>. While NordLocker is over 50 MiB and VeraCrypt is over 20 MiB, Picocrypt sits at just 3 MiB, about the size of a medium-resolution photo. And that's not all - Picocrypt is portable (doesn't need to be installed) and doesn't require administrator/root privileges.</li>
+	<li>Unlike BitLocker and most cloud services, Picocrypt and its dependencies are completely open-source and auditable. You can verify for yourself that there aren't any backdoors or flaws.</li>
+	<li>Picocrypt is <i>tiny</i>. While Cryptomator is over 50 MiB and VeraCrypt is over 20 MiB, Picocrypt sits at just 2 MiB, about the size of a medium-resolution photo. And that's not all - Picocrypt is portable (doesn't need to be installed) and doesn't require administrator/root privileges.</li>
 	<li>Picocrypt is easier and more productive to use than VeraCrypt. To encrypt files with VeraCrypt, you'd have to spend a minute or two just setting up a volume. With Picocrypt's simple UI, all you have to do is drag and drop your files, enter a password, and hit Encrypt. All the complex procedures are handled by Picocrypt internally. Who said secure encryption can't be simple?</li>
 	<li>Picocrypt is designed for security. 7-Zip is an archive utility and not an encryption tool, so its focus is not on security. Picocrypt, however, is built with security as the number one priority. Every part of Picocrypt exists for a reason and anything that could impact the security of Picocrypt is removed. Picocrypt is built with cryptography you can trust.</li>
 	<li>Picocrypt authenticates data in addition to protecting it, preventing hackers from maliciously modifying sensitive data. This is useful when you are sending encrypted files over an insecure channel and want to be sure that it arrives untouched.</li>
@@ -37,22 +37,22 @@ Why should you use Picocrypt instead of BitLocker, NordLocker, VeraCrypt, AxCryp
 # Comparison
 Here's how Picocrypt compares to other popular encryption tools.
 
-|                | Picocrypt      | VeraCrypt      | 7-Zip (GUI)    | BitLocker      | Cryptomator    | NordLocker     | AxCrypt        |
-| -------------- | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- | -------------- |
-| Free           |✅ Yes         |✅ Yes          |✅ Yes         |🟧 Partially    |✅ Yes         |🟧 Partially    |🟧 Partially   |
-| Open Source    |✅ GPLv3       |✅ Multi        |✅ LGPL        |❌ No           |✅ GPLv3       |❌ No           |❌ No          |
-| Cross-Platform |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |❌ No           |❌ No          |
-| Size           |✅ 3 MiB       |❌ 20 MiB       |✅ 2 MiB       |✅ Included     |❌ 50 MiB      |❌ 60 MiB       |🟧 8 MiB       |
-| Portable       |✅ Yes         |✅ Yes          |❌ No          |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
-| Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |
-| Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |🟧 Medium       |🟧 Medium      |🟧 Medium       |✅ Easy        |
-| Cipher         |✅ XChaCha20   |✅ AES-256      |✅ AES-256     |🟧 AES-128      |✅ AES-256     |✅ AES-256      |🟧 AES-128     |
-| Key Derivation |✅ Argon2      |🆗 PBKDF2       |❌ SHA-256     |❓ Unknown      |✅ Scrypt      |✅ Argon2       |🆗 PBKDF2      |
-| Data Integrity |✅ Always      |❌ No           |❌ No          |❓ Unknown      |✅ Always      |✅ Always       |✅ Always      |
-| Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |❌ No           |❌ No          |
-| Compression    |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
-| Telemetry      |✅ None        |✅ None         |✅ None        |❓ Unknown      |✅ None        |❌ Analytics    |❌ Accounts    |
-| Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓ Unknown      |✅ Yes         |❓ Unknown      |❌ No          |
+|                | Picocrypt      | VeraCrypt      | 7-Zip GUI      | BitLocker      | Cryptomator    |
+| -------------- | -------------- | -------------- | -------------- | -------------- | -------------- |
+| Free           |✅ Yes         |✅ Yes          |✅ Yes         |✅ Yes          |✅ Yes         |
+| Open Source    |✅ GPLv3       |✅ Multi        |✅ LGPL        |❌ No           |✅ GPLv3       |
+| Cross-Platform |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
+| Size           |✅ 2 MiB       |❌ 20 MiB       |✅ 2 MiB       |✅ Included     |❌ 50 MiB      |
+| Portable       |✅ Yes         |✅ Yes          |❌ No          |✅ Yes          |❌ No          |
+| Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |
+| Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |✅ Easy         |🟧 Medium      |
+| Cipher         |✅ XChaCha20   |✅ AES-256      |✅ AES-256     |🟧 AES-128      |✅ AES-256     |
+| Key Derivation |✅ Argon2      |🟧 PBKDF2       |❌ SHA-256     |❓ Unknown      |✅ Scrypt      |
+| Data Integrity |✅ Always      |❌ No           |❌ No          |❓ Unknown      |✅ Always      |
+| Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |
+| Compression    |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |❌ No          |
+| Telemetry      |✅ None        |✅ None         |✅ None        |❓ Unknown      |✅ None        |
+| Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓ Unknown      |✅ Yes         |
 
 # Features
 Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a basic level, simply dropping your files, entering a password, and hitting Encrypt is all that's needed to encrypt your files. Dropping the output back into Picocrypt, entering the password, and hitting Decrypt is all that's needed to decrypt those files. Pretty simple, right?
