@@ -3,7 +3,6 @@ module Picocrypt
 go 1.17
 
 require (
-	github.com/HACKERALERT/clipboard v0.1.5-0.20220507233423-cccec4a4226a
 	github.com/HACKERALERT/crypto v0.0.0-20220905152506-aa0dd62d8f67
 	github.com/HACKERALERT/dialog v0.0.0-20220508022504-af3bc34fe379
 	github.com/HACKERALERT/giu v0.5.7-0.20221117223150-211c1da061d9

@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.30
+Picocrypt v1.31
 Copyright (c) Evan Su
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -32,7 +32,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/HACKERALERT/clipboard"
 	"github.com/HACKERALERT/crypto/argon2"
 	"github.com/HACKERALERT/crypto/blake2b"
 	"github.com/HACKERALERT/crypto/chacha20"
@@ -59,7 +58,7 @@ var TRANSPARENT = color.RGBA{0x00, 0x00, 0x00, 0x00}
 
 // Generic variables
 var window *giu.MasterWindow
-var version = "v1.30"
+var version = "v1.31"
 var dpi float32
 var mode string
 var working bool
@@ -182,9 +181,7 @@ func draw() {
 					giu.Checkbox("Lowercase", &passgenLower),
 					giu.Checkbox("Numbers", &passgenNums),
 					giu.Checkbox("Symbols", &passgenSymbols),
-					giu.Style().SetDisabled(clipboard.Unsupported).To(
-						giu.Checkbox("Copy to clipboard", &passgenCopy),
-					),
+					giu.Checkbox("Copy to clipboard", &passgenCopy),
 					giu.Row(
 						giu.Button("Cancel").Size(100, 0).OnClick(func() {
 							giu.CloseCurrentPopup()
@@ -339,26 +336,22 @@ func draw() {
 				}),
 				giu.Tooltip("Clear the password entries."),
 
-				giu.Style().SetDisabled(clipboard.Unsupported).To(
-					giu.Row(
-						giu.Button("Copy").Size(54, 0).OnClick(func() {
-							clipboard.WriteAll(password)
-							giu.Update()
-						}),
-						giu.Tooltip("Copy the password into your clipboard."),
+				giu.Button("Copy").Size(54, 0).OnClick(func() {
+					giu.Context.GetPlatform().SetClipboard(password)
+					giu.Update()
+				}),
+				giu.Tooltip("Copy the password into your clipboard."),
 
-						giu.Button("Paste").Size(54, 0).OnClick(func() {
-							tmp, _ := clipboard.ReadAll()
-							password = tmp
-							if mode != "decrypt" {
-								cpassword = tmp
-							}
-							passwordStrength = zxcvbn.PasswordStrength(password, nil).Score
-							giu.Update()
-						}),
-						giu.Tooltip("Paste a password from your clipboard."),
-					),
-				),
+				giu.Button("Paste").Size(54, 0).OnClick(func() {
+					tmp := giu.Context.GetPlatform().GetClipboard()
+					password = tmp
+					if mode != "decrypt" {
+						cpassword = tmp
+					}
+					passwordStrength = zxcvbn.PasswordStrength(password, nil).Score
+					giu.Update()
+				}),
+				giu.Tooltip("Paste a password from your clipboard."),
 
 				giu.Style().SetDisabled(mode == "decrypt").To(
 					giu.Button("Create").Size(54, 0).OnClick(func() {
@@ -782,7 +775,7 @@ func onDrop(names []string) {
 				tmp := make([]byte, 15)
 				fin.Read(tmp)
 				tmp, err = rsDecode(rs5, tmp)
-				if valid, _ := regexp.Match(`^v\d\.\d{2}`, tmp); !valid || err != nil {
+				if valid, _ := regexp.Match(`^v1\.\d{2}`, tmp); !valid || err != nil {
 					resetUI()
 					mainStatus = "This doesn't seem like a Picocrypt volume."
 					mainStatusColor = RED
@@ -1883,7 +1876,7 @@ func resetUI() {
 	passgenLower = true
 	passgenNums = true
 	passgenSymbols = true
-	passgenCopy = !clipboard.Unsupported
+	passgenCopy = true
 
 	keyfile = false
 	keyfiles = nil
@@ -1984,7 +1977,7 @@ func genPassword() string {
 		tmp[i] = chars[j.Int64()]
 	}
 	if passgenCopy {
-		clipboard.WriteAll(string(tmp))
+		giu.Context.GetPlatform().SetClipboard(string(tmp))
 	}
 	return string(tmp)
 }
@@ -2038,11 +2031,6 @@ func main() {
 
 	// Set universal DPI
 	dpi = giu.Context.GetPlatform().GetContentScale()
-
-	// Check for clipboard support
-	if clipboard.Unsupported {
-		mainStatus = "Ready. (Note: No clipboard support found.)"
-	}
 
 	// Start the UI
 	window.Run(draw)
