@@ -14,19 +14,17 @@ Picocrypt 是一个非常小（因而叫 _Pico_）、简单、而且安全的加
 
 ## Windows
 
-适用于 Windows 的 Picocrypt 非常简单。我们提供了最新的、单文件、绿色版的 Windows 可执行文件，下载请点击[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe)。如果 Windows Defender 或杀毒软件将 Picocrypt 标记为病毒，请尽自己的一份力量并将其作为误报提交，以造福所有人。
-
-如果上面的可执行文件不能工作，这很可能意味着您的系统不支持 OpenGL。对于这种情况，我提供了一个可以在任何 Windows 系统上运行的替代实现，你可以在[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt-NoGL.exe)下载。
+适用于 Windows 的 Picocrypt 非常简单。我们提供了最新的、单文件、绿色版的 Windows 可执行文件，下载请点击[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.exe)。如果 Windows Defender 或杀毒软件将 Picocrypt 标记为病毒，请尽自己的一份力量并将其作为误报提交，以造福所有人。
 
 ## macOS
 
-用于 macOS 的 Picocrypt 也非常简单。在[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip)下载，解压，并运行里面的 Picocrypt。如果提示 Picocrypt 不是来自一个经过验证的开发商，打不开，请按住 control 点击 Picocrypt 并点“打开”以绕过警告。
+用于 macOS 的 Picocrypt 也非常简单。在[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.app.zip)下载，解压，并运行里面的 Picocrypt。如果提示 Picocrypt 不是来自一个经过验证的开发商，打不开，请按住 control 点击 Picocrypt 并点“打开”以绕过警告。
 
 需要记住，Picocrypt 在 macOS 上依赖 Rosetta 2 和 OpenGL，而这两者未来可能会被苹果移除，因为苹果公司正在推广他们的专有图像和芯片。这意味着 Picocrypt 可能将来在 macOS 上无法运行。解决办法？不要购买苹果。他们从不在意开发者的处境。
 
 ## Linux
 
-有多种方法可以在 Linux 上使用 Picocrypt。推荐通过[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.deb)的 .deb 包 安装 Picocrypt（Debian 11+ 和 Ubuntu 20+）。如果 .deb 不适合，或者您不使用基于 Debian 的发行版，可以使用[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.AppImage)的 AppImage。如果以上两种方法都不奏效，你可以从 Snapcraft 安装 Picocrypt，它应该能在所有发行版上工作。在[这里](https://snapcraft.io/picocrypt)找到 Snapcraft 的说明。
+有多种方法可以在 Linux 上使用 Picocrypt。推荐通过[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.deb)的 .deb 包 安装 Picocrypt（Debian 11+ 和 Ubuntu 20+）。如果 .deb 不适合，或者您不使用基于 Debian 的发行版，可以使用[这里](https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.AppImage)的 AppImage。如果以上两种方法都不奏效，你可以从 Snapcraft 安装 Picocrypt，它应该能在所有发行版上工作。在[这里](https://snapcraft.io/picocrypt)找到 Snapcraft 的说明。
 
 ## Paranoid Packs
 

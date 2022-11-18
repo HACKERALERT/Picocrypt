@@ -14,11 +14,11 @@ Fai una donazione a Picocrypt su <a  href="https://opencollective.com/picocrypt"
 
 ## Windows
 
-Scaricare Picocrypt per Windows è semplicissimo. Scarica l'ultima versione, standalone e portable, degli eseguibili per Windows, cliccando <a  href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe">qui</a>. Se Windows Defender o il tuo antivirus segnala Picocrypt come un virus, per piacere, per il bene di tutti, contribuisci al progetto segnalandolo come un falso positivo.
+Scaricare Picocrypt per Windows è semplicissimo. Scarica l'ultima versione, standalone e portable, degli eseguibili per Windows, cliccando <a  href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.exe">qui</a>. Se Windows Defender o il tuo antivirus segnala Picocrypt come un virus, per piacere, per il bene di tutti, contribuisci al progetto segnalandolo come un falso positivo.
 
 ## macOS
 
-Scaricare Picocrypt per macOS è altrettanto semplice. Scarica Picocrypt <a  href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">qui</a>, estrai l'archivio zip ed esegui il Picocrypt che troverai al suo interno. Se non riesci ad aprire Picocrypt perché non proviene da uno sviluppatore certificato, premi il tasto destro su Picocrypt e seleziona "Apri". Se nonostante tutto ricevi ancora un avviso, ripremi il tasto destro su Picocrypt e seleziona "Apri" ancora una volta. A questo punto dovresti poter eseguire Picocrypt.
+Scaricare Picocrypt per macOS è altrettanto semplice. Scarica Picocrypt <a  href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.app.zip">qui</a>, estrai l'archivio zip ed esegui il Picocrypt che troverai al suo interno. Se non riesci ad aprire Picocrypt perché non proviene da uno sviluppatore certificato, premi il tasto destro su Picocrypt e seleziona "Apri". Se nonostante tutto ricevi ancora un avviso, ripremi il tasto destro su Picocrypt e seleziona "Apri" ancora una volta. A questo punto dovresti poter eseguire Picocrypt.
 
 ## Linux
 

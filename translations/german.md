@@ -14,19 +14,17 @@ Bitte spenden Sie für Picocrypt auf <a href="https://opencollective.com/picocry
 
 ## Windows
 
-Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm (false positive), damit andere Picocrypt-Nutzer nicht verwirrt werden.
-
-Sollte sich die Datei nicht ausführen lassen, liegt es wahrscheinlich daran, dass ihr System kein OpenGL unterstützt. Für diese Situation ist eine Alternative bereitgestellt, die auf jedem Windows System ausführbar ist. Sie können sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt-NoGL.exe">hier</a> herunterladen.
+Picocrypt für Windows ist so einfach, wie es nur geht. Klicken Sie <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.exe">hier</a>, um die neueste, eigenständige, portabel ausführbare Datei für Windows herunterzuladen. Wenn Windows Defender oder Ihr Antivirenprogramm Picocrypt als Virus erkennt, tun Sie bitte Ihren Teil und melden Sie es als Fehlalarm (false positive), damit andere Picocrypt-Nutzer nicht verwirrt werden.
 
 ## macOS
 
-Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, führen Sie einen Control-Klick auf Picocrypt aus, um diese Warnung zu umgehen.
+Picocrypt für macOS ist ebenfalls sehr einfach. Laden Sie Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.app.zip">hier</a> herunter, entpacken Sie die Zip-Datei und starten Sie das darin enthaltene Picocrypt. Wenn Sie Picocrypt nicht öffnen können, weil es nicht von einem verifizierten Entwickler stammt, führen Sie einen Control-Klick auf Picocrypt aus, um diese Warnung zu umgehen.
 
 Zu beachten ist, dass Picocrypt unter macOS Rosetta 2 und OpenGL benötigt, die beide wahrscheinlich in Zukunft von Apple entfernt werden. Das bedeutet, dass Picocrypt in Zukunft möglicherweise nicht mehr unter macOS laufen wird, da Apple seine eigenen proprietären Grafik- und Prozessortechnologien vorantreibt. Die Lösung? Kaufen Sie kein Apple. Entwickler sind ihnen egal.
 
 ## Linux
 
-Es gibt mehrer Wege, wie Sie Picocrypt unter Linux verwenden können. Die empfohlene Art ist es, Picocrypt als <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.deb">.deb-Paket</a> (Debain 11+ und Ubuntu 20+) zu installieren. Falls .deb nicht ihren Bedürfnissen entspricht oder Sie eine nicht Debain-basierte Distro verwenden, steht auch ein <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.AppImage">AppImage</a> zur Verfügung. Falls keine dieser Optionen funktioniert, können Sie Picocrypt auch über <a href="https://snapcraft.io/picocrypt">Snapcraft</a> installieren.
+Es gibt mehrer Wege, wie Sie Picocrypt unter Linux verwenden können. Die empfohlene Art ist es, Picocrypt als <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.29/Picocrypt.deb">.deb-Paket</a> (Debain 11+ und Ubuntu 20+) zu installieren. Falls .deb nicht ihren Bedürfnissen entspricht oder Sie eine nicht Debain-basierte Distro verwenden, steht auch ein <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.AppImage">AppImage</a> zur Verfügung. Falls keine dieser Optionen funktioniert, können Sie Picocrypt auch über <a href="https://snapcraft.io/picocrypt">Snapcraft</a> installieren.
 
 ## Paranoid Packs
 
