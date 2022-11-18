@@ -942,13 +942,8 @@ func work() {
 		}
 
 		// Open a temporary .zip for writing
-		file, err := os.CreateTemp("", "*.zip")
-		if err != nil { // Error, fall back to output folder
-			inputFile = strings.TrimSuffix(outputFile, ".pcv")
-			file, err = os.Create(inputFile)
-		} else { // No issues, use the temporary .zip
-			inputFile = file.Name()
-		}
+		inputFile = strings.TrimSuffix(outputFile, ".pcv")
+		file, err := os.Create(inputFile)
 		if err != nil { // Make sure file is writable
 			accessDenied("Write")
 			return
