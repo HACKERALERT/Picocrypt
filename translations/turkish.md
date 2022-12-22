@@ -5,8 +5,8 @@ Picocrypt dosyalarınızı korumak için kullanabileceğiniz çok küçük (bu y
 
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
-# Funding
-**Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a security audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.**</i>
+# Finansman Sağlama
+**Cure53'ten bir güvenlik denetimi için para toplamak üzere, lütfen <a href="https://opencollective.com/picocrypt">Open Collective</a> üzerinden (kripto kabul edilir) Picocrypt'e bağış yapın. Bu projeyi hayata geçirebilmek için saatlerce çalıştım ve bundan herhangi bir parasal gelir elde etmiyorum, bu yüzden denetleme ücretini kendi başıma ödeyemem. <i>Picocrypt'in, topluluğunun desteğine ihtiyacı var.**</i>
 
 # Downloads
 **Important**: There are multiple entities under the name "Picocrypt". For example, there's an old encryption tool called PicoCrypt that uses a broken cipher. There's also an ERC-funded research project called PICOCRYPT. There are even domains related to Picocrypt that I've never registered. Please don't confuse any of these unrelated projects with Picocrypt (this project). Make sure to only download Picocrypt from this repository to ensure that you get the authentic and backdoor-free Picocrypt. When sharing Picocrypt with others, be sure to link to this repository to prevent any confusion.
