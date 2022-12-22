@@ -34,25 +34,25 @@ Neden VeraCrypt, 7-Zip, BitLocker, ya da Cryptomator yerine Picocrypt kullanmal�
 	<li>Picocrypt dosyalarınızın bozulmalara karşı aktif olarak korunması için mevcut üstbilgilerine ek olarak Reed-Solomon eşitlik bitleri ekler, bu sayede bir birimin üstbilgisinin bir parçası (ki bu kısım önemli kriptografik bileşenleri içerir) bozulsa bile (örn. sabit disk bit rot'u) Picocrypt yüksek bir başarı oranıyla üstbilgiyi kurtarabilir ve dosyalarınızın şifresini çözebilir. Ayrıca Picocrypt bütün bir birimi Reed-Solomon ile şifreleyerek önemli dosyalarınızın kaybolmasının da önünde geçebilir.</li>
 </ul>
 
-# Comparison
-Here's how Picocrypt compares to other popular encryption tools.
+# Kıyaslama
+İşte Picocrypt'in diğer popüler şifreleme araçları ile kıyası.
 
-|                | Picocrypt      | VeraCrypt      | 7-Zip GUI      | BitLocker      | Cryptomator    |
-| -------------- | -------------- | -------------- | -------------- | -------------- | -------------- |
-| Free           |✅ Yes         |✅ Yes          |✅ Yes         |✅ Bundled      |✅ Yes         |
-| Open Source    |✅ GPLv3       |✅ Multi        |✅ LGPL        |❌ No           |✅ GPLv3       |
-| Cross-Platform |✅ Yes         |✅ Yes          |❌ No          |❌ No           |✅ Yes         |
-| Size           |✅ 3 MiB       |❌ 20 MiB       |✅ 2 MiB       |✅ N/A          |❌ 50 MiB      |
-| Portable       |✅ Yes         |✅ Yes          |❌ No          |✅ Yes          |❌ No          |
-| Permissions    |✅ None        |❌ Admin        |❌ Admin       |❌ Admin        |❌ Admin       |
-| Ease-Of-Use    |✅ Easy        |❌ Hard         |✅ Easy        |✅ Easy         |🟧 Medium      |
-| Cipher         |✅ XChaCha20   |✅ AES-256      |✅ AES-256     |🟧 AES-128      |✅ AES-256     |
-| Key Derivation |✅ Argon2      |🟧 PBKDF2       |❌ SHA-256     |❓ Unknown      |✅ Scrypt      |
-| Data Integrity |✅ Always      |❌ No           |❌ No          |❓ Unknown      |✅ Always      |
-| Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |
-| Compression    |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |❌ No          |
-| Telemetry      |✅ None        |✅ None         |✅ None        |❓ Unknown      |✅ None        |
-| Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓ Unknown      |✅ Yes         |
+|                   | Picocrypt      | VeraCrypt      | 7-Zip GUI      | BitLocker      | Cryptomator    |
+| --------------    | -------------- | -------------- | -------------- | -------------- | -------------- |
+|Ücretsiz           |✅Evet          |✅Evet          |✅Evet         |✅Gömülü        |✅Evet         |
+|Açık Kaynak        |✅GPLv3         |✅Çoklu-Lisans  |✅LGPL         |❌Hayır         |✅GPLv3        |
+|Çapraz-Platform    |✅Evet          |✅Evet          |❌Hayır        |❌Hayır         |✅Evet         |
+|Boyut              |✅3 MiB         |❌20 MiB        |✅2 MiB        |✅Belirsiz      |❌50 MiB       |
+|Taşınabilir        |✅Evet          |✅Evet          |❌Hayır        |✅Evet          |❌Hayır        |
+|İzinler            |✅Yok           |❌Yönetici      |❌Yönetici     |❌Yönetici      |❌Yönetici     |
+|Kullanım Kolaylığı |✅Kolay         |❌Zor           |✅Kolay        |✅Kolay         |🟧Orta         |
+|Şifreleyici        |✅XChaCha20     |✅AES-256       |✅AES-256      |🟧AES-128       |✅AES-256      |
+|Anahtar Türetimi   |✅Argon2        |🟧PBKDF2        |❌SHA-256      |❓Bilinmiyor    |✅Scrypt       |
+|Veri Bütünlüğü     |✅Her zaman     |❌Hayır         |❌Hayır        |❓Bilinmiyor    |✅Her zaman    |
+|Reed-Solomon       |✅Evet          |❌Hayır         |❌Hayır        |❌Hayır         |❌Hayır        |
+|Sıkıştırma         |✅Evet          |❌Hayır         |✅Evet         |✅Evet          |❌Hayır        |
+|Telemetri          |✅Hiç yok       |✅Hiç yok       |✅Hiç yok      |❓Bilinmiyor    |✅Hiç yok      |
+|Denetlendi         |🟧Planlandı     |✅Evet          |❌Hayır        |❓Bilinmiyor    |✅Evet         |
 
 # Features
 Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a basic level, simply dropping your files, entering a password, and hitting Encrypt is all that's needed to encrypt your files. Dropping the output back into Picocrypt, entering the password, and hitting Decrypt is all that's needed to decrypt those files. Pretty simple, right?
