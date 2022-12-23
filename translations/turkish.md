@@ -55,9 +55,9 @@ Neden VeraCrypt, 7-Zip, BitLocker, ya da Cryptomator yerine Picocrypt kullanmal�
 |Denetlendi         |🟧Planlandı     |✅Evet          |❌Hayır        |❓Bilinmiyor    |✅Evet         |
 
 # Features
-Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a basic level, simply dropping your files, entering a password, and hitting Encrypt is all that's needed to encrypt your files. Dropping the output back into Picocrypt, entering the password, and hitting Decrypt is all that's needed to decrypt those files. Pretty simple, right?
+Picocrypt çok basit bir araçtır ve çoğu kullanıcı onu nasıl kullanacağını birkaç saniye içinde sezgisel olarak anlayacaktır. Temel olarak dosyalarınızı şifrelemek için onları sürükleyip bırakarak ve akabinde bir parola girip Şifrele'ye basmak yeterlidir. Benzer şekilde, şifrelenmiş birimi sürükleip bırakmak, şifrelerken belirlediğiniz parolayı girmek ve Deşifrele'ye basmak dosyalarınızın şifresini çözmek için yeterlidir. Oldukça basit, değil mi?
 
-While being simple, Picocrypt also strives to be powerful in the hands of knowledgeable and advanced users. Thus, there are some additional options that you may use to suit your needs.
+Picocrypt basit olmakla birlikte, bilgili ve ileri düzey kullanıcıların elinde güçlü olmaya da çalışır. Dolayısıyla, ihtiyaçlarınıza uygun olarak kullanabileceğiniz bazı ek seçenekler sunar.
 <ul>
 	<li><strong>Password generator</strong>: Picocrypt provides a secure password generator that you can use to create cryptographically secure passwords. You can customize the password length, as well as the types of characters to include.</li>
 	<li><strong>Comments</strong>: Use this to store notes, information, and text along with the file (it won't be encrypted). For example, you can put a description of the file you're encrypting before sending it to someone. When the person you sent it to drops the file into Picocrypt, your description will be shown to that person.</li>
