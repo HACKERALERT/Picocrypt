@@ -14,7 +14,7 @@ brew install glfw glew
 **Windows:** A C compiler, ideally TDM-GCC or MinGW-w64
 
 # 2. Install Go
-If you don't have Go installed, download it from <a href="https://go.dev/dl/">here</a> or install it from your package manager (`apt install golang-go`). The latest version of Go is recommended, although you may fall back to Go 1.18 should any issues arise in the future.
+If you don't have Go installed, download it from <a href="https://go.dev/dl/">here</a> or install it from your package manager (`apt install golang-go`). The latest version of Go is recommended, although you may fall back to Go 1.19 should any issues arise in the future.
 
 # 3. Get the Source Files
 Download the source files as a zip from the homepage or `git clone` this repository. Next, navigate to the `src/` directory, where you will find the source file (`Picocrypt.go`). You will need this file, along with `go.mod` and `go.sum`, to compile Picocrypt.
@@ -24,6 +24,8 @@ Finally, build Picocrypt from source:
 - Windows: <code>go build -ldflags="-s -w -H=windowsgui -extldflags=-static" Picocrypt.go</code>
 - macOS: <code>go build -ldflags="-s -w" Picocrypt.go</code>
 - Linux: <code>go build -ldflags="-s -w" Picocrypt.go</code>
+
+Note: Make sure to set `CGO_ENABLED=1` if it isn't already.
 
 # 5. Done!
 You should now see a compiled executable (`Picocrypt.exe`/`Picocrypt`) in your directory. You can run it by double-clicking or executing it in your terminal. That wasn't too hard, right? Enjoy!
