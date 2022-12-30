@@ -73,7 +73,7 @@ Picocrypt basit olmakla birlikte, bilgili ve ileri düzey kullanıcıların elin
 Picocrypt'in kriptografiyi nasıl ele aldığı hakkında daha fazla bilgi için <a href="Internals.md">Teknik Bilgiler</a>'e göz atabilirsiniz. Benim veya bu projenin güvenliğinden endişe ediyorsanız, sizi temin ederim ki bu depo çalınmayacak veya arka kapı saldırısına uğramayacak. Tüm taşınabilir cihazlarımdaki tam disk şifrelemesine ek olarak, Picocrypt ile bağlantılı tüm hesaplarda (GitHub, Reddit, Google, vb.) 2FA'yı (TOTP) etkinleştirdim. FDahası, Picocrypt ihtiyaç duyduğu bağımlılıkları tarafımca çatallanmış izole depolardan kullanır, yalnızca değişikliklere göz attıktan sonra ve herhangi bir güvenlik sorunu olmadığına emin olduğumda ana depoyu fetch ediyorum. Bu, eğer ilgili bağımlılığın bir saldırıya uğraması veya sahibi tarafından silinmesi durumunda, Picocrypt'in benim çatallarımı kullandığı için hiçbir şekilde etkilenmeyeceği anlamına gelir. Picocrypt'i kullanmakla ilgili kafanız rahat olabilir.
 
 ## Signatures
-For the paranoid, Picocrypt is signed with PGP. The fingerprint and public key are listed below.
+Paranoid paketi için, Picocrypt PGP ile şifrelenmiştir. Parmak izi ve açık anahtar aşağıda sunulmuştur.
 
 <pre>B342A744BDEEA57B6A583E33A247E73798946F55</pre>
 <pre>-----BEGIN PGP PUBLIC KEY BLOCK-----
