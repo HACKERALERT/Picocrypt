@@ -92,23 +92,23 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 # Bağış
 Picocrypt'i aktif olarak geliştirirken bağışları kabul ettim, ancak artık Picocrypt tamamlandı ve kullanıma hazır, artık buna gerek yok. Bunun yerine, zamanınızı ve çabanızı Picocrypt sevgisini başkalarıyla paylaşmak için ayırın. Bağışlar güzel ama başkalarına edilen yardım benim için birkaç dolardan çok daha değerli. Picocrypt'in, insanların dosyalarını korumalarına yardımcı olduğunu bilmek benim için yeterli.
 
-# FAQ
+# Sıkça Sorulan Sorular
 
-**Is Picocrypt accepting new features?**
+**Picocrypt yeni özellikler alacak mı?**
 
-No, Picocrypt is considered feature-complete and won't be getting any new features. Unlike other tools which try to constantly add new features (which introduces new bugs and security holes), Picocrypt focuses on just a few core features but does each of them exceptionally well. Remember Picocrypt's ideology: small, simple, and secure.
+Hayır, Picocrypt tam-özellikli olarak kabul edilmekte olup yeni özellikler almayacaktır. Sürekli olarak yeni özellikler eklemeye çalışan diğer araçların aksine (-ki bu yeni hatalar ve yeni güvenlik açıklarına sebep olur), Picocrypt yalnızca birkaç temel özelliğe odaklanır, ancak her birini olağanüstü derecede iyi yapar. Picocrypt'in ideolojisi küçük, basit ve güvenli olmasıdır.
 
-**Will Android/iOS be supported?**
+**Android/iOS desteklenecek mi?**
 
-No, I don't plan on supporting Android or iOS because they are very different from traditional desktop operating systems and require different toolchains to develop apps for. Due to the nature of open-source software, however, a community-built version of Picocrypt for Android or iOS may appear in the future.
+Hayır, geleneksel masaüstü işletim sistemlerinden çok farklı oldukları ve uygulama geliştirmek için farklı araç zincirleri gerektirdikleri için Android veya iOS'u desteklemeyi planlamıyorum. Bununla birlikte, açık kaynaklı yazılımın doğası gereği, gelecekte Android veya iOS için topluluk tarafından oluşturulmuş bir Picocrypt sürümü olabilir.
 
-**Why is Picocrypt not updated frequently?**
+**Neden Picocrypt sıklıkla güncelleme almaz?**
 
-People seem to have the notion that software must be constantly updated to stay relevant and secure. While this may be true for a lot of the software we use today, it is not for Picocrypt. Picocrypt is "good software" and good software doesn't need constant updates to remain relevant and secure. Good software will always be good software.
+İnsanlar, amaca uygun ve güvenli kalabilmesi için bir yazılımın sürekli olarak güncellenmesi gerektiği fikrine sahip gibi görünüyor. Bu, bugün kullandığımız birçok yazılım için doğru olsa dahi, Picocrypt için geçerli değildir. Picocrypt "iyi yazılım"dır ve iyi yazılımlar amaca uygun ve güvenli kalmak için sürekli güncelleme almaya ihtiyaç duymazlar. İyi yazılım her zaman iyi yazılım olacaktır.
 
-**Does the "Delete files" feature shred files?**
+**"Dosyaları sil" özelliği dosyaları gerçekten siliyor mu (shredding)?**
 
-No, it doesn't shred any files and just deletes them as your file manager would. On modern storage mediums like SSDs, there is no such thing as shredding a file since wear leveling makes it impossible to overwrite a particular sector. Thus, to prevent giving users a false sense of security, Picocrypt doesn't include any shredding features at all.
+Hayır, hiçbir dosyayı gerçekten silmez sadece dosya yöneticiniz nasıl siliyorsa o şekilde siler. SSD gibi modern depolama birimlerinde dosyaları gerçekten silme diye bir şey yoktur, zira bu birimlerdeki yıpranma hızı belirli bir sektörün üzerine yazmayı imkansız kılmaktar. Dolayısıyla, Picocrypt kullanıcılara yanlış bir güvenlik hissi vermemek için herhangi bir gerçekten silme özelliği içermez.
 
 # Acknowledgements
 A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
