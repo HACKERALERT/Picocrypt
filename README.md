@@ -115,6 +115,10 @@ No, it doesn't shred any files and just deletes them as your file manager would.
 # Acknowledgements
 A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
 <ul>
+	<li>donor39 (backer)</li>
+	<li>Pokabu (backer)</li>
+	<li>akp (backer)</li>
+	<li>Marvin (backer)</li>
 	<li>Guest ($842)</li>
 	<li>YellowNight ($818)</li>
 	<li>evelian ($50)</li>
@@ -122,19 +126,16 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>guest-116103ad ($50)</li>
 	<li>Guest ($27)</li>
 	<li>oli ($20)</li>
+	<li>Bright ($20)</li>
 	<li>Markus ($15)</li>
-	<li>Bright ($15)</li>
 	<li>Tybbs ($10)</li>
 	<li>N. Chin ($10)</li>
 	<li>Manjot ($10)</li>
 	<li>Phil P. ($10)</li>
 	<li>Raymond ($10)</li>
 	<li>Cohen ($10)</li>
-	<li>donor39 (backer)</li>
-	<li>Pokabu (backer)</li>
-	<li>akp (backer)</li>
 </ul>
-<!-- Last updated November 18, 2022 -->
+<!-- Last updated December 30, 2022 -->
 
 Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
 <ul>
@@ -147,17 +148,17 @@ Also, a huge thanks to the following list of five people, who were the first to 
 
 As well, a great thanks to these people, who have helped translate Picocrypt's README and make it more accessible to the world:
 <ul>
-	<li>@umitseyhan75 for Turkish</li>
-	<li>@digitalblossom and @Pokabu26 for German</li>
-	<li>@zeeaall and @Rayserzor for Portuguese</li>
-	<li>u/francirc and @victorhck for Spanish</li>
-	<li>yn, Voron, and @ViktorOn for Russian</li>
-	<li>@Etim-Orb for Hungarian</li>
-	<li>@Minibus93 for Italian</li>
-	<li>Michel for French</li>
-	<li>@MasterKia for Persian</li>
-	<li>@ungespurv for Polish</li>
-	<li>@qaqland for Chinese</li>
+	<li>Turkish: @umitseyhan75</li>
+	<li>German: @digitalblossom and @Pokabu26</li>
+	<li>Portuguese: @zeeaall and @Rayserzor</li>
+	<li>Spanish: u/francirc and @victorhck</li>
+	<li>Russian: yn, Voron, and @ViktorOn</li>
+	<li>Hungarian: @Etim-Orb</li>
+	<li>Italian: @Minibus93</li>
+	<li>French: Michel</li>
+	<li>Persian: @MasterKia</li>
+	<li>Polish: @ungespurv</li>
+	<li>Chinese: @qaqland</li>
 </ul>
 
 Finally, thanks to these people/organizations for helping me out when needed:
