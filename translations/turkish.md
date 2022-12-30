@@ -110,8 +110,8 @@ Hayır, geleneksel masaüstü işletim sistemlerinden çok farklı oldukları ve
 
 Hayır, hiçbir dosyayı gerçekten silmez sadece dosya yöneticiniz nasıl siliyorsa o şekilde siler. SSD gibi modern depolama birimlerinde dosyaları gerçekten silme diye bir şey yoktur, zira bu birimlerdeki yıpranma hızı belirli bir sektörün üzerine yazmayı imkansız kılmaktar. Dolayısıyla, Picocrypt kullanıcılara yanlış bir güvenlik hissi vermemek için herhangi bir gerçekten silme özelliği içermez.
 
-# Acknowledgements
-A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
+# Teşekkürler
+Open Collective üzerinden hatrı sayılır miktarda bağışlarda bulunan bu kişilere tüm içtenliğimle teşekkür ederim.
 <ul>
 	<li>Guest ($842)</li>
 	<li>YellowNight ($818)</li>
