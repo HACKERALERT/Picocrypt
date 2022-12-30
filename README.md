@@ -1,4 +1,4 @@
-<p>English | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | <a href="/translations/german.md">Deutsch</a> | <a href="/translations/portuguese.md">Português</a> | <a href="/translations/turkish.md">Türkçe</a> | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">русский</a> | <a href="/translations/hungarian.md">Magyar</a> | <a href="/translations/italian.md">Italiano</a> | <a href="/translations/persian.md">پارسی</a> | <a href="/translations/polish.md">Polski</a></p>
+<p>English | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | <a href="/translations/german.md">Deutsch</a> | <a href="/translations/portuguese.md">Português</a> | <a href="/translations/turkish.md">Türkçe</a> | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">Русский</a> | <a href="/translations/hungarian.md">Magyar</a> | <a href="/translations/italian.md">Italiano</a> | <a href="/translations/persian.md">پارسی</a> | <a href="/translations/polish.md">Polski</a></p>
 <p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p> 
 
 Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encryption tool that you can use to protect your files. It's designed to be the <i>go-to</i> tool for encryption, with a focus on security, simplicity, and reliability. Picocrypt uses the secure XChaCha20 cipher and the Argon2id key derivation function to provide a high level of security, even from three-letter agencies like the NSA. It's designed for maximal security, making absolutely no compromises security-wise, and is built with Go's standard x/crypto modules. <strong>Your privacy and security are under attack. Take it back with confidence by protecting your files with Picocrypt.</strong>
@@ -54,7 +54,7 @@ Here's how Picocrypt compares to other popular encryption tools.
 | Telemetry      |✅ None        |✅ None         |✅ None        |❓ Unknown      |✅ None        |
 | Audited        |🟧 Planned     |✅ Yes          |❌ No          |❓ Unknown      |✅ Yes         |
 
-Keep in mind that while Picocrypt does most things better than other tools, it's not a one-size-fits-all and doesn't try to be. There are use cases such as full-disk encryption where VeraCrypt and BitLocker would be a better choice. So while Picocrypt is a great choice for the majority of people, you should still do your research and use what's best for you.
+Keep in mind that while Picocrypt does most things better than other tools, it's not a one-size-fits-all and doesn't try to be. There are use cases such as full-disk encryption where VeraCrypt and BitLocker would be a better choice. So while Picocrypt is a great choice for the majority of people, you should still do your own research and use what's best for you.
 
 # Features
 Picocrypt is a very simple tool, and most users will intuitively understand how to use it in a few seconds. On a basic level, simply dropping your files, entering a password, and hitting Encrypt is all that's needed to encrypt your files. Dropping the output back into Picocrypt, entering the password, and hitting Decrypt is all that's needed to decrypt those files. Pretty simple, right?
@@ -148,10 +148,10 @@ Also, a huge thanks to the following list of five people, who were the first to 
 As well, a great thanks to these people, who have helped translate Picocrypt's README and make it more accessible to the world:
 <ul>
 	<li>@umitseyhan75 for Turkish</li>
-	<li>@digitalblossom & @Pokabu26 for German</li>
-	<li>@zeeaall & @Rayserzor for Portuguese</li>
-	<li>u/francirc & @victorhck for Spanish</li>
-	<li>yn & Voron for Russian</li>
+	<li>@digitalblossom and @Pokabu26 for German</li>
+	<li>@zeeaall and @Rayserzor for Portuguese</li>
+	<li>u/francirc and @victorhck for Spanish</li>
+	<li>yn, Voron, and @ViktorOn for Russian</li>
 	<li>@Etim-Orb for Hungarian</li>
 	<li>@Minibus93 for Italian</li>
 	<li>Michel for French</li>
