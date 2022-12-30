@@ -132,9 +132,9 @@ Open Collective üzerinden hatrı sayılır miktarda bağışlarda bulunan bu ki
 	<li>Pokabu (backer)</li>
 	<li>akp (backer)</li>
 </ul>
-<!-- Last updated November 18, 2022 -->
+<!-- Son güncelleme tarihi 18 Kasım 2022 -->
 
-Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
+Ayrıca, Picocrypt'e ilk bağışta bulunan ve destekleyen beş kişiden oluşan aşağıdaki listeye de çok teşekkür ederim:
 <ul>
 	<li>W.Graham</li>
 	<li>N. Chin</li>
@@ -143,32 +143,32 @@ Also, a huge thanks to the following list of five people, who were the first to 
 	<li>E. Zahard</li>
 </ul>
 
-As well, a great thanks to these people, who have helped translate Picocrypt and make it more accessible to the world:
+Ayrıca, Picocrypt'in tercüme edilmesine ve dünya tarafından daha erişilebilir hale getirilmesine yardımcı olan bu kişilere çok teşekkür ederim:
 <ul>
-	<li>@umitseyhan75 for Turkish</li>
-	<li>@digitalblossom & @Pokabu26 for German</li>
-	<li>@zeeaall & @Rayserzor for Portuguese</li>
-	<li>u/francirc & @victorhck for Spanish</li>
-	<li>yn & Voron for Russian</li>
-	<li>@Etim-Orb for Hungarian</li>
-	<li>@Minibus93 for Italian</li>
-	<li>Michel for French</li>
-	<li>@MasterKia for Persian</li>
-	<li>@ungespurv for Polish</li>
-	<li>@qaqland for Chinese</li>
+	<li>Türkçe için @umitseyhan75</li>
+	<li>Almance için @digitalblossom ve @Pokabu26</li>
+	<li>Portekizce için @zeeaall ve @Rayserzor</li>
+	<li>İspanyolca için u/francirc ve @victorhck</li>
+	<li>Rusça için yn ve Voron</li>
+	<li>Macarca için @Etim-Orb</li>
+	<li>İtalyanca için @Minibus93</li>
+	<li>Fransızca için Michel</li>
+	<li>Farsça için @MasterKia</li>
+	<li>Lehçe için @ungespurv</li>
+	<li>Çince için @qaqland</li>
 </ul>
 
-Finally, thanks to these people/organizations for helping me out when needed:
+Ve son olarak, bu insanlara/organizasyonlara ihtiyacım olduğunda yardım ettikleri için teşekkür ederim:
 <ul>
-	<li>[ REDACTED ] for helping me create an AppImage for Picocrypt</li>
-	<li>u/Upstairs-Fishing867 for helping me test PGP signatures</li>
-	<li>u/greenreddits for constant feedback and support</li>
-	<li>u/Tall_Escape for helping me test Picocrypt</li>
-	<li>u/NSABackdoors for doing plenty of testing</li>
-	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
-	<li><a href="https://privacytools.io">PrivacyTools</a> for listing Picocrypt</li>
-	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
-	<li>...You?</li>
+	<li>Picocrypt için bir AppImage oluşturmamda bana yardım ettiği için [ REDACTED ]</li>
+	<li>PGP imzalarını test etmemde yardımcı olduğu için u/Upstairs-Fishing867</li>
+	<li>Düzenli geri bildirimleri ve desteğinden ötürü u/greenreddits</li>
+	<li>Picocrypt'i test etmeme yardımcı olduğu için</li>
+	<li>Yaptığı bol miktarda test için u/NSABackdoors</li>
+	<li>Geri bilgirim, tavsiye ve desteğinden ötürü @samuel-lucas6</li>
+	<li>Picocrypt'i listeledikleri için <a href="https://privacytools.io">PrivacyTools</a></li>
+	<li>Picocrypt'i listeledikleri için<a href="https://privacyguides.org">PrivacyGuides</a></li>
+	<li>...Siz?</li>
 </ul>
 
 
