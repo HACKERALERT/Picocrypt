@@ -89,8 +89,8 @@ PIbXjQvrAMkEVIc0HbCzLxr1k3sH
 # Topluluk
 <a href="https://www.reddit.com/r/Picocrypt/">r/Picocrypt</a>'e katılmayı düşünebilirsiniz. Bu subreddit'te kendim aktif olmayacak olsam dahi, özellikle gelecekte bana veya bu depoya bir şey olması durumunda soru sormak ve başkalarına yardım etmek için harika bir ortamdır. Sadece bu spesifik subreddit'e güvenin ve diğer ortamlarda beni taklit etmeye ve sizi kandırmaya çalışabilecek bilgisayar korsanlarına karşı dikkatli olun. Size asla şifrenizi sormam ve eğer soruyorsam bilin ki o ben değilimdir. Sizden asla şüpheli bir bağlantıdan dosya indirmenizi istemeyeceğim ve eğer istiyorsam bilin ki o ben değilimdir.
 
-# Donations
-When I was actively developing Picocrypt, I accepted donations, but now that Picocrypt is complete and production-ready, there's no need anymore. Instead, take your time and effort to share the love of Picocrypt with others. Donations are nice, but being able to help others is a lot more valuable to me than a few spare dollars. Knowing that Picocrypt is helping people secure their files is plenty enough for me.
+# Bağış
+Picocrypt'i aktif olarak geliştirirken bağışları kabul ettim, ancak artık Picocrypt tamamlandı ve kullanıma hazır, artık buna gerek yok. Bunun yerine, zamanınızı ve çabanızı Picocrypt sevgisini başkalarıyla paylaşmak için ayırın. Bağışlar güzel ama başkalarına edilen yardım benim için birkaç dolardan çok daha değerli. Picocrypt'in, insanların dosyalarını korumalarına yardımcı olduğunu bilmek benim için yeterli.
 
 # FAQ
 
