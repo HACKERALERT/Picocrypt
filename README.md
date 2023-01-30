@@ -1,4 +1,3 @@
-<p>English | <a href="/translations/french.md">Français</a> | <a href="/translations/spanish.md">Español</a> | <a href="/translations/german.md">Deutsch</a> | <a href="/translations/portuguese.md">Português</a> | <a href="/translations/turkish.md">Türkçe</a> | <a href="/translations/chinese.md">中文</a> | <a href="/translations/russian.md">Русский</a> | <a href="/translations/hungarian.md">Magyar</a> | <a href="/translations/italian.md">Italiano</a> | <a href="/translations/persian.md">پارسی</a> | <a href="/translations/polish.md">Polski</a></p>
 <p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p> 
 
 Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encryption tool that you can use to protect your files. It's designed to be the <i>go-to</i> tool for encryption, with a focus on security, simplicity, and reliability. Picocrypt uses the secure XChaCha20 cipher and the Argon2id key derivation function to provide a high level of security, even from three-letter agencies like the NSA. It's designed for maximal security, making absolutely no compromises security-wise, and is built with Go's standard x/crypto modules. <strong>Your privacy and security are under attack. Take it back with confidence by protecting your files with Picocrypt.</strong>
@@ -146,21 +145,6 @@ Also, a huge thanks to the following list of five people, who were the first to 
 	<li>E. Zahard</li>
 </ul>
 
-As well, a great thanks to these people, who have helped translate Picocrypt's README and make it more accessible to the world:
-<ul>
-	<li>Turkish: @umitseyhan75</li>
-	<li>German: @digitalblossom and @Pokabu26</li>
-	<li>Portuguese: @zeeaall and @Rayserzor</li>
-	<li>Spanish: u/francirc and @victorhck</li>
-	<li>Russian: yn, Voron, and @ViktorOn</li>
-	<li>Hungarian: @Etim-Orb</li>
-	<li>Italian: @Minibus93</li>
-	<li>French: Michel</li>
-	<li>Persian: @MasterKia</li>
-	<li>Polish: @ungespurv</li>
-	<li>Chinese: @qaqland</li>
-</ul>
-
 Finally, thanks to these people/organizations for helping me out when needed:
 <ul>
 	<li>[ REDACTED ] for helping me create an AppImage for Picocrypt</li>
@@ -171,5 +155,4 @@ Finally, thanks to these people/organizations for helping me out when needed:
 	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
 	<li><a href="https://privacytools.io">PrivacyTools</a> for listing Picocrypt</li>
 	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
-	<li>...You?</li>
 </ul>
