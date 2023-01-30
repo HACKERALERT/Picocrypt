@@ -2,6 +2,7 @@
 
 Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encryption tool that you can use to protect your files. It's designed to be the <i>go-to</i> tool for encryption, with a focus on security, simplicity, and reliability. Picocrypt uses the secure XChaCha20 cipher and the Argon2id key derivation function to provide a high level of security, even from three-letter agencies like the NSA. It's designed for maximal security, making absolutely no compromises security-wise, and is built with Go's standard x/crypto modules. <strong>Your privacy and security are under attack. Take it back with confidence by protecting your files with Picocrypt.</strong>
 
+<br>
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
 # Funding
@@ -99,6 +100,10 @@ When I was actively developing Picocrypt, I accepted donations, but now that Pic
 
 No, Picocrypt is considered feature-complete and won't be getting any new features. Unlike other tools which try to constantly add new features (which introduces new bugs and security holes), Picocrypt focuses on just a few core features but does each of them exceptionally well. Remember Picocrypt's ideology: small, simple, and secure.
 
+**Is there a command-line interface?**
+
+No, Picocrypt doesn't have a command-line interface because it's designed to appeal to the general public, most of which isn't very comfortable with a terminal. The UI is what makes Picocrypt powerful and unique, so adding a command-line interface wouldn't be of much benefit for most users.
+
 **Will Android/iOS be supported?**
 
 No, I don't plan on supporting Android or iOS because they are very different from traditional desktop operating systems and require different toolchains to develop apps for. Due to the nature of open-source software, however, a community-built version of Picocrypt for Android or iOS may appear in the future.
@@ -111,8 +116,12 @@ People seem to have the notion that software must be constantly updated to stay 
 
 No, it doesn't shred any files and just deletes them as your file manager would. On modern storage mediums like SSDs, there is no such thing as shredding a file since wear leveling makes it impossible to overwrite a particular sector. Thus, to prevent giving users a false sense of security, Picocrypt doesn't include any shredding features at all.
 
+**Is Picocrypt quantum-secure?**
+
+Yes, Picocrypt is secure against quantum computers. All of the cryptography used in Picocrypt works off of a private key, and private-key cryptography is considered to be resistant against all current and future developments, including quantum computers. As long as you choose a good password, any files encrypted with Picocrypt should remain secure indefinitely.
+
 # Acknowledgements
-A thank you from the bottom of my heart to the people on Open Collective who have made a significant contribution:
+A thank you from the bottom of my heart to the contributors on Open Collective:
 <ul>
 	<li>donor39 (backer)</li>
 	<li>Pokabu (backer)</li>
@@ -133,10 +142,12 @@ A thank you from the bottom of my heart to the people on Open Collective who hav
 	<li>Phil P. ($10)</li>
 	<li>Raymond ($10)</li>
 	<li>Cohen ($10)</li>
+	<li>EuA ($10)</li>
+	<li>geevade ($10)</li>
 </ul>
-<!-- Last updated December 30, 2022 -->
+<!-- Last updated January 30, 2023 -->
 
-Also, a huge thanks to the following list of five people, who were the first to donate and support Picocrypt:
+Also, a huge thanks to the following people who were the first to donate and support Picocrypt:
 <ul>
 	<li>W.Graham</li>
 	<li>N. Chin</li>
