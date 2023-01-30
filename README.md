@@ -121,7 +121,7 @@ No, it doesn't shred any files and just deletes them as your file manager would.
 Yes, Picocrypt is secure against quantum computers. All of the cryptography used in Picocrypt works off of a private key, and private-key cryptography is considered to be resistant against all current and future developments, including quantum computers.
 
 # Acknowledgements
-A thank you from the bottom of my heart to the contributors on Open Collective:
+A thank you from the bottom of my heart to the significant contributors on Open Collective:
 <ul>
 	<li>donor39 (backer)</li>
 	<li>Pokabu (backer)</li>
