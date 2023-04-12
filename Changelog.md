@@ -1,3 +1,9 @@
+# v1.32 (No ETA)
+<ul>
+	<li>✓ Added a command-line interface</li>
+	<li>Use Debian 11 as the base for the AppImage instead of Debian 10</li>
+</ul>
+
 # v1.31 (Released 11/18/2022)
 <ul>
 	<li>✓ Force software OpenGL rendering on macOS</li>
