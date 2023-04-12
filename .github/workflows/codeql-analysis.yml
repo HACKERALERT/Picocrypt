@@ -5,6 +5,9 @@ on:
       - "src/*.go"
       - "src/go.mod"
       - "src/go.sum"
+      - "cli/picocrypt/*.go"
+      - "cli/picocrypt/go.mod"
+      - "cli/picocrypt/go.sum"
   pull_request:
     branches: [ main ]
 jobs:
