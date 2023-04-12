@@ -20,6 +20,9 @@ Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://
 ## Linux
 To use Picocrypt on Linux, you can download the AppImage <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Picocrypt.AppImage">here</a>. While this AppImage should work on most systems, Linux is a mess when it comes to cross-distro and cross-release compatibility, so if the AppImage doesn't work, you can run Picocrypt through Wine or from source using the instructions in the `src/` directory.
 
+## CLI
+A command-line interface is available for Picocrypt <a href="/cli">here</a>. Keep in mind that the functionality is extremely limited and is not meant to replace the standard GUI app. Rather, it's best suited for environments where the GUI won't run or you need the ability to automate encryption workflows.
+
 ## Paranoid Pack
 The Paranoid Pack is a compressed archive that contains executables for Windows, macOS, and Linux, including the source code and dependencies. As long as you have it stored in a place you can access, you'll be able to open it and use Picocrypt on any desktop operating system in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt; as long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in case of catastrophic events. The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. Get your copy <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.31/Paranoid.zip">here</a>.
 
@@ -100,10 +103,6 @@ When I was actively developing Picocrypt, I accepted donations, but now that Pic
 
 No, Picocrypt is considered feature-complete and won't be getting any new features. Unlike other tools which try to constantly add new features (which introduces new bugs and security holes), Picocrypt focuses on just a few core features but does each of them exceptionally well. Remember Picocrypt's ideology: small, simple, and secure.
 
-**Is there a command-line interface?**
-
-No, Picocrypt doesn't have a command-line interface because it's designed to appeal to the general public, most of which isn't very comfortable with a terminal. The UI is what makes Picocrypt powerful and unique, so adding a command-line interface wouldn't be of much benefit for most users.
-
 **Will Android/iOS be supported?**
 
 No, I don't plan on supporting Android or iOS because they are very different from traditional desktop operating systems and require different toolchains to develop apps for. Due to the nature of open-source software, however, a community-built version of Picocrypt for Android or iOS may appear in the future.
@@ -144,8 +143,12 @@ A thank you from the bottom of my heart to the significant contributors on Open 
 	<li>Cohen ($10)</li>
 	<li>EuA ($10)</li>
 	<li>geevade ($10)</li>
+	<li>Guest ($10)</li>
+	<li>Hilebrinest ($10)</li>
+	<li>gabu.gu ($10)</li>
+	<li>Boat ($10)</li>
 </ul>
-<!-- Last updated January 30, 2023 -->
+<!-- Last updated April 11, 2023 -->
 
 Also, a huge thanks to the following people who were the first to donate and support Picocrypt:
 <ul>
