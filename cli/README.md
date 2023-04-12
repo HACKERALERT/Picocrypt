@@ -1,4 +1,3 @@
-# CLI
 Work in progress
 
 # Installation
@@ -8,4 +7,8 @@ If you don't have Go installed, download it from <a href="https://go.dev/dl/">he
 go install github.com/HACKERALERT/Picocrypt/cli/picocrypt@latest
 ```
 
-You should now be able to run `picocrypt` in your terminal.
+You should now be able to run `picocrypt` in your terminal. If you can't, try adding Go's `bin` directory to your PATH:
+
+```bash
+export PATH=$PATH:$(go env GOPATH)/bin
+```
