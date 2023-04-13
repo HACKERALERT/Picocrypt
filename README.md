@@ -167,6 +167,5 @@ Finally, thanks to these people/organizations for helping me out when needed:
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
 	<li>u/NSABackdoors for doing plenty of testing</li>
 	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
-	<li><a href="https://privacytools.io">PrivacyTools</a> for listing Picocrypt</li>
 	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
 </ul>
