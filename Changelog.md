@@ -1,8 +1,9 @@
-# v1.32 (No ETA)
+# v1.32 (Released 04/28/2023)
 <ul>
 	<li>✓ Added a command-line interface</li>
-	<li>Use Debian 11 as the base for the AppImage instead of Debian 10</li>
-	<li>Include software rendering DLLs in the Paranoid Pack for future proofing</li>
+	<li>✓ Use Debian 11 as the base for the AppImage instead of Debian 10</li>
+	<li>✓ Include software rendering DLLs in the Paranoid Pack for future proofing</li>
+	<li>✓ Add plausible deniability and recursive encryption</li>
 </ul>
 
 # v1.31 (Released 11/18/2022)
