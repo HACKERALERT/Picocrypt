@@ -623,7 +623,7 @@ func draw() {
 				if !recursively {
 					return startLabel
 				}
-				return "Work"
+				return "Process"
 			}()).Size(giu.Auto, 34).OnClick(func() {
 				if keyfile && keyfiles == nil {
 					mainStatus = "Please select your keyfiles."
