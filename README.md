@@ -52,6 +52,7 @@ Here's how Picocrypt compares to other popular encryption tools.
 | Cipher         |✅ XChaCha20   |✅ AES-256      |✅ AES-256     |🟧 AES-128      |✅ AES-256     |
 | Key Derivation |✅ Argon2      |🟧 PBKDF2       |❌ SHA-256     |❓ Unknown      |✅ Scrypt      |
 | Data Integrity |✅ Always      |❌ No           |❌ No          |❓ Unknown      |✅ Always      |
+| Deniability    |✅ Supported   |✅ Supported    |❌ No          |❌ No           |❌ No          |
 | Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |
 | Compression    |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |❌ No          |
 | Telemetry      |✅ None        |✅ None         |✅ None        |❓ Unknown      |✅ None        |
@@ -72,6 +73,8 @@ While being simple, Picocrypt also strives to be powerful in the hands of knowle
 	<li><strong>Force decrypt</strong>: Picocrypt automatically checks for file integrity upon decryption. If the file has been modified or is corrupted, Picocrypt will automatically delete the output for the user's safety. If you would like to override these safeguards, check this option. Also, if this option is checked and the Reed-Solomon feature was used on the encrypted volume, Picocrypt will attempt to recover as much of the file as possible during decryption.</li>
 	<li><strong>Split into chunks</strong>: Don't feel like dealing with gargantuan files? No worries! With Picocrypt, you can choose to split your output file into custom-sized chunks, so large files can become more manageable and easier to upload to cloud providers. Simply choose a unit (KiB, MiB, GiB, or TiB) and enter your desired chunk size for that unit. To decrypt the chunks, simply drag one of them into Picocrypt and the chunks will be automatically recombined during decryption.</li>
 	<li><strong>Compress files</strong>: By default, Picocrypt uses a zip file with no compression to quickly merge files together when encrypting multiple files. If you would like to compress these files, however, simply check this box and the standard Deflate compression algorithm will be applied during encryption.</li>
+	<li><strong>Deniability</strong>: Picocrypt volumes typically follow an easily recognizable header format. However, if you want to hide the fact that you are encrypting your files, enabling this option will provide you with plausible deniability. The output volume will indistinguishable from a stream of random bytes, and no one can prove it is a volume without the correct password. This can be useful in an authoritarian country where the only way to transport your files safely is if they don't "exist" in the first place.</li>
+	<li><strong>Recursively</strong>: If you want to encrypt and/or decrypt a large set of files individually, this option will tell Picocrypt to go through every recursive file that you drop in and encrypt/decrypt it separately. This is useful, for example, if you are encrypting thousands of large documents and want to be able to decrypt any one of them in particular without having to download and decrypt the entire set of documents. Keep in mind that this is a very complex feature that should only be used if you know what you are doing.</li>
 </ul>
 
 # Security
@@ -167,5 +170,6 @@ Finally, thanks to these people/organizations for helping me out when needed:
 	<li>u/Tall_Escape for helping me test Picocrypt</li>
 	<li>u/NSABackdoors for doing plenty of testing</li>
 	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
+	<li>@AsuxAX and @Minibus93 for testing new features</li>
 	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
 </ul>
