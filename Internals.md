@@ -48,5 +48,11 @@ If Reed-Solomon is to be used with the input data itself, the data will be encod
 
 To address the edge case where the final 128-byte block happens to be padded so that it completes a full 1 MiB chunk, a flag is used to distinguish whether the last 128-byte block was padded originally or if it is just a full 128-byte block of data.
 
+# Deniability
+Plausible deniability in Picocrypt is achieved by simply re-encrypting the volume but without storing any identifiable header data. A new Argon2 salt and XChaCha20 nonce will be generated and stored in the deniable volume, but since both values are random, they don't reveal anything. A deniable volume will look something like this:
+```
+[argon2 salt][xchacha20 nonce][encrypted stream of bytes]
+```
+
 # Just Read the Code
 Picocrypt is a very simple tool and only has one source file. The source Go file is just 2K lines and a lot of the code is dealing with the UI. The core cryptography code is only about 1K lines of code, and even so, a lot of that code deals with the UI and other features of Picocrypt. So if you need more information about how Picocrypt works, just read the code. It's not long, and it is well commented and will explain what happens under the hood better than a document can.
