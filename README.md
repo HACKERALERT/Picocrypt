@@ -14,7 +14,7 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 ## Windows
 Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.32/Picocrypt.exe">here</a>. If Microsoft Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
 
-If you use Picocrypt frequently, you can also download the installable version from <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.32/Installer.exe">here</a>, which will install Picocrypt onto your system and add it to your start menu for easy access.
+If you use Picocrypt frequently, you can also download the installable version from <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.32/Installer.exe">here</a>, which will install Picocrypt onto your system and add it to your start menu for easy access. The installer also includes extra compatibility helpers, so if the executable doesn't work, this likely will.
 
 ## macOS
 Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.32/Picocrypt.app.zip">here</a>, extract the zip file, and run Picocrypt which is inside. If you can't open Picocrypt because it's not from a verified developer, control-click on Picocrypt and hit Open to bypass the warning. Keep in mind that Picocrypt runs through Rosetta 2 and requires OpenGL, and may not work in the future should Apple remove either.
@@ -173,5 +173,6 @@ Finally, thanks to these people/organizations for helping me out when needed:
 	<li>u/NSABackdoors for doing plenty of testing</li>
 	<li>@samuel-lucas6 for feedback, suggestions, and support</li>
 	<li>@AsuxAX and @Minibus93 for testing new features</li>
+	<li>@mdanish-kh and @stephengillie for WinGet package</li>
 	<li><a href="https://privacyguides.org">PrivacyGuides</a> for listing Picocrypt</li>
 </ul>
