@@ -131,6 +131,7 @@ A thank you from the bottom of my heart to the significant contributors on Open 
 	<li>Pokabu (backer)</li>
 	<li>akp (backer)</li>
 	<li>Marvin (backer)</li>
+	<li>Kenichi Nakasaka (backer)</li>
 	<li>Guest ($842)</li>
 	<li>YellowNight ($818)</li>
 	<li>evelian ($50)</li>
@@ -153,7 +154,7 @@ A thank you from the bottom of my heart to the significant contributors on Open 
 	<li>gabu.gu ($10)</li>
 	<li>Boat ($10)</li>
 </ul>
-<!-- Last updated April 11, 2023 -->
+<!-- Last updated June 14, 2023 -->
 
 Also, a huge thanks to the following people who were the first to donate and support Picocrypt:
 <ul>
