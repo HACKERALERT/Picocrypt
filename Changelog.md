@@ -1,9 +1,16 @@
+# v1.33 (No ETA)
+<ul>
+	<li>Add tooltip warning that comments are not encrypted (#164)</li>
+	<li>Hash keyfiles in chunks to reduce memory usage (#168)</li>
+</ul>
+
 # v1.32 (Released 04/28/2023)
 <ul>
 	<li>✓ Added a command-line interface</li>
 	<li>✓ Use Debian 11 as the base for the AppImage instead of Debian 10</li>
 	<li>✓ Include software rendering DLLs in the Paranoid Pack for future proofing</li>
 	<li>✓ Add plausible deniability and recursive encryption</li>
+	<li>✓ Added an installer for Windows (made using Inno Setup)</li>
 </ul>
 
 # v1.31 (Released 11/18/2022)
