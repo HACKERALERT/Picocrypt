@@ -2,6 +2,7 @@
 <ul>
 	<li>Add tooltip warning that comments are not encrypted (#164)</li>
 	<li>Hash keyfiles in chunks to reduce memory usage (#168)</li>
+	<li>Prevent using identical keyfiles under different filenames (#170)</li>
 </ul>
 
 # v1.32 (Released 04/28/2023)
