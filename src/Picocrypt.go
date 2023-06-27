@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.32
+Picocrypt v1.33
 Copyright (c) Evan Su
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -58,7 +58,7 @@ var TRANSPARENT = color.RGBA{0x00, 0x00, 0x00, 0x00}
 
 // Generic variables
 var window *giu.MasterWindow
-var version = "v1.32"
+var version = "v1.33"
 var dpi float32
 var mode string
 var working bool
@@ -476,6 +476,11 @@ func draw() {
 					}
 					return giu.InputTextFlagsNone
 				}()),
+				giu.Custom(func() {
+					if !commentsDisabled {
+						giu.Tooltip("Note: comments are not encrypted!").Build()
+					}
+				}),
 			),
 		),
 		giu.Style().SetDisabled((len(keyfiles) == 0 && password == "") || (mode == "encrypt" && password != cpassword)).To(
@@ -1466,17 +1471,34 @@ func work() {
 		popupStatus = "Reading keyfiles..."
 		giu.Update()
 
+		var keyfileTotal int64
+		for _, path := range keyfiles {
+			stat, _ := os.Stat(path)
+			keyfileTotal += stat.Size()
+		}
+
 		if keyfileOrdered { // If order matters, hash progressively
 			var tmp = sha3.New256()
+			var keyfileDone int
 
 			// For each keyfile...
 			for _, path := range keyfiles {
 				fin, _ := os.Open(path)
-				stat, _ := os.Stat(path)
-				data := make([]byte, stat.Size())
-				fin.Read(data) // Read the keyfile
+				for { // Read in chunks of 1 MiB
+					data := make([]byte, MiB)
+					size, err := fin.Read(data)
+					if err != nil {
+						break
+					}
+					data = data[:size]
+					tmp.Write(data) // Hash the data
+
+					// Update progress
+					keyfileDone += size
+					progress = float32(keyfileDone) / float32(keyfileTotal)
+					giu.Update()
+				}
 				fin.Close()
-				tmp.Write(data) // Hash the data
 			}
 			keyfileKey = tmp.Sum(nil) // Get the SHA3-256
 
@@ -1485,17 +1507,29 @@ func work() {
 			tmp.Write(keyfileKey)
 			keyfileHash = tmp.Sum(nil)
 		} else { // If order doesn't matter, hash individually and combine
+			var keyfileDone int
+
+			// For each keyfile...
 			for _, path := range keyfiles {
 				fin, _ := os.Open(path)
-				stat, _ := os.Stat(path)
-				data := make([]byte, stat.Size())
-				fin.Read(data) // Read the keyfile
+				tmp := sha3.New256()
+				for { // Read in chunks of 1 MiB
+					data := make([]byte, MiB)
+					size, err := fin.Read(data)
+					if err != nil {
+						break
+					}
+					data = data[:size]
+					tmp.Write(data) // Hash the data
+
+					// Update progress
+					keyfileDone += size
+					progress = float32(keyfileDone) / float32(keyfileTotal)
+					giu.Update()
+				}
 				fin.Close()
 
-				// Get the SHA3-256
-				tmp := sha3.New256()
-				tmp.Write(data)
-				sum := tmp.Sum(nil)
+				sum := tmp.Sum(nil) // Get the SHA3-256
 
 				// XOR keyfile hash with 'keyfileKey'
 				if keyfileKey == nil {
@@ -1571,6 +1605,19 @@ func work() {
 	}
 
 	if len(keyfiles) > 0 || keyfile {
+		// Prevent an even number of duplicate keyfiles
+		if bytes.Equal(keyfileKey, make([]byte, 32)) {
+			mainStatus = "Duplicate keyfiles detected."
+			mainStatusColor = RED
+			fin.Close()
+			if len(allFiles) > 1 || len(onlyFolders) > 0 || compress {
+				os.Remove(inputFile)
+			}
+			fout.Close()
+			os.Remove(fout.Name())
+			return
+		}
+
 		// XOR the encryption key with the keyfile key
 		tmp := key
 		key = make([]byte, 32)
