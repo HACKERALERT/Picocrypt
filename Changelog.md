@@ -1,8 +1,8 @@
-# v1.33 (No ETA)
+# v1.33 (Released 06/27/2023)
 <ul>
-	<li>Add tooltip warning that comments are not encrypted (#164)</li>
-	<li>Hash keyfiles in chunks to reduce memory usage (#168)</li>
-	<li>Prevent using identical keyfiles under different filenames (#170)</li>
+	<li>✓ Add tooltip warning that comments are not encrypted (#164)</li>
+	<li>✓ Hash keyfiles in chunks to reduce memory usage (#168)</li>
+	<li>✓ Prevent using identical keyfiles under different filenames (#170)</li>
 </ul>
 
 # v1.32 (Released 04/28/2023)
