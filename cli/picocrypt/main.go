@@ -59,7 +59,7 @@ func work(filename string, password string) int {
 		rand.Read(salt)
 		rand.Read(hkdfSalt)
 		rand.Read(nonce)
-		fout.Write(rsEncode(rs5, []byte("v1.32")))
+		fout.Write(rsEncode(rs5, []byte("v1.33")))
 		fout.Write(rsEncode(rs5, []byte("00000")))
 		fout.Write(rsEncode(rs5, make([]byte, 5)))
 		fout.Write(rsEncode(rs16, salt))
