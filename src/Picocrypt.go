@@ -117,7 +117,7 @@ var splitUnits = []string{"KiB", "MiB", "GiB", "TiB", "Total"}
 var splitSelected int32 = 1
 var recombine bool
 var compress bool
-var delete bool
+var del bool
 var keep bool
 var kept bool
 
@@ -509,7 +509,7 @@ func draw() {
 						giu.Checkbox("Reed-Solomon", &reedsolo),
 						giu.Tooltip("Prevent file corruption with erasure coding."),
 						giu.Dummy(-170, 0),
-						giu.Checkbox("Delete files", &delete),
+						giu.Checkbox("Delete files", &del),
 						giu.Tooltip("Delete the input files after encryption."),
 					).Build()
 
@@ -543,7 +543,7 @@ func draw() {
 							giu.Tooltip("Override security measures when decrypting."),
 						),
 						giu.Dummy(-170, 0),
-						giu.Checkbox("Delete volume", &delete),
+						giu.Checkbox("Delete volume", &del),
 						giu.Tooltip("Delete the volume after a successful decryption."),
 					).Build()
 				}
@@ -687,7 +687,7 @@ func draw() {
 						oldSplit := split
 						oldSplitSize := splitSize
 						oldSplitSelected := splitSelected
-						oldDelete := delete
+						oldDelete := del
 						files := allFiles
 						go func() {
 							for _, file := range files {
@@ -708,7 +708,7 @@ func draw() {
 								split = oldSplit
 								splitSize = oldSplitSize
 								splitSelected = oldSplitSelected
-								delete = oldDelete
+								del = oldDelete
 
 								work()
 								if !working {
@@ -2050,7 +2050,7 @@ func work() {
 	}
 
 	// Delete the input files if the user chooses
-	if delete {
+	if del {
 		popupStatus = "Deleting files..."
 		giu.Update()
 
@@ -2180,7 +2180,7 @@ func resetUI() {
 	splitSelected = 1
 	recombine = false
 	compress = false
-	delete = false
+	del = false
 	keep = false
 	kept = false
 
