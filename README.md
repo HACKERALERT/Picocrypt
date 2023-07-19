@@ -5,6 +5,8 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 <br>
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
+**Project status: temporarily on hold**. I've decided to take some time off of Picocrypt to focus on my academics and personal goals. Thus, don't expect any new developments for the next little while, although none should be needed as Picocrypt is already very stable and usable. It's been a pleasure developing this app so far and I hope to continue in the future when I have more time and energy. Until then, farewell!
+
 # Funding
 **Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a security audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.**</i>
 
