@@ -8,6 +8,9 @@ on:
       - "cli/picocrypt/*.go"
       - "cli/picocrypt/go.mod"
       - "cli/picocrypt/go.sum"
+      - "web/*.go"
+      - "web/go.mod"
+      - "web/go.sum"
   pull_request:
     branches: [ main ]
 jobs:
