@@ -25,7 +25,7 @@ Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://
 To use Picocrypt on Linux, you can download the AppImage <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.33/Picocrypt.AppImage">here</a>. While this AppImage should work on most systems, Linux is a mess when it comes to cross-distro and cross-release compatibility, so if the AppImage doesn't work, you can try the <a href="https://snapcraft.io/picocrypt">Snap</a>, run Picocrypt through Wine, or compile from source using the instructions in the `src/` directory.
 
 ## Web
-A web interface for Picocrypt is available <a href="https://picocrypt.pages.dev/">here</a>, allowing you to use a lite version of Picocrypt on any device. Keep in mind that its functionality is very limited and you won't be able to use any advanced features. It is also quite slow compared to the native app.
+A web interface for Picocrypt is available <a href="https://picocrypt.pages.dev/">here</a>, allowing you to use a lite version of Picocrypt on any device. Keep in mind that its functionality is very limited and you won't be able to use any advanced features or encrypt large files. It is also quite slow compared to the native app.
 
 ## CLI
 A command-line interface is available for Picocrypt <a href="/cli">here</a>. Keep in mind that the functionality is extremely limited and is not meant to replace the standard GUI app. Rather, it's best suited for environments where the GUI won't run or you need the ability to automate encryption workflows.
