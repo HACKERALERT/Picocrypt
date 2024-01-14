@@ -13,7 +13,7 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 # Downloads
 **Important**: There are multiple entities under the name "Picocrypt". For example, there's an old encryption tool called PicoCrypt that uses a broken cipher. There's also an ERC-funded research project called PICOCRYPT. There are even domains related to Picocrypt that I've never registered like picocrypt.com and picocrypt.org. Please don't confuse any of these unrelated (and potentially malicious) projects/domains with Picocrypt (this project). **Make sure to only download Picocrypt from this repository** to ensure that you get the authentic and backdoor-free Picocrypt. When sharing Picocrypt with others, be sure to link to this repository to prevent any confusion.
 
-**Beware of picocrypt.org, which claims to be the official website! There is no official website for Picocrypt other than this GitHub repo.** Even if this website is taken down, I will not remove this message; let it be a warning to stay vigilant.
+**Beware of picocrypt.org, which claims to be the official website for this project! Remember, there is no official website for Picocrypt.** Even if this self-proclaimed website is taken down, I will not remove this message; let it be a real-world warning to stay vigilant.
 
 ## Windows
 Picocrypt for Windows is as simple as it gets. To download the latest, standalone, and portable executable for Windows, click <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.33/Picocrypt.exe">here</a>. If Microsoft Defender or your antivirus flags Picocrypt as a virus, please do your part and submit it as a false positive for the betterment of everyone.
