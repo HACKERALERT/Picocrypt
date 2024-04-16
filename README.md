@@ -5,8 +5,6 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 <br>
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
 
-**Project status: temporarily on hold**. I've decided to take some time off of Picocrypt to focus on my academics and personal goals. Thus, don't expect any new developments for the next little while, although none should be needed as Picocrypt is already very stable and usable. It's been a pleasure developing this app so far and I hope to continue in the future when I have more time and energy. Until then, farewell!
-
 # Funding
 **Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a security audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.**</i>
 
@@ -139,6 +137,8 @@ A thank you from the bottom of my heart to the significant contributors on Open 
 	<li>akp (backer)</li>
 	<li>Marvin (backer)</li>
 	<li>Kenichi Nakasaka (backer)</li>
+	<li>EN (backer)</li>
+	<li>JC (backer)</li>
 	<li>Guest ($842)</li>
 	<li>YellowNight ($818)</li>
 	<li>evelian ($50)</li>
@@ -147,6 +147,8 @@ A thank you from the bottom of my heart to the significant contributors on Open 
 	<li>Guest ($27)</li>
 	<li>oli ($20)</li>
 	<li>Bright ($20)</li>
+	<li>Incognito ($20)</li>
+	<li>Guest ($20)</li>
 	<li>Markus ($15)</li>
 	<li>Tybbs ($10)</li>
 	<li>N. Chin ($10)</li>
@@ -160,8 +162,9 @@ A thank you from the bottom of my heart to the significant contributors on Open 
 	<li>Hilebrinest ($10)</li>
 	<li>gabu.gu ($10)</li>
 	<li>Boat ($10)</li>
+	<li>Guest ($10)</li>
 </ul>
-<!-- Last updated June 14, 2023 -->
+<!-- Last updated April 16, 2024 -->
 
 Also, a huge thanks to the following people who were the first to donate and support Picocrypt:
 <ul>
