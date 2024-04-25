@@ -1,4 +1,4 @@
-module github.com/HACKERALERT/Picocrypt/cli/picocrypt
+module github.com/HACKERALERT/Picocrypt/cli/v1/picocrypt
 
 go 1.17
 
