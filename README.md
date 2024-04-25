@@ -24,11 +24,11 @@ Picocrypt for macOS is very simple as well. Download Picocrypt <a href="https://
 ## Linux
 To use Picocrypt on Linux, you can download the AppImage <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.33/Picocrypt.AppImage">here</a>. While this AppImage should work on most systems, Linux is a mess when it comes to cross-distro and cross-release compatibility, so if the AppImage doesn't work, you can try the <a href="https://snapcraft.io/picocrypt">Snap</a>, run Picocrypt through Wine, or compile from source using the instructions in the `src/` directory.
 
+## CLI
+A command-line interface is available for Picocrypt <a href="/cli/v2/picocrypt">here</a>. It can encrypt and decrypt files, folders, and globs, and supports paranoid mode and Reed-Solomon encoding. You can use it on systems that don't have a GUI or can't run the GUI app, or to write automated shell scripts for backups, etc.
+
 ## Web
 A web interface for Picocrypt is available <a href="https://picocrypt.pages.dev/">here</a>, allowing you to use a lite version of Picocrypt on any device. Keep in mind that its functionality is very limited and you won't be able to use any advanced features or encrypt large files. It is also quite slow compared to the native app.
-
-## CLI
-A command-line interface is available for Picocrypt <a href="/cli">here</a>. Keep in mind that the functionality is extremely limited and is not meant to replace the standard GUI app. Rather, it's best suited for environments where the GUI won't run or you need the ability to automate encryption workflows.
 
 ## Paranoid Pack
 The Paranoid Pack is a compressed archive that contains executables for Windows, macOS, and Linux, including the source code and dependencies. As long as you have it stored in a place you can access, you'll be able to open it and use Picocrypt on any desktop operating system in case this repository mysteriously vanishes or the entire Internet burns down. Think of it as a seed vault for Picocrypt; as long as one person has the Paranoid Pack within reach, they can share it with the rest of the world and keep Picocrypt functional in case of catastrophic events. The best way to ensure Picocrypt is accessible many decades from now is to keep a Paranoid Pack in a safe place. Get your copy <a href="https://github.com/HACKERALERT/Picocrypt/releases/download/1.33/Paranoid.zip">here</a>.
