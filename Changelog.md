@@ -5,7 +5,9 @@
 
 # v1.34 (No ETA)
 <ul>
-	<li>hi</li>
+	<li>(WIP) New CLI with support for files, folders, globs, paranoid mode, and Reed-Solomon</li>
+	<li>Migrate github.com/HACKERALERT/crypto back to golang.org/x/crypto</li>
+	<li>Distribute raw Linux binary instead of AppImage for better portability</li>
 </ul>
 
 # v1.33 (Released 06/27/2023)
