@@ -1,11 +1,13 @@
 # Future
 <ul>
 	<li>Migrate golang.org/x/crypto to standard library imports (https://github.com/golang/go/issues/65269)</li>
+	<li>(Under consideration) Better web app; add advanced features</li>
 </ul>
 
 # v1.34 (No ETA)
 <ul>
 	<li>(WIP) New CLI with support for files, folders, globs, paranoid mode, and Reed-Solomon</li>
+	<li>Unzip after decryption (advanced feature)</li>
 	<li>Migrate github.com/HACKERALERT/crypto back to golang.org/x/crypto</li>
 	<li>Distribute raw Linux binary instead of AppImage for better portability</li>
 </ul>
