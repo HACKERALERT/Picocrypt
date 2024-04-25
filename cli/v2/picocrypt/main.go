@@ -19,6 +19,7 @@ import (
 
 	"github.com/HACKERALERT/infectious"
 	"github.com/HACKERALERT/serpent"
+	"github.com/schollz/progressbar/v3"
 	"golang.org/x/crypto/argon2"
 	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/chacha20"
@@ -103,6 +104,36 @@ func work() int {
 		}
 	}
 
+	var password, cpassword []byte
+	var err error
+	if mode == "encrypt" {
+		fmt.Print("Password: ")
+		password, err = term.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			fmt.Println("Error reading password.")
+			return 1
+		}
+		fmt.Print(strings.Repeat("*", len(password)), " | Confirm: ")
+		cpassword, err = term.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			fmt.Println("Error reading password.")
+			return 1
+		}
+		fmt.Println(strings.Repeat("*", len(cpassword)))
+		if !bytes.Equal(password, cpassword) {
+			fmt.Println("Passwords don't match.")
+			return 1
+		}
+	} else {
+		fmt.Print("Password: ")
+		password, err = term.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			fmt.Println("Error reading password.")
+			return 1
+		}
+		fmt.Println(strings.Repeat("*", len(password)))
+	}
+
 	fin_, fout_ := "", ""
 	if mode == "decrypt" {
 		fin_ = flag.Arg(0)
@@ -161,7 +192,7 @@ func work() int {
 				return 1
 			}
 			writer := zip.NewWriter(file)
-			for _, path := range files {
+			for i, path := range files {
 				stat, err := os.Stat(path)
 				if err != nil {
 					continue
@@ -182,7 +213,7 @@ func work() int {
 				if err != nil {
 					continue
 				}
-				fin_, err := os.Open(path)
+				fin, err := os.Open(path)
 				if err != nil {
 					writer.Close()
 					file.Close()
@@ -190,9 +221,18 @@ func work() int {
 					fmt.Println("Read access to input(s) denied.")
 					return 1
 				}
-				fmt.Println("Compressing:", abs)
-				_, err = io.Copy(entry, fin_)
-				fin_.Close()
+				bar := progressbar.NewOptions(
+					int(stat.Size()),
+					progressbar.OptionClearOnFinish(),
+					progressbar.OptionFullWidth(),
+					progressbar.OptionShowBytes(true),
+					progressbar.OptionUseIECUnits(true),
+					progressbar.OptionSetDescription(
+						fmt.Sprintf("Compressing [%d/%d]:", i+1, len(files)),
+					),
+				)
+				_, err = io.Copy(io.MultiWriter(entry, bar), fin)
+				fin.Close()
 				if err != nil {
 					writer.Close()
 					file.Close()
@@ -207,37 +247,6 @@ func work() int {
 			fout_ = "encrypted.zip.pcv"
 			defer os.Remove(file.Name())
 		}
-	}
-
-	var password []byte
-	var cpassword []byte
-	var err error
-	if mode == "encrypt" {
-		fmt.Print("Password: ")
-		password, err = term.ReadPassword(int(os.Stdin.Fd()))
-		if err != nil {
-			fmt.Println("\nError reading password.")
-			return 1
-		}
-		fmt.Print("\nConfirm: ")
-		cpassword, err = term.ReadPassword(int(os.Stdin.Fd()))
-		if err != nil {
-			fmt.Println("\nError reading password.")
-			return 1
-		}
-		if !bytes.Equal(password, cpassword) {
-			fmt.Println("\nPasswords don't match.")
-			return 1
-		}
-		fmt.Println()
-	} else {
-		fmt.Print("Password: ")
-		password, err = term.ReadPassword(int(os.Stdin.Fd()))
-		if err != nil {
-			fmt.Println("\nError reading password.")
-			return 1
-		}
-		fmt.Println()
 	}
 
 	var padded bool
@@ -271,8 +280,10 @@ func work() int {
 		return 1
 	}
 	total := stat.Size()
+	if mode == "decrypt" {
+		total -= 789
+	}
 	if mode == "encrypt" {
-		fmt.Println("Generating volume header...")
 		errs := make([]error, 11)
 		salt = make([]byte, 16)
 		hkdfSalt = make([]byte, 32)
@@ -313,7 +324,6 @@ func work() int {
 			}
 		}
 	} else {
-		fmt.Println("Reading volume header...")
 		errs := make([]error, 10)
 		version := make([]byte, 15)
 		fin.Read(version)
@@ -420,6 +430,21 @@ func work() int {
 	s, _ := serpent.NewCipher(serpentKey)
 	serpent := cipher.NewCTR(s, serpentIV)
 
+	bar := progressbar.NewOptions(
+		int(total),
+		progressbar.OptionClearOnFinish(),
+		progressbar.OptionFullWidth(),
+		progressbar.OptionShowBytes(true),
+		progressbar.OptionUseIECUnits(true),
+		progressbar.OptionSetDescription(
+			(func() string {
+				if mode == "encrypt" {
+					return "Encrypting:"
+				}
+				return "Decrypting:"
+			})(),
+		),
+	)
 	for {
 		var src []byte
 		if mode == "decrypt" && *reedsolo {
@@ -516,6 +541,12 @@ func work() int {
 			fmt.Println("Insufficient disk space.")
 			return 1
 		}
+		if mode == "decrypt" && *reedsolo {
+			done += MiB / 128 * 136
+		} else {
+			done += MiB
+		}
+		bar.Set(done)
 
 		if counter >= 60*GiB {
 			nonce = make([]byte, 24)
@@ -527,6 +558,7 @@ func work() int {
 			counter = 0
 		}
 	}
+	bar.Set64(total)
 
 	if mode == "encrypt" {
 		fout.Seek(int64(309+0*3), 0)
@@ -545,7 +577,7 @@ func work() int {
 
 	fin.Close()
 	fout.Close()
-	fmt.Println("Completed.")
+	fmt.Println("\nCompleted.")
 	return 0
 }
 
