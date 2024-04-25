@@ -1,3 +1,13 @@
+# Future
+<ul>
+	<li>Migrate golang.org/x/crypto to standard library imports (https://github.com/golang/go/issues/65269)</li>
+</ul>
+
+# v1.34 (No ETA)
+<ul>
+	<li>hi</li>
+</ul>
+
 # v1.33 (Released 06/27/2023)
 <ul>
 	<li>✓ Add tooltip warning that comments are not encrypted (#164)</li>
