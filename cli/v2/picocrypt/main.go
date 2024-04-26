@@ -84,7 +84,7 @@ func work() int {
 	}
 	paranoid := flag.Bool("p", false, "")
 	reedsolo := flag.Bool("r", false, "")
-	fix := flag.Bool("fix", false, "")
+	fix := flag.Bool("f", false, "")
 	flag.Parse()
 
 	mode := ""
@@ -108,7 +108,7 @@ func work() int {
 		}
 	}
 	for _, v := range flag.Args() {
-		if v == "-p" || v == "-r" || v == "-fix" {
+		if v == "-p" || v == "-r" || v == "-f" {
 			fmt.Println("Flags are only accepted before arguments!")
 			return 1
 		}
@@ -580,11 +580,11 @@ func work() int {
 			fin.Close()
 			fout.Close()
 			os.Remove(fout_)
-			fmt.Println("The input volume is damaged or modified.")
+			fmt.Println("\nThe input volume is damaged or modified.")
 			if *reedsolo {
 				if !(*fix) {
 					fmt.Println("Fortunately, this volume is encoded with Reed-Solomon.")
-					fmt.Println("Try again using the -fix flag to repair the corruption.")
+					fmt.Println("Try again using the '-f' flag to repair the corruption.")
 				} else {
 					fmt.Println("The corruption could not be fixed with Reed-Solomon.")
 				}
