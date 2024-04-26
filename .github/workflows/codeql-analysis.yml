@@ -5,9 +5,12 @@ on:
       - "src/*.go"
       - "src/go.mod"
       - "src/go.sum"
-      - "cli/picocrypt/*.go"
-      - "cli/picocrypt/go.mod"
-      - "cli/picocrypt/go.sum"
+      - "cli/v1/picocrypt/*.go"
+      - "cli/v1/picocrypt/go.mod"
+      - "cli/v1/picocrypt/go.sum"
+      - "cli/v2/picocrypt/*.go"
+      - "cli/v2/picocrypt/go.mod"
+      - "cli/v2/picocrypt/go.sum"
       - "web/*.go"
       - "web/go.mod"
       - "web/go.sum"
@@ -27,12 +30,12 @@ jobs:
         language: ['go']
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
+      uses: github/codeql-action/autobuild@v3
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
