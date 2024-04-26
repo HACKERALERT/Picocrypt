@@ -107,6 +107,12 @@ func work() int {
 			}
 		}
 	}
+	for _, v := range flag.Args() {
+		if v == "-p" || v == "-r" || v == "-fix" {
+			fmt.Println("Flags are only accepted before arguments!")
+			return 1
+		}
+	}
 
 	var password, cpassword []byte
 	var err error
