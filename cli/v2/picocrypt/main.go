@@ -13,6 +13,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -194,12 +195,13 @@ func work() int {
 				fmt.Println("Cannot get current working directory.")
 				return 1
 			}
-			file, err := os.CreateTemp("", "")
+			file, err := os.CreateTemp("", "picocrypt-cli-v2-*.tmp")
 			if err != nil {
 				fmt.Println("Cannot create temporary file.")
 				return 1
 			}
 			writer := zip.NewWriter(file)
+
 			for i, path := range files {
 				stat, err := os.Stat(path)
 				if err != nil {
@@ -281,6 +283,16 @@ func work() int {
 		fmt.Println("Error creating output file.")
 		return 1
 	}
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c
+		fin.Close()
+		fout.Close()
+		if err := os.Remove(fout.Name()); err == nil {
+			fmt.Print("\nSystem interrupt detected, cleaning up.")
+		}
+	}()
 
 	stat, err := os.Stat(fin_)
 	if err != nil {
@@ -381,7 +393,7 @@ func work() int {
 				fin.Close()
 				fout.Close()
 				os.Remove(fout_)
-				fmt.Println("The volume header is damaged.")
+				fmt.Println("The volume header is irrecoverably damaged.")
 				return 1
 			}
 		}
@@ -500,7 +512,7 @@ func work() int {
 							fin.Close()
 							fout.Close()
 							os.Remove(fout_)
-							fmt.Println("The input file is irrecoverably damaged.")
+							fmt.Println("\nThe input file is irrecoverably damaged.")
 							return 1
 						}
 						if i == MiB/128*136-136 && done+MiB/128*136 >= int(total) && padded {
@@ -516,7 +528,7 @@ func work() int {
 							fin.Close()
 							fout.Close()
 							os.Remove(fout_)
-							fmt.Println("The input file is irrecoverably damaged.")
+							fmt.Println("\nThe input file is irrecoverably damaged.")
 							return 1
 						}
 						src = append(src, tmp...)
@@ -526,7 +538,7 @@ func work() int {
 						fin.Close()
 						fout.Close()
 						os.Remove(fout_)
-						fmt.Println("The input file is irrecoverably damaged.")
+						fmt.Println("\nThe input file is irrecoverably damaged.")
 						return 1
 					}
 					src = append(src, unpad(tmp)...)
@@ -545,8 +557,9 @@ func work() int {
 		if err != nil {
 			fin.Close()
 			fout.Close()
-			os.Remove(fout_)
-			fmt.Println("Insufficient disk space.")
+			if err := os.Remove(fout.Name()); err == nil {
+				fmt.Print("\nSystem interrupt detected, cleaning up.")
+			}
 			return 1
 		}
 		if mode == "decrypt" && *reedsolo {
@@ -580,12 +593,8 @@ func work() int {
 			os.Remove(fout_)
 			fmt.Println("\nThe input volume is damaged or modified.")
 			if *reedsolo {
-				if !(*fix) {
-					fmt.Println("Fortunately, this volume is encoded with Reed-Solomon.")
-					fmt.Println("Try again using the '-f' flag to repair the corruption.")
-				} else {
-					fmt.Println("The corruption could not be fixed with Reed-Solomon.")
-				}
+				fmt.Println("Fortunately, this volume is encoded with Reed-Solomon.")
+				fmt.Println("Try again using the '-f' flag to repair the corruption.")
 			}
 			return 1
 		}
@@ -598,5 +607,11 @@ func work() int {
 }
 
 func main() {
+	g, err := filepath.Glob(filepath.Join(os.TempDir(), "picocrypt-cli-v2-*.tmp"))
+	if err == nil {
+		for _, v := range g {
+			os.Remove(v)
+		}
+	}
 	os.Exit(work())
 }
