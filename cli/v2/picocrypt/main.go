@@ -47,7 +47,10 @@ func rsEncode(rs *infectious.FEC, data []byte) []byte {
 	return res
 }
 
-func rsDecode(rs *infectious.FEC, data []byte) ([]byte, error) {
+func rsDecode(rs *infectious.FEC, data []byte, fast bool) ([]byte, error) {
+	if rs.Total() == 136 && fast {
+		return data[:128], nil
+	}
 	tmp := make([]infectious.Share, rs.Total())
 	for i := 0; i < rs.Total(); i++ {
 		tmp[i].Number = i
@@ -81,6 +84,7 @@ func work() int {
 	}
 	paranoid := flag.Bool("p", false, "")
 	reedsolo := flag.Bool("r", false, "")
+	fix := flag.Bool("fix", false, "")
 	flag.Parse()
 
 	mode := ""
@@ -327,16 +331,16 @@ func work() int {
 		errs := make([]error, 10)
 		version := make([]byte, 15)
 		fin.Read(version)
-		_, errs[0] = rsDecode(rs5, version)
+		_, errs[0] = rsDecode(rs5, version, !(*fix))
 		tmp := make([]byte, 15)
 		fin.Read(tmp)
-		tmp, errs[1] = rsDecode(rs5, tmp)
+		tmp, errs[1] = rsDecode(rs5, tmp, !(*fix))
 		commentsLength, _ := strconv.Atoi(string(tmp))
 		fin.Read(make([]byte, commentsLength*3))
 		total -= int64(commentsLength) * 3
 		flags := make([]byte, 15)
 		fin.Read(flags)
-		flags, errs[2] = rsDecode(rs5, flags)
+		flags, errs[2] = rsDecode(rs5, flags, !(*fix))
 		*paranoid = flags[0] == 1
 		*reedsolo = flags[3] == 1
 		padded = flags[4] == 1
@@ -349,25 +353,25 @@ func work() int {
 		}
 		salt = make([]byte, 48)
 		fin.Read(salt)
-		salt, errs[3] = rsDecode(rs16, salt)
+		salt, errs[3] = rsDecode(rs16, salt, !(*fix))
 		hkdfSalt = make([]byte, 96)
 		fin.Read(hkdfSalt)
-		hkdfSalt, errs[4] = rsDecode(rs32, hkdfSalt)
+		hkdfSalt, errs[4] = rsDecode(rs32, hkdfSalt, !(*fix))
 		serpentIV = make([]byte, 48)
 		fin.Read(serpentIV)
-		serpentIV, errs[5] = rsDecode(rs16, serpentIV)
+		serpentIV, errs[5] = rsDecode(rs16, serpentIV, !(*fix))
 		nonce = make([]byte, 72)
 		fin.Read(nonce)
-		nonce, errs[6] = rsDecode(rs24, nonce)
+		nonce, errs[6] = rsDecode(rs24, nonce, !(*fix))
 		keyHashRef = make([]byte, 192)
 		fin.Read(keyHashRef)
-		keyHashRef, errs[7] = rsDecode(rs64, keyHashRef)
+		keyHashRef, errs[7] = rsDecode(rs64, keyHashRef, !(*fix))
 		keyfileHashRef := make([]byte, 96)
 		fin.Read(keyfileHashRef)
-		_, errs[8] = rsDecode(rs32, keyfileHashRef)
+		_, errs[8] = rsDecode(rs32, keyfileHashRef, !(*fix))
 		authTag = make([]byte, 192)
 		fin.Read(authTag)
-		authTag, errs[9] = rsDecode(rs64, authTag)
+		authTag, errs[9] = rsDecode(rs64, authTag, !(*fix))
 		for _, err := range errs {
 			if err != nil {
 				fin.Close()
@@ -487,7 +491,7 @@ func work() int {
 				src = nil
 				if len(dst) == MiB/128*136 {
 					for i := 0; i < MiB/128*136; i += 136 {
-						tmp, err := rsDecode(rs128, dst[i:i+136])
+						tmp, err := rsDecode(rs128, dst[i:i+136], !(*fix))
 						if err != nil {
 							fin.Close()
 							fout.Close()
@@ -503,7 +507,7 @@ func work() int {
 				} else {
 					chunks := len(dst)/136 - 1
 					for i := 0; i < chunks; i++ {
-						tmp, err := rsDecode(rs128, dst[i*136:(i+1)*136])
+						tmp, err := rsDecode(rs128, dst[i*136:(i+1)*136], !(*fix))
 						if err != nil {
 							fin.Close()
 							fout.Close()
@@ -513,7 +517,7 @@ func work() int {
 						}
 						src = append(src, tmp...)
 					}
-					tmp, err := rsDecode(rs128, dst[int(chunks)*136:])
+					tmp, err := rsDecode(rs128, dst[int(chunks)*136:], !(*fix))
 					if err != nil {
 						fin.Close()
 						fout.Close()
@@ -571,6 +575,14 @@ func work() int {
 			fout.Close()
 			os.Remove(fout_)
 			fmt.Println("The input volume is damaged or modified.")
+			if *reedsolo {
+				if !(*fix) {
+					fmt.Println("Fortunately, this volume is encoded with Reed-Solomon.")
+					fmt.Println("Try again using the -fix flag to repair the corruption.")
+				} else {
+					fmt.Println("The corruption could not be fixed with Reed-Solomon.")
+				}
+			}
 			return 1
 		}
 	}
