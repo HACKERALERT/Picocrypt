@@ -28,10 +28,8 @@ import (
 	"golang.org/x/term"
 )
 
-var KiB = 1 << 10
 var MiB = 1 << 20
 var GiB = 1 << 30
-var TiB = 1 << 40
 var rs5, _ = infectious.NewFEC(5, 15)
 var rs16, _ = infectious.NewFEC(16, 48)
 var rs24, _ = infectious.NewFEC(24, 72)
