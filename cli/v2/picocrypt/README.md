@@ -7,8 +7,13 @@ You should now be able to run `picocrypt` in your terminal. If not, run `export 
 # Usage
 ```
 C:\Users\Evan>picocrypt
-Usage: picocrypt [-p]aranoid [-r]eedsolo <item1> [<item2> ...]
-Items: can be a file (cat.png), folder (./src), or glob (*.txt)
+Usage: picocrypt <item1> [<item2> ...]
+Items: can be files, folders, or globs
+Flags:
+  -f    (decryption) attempt to fix corruption
+  -k    (decryption) keep output even if corrupted
+  -p    (encryption) use paranoid mode
+  -r    (encryption) encode with Reed-Solomon
 ```
 ## Examples
 To encrypt a single file:
