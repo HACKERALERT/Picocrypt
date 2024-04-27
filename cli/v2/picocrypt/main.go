@@ -44,7 +44,7 @@ func parse() int {
 		os.Exit(1)
 	}
 	f = flag.Bool("f", false, "(decryption) attempt to fix corruption")
-	k = flag.Bool("k", false, "(decryption) keep output unconditionally")
+	k = flag.Bool("k", false, "(decryption) keep output even if corrupted")
 	p = flag.Bool("p", false, "(encryption) use paranoid mode")
 	r = flag.Bool("r", false, "(encryption) encode with Reed-Solomon")
 	flag.Parse()
@@ -612,7 +612,7 @@ func work() int {
 
 	fin.Close()
 	fout.Close()
-	fmt.Print("Completed -> ", fout.Name())
+	fmt.Println("Completed -> ", fout.Name())
 	return 0
 }
 
