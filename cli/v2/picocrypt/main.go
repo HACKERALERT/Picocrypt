@@ -612,7 +612,7 @@ func work() int {
 
 	fin.Close()
 	fout.Close()
-	fmt.Println("Completed -> ", fout.Name())
+	fmt.Println("Completed ->", fout.Name())
 	return 0
 }
 
