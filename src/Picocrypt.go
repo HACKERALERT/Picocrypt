@@ -2,7 +2,7 @@ package main
 
 /*
 
-Picocrypt v1.33
+Picocrypt v1.34
 Copyright (c) Evan Su
 Released under a GNU GPL v3 License
 https://github.com/HACKERALERT/Picocrypt
@@ -32,17 +32,17 @@ import (
 	"strings"
 	"time"
 
-	"github.com/HACKERALERT/crypto/argon2"
-	"github.com/HACKERALERT/crypto/blake2b"
-	"github.com/HACKERALERT/crypto/chacha20"
-	"github.com/HACKERALERT/crypto/hkdf"
-	"github.com/HACKERALERT/crypto/sha3"
 	"github.com/HACKERALERT/dialog"
 	"github.com/HACKERALERT/giu"
 	"github.com/HACKERALERT/imgui-go"
 	"github.com/HACKERALERT/infectious"
 	"github.com/HACKERALERT/serpent"
 	"github.com/HACKERALERT/zxcvbn-go"
+	"golang.org/x/crypto/argon2"
+	"golang.org/x/crypto/blake2b"
+	"golang.org/x/crypto/chacha20"
+	"golang.org/x/crypto/hkdf"
+	"golang.org/x/crypto/sha3"
 )
 
 // Constants
