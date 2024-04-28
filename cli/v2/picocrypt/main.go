@@ -654,6 +654,7 @@ func main() {
 				fmt.Print("Failure.")
 			}
 		}
+		fmt.Println()
 		os.Exit(1)
 	}()
 
