@@ -3,7 +3,7 @@
 	<li>Migrate golang.org/x/crypto to standard library imports (https://github.com/golang/go/issues/65269)</li>
 </ul>
 
-# v1.34 (No ETA)
+# v1.34 (Released 04/29/2024)
 <ul>
 	<li>✓ New CLI with support for files, folders, globs, paranoid mode, and Reed-Solomon</li>
 	<li>✓ Migrate github.com/HACKERALERT/crypto back to golang.org/x/crypto</li>
