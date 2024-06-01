@@ -1,5 +1,5 @@
 # ✨We've Moved!✨
-In an effort to make Picocrypt more open to future developments and maintenance from the community, this repository will be moving to [github.com/Picocrypt](https://github.com/Picocrypt). While future developments will likely take place there, this repository will still exist as a trusted and reliable "backup" for people who need the highest level of security and stability. For people who are more open to experimental (and potentially less stable) software, I encourage you to move over to the new Picocrypt organization's repositories. Thank you all for your support along the way!
+In an effort to make Picocrypt more open to future developments and maintenance from the community, this repository will be moving to [github.com/Picocrypt](https://github.com/Picocrypt). While future developments will likely take place there, this repository will still exist as a trusted and reliable "backup" for people who need the highest level of security and stability. For people who are more open to experimental (and potentially less stable) software, I encourage you to move over to the new Picocrypt organization's repositories. For more details, see [here](https://github.com/HACKERALERT/Picocrypt/issues/186). Thank you all for your support along the way!
 
 # Picocrypt
 
