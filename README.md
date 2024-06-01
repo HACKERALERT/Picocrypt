@@ -1,3 +1,8 @@
+# ✨We've Moved!✨
+In an effort to make Picocrypt more open to future developments and maintenance from the community, this repository will be moving to [github.com/Picocrypt](https://github.com/Picocrypt). While future developments will likely take place there, this repository will still exist as a trusted and reliable "backup" for people who need the highest level of security and stability. For people who are more open to experimental (and potentially less stable) software, I encourage you to move over to the new Picocrypt organization's repositories. Thank you all for your support along the way!
+
+# Picocrypt
+
 <p align="center"><img align="center" src="/images/logo.svg" width="512" alt="Picocrypt"></p> 
 
 Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encryption tool that you can use to protect your files. It's designed to be the <i>go-to</i> tool for encryption, with a focus on security, simplicity, and reliability. Picocrypt uses the secure XChaCha20 cipher and the Argon2id key derivation function to provide a high level of security, even from three-letter agencies like the NSA. <strong>Your privacy and security is under attack. Take it back with confidence by protecting your files with Picocrypt.</strong>
