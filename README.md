@@ -1,5 +1,5 @@
 # ✨We've Moved!✨
-In an effort to make Picocrypt more open to future developments and maintenance from the community, this repository will be moving to [github.com/Picocrypt](https://github.com/Picocrypt). While future developments will likely take place there, this repository will still exist as a trusted and reliable "backup" for people who need the highest level of security and stability. For people who are more open to experimental (and potentially less stable) software, I encourage you to move over to the new Picocrypt organization's repositories. For more details, see [here](https://github.com/HACKERALERT/Picocrypt/issues/186). Thank you all for your support along the way!
+This repository has permanently moved to [github.com/Picocrypt](https://github.com/Picocrypt).
 
 # Picocrypt
 
@@ -9,9 +9,6 @@ Picocrypt is a very small (hence <i>Pico</i>), very simple, yet very secure encr
 
 <br>
 <p align="center"><img align="center" src="/images/screenshot.png" width="318" alt="Picocrypt"></p>
-
-# Funding
-**Please donate to Picocrypt on <a href="https://opencollective.com/picocrypt">Open Collective</a> (crypto is accepted) to raise money for a security audit from Cure53. Because this is a project that I spend many hours on and make no money from, I cannot pay for an audit myself. <i>Picocrypt needs support from its community.**</i>
 
 # Downloads
 **Important**: There are multiple entities under the name "Picocrypt". For example, there's an old encryption tool called PicoCrypt that uses a broken cipher. There's also an ERC-funded research project called PICOCRYPT. There are even domains related to Picocrypt that I've never registered like picocrypt.com and picocrypt.org. Please don't confuse any of these unrelated (and potentially malicious) projects/domains with Picocrypt (this project). **Make sure to only download Picocrypt from this repository** to ensure that you get the authentic and backdoor-free Picocrypt. When sharing Picocrypt with others, be sure to link to this repository to prevent any confusion.
@@ -72,7 +69,7 @@ Here's how Picocrypt compares to other popular encryption tools.
 | Reed-Solomon   |✅ Yes         |❌ No           |❌ No          |❌ No           |❌ No          |
 | Compression    |✅ Yes         |❌ No           |✅ Yes         |✅ Yes          |❌ No          |
 | Telemetry      |✅ None        |✅ None         |✅ None        |❓ Unknown      |✅ None        |
-| Audited        |❌ [Donate](https://opencollective.com/picocrypt)     |✅ Yes          |❌ No          |❓ Unknown      |✅ Yes         |
+| Audited        |✅ Yes         |✅ Yes          |❌ No          |❓ Unknown      |✅ Yes         |
 
 Keep in mind that while Picocrypt does most things better than other tools, it's not a one-size-fits-all and doesn't try to be. There are use cases such as full-disk encryption where VeraCrypt and BitLocker would be a better choice. So while Picocrypt is a great choice for the majority of people, you should still do your own research and use what's best for you.
 
